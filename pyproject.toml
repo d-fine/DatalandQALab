@@ -12,6 +12,35 @@ license = {text = "AGPL-3.0-only"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
 [tool.pdm]
 distribution = true
+
+[tool.pdm.scripts]
+lint = "ruff check --fix ."
+format = "ruff format ."
+test = "pytest tests/"
+doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
+
+[tool.pdm.dev-dependencies]
+linting = [
+    "ruff>=0.6.9",
+]
+testing = [
+    "pytest>=8.3.3",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+preview = true
+select = ["F", "E", "W", "I", "N", "D", "UP", "ASYNC", "BLE", "B", "A", "COM", "C4",
+    "DTZ", "DJ", "EM", "FA", "ISC", "LOG", "G", "PIE", "T20", "PT", "Q", "RSE", "RET", "SIM",
+    "TID", "TCH", "INT", "ARG", "PTH", "PD", "PL", "TRY", "FLY", "NPY", "PERF", "FURB", "RUF", "ANN"]
+ignore = ["ISC001", "COM812", "DTZ001", "RET504", "D100"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["D", "PLR2004"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

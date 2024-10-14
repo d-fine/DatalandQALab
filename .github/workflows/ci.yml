@@ -1,0 +1,33 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+
+      - name: Install dependencies
+        run: pdm install
+
+      - name: Check formatting
+        run: pdm run ruff format --check
+
+      - name: Check linting
+        if: always()
+        run: pdm run ruff check
+
+      - name: Run tests
+        if: always()
+        run: pdm run test
+
+      - name: Run doctests
+        if: always()
+        run: pdm run doctest
