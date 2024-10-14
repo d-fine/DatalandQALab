@@ -1,0 +1,17 @@
+[project]
+name = "dataland-qa-lab"
+version = "0.1.0"
+description = "The Dataland Quality Assurance Lab is a joint project between a team of students from TU Darmstadt, Dataland, and d-fine building automated quality assurance solutions for the Dataland platform in the winter term 2024/2025."
+authors = []
+dependencies = []
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "AGPL-3.0-only"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
