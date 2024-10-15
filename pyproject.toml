@@ -7,6 +7,7 @@ dependencies = [
     "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
     "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
     "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
+    "pydantic-settings>=2.5.2",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
