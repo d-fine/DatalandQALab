@@ -40,9 +40,9 @@ class DatalandClient:
         return dataland_backend.CompanyDataControllerApi(self.backend_client)
 
     @property
-    def backend_actuator_api(self) -> dataland_backend.ActuatorApi:
-        """Get the actuator API client for the backend service."""
-        return dataland_backend.ActuatorApi(self.backend_client)
+    def eu_taxonomy_nf_api(self) -> dataland_backend.EutaxonomyNonFinancialsDataControllerApi:
+        """Function to run the eu-taxonomy-non-financials-data-controller API."""
+        return dataland_backend.EutaxonomyNonFinancialsDataControllerApi(self.backend_client)
 
     @property
     def documents_client(self) -> dataland_documents.ApiClient:
@@ -72,3 +72,8 @@ class DatalandClient:
     def qa_api(self) -> dataland_qa.QaControllerApi:
         """Function to run the qa-controller API."""
         return dataland_qa.QaControllerApi(self.qa_client)
+
+    @property
+    def eu_taxonomy_nf_qa_api(self) -> dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi:
+        """Function to run the QA report controller for EU Taxonomy non-financials."""
+        return dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi(self.qa_client)

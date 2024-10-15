@@ -8,6 +8,10 @@ dependencies = [
     "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
     "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
     "pydantic-settings>=2.5.2",
+    "pypdf>=5.0.1",
+    "cryptography>=43.0.1",
+    "azure-ai-documentintelligence>=1.0.0b4",
+    "openai>=1.51.2",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
@@ -30,6 +34,9 @@ doctest-cov = "coverage run -m pytest --doctest-modules --doctest-continue-on-fa
 export-coverage = "coverage xml"
 
 [tool.pdm.dev-dependencies]
+notebooks = [
+    "jupyterlab>=4.2.5",
+]
 linting = [
     "ruff>=0.6.9",
 ]
@@ -50,6 +57,7 @@ ignore = ["ISC001", "COM812", "DTZ001", "RET504", "D100"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["D", "PLR2004"]
+"**/*.ipynb" = ["D", "A004", "T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
