@@ -30,6 +30,14 @@ openapi_generator generate \
     --additional-properties=packageName=dataland_documents \
     -o './clients/documents'
 
+# Dataland Community Manager
+rm -rf ./clients/community
+openapi_generator generate \
+    -i https://dataland.com/community/v3/api-docs/public \
+    -g python \
+    --additional-properties=packageName=dataland_community \
+    -o './clients/community'
+
 # Dataland QA Service
 rm -rf ./clients/qa
 openapi_generator generate \

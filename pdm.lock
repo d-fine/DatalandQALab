@@ -5,7 +5,7 @@
 groups = ["default", "linting", "notebooks", "testing"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:4c76c8396f1dbe59d7d6722fb27bb2bafec0dd521d1a98721b920447e7edfc01"
+content_hash = "sha256:cc0a24c76d139392219e53bba7587005f2f74de09cb88b870681c7c84aa6a7f9"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -413,6 +413,20 @@ version = "1.0.0"
 requires_python = "<4.0,>=3.7"
 path = "./clients/backend"
 summary = "Dataland Backend API documentation"
+groups = ["default"]
+dependencies = [
+    "pydantic>=2",
+    "python-dateutil>=2.8.2",
+    "typing-extensions>=4.7.1",
+    "urllib3>=1.25.3",
+]
+
+[[package]]
+name = "dataland-community"
+version = "1.0.0"
+requires_python = "<4.0,>=3.7"
+path = "./clients/community"
+summary = "Dataland Community Manager API documentation"
 groups = ["default"]
 dependencies = [
     "pydantic>=2",

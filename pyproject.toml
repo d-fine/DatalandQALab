@@ -7,6 +7,7 @@ dependencies = [
     "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
     "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
     "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
+    "dataland-community @ file:///${PROJECT_ROOT}/clients/community",
     "pydantic-settings>=2.5.2",
     "pypdf>=5.0.1",
     "cryptography>=43.0.1",
@@ -28,9 +29,10 @@ distribution = true
 lint = "ruff check --fix ."
 format = "ruff format ."
 test = "pytest tests/"
-test-cov = "coverage run -m pytest tests/"
+test-cov = "coverage run --data-file=.coverage.pytest -m pytest tests/"
 doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
-doctest-cov = "coverage run -m pytest --doctest-modules --doctest-continue-on-failure src/"
+doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"
+combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
 
 [tool.pdm.dev-dependencies]

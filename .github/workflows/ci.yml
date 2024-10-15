@@ -47,7 +47,7 @@ jobs:
 
       - name: Export coverage
         if: always()
-        run: pdm run export-coverage
+        run: pdm run combine-coverage && pdm run export-coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
