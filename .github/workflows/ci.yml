@@ -24,6 +24,9 @@ jobs:
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
 
+      - name: Generate API clients
+        run: ./bin/generate_dataland_api_clients.sh
+
       - name: Install dependencies
         run: pdm install
 
