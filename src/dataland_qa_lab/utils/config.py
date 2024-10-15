@@ -1,5 +1,6 @@
 import logging
 from functools import cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,7 +21,7 @@ class DatalandQaLabSettings(BaseSettings):
         azure_docintel_endpoint (str): The endpoint for the Azure Document Intelligence service.
     """
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=Path(__file__).parent.parent.parent.parent / ".env", env_file_encoding="utf-8")
 
     dataland_url: str
     dataland_api_key: str

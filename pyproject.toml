@@ -24,7 +24,10 @@ distribution = true
 lint = "ruff check --fix ."
 format = "ruff format ."
 test = "pytest tests/"
+test-cov = "coverage run -m pytest tests/"
 doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
+doctest-cov = "coverage run -m pytest --doctest-modules --doctest-continue-on-failure src/"
+export-coverage = "coverage xml"
 
 [tool.pdm.dev-dependencies]
 linting = [
@@ -32,6 +35,7 @@ linting = [
 ]
 testing = [
     "pytest>=8.3.3",
+    "coverage>=7.6.3",
 ]
 
 [tool.ruff]
