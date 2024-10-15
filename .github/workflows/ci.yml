@@ -10,7 +10,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     env:
-      DATALAND_URL: ${{ secrets.DATALAND_URL }}
+      DATALAND_URL: ${{ vars.DATALAND_URL }}
       DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
       AZURE_OPENAI_API_KEY: "null"
       AZURE_OPENAI_ENDPOINT: "null"
@@ -39,11 +39,15 @@ jobs:
 
       - name: Run tests
         if: always()
-        run: pdm run test
+        run: pdm run test-cov
 
       - name: Run doctests
         if: always()
-        run: pdm run doctest
+        run: pdm run doctest-cov
+
+      - name: Export coverage
+        if: always()
+        run: pdm run export-coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
