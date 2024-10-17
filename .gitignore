@@ -164,6 +164,3 @@ cython_debug/
 
 # Automatically generated API clients
 clients/
-
-# Ansible Inventory
-inventory.yml
