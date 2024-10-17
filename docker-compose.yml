@@ -1,0 +1,13 @@
+---
+services:
+  qa-lab-server-dev:
+    profiles:
+      - dev
+    build: .
+    environment:
+      DATALAND_URL: ${DATALAND_URL}
+      DATALAND_API_KEY: ${DATALAND_API_KEY}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      AZURE_DOCINTEL_API_KEY: ${AZURE_DOCINTEL_API_KEY}
+      AZURE_DOCINTEL_ENDPOINT: ${AZURE_DOCINTEL_ENDPOINT}
