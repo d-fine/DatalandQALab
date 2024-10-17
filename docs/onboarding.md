@@ -8,13 +8,16 @@ Please ensure the following software is installed on your machine:
 * [Python 3.12](https://www.python.org/downloads/)
 * [PDM](https://pdm-project.org/en/latest/#installation) - a Python package manager
 * A recent version of Java (on windows, we recommend [Eclipse Temurin](https://adoptium.net/de/temurin/releases/) 21 for easy installation. On linux, just use your package manager ;))
-* An IDE of your choice (we recommend [VS Code](https://code.visualstudio.com/download). Alternatively you may use [IntelliJ Ultimate/PyCharm](https://www.jetbrains.com/de-de/pycharm/download/))
+* We would recommend everyone to use [VS Code](https://code.visualstudio.com/download) for consistency.
 
 ## First Steps
 * Create a [Github](https://github.com) account (if not already available)
 * Generate an ssh private-public key pair if you haven't got any yet (run `ssh-keygen -t ed25519` in your terminal)
 * Add your ssh public key to your personal GitHub account [here](https://github.com/settings/keys)
 * Clone the project repository to your local machine (run `git clone git@github.com:d-fine/DatalandQARG.git` in your terminal)
+* Open the project in VS Code. To work effectively with this codebase, you need to install some extensions. These have been configured as recommended extensions for this repository.
+  * When you first open the project, VS Code should prompt you to install the recommended extensions. If prompted, click yes.
+  * If this does not work, press `CTRL+P` and enter `Extensions: Show Recommended Extensions`. This should open the extensions menu. At the top, there should be a section called `Workspace Recommendations`. Install all extensions listed here.
 * Configure your git username and email (run `git config user.name "Your GitHub Username"` and `git config user.email "email@domain.com"` in the newly created project directory). The email must match one of the addresses you have registered with GitHub.
 > [!CAUTION]
 > The email address you use here will be publicly visible alongside your commits. Alternatively, you can obtain a pseudonymous email address by going to the [GitHub Email Settings](https://github.com/settings/emails) and activating "Keep my email addresses private".
