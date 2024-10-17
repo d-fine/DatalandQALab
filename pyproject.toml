@@ -46,6 +46,9 @@ testing = [
     "pytest>=8.3.3",
     "coverage>=7.6.3",
 ]
+infra = [
+    "ansible>=10.5.0",
+]   
 
 [tool.ruff]
 line-length = 120
