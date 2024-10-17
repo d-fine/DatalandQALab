@@ -73,4 +73,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/d-fine/DatalandQALab/qalab-server:${{ github.sha }}
+          tags:
+            - ghcr.io/d-fine/DatalandQALab/qalab-server:${{ github.sha }}
