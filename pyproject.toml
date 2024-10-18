@@ -1,0 +1,65 @@
+[project]
+name = "dataland-qa-lab"
+version = "0.1.0"
+description = "The Dataland Quality Assurance Lab is a joint project between a team of students from TU Darmstadt, Dataland, and d-fine building automated quality assurance solutions for the Dataland platform in the winter term 2024/2025."
+authors = []
+dependencies = [
+    "dataland-backend @ file:///${PROJECT_ROOT}/clients/backend",
+    "dataland-documents @ file:///${PROJECT_ROOT}/clients/documents",
+    "dataland-qa @ file:///${PROJECT_ROOT}/clients/qa",
+    "dataland-community @ file:///${PROJECT_ROOT}/clients/community",
+    "pydantic-settings>=2.5.2",
+    "pypdf>=5.0.1",
+    "cryptography>=43.0.1",
+    "azure-ai-documentintelligence>=1.0.0b4",
+    "openai>=1.51.2",
+]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "AGPL-3.0-only"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+lint = "ruff check --fix ."
+format = "ruff format ."
+test = "pytest tests/"
+test-cov = "coverage run --data-file=.coverage.pytest -m pytest tests/"
+doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
+doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"
+combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
+export-coverage = "coverage xml"
+
+[tool.pdm.dev-dependencies]
+notebooks = [
+    "jupyterlab>=4.2.5",
+]
+linting = [
+    "ruff>=0.6.9",
+]
+testing = [
+    "pytest>=8.3.3",
+    "coverage>=7.6.3",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+preview = true
+select = ["F", "E", "W", "I", "N", "D", "UP", "ASYNC", "BLE", "B", "A", "COM", "C4",
+    "DTZ", "DJ", "EM", "FA", "ISC", "LOG", "G", "PIE", "T20", "PT", "Q", "RSE", "RET", "SIM",
+    "TID", "TCH", "INT", "ARG", "PTH", "PD", "PL", "TRY", "FLY", "NPY", "PERF", "FURB", "RUF", "ANN"]
+ignore = ["ISC001", "COM812", "DTZ001", "RET504", "D100"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["D", "PLR2004"]
+"**/*.ipynb" = ["D", "A004", "T201"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"

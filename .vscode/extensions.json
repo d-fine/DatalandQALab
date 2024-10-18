@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter",
+        "ms-python.python",
+        "ms-python.debugpy",
+        "ms-python.vscode-pylance",
+        "njpwerner.autodocstring",
+        "tomoki1207.pdf",
+        "waderyan.gitblame",
+        "mhutchie.git-graph",
+        "GitHub.vscode-pull-request-github",
+        "ms-vscode-remote.remote-ssh"
+    ]
+}
