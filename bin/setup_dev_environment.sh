@@ -10,4 +10,4 @@ mkdir -p "./clients"
 
 pdm install
 
-python -m dataland_qa_lab.bin.verify_config
+pdm run python -m dataland_qa_lab.bin.verify_config
