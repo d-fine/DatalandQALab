@@ -47,6 +47,9 @@ jobs:
       AZURE_DOCINTEL_API_KEY: ${{ secrets.AZURE_DOCINTEL_API_KEY }}
       AZURE_DOCINTEL_ENDPOINT: ${{ secrets.AZURE_DOCINTEL_ENDPOINT }}
       QALAB_SERVER_VERSION: ${{ github.sha }}
+      SERVER_URL: ${{ vars.SERVER_URL }}
+      SSH_HOST_KEY: ${{ vars.SSH_HOST_KEY }}
+      PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
