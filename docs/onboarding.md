@@ -31,7 +31,8 @@ Please ensure the following software is installed on your machine:
 ## Configuring Environment Variables
 After opening the project in your IDE, you need to configure the required environment variables. Start by copying the `.env.template` file to `.env`.
 Any values starting with `AZURE_` will be provided by the project maintainers. 
-**After** having received elevated permissions on the Dataland testing environment, you can fill in the `DATALAND_API_KEY` field by going to [Dataland API Key Management](https://test.dataland.com/api-key) and creating a new API Key (make sure to select a suitable expiration date)
+**After** having received elevated permissions on the Dataland testing environment, you can fill in the `DATALAND_API_KEY` field by going to [Dataland Test Instance API Key Management](https://test.dataland.com/api-key) and creating a new API Key (make sure to select a suitable expiration date).
+Enter `https://test.dataland.com` for the `DATLAND_URL`. The `QALAB_SERVER_VERSION`can be any arbitrary string for now.
 
 > [!CAUTION]
 > All environment variables are confidential and must not be shared with anyone. Do not commit the `.env` file to the repository.

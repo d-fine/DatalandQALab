@@ -1,0 +1,71 @@
+---
+name: Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select Environment'
+        required: true
+        type: environment
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/d-fine/datalandqalab/qalab-server:${{ github.sha }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    environment: ${{ github.event.inputs.environment || 'prod' }}
+    concurrency:
+      group: ${{ github.event.inputs.environment || 'prod' }}
+      cancel-in-progress: true
+    env:
+      DATALAND_URL: ${{ vars.DATALAND_URL }}
+      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_DOCINTEL_API_KEY: ${{ secrets.AZURE_DOCINTEL_API_KEY }}
+      AZURE_DOCINTEL_ENDPOINT: ${{ secrets.AZURE_DOCINTEL_ENDPOINT }}
+      QALAB_SERVER_VERSION: ${{ github.sha }}
+      SERVER_URL: ${{ vars.SERVER_URL }}
+      SSH_HOST_KEY: ${{ vars.SSH_HOST_KEY }}
+      PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure SSH for accessing the server
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_HOST_KEY" >  ~/.ssh/known_hosts
+          echo "$PRIVATE_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+      
+      - name: Push files for deployment
+        run: scp docker-compose.yml ubuntu@"$SERVER_URL":~/qalab/docker-compose.yml
+
+      - name: Create .env file for deployment
+        run: envsubst < .env.template | ssh ubuntu@"$SERVER_URL" "cat > ~/qalab/.env"
+      
+      - name: Launch instance
+        run: ssh ubuntu@"$SERVER_URL" "cd ~/qalab && docker compose --profile prod up -d"
