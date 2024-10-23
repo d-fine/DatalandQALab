@@ -1,5 +1,5 @@
 ---
-name: Deployment Workflow
+name: Deployment
 
 on:
   push:
@@ -59,11 +59,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
       
       - name: Push files for deployment
-          scp docker-compose.yml ubuntu@"$SERVER_URL":~/qalab/docker-compose.yml
+        run: scp docker-compose.yml ubuntu@"$SERVER_URL":~/qalab/docker-compose.yml
 
       - name: Create .env file for deployment
-          envsubst < .env.template | ssh ubuntu@"$SERVER_URL" "cat > ~/qalab/.env"
+        run: envsubst < .env.template | ssh ubuntu@"$SERVER_URL" "cat > ~/qalab/.env"
       
       - name: Launch instance
-          ssh ubuntu@"$SERVER_URL" "cd ~/qalab && docker compose --profile prod up -d"
-
+        run: ssh ubuntu@"$SERVER_URL" "cd ~/qalab && docker compose --profile prod up -d"
