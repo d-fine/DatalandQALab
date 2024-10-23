@@ -14,7 +14,7 @@ Please ensure the following software is installed on your machine:
 * Create a [Github](https://github.com) account (if not already available)
 * Generate an ssh private-public key pair if you haven't got any yet (run `ssh-keygen -t ed25519` in your terminal)
 * Add your ssh public key to your personal GitHub account [here](https://github.com/settings/keys)
-* Clone the project repository to your local machine (run `git clone git@github.com:d-fine/DatalandQARG.git` in your terminal)
+* Clone the project repository to your local machine (run `git clone git@github.com:d-fine/DatalandQaLab.git` in your terminal)
 * Open the project in VS Code. To work effectively with this codebase, you need to install some extensions. These have been configured as recommended extensions for this repository.
   * When you first open the project, VS Code should prompt you to install the recommended extensions. If prompted, click yes.
   * If this does not work, press `CTRL+P` and enter `Extensions: Show Recommended Extensions`. This should open the extensions menu. At the top, there should be a section called `Workspace Recommendations`. Install all extensions listed here.
