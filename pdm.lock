@@ -5,7 +5,7 @@
 groups = ["default", "linting", "notebooks", "testing"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:cc0a24c76d139392219e53bba7587005f2f74de09cb88b870681c7c84aa6a7f9"
+content_hash = "sha256:e578e4595b250994f16a02bcca3a47af03818d42bcaa20ea6f6f85b4d6c63f8b"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
