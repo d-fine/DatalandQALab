@@ -6,3 +6,8 @@ def return_hello_world() -> str:
     'Hello, World!'
     """
     return "Hello, World!"
+
+
+def check_if_array_sorted(array: list[str]) -> bool:
+    """Returns hello world."""
+    return "ASd"
