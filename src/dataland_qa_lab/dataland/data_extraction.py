@@ -48,6 +48,7 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
     deployment_name = "gpt-4o"
 
     prompt = f"""
+    Answer only with 'yes' or 'no'!
     You are an AI research Agent. As the agent, you answer questions briefly, succinctly, and factually.
     Always justify you answer.
     # Safety
@@ -62,7 +63,7 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
     Given the information from the [relevant documents], answer the following question with 'yes' or 'no':
     The undertaking carries out, funds or has exposures to research, development, demonstration and deployment of
     innovative electricity generation facilities that produce energy from nuclear processes with minimal waste
-    from the fuel cycle. Answer with 'yes' or 'no'
+    from the fuel cycle. Answer only with 'yes' or 'no'!
 
     # Relevant Documents
     {relevant_document.content}
