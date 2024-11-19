@@ -5,7 +5,8 @@ def _get_data_set_by_year_(company_id: str, year: str) -> str:
     conf = config.get_config()
     dataland_client = conf.dataland_client
 
-    dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(company_id=company_id)
+    api = dataland_client.eu_taxonomy_nuclear_and_gas_api
+    dataset = api.get_all_company_nuclear_and_gas_data(company_id=company_id)
 
     # Eintragen aus welcher Periode man das Dataset haben will -> In diesem Fall 2024
     data_id = "test"
