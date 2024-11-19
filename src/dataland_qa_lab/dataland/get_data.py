@@ -12,5 +12,8 @@ def get_data_set_by_year(company_id: str, year: str) -> str:
         if (dataset[t].meta_info.reporting_period == year):
             data_id = dataset[t].meta_info.data_id
             break
-
-    return data_id
+    print(data_id)
+    data = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(data_id=data_id)
+    wert1 = data.data.general.general.nuclear_energy_related_activities_section426.value.value
+    print(wert1)
+    return wert1
