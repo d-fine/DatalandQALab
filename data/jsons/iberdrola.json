@@ -1,0 +1,239 @@
+{
+  "companyId": "84b1b7dc-2c14-45b8-af25-0b271764416a",
+  "reportingPeriod": "2023",
+  "data": {
+    "general": {
+      "general": {
+        "referencedReports": {
+          "gsm24-sustainability-report-2023": {
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2",
+            "fileName": null,
+            "publicationDate": null
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection426": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection427": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection428": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "fossilGasRelatedActivitiesSection429": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "fossilGasRelatedActivitiesSection430": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "fossilGasRelatedActivitiesSection431": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "295",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        }
+      },
+      "taxonomyAlignedDenominator": {
+        "nuclearAndGasTaxonomyAlignedRevenueDenominator": null,
+        "nuclearAndGasTaxonomyAlignedCapexDenominator": null
+      },
+      "taxonomyAlignedNumerator": {
+        "nuclearAndGasTaxonomyAlignedRevenueNumerator": null,
+        "nuclearAndGasTaxonomyAlignedCapexNumerator": null
+      },
+      "taxonomyEligibleButNotAligned": {
+        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 9.7,
+              "mitigation": 9.7,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 6.2,
+              "mitigation": 6.2,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 15.9,
+              "mitigation": 15.9,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "296",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 1.4,
+              "mitigation": 1.4,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 1.4,
+              "mitigation": 1.4,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "297",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        }
+      },
+      "taxonomyNonEligible": {
+        "nuclearAndGasTaxonomyNonEligibleRevenue": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 3.2,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 40.5,
+            "taxonomyNonEligibleShare": 43.7
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "297",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        },
+        "nuclearAndGasTaxonomyNonEligibleCapex": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 1.3,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 8.5,
+            "taxonomyNonEligibleShare": 9.8
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "298",
+            "tagName": null,
+            "fileName": "gsm24-sustainability-report-2023",
+            "fileReference": "3305bd49f340b73919de891d166f7492cd61f59a9efdc1b84a0720db1f846fc2"
+          }
+        }
+      }
+    }
+  }
+}

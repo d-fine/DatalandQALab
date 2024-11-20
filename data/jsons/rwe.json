@@ -1,0 +1,443 @@
+{
+  "companyId": "03a1fc59-8101-4e20-a197-c3b90a1ec103",
+  "reportingPeriod": "2023",
+  "data": {
+    "general": {
+      "general": {
+        "referencedReports": {
+          "2024-03-14-rwe-annual-report-2023": {
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be",
+            "fileName": null,
+            "publicationDate": "2024-03-14"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection426": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection427": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection428": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "fossilGasRelatedActivitiesSection429": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "fossilGasRelatedActivitiesSection430": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "fossilGasRelatedActivitiesSection431": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "104",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        }
+      },
+      "taxonomyAlignedDenominator": {
+        "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 17,
+              "mitigation": 17,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "105",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 89,
+              "mitigation": 89,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "106",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        }
+      },
+      "taxonomyAlignedNumerator": {
+        "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "108",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "109",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        }
+      },
+      "taxonomyEligibleButNotAligned": {
+        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 94,
+              "mitigation": 94,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 1,
+              "mitigation": 1,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 5,
+              "mitigation": 5,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "111",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 96,
+              "mitigation": 96,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 2,
+              "mitigation": 2,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 2,
+              "mitigation": 2,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": null,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "112",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        }
+      },
+      "taxonomyNonEligible": {
+        "nuclearAndGasTaxonomyNonEligibleRevenue": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 2,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 98,
+            "taxonomyNonEligibleShare": 100
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "114",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        },
+        "nuclearAndGasTaxonomyNonEligibleCapex": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 4,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 96,
+            "taxonomyNonEligibleShare": 100
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "115",
+            "tagName": null,
+            "fileName": "2024-03-14-rwe-annual-report-2023",
+            "fileReference": "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be"
+          }
+        }
+      }
+    }
+  }
+}

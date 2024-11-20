@@ -1,0 +1,443 @@
+{
+  "companyId": "73a68944-c272-416d-b199-cd4a30579c00",
+  "reportingPeriod": "2023",
+  "data": {
+    "general": {
+      "general": {
+        "referencedReports": {
+          "totalenergies_universal-registration-document-2023_2023_en_pdf": {
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6",
+            "fileName": null,
+            "publicationDate": "2024-03-29"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection426": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection427": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection428": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "fossilGasRelatedActivitiesSection429": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "fossilGasRelatedActivitiesSection430": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "fossilGasRelatedActivitiesSection431": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        }
+      },
+      "taxonomyAlignedDenominator": {
+        "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 1.4,
+              "mitigation": 1.4,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "317",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 25.7,
+              "mitigation": 25.7,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "318",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        }
+      },
+      "taxonomyAlignedNumerator": {
+        "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "319",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "319",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        }
+      },
+      "taxonomyEligibleButNotAligned": {
+        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 0.9,
+              "mitigation": 0.9,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 4.1,
+              "mitigation": 4.1,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 5,
+              "mitigation": 5,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "320",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": 0.3,
+              "mitigation": 0.3,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 2.1,
+              "mitigation": 2.1,
+              "adaptation": 0
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 2.4,
+              "mitigation": 2.4,
+              "adaptation": 0
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "321",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        }
+      },
+      "taxonomyNonEligible": {
+        "nuclearAndGasTaxonomyNonEligibleRevenue": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": null,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 93.5,
+            "taxonomyNonEligibleShare": 93.5
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "322",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        },
+        "nuclearAndGasTaxonomyNonEligibleCapex": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": null,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 71.9,
+            "taxonomyNonEligibleShare": 71.9
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "322",
+            "tagName": null,
+            "fileName": "totalenergies_universal-registration-document-2023_2023_en_pdf",
+            "fileReference": "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6"
+          }
+        }
+      }
+    }
+  }
+}

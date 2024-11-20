@@ -1,0 +1,443 @@
+{
+  "companyId": "36ea3185-d665-41b7-a14f-4f50fa61b6db",
+  "reportingPeriod": "2023",
+  "data": {
+    "general": {
+      "general": {
+        "referencedReports": {
+          "integrierter-geschaeftsbericht-2023": {
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595",
+            "fileName": null,
+            "publicationDate": "2024-03-27"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection426": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection427": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearEnergyRelatedActivitiesSection428": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "fossilGasRelatedActivitiesSection429": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "fossilGasRelatedActivitiesSection430": {
+          "value": "Yes",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "fossilGasRelatedActivitiesSection431": {
+          "value": "No",
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        }
+      },
+      "taxonomyAlignedDenominator": {
+        "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 16.3,
+              "mitigation": 16.3,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "152",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+          "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG429": {
+              "mitigationAndAdaptation": 5.2,
+              "mitigation": 5.2,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG430": {
+              "mitigationAndAdaptation": 2,
+              "mitigation": 2,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominatorOtherActivities": {
+              "mitigationAndAdaptation": 79,
+              "mitigation": 79,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareDenominator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "155",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        }
+      },
+      "taxonomyAlignedNumerator": {
+        "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "153",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+          "value": {
+            "taxonomyAlignedShareNumeratorNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG429": {
+              "mitigationAndAdaptation": 6,
+              "mitigation": 6,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG430": {
+              "mitigationAndAdaptation": 2.3,
+              "mitigation": 2.3,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumeratorOtherActivities": {
+              "mitigationAndAdaptation": 91.7,
+              "mitigation": 91.7,
+              "adaptation": null
+            },
+            "taxonomyAlignedShareNumerator": {
+              "mitigationAndAdaptation": 100,
+              "mitigation": 100,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "156",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        }
+      },
+      "taxonomyEligibleButNotAligned": {
+        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 1.3,
+              "mitigation": 1.3,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 1.3,
+              "mitigation": 1.3,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "153",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+          "value": {
+            "taxonomyEligibleButNotAlignedShareNAndG426": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG427": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG428": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG429": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG430": {
+              "mitigationAndAdaptation": 0.1,
+              "mitigation": 0.1,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareNAndG431": {
+              "mitigationAndAdaptation": null,
+              "mitigation": null,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShareOtherActivities": {
+              "mitigationAndAdaptation": 0,
+              "mitigation": 0,
+              "adaptation": null
+            },
+            "taxonomyEligibleButNotAlignedShare": {
+              "mitigationAndAdaptation": 0.1,
+              "mitigation": 0.1,
+              "adaptation": null
+            }
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "156",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        }
+      },
+      "taxonomyNonEligible": {
+        "nuclearAndGasTaxonomyNonEligibleRevenue": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 0.3,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 82.2,
+            "taxonomyNonEligibleShare": 82.5
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "154",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        },
+        "nuclearAndGasTaxonomyNonEligibleCapex": {
+          "value": {
+            "taxonomyNonEligibleShareNAndG426": null,
+            "taxonomyNonEligibleShareNAndG427": null,
+            "taxonomyNonEligibleShareNAndG428": 0,
+            "taxonomyNonEligibleShareNAndG429": null,
+            "taxonomyNonEligibleShareNAndG430": null,
+            "taxonomyNonEligibleShareNAndG431": null,
+            "taxonomyNonEligibleShareOtherActivities": 13.8,
+            "taxonomyNonEligibleShare": 13.8
+          },
+          "quality": "Audited",
+          "comment": "",
+          "dataSource": {
+            "page": "157",
+            "tagName": null,
+            "fileName": "integrierter-geschaeftsbericht-2023",
+            "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+          }
+        }
+      }
+    }
+  }
+}
