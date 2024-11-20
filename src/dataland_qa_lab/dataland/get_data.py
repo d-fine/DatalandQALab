@@ -37,7 +37,7 @@ def _get_value1_by_year_(company_id: str, year: str) -> str:
     return value1
 
 
-def _get_datasource_reference_(company_id: str, year: str) -> str:
+def _get_datasource_reference_bytes_(company_id: str, year: str) -> str:
     data = _get_dataset_by_year_(company_id=company_id, year=year)
     value1 = data.data.general.general.nuclear_energy_related_activities_section426
     document_bytes = dataland_client.documents_api.get_document(value1.data_source.file_reference)
