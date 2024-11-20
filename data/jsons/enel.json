@@ -1,239 +1,239 @@
 {
-  "companyId": "3ef3eedd-59b1-46a5-aaa9-25d0d3363caf",
-  "reportingPeriod": "2023",
-  "data": {
-    "general": {
-      "general": {
-        "referencedReports": {
-          "enel_report": {
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c",
-            "fileName": null,
-            "publicationDate": null
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection426": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection427": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection428": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "fossilGasRelatedActivitiesSection429": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "fossilGasRelatedActivitiesSection430": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "fossilGasRelatedActivitiesSection431": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "232",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        }
-      },
-      "taxonomyAlignedDenominator": {
-        "nuclearAndGasTaxonomyAlignedRevenueDenominator": null,
-        "nuclearAndGasTaxonomyAlignedCapexDenominator": null
-      },
-      "taxonomyAlignedNumerator": {
-        "nuclearAndGasTaxonomyAlignedRevenueNumerator": null,
-        "nuclearAndGasTaxonomyAlignedCapexNumerator": null
-      },
-      "taxonomyEligibleButNotAligned": {
-        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
+    "companyId": "3ef3eedd-59b1-46a5-aaa9-25d0d3363caf",
+    "reportingPeriod": "2023",
+    "data": {
+        "general": {
+            "general": {
+                "referencedReports": {
+                    "enel_report": {
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c",
+                        "fileName": null,
+                        "publicationDate": null
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection426": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection427": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection428": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection429": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection430": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection431": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "232",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                }
             },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
+            "taxonomyAlignedDenominator": {
+                "nuclearAndGasTaxonomyAlignedRevenueDenominator": null,
+                "nuclearAndGasTaxonomyAlignedCapexDenominator": null
             },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
+            "taxonomyAlignedNumerator": {
+                "nuclearAndGasTaxonomyAlignedRevenueNumerator": null,
+                "nuclearAndGasTaxonomyAlignedCapexNumerator": null
             },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 3,
-              "adaptation": null
+            "taxonomyEligibleButNotAligned": {
+                "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 3,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 1,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 4,
+                            "adaptation": null
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "233",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 1.9,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 1,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": 2.9,
+                            "adaptation": null
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "233",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                }
             },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 1,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 4,
-              "adaptation": null
+            "taxonomyNonEligible": {
+                "nuclearAndGasTaxonomyNonEligibleRevenue": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": 1.5,
+                        "taxonomyNonEligibleShareNAndG429": null,
+                        "taxonomyNonEligibleShareNAndG430": null,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": 60.8,
+                        "taxonomyNonEligibleShare": 62.3
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "234",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                },
+                "nuclearAndGasTaxonomyNonEligibleCapex": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": 1.2,
+                        "taxonomyNonEligibleShareNAndG429": null,
+                        "taxonomyNonEligibleShareNAndG430": null,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": 11,
+                        "taxonomyNonEligibleShare": 12.2
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "234",
+                        "tagName": null,
+                        "fileName": "enel_report",
+                        "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
+                    }
+                }
             }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "233",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 1.9,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 1,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": null,
-              "mitigation": 2.9,
-              "adaptation": null
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "233",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
         }
-      },
-      "taxonomyNonEligible": {
-        "nuclearAndGasTaxonomyNonEligibleRevenue": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": 1.5,
-            "taxonomyNonEligibleShareNAndG429": null,
-            "taxonomyNonEligibleShareNAndG430": null,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": 60.8,
-            "taxonomyNonEligibleShare": 62.3
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "234",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        },
-        "nuclearAndGasTaxonomyNonEligibleCapex": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": 1.2,
-            "taxonomyNonEligibleShareNAndG429": null,
-            "taxonomyNonEligibleShareNAndG430": null,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": 11,
-            "taxonomyNonEligibleShare": 12.2
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "234",
-            "tagName": null,
-            "fileName": "enel_report",
-            "fileReference": "a58354fd0d2969d7c3161d6ba273c9ba4814866c0fc8ec0e220dc4ee6e87753c"
-          }
-        }
-      }
     }
-  }
 }

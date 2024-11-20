@@ -1,443 +1,443 @@
 {
-  "companyId": "7110b806-efe3-42b9-9607-f3b91d8aac18",
-  "reportingPeriod": "2023",
-  "data": {
-    "general": {
-      "general": {
-        "referencedReports": {
-          "MunichRe-Konzerngeschaeftsbericht-2023-de": {
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3",
-            "fileName": null,
-            "publicationDate": "2024-03-14"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection426": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection427": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection428": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "fossilGasRelatedActivitiesSection429": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "fossilGasRelatedActivitiesSection430": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "fossilGasRelatedActivitiesSection431": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "65",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
+    "companyId": "7110b806-efe3-42b9-9607-f3b91d8aac18",
+    "reportingPeriod": "2023",
+    "data": {
+        "general": {
+            "general": {
+                "referencedReports": {
+                    "MunichRe-Konzerngeschaeftsbericht-2023-de": {
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3",
+                        "fileName": null,
+                        "publicationDate": "2024-03-14"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection426": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection427": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection428": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection429": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection430": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection431": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "65",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                }
+            },
+            "taxonomyAlignedDenominator": {
+                "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 2.2,
+                            "mitigation": 2.2,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "66",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 2.5,
+                            "mitigation": 2.5,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": null,
+                            "adaptation": null
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "68",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                }
+            },
+            "taxonomyAlignedNumerator": {
+                "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "66",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 2.5,
+                            "mitigation": 2.5,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "68",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                }
+            },
+            "taxonomyEligibleButNotAligned": {
+                "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0.3,
+                            "mitigation": 0.3,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 16.3,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 16.6,
+                            "mitigation": null,
+                            "adaptation": null
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "67",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0.3,
+                            "mitigation": 0.3,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 16.7,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 17,
+                            "mitigation": null,
+                            "adaptation": null
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "69",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                }
+            },
+            "taxonomyNonEligible": {
+                "nuclearAndGasTaxonomyNonEligibleRevenue": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": null,
+                        "taxonomyNonEligibleShareNAndG429": 0,
+                        "taxonomyNonEligibleShareNAndG430": 0,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": 15.8,
+                        "taxonomyNonEligibleShare": 15.8
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "67",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                },
+                "nuclearAndGasTaxonomyNonEligibleCapex": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": null,
+                        "taxonomyNonEligibleShareNAndG429": 0,
+                        "taxonomyNonEligibleShareNAndG430": null,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": 14.4,
+                        "taxonomyNonEligibleShare": 14.4
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "69",
+                        "tagName": null,
+                        "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
+                        "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
+                    }
+                }
+            }
         }
-      },
-      "taxonomyAlignedDenominator": {
-        "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
-          "value": {
-            "taxonomyAlignedShareDenominatorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorOtherActivities": {
-              "mitigationAndAdaptation": 2.2,
-              "mitigation": 2.2,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 100,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "66",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearAndGasTaxonomyAlignedCapexDenominator": {
-          "value": {
-            "taxonomyAlignedShareDenominatorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG430": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorOtherActivities": {
-              "mitigationAndAdaptation": 2.5,
-              "mitigation": 2.5,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": null,
-              "adaptation": null
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "68",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        }
-      },
-      "taxonomyAlignedNumerator": {
-        "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
-          "value": {
-            "taxonomyAlignedShareNumeratorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorOtherActivities": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 100,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumerator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 100,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "66",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearAndGasTaxonomyAlignedCapexNumerator": {
-          "value": {
-            "taxonomyAlignedShareNumeratorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG430": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorOtherActivities": {
-              "mitigationAndAdaptation": 2.5,
-              "mitigation": 2.5,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumerator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 100,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "68",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        }
-      },
-      "taxonomyEligibleButNotAligned": {
-        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": 0.3,
-              "mitigation": 0.3,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": 16.3,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": 16.6,
-              "mitigation": null,
-              "adaptation": null
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "67",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": 0.3,
-              "mitigation": 0.3,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": 16.7,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": 17,
-              "mitigation": null,
-              "adaptation": null
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "69",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        }
-      },
-      "taxonomyNonEligible": {
-        "nuclearAndGasTaxonomyNonEligibleRevenue": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": null,
-            "taxonomyNonEligibleShareNAndG429": 0,
-            "taxonomyNonEligibleShareNAndG430": 0,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": 15.8,
-            "taxonomyNonEligibleShare": 15.8
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "67",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        },
-        "nuclearAndGasTaxonomyNonEligibleCapex": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": null,
-            "taxonomyNonEligibleShareNAndG429": 0,
-            "taxonomyNonEligibleShareNAndG430": null,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": 14.4,
-            "taxonomyNonEligibleShare": 14.4
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "69",
-            "tagName": null,
-            "fileName": "MunichRe-Konzerngeschaeftsbericht-2023-de",
-            "fileReference": "e974e3f3675386f17b67af4a5b03ee5a0a313c4d0b07d719c2cf5cb715ccbeb3"
-          }
-        }
-      }
     }
-  }
 }

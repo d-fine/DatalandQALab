@@ -1,443 +1,443 @@
 {
-  "companyId": "7af5fe86-8a96-4459-9550-48c4426a8e58",
-  "reportingPeriod": "2023",
-  "data": {
-    "general": {
-      "general": {
-        "referencedReports": {
-          "2023_DNK_Concordia_Versicherungen": {
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59",
-            "fileName": null,
-            "publicationDate": null
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection426": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection427": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearEnergyRelatedActivitiesSection428": {
-          "value": "No",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "fossilGasRelatedActivitiesSection429": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "fossilGasRelatedActivitiesSection430": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "fossilGasRelatedActivitiesSection431": {
-          "value": "Yes",
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
+    "companyId": "7af5fe86-8a96-4459-9550-48c4426a8e58",
+    "reportingPeriod": "2023",
+    "data": {
+        "general": {
+            "general": {
+                "referencedReports": {
+                    "2023_DNK_Concordia_Versicherungen": {
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59",
+                        "fileName": null,
+                        "publicationDate": null
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection426": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection427": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection428": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection429": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection430": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection431": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                }
+            },
+            "taxonomyAlignedDenominator": {
+                "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 0.04,
+                            "mitigation": 0.03,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 0.04,
+                            "mitigation": 0.03,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "57",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 0.07,
+                            "mitigation": 0.05,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 0.07,
+                            "mitigation": 0.05,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "60",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                }
+            },
+            "taxonomyAlignedNumerator": {
+                "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 84.84,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 84.84,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "58",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 81.57,
+                            "adaptation": 0.1
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 81.57,
+                            "adaptation": 0.1
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "60",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                }
+            },
+            "taxonomyEligibleButNotAligned": {
+                "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 0.26,
+                            "mitigation": 0.2,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 0.26,
+                            "mitigation": 0.2,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "58",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": null,
+                            "mitigation": null,
+                            "adaptation": null
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 0.28,
+                            "mitigation": 0.18,
+                            "adaptation": 0.16
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 0.28,
+                            "mitigation": 0.18,
+                            "adaptation": 0.16
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "60-61",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                }
+            },
+            "taxonomyNonEligible": {
+                "nuclearAndGasTaxonomyNonEligibleRevenue": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": null,
+                        "taxonomyNonEligibleShareNAndG429": null,
+                        "taxonomyNonEligibleShareNAndG430": null,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": null,
+                        "taxonomyNonEligibleShare": 0.65
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "58-59",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                },
+                "nuclearAndGasTaxonomyNonEligibleCapex": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": null,
+                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG428": null,
+                        "taxonomyNonEligibleShareNAndG429": null,
+                        "taxonomyNonEligibleShareNAndG430": null,
+                        "taxonomyNonEligibleShareNAndG431": null,
+                        "taxonomyNonEligibleShareOtherActivities": null,
+                        "taxonomyNonEligibleShare": 0.6
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "61",
+                        "tagName": null,
+                        "fileName": "2023_DNK_Concordia_Versicherungen",
+                        "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
+                    }
+                }
+            }
         }
-      },
-      "taxonomyAlignedDenominator": {
-        "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
-          "value": {
-            "taxonomyAlignedShareDenominatorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorOtherActivities": {
-              "mitigationAndAdaptation": 0.04,
-              "mitigation": 0.03,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominator": {
-              "mitigationAndAdaptation": 0.04,
-              "mitigation": 0.03,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "57",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearAndGasTaxonomyAlignedCapexDenominator": {
-          "value": {
-            "taxonomyAlignedShareDenominatorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareDenominatorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominatorOtherActivities": {
-              "mitigationAndAdaptation": 0.07,
-              "mitigation": 0.05,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareDenominator": {
-              "mitigationAndAdaptation": 0.07,
-              "mitigation": 0.05,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "60",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        }
-      },
-      "taxonomyAlignedNumerator": {
-        "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
-          "value": {
-            "taxonomyAlignedShareNumeratorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorOtherActivities": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 84.84,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumerator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 84.84,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "58",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearAndGasTaxonomyAlignedCapexNumerator": {
-          "value": {
-            "taxonomyAlignedShareNumeratorNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyAlignedShareNumeratorNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyAlignedShareNumeratorOtherActivities": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 81.57,
-              "adaptation": 0.1
-            },
-            "taxonomyAlignedShareNumerator": {
-              "mitigationAndAdaptation": 100,
-              "mitigation": 81.57,
-              "adaptation": 0.1
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "60",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        }
-      },
-      "taxonomyEligibleButNotAligned": {
-        "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": 0.26,
-              "mitigation": 0.2,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": 0.26,
-              "mitigation": 0.2,
-              "adaptation": 0
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "58",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
-          "value": {
-            "taxonomyEligibleButNotAlignedShareNAndG426": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG427": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG428": {
-              "mitigationAndAdaptation": null,
-              "mitigation": null,
-              "adaptation": null
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG429": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG430": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareNAndG431": {
-              "mitigationAndAdaptation": 0,
-              "mitigation": 0,
-              "adaptation": 0
-            },
-            "taxonomyEligibleButNotAlignedShareOtherActivities": {
-              "mitigationAndAdaptation": 0.28,
-              "mitigation": 0.18,
-              "adaptation": 0.16
-            },
-            "taxonomyEligibleButNotAlignedShare": {
-              "mitigationAndAdaptation": 0.28,
-              "mitigation": 0.18,
-              "adaptation": 0.16
-            }
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "60-61",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        }
-      },
-      "taxonomyNonEligible": {
-        "nuclearAndGasTaxonomyNonEligibleRevenue": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": null,
-            "taxonomyNonEligibleShareNAndG429": null,
-            "taxonomyNonEligibleShareNAndG430": null,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": null,
-            "taxonomyNonEligibleShare": 0.65
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "58-59",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        },
-        "nuclearAndGasTaxonomyNonEligibleCapex": {
-          "value": {
-            "taxonomyNonEligibleShareNAndG426": null,
-            "taxonomyNonEligibleShareNAndG427": null,
-            "taxonomyNonEligibleShareNAndG428": null,
-            "taxonomyNonEligibleShareNAndG429": null,
-            "taxonomyNonEligibleShareNAndG430": null,
-            "taxonomyNonEligibleShareNAndG431": null,
-            "taxonomyNonEligibleShareOtherActivities": null,
-            "taxonomyNonEligibleShare": 0.6
-          },
-          "quality": "Audited",
-          "comment": "",
-          "dataSource": {
-            "page": "61",
-            "tagName": null,
-            "fileName": "2023_DNK_Concordia_Versicherungen",
-            "fileReference": "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59"
-          }
-        }
-      }
     }
-  }
 }
