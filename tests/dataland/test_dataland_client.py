@@ -14,7 +14,6 @@ def test_dataland_connectivity() -> None:
 
 
 def test_dummy_get_data() -> None:
-
     company_id = "4423c691-0436-423f-abcb-0a08127ee848"
     year = "2024"
     qa.get_all_company_datasets(company_id=company_id)

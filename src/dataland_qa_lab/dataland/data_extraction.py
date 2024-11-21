@@ -29,13 +29,15 @@ def extraxt_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
     conf = get_config()
     docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
-    endpoint=conf.azure_docintel_endpoint, credential=docintel_cred)
+        endpoint=conf.azure_docintel_endpoint, credential=docintel_cred
+    )
 
     poller = document_intelligence_client.begin_analyze_document(
-    "prebuilt-layout",
-    analyze_request=pdf,
-    content_type="application/octet-stream",
-    output_content_format=ContentFormat.MARKDOWN)
+        "prebuilt-layout",
+        analyze_request=pdf,
+        content_type="application/octet-stream",
+        output_content_format=ContentFormat.MARKDOWN,
+    )
     result: AnalyzeResult = poller.result()
     return result
 
@@ -43,7 +45,8 @@ def extraxt_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
 def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa: D103
     conf = get_config()
     client = AzureOpenAI(
-    api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint)
+        api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint
+    )
 
     deployment_name = "gpt-4o"
 
