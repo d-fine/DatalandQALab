@@ -35,7 +35,7 @@ def test_dummy_data_extraction() -> None:
     pdf_stream = io.BytesIO(pdf)
     pdf_reader = PdfReader(pdf_stream)
 
-    data = da.get_relevant_page_of_pdf(dataset_section426.data_source.page, pdf_reader)
+    data = da.get_relevant_page_of_pdf(int(dataset_section426.data_source.page), pdf_reader)
     text = da.extraxt_text_of_pdf(data)
     da.extract_section_426(text)
 
