@@ -8,11 +8,17 @@ from dataland_backend.models.company_associated_data_nuclear_and_gas_data import
 from dataland_qa_lab.utils import config
 
 
-def upload_test_data() -> None:
-    """Function to upload 10 test cases for EU Taxonomy Nuclear and Gas to Dataland."""
-    pdf_path = Path("../data/pdfs/")
-    json_path = Path("../data/jsons/")
+def upload_test_data(pdf_path: Path, json_path: Path) -> list[str]:
+    """Upload 10 test cases.
 
+    Upload 10 test cases for EU Taxonomy Nuclear and Gas to Dataland.
+
+    :param pdf_path: absolute path to pdf files (required)
+    :type pdf_path: Path
+    :param json_path: absolute path to json files (required)
+    :type json_path: Path
+    :return: Returns a list containing the data ids of the test datasets.
+    """
     conf = config.get_config()
     dataland_client = conf.dataland_client
 
@@ -31,11 +37,13 @@ def upload_test_data() -> None:
         "eb119227edc8c66d672785619522cd6045b2faf37e63796207799c0e40fa66be",
         "dba48e9f5e7e6fc9862dd95159960eb2a270d6975f2457f443ca422e7449e7d6",
     ]
+
+    new_data_ids = []
+
     for company, pdf_id in zip(companies, pdfs, strict=False):
         # if needed upload pdf file to dataland
         if not dataland_client.documents_api.get_document(document_id=pdf_id):
-            pdf_file_path = pdf_path / f"{company}.pdf"
-            pdf_content = pdf_file_path.read_bytes()
+            pdf_content = (pdf_path / f"{company}.pdf").read_bytes()
 
             dataland_client.documents_api.post_document(document=pdf_content)
 
@@ -62,11 +70,18 @@ def upload_test_data() -> None:
         json_str = json.dumps(json_data, indent=4)
         json_file_path.write_text(json_str, encoding="utf-8")
 
-        # if needed upload document
-        if not dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
+        # if needed upload dataset
+        old_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
             company_id=company_id
-        ):
+        )
+        if not old_dataset:
             nuclear_and_gas_data = CompanyAssociatedDataNuclearAndGasData.from_json(json_str)
-            dataland_client.eu_taxonomy_nuclear_and_gas_api.post_company_associated_nuclear_and_gas_data(
+
+            new_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.post_company_associated_nuclear_and_gas_data(
                 company_associated_data_nuclear_and_gas_data=nuclear_and_gas_data, bypass_qa=True
             )
+            new_data_ids.append(new_dataset.data_id)
+        else:
+            new_data_ids.append(old_dataset[0].meta_info.data_id)
+
+    return new_data_ids
