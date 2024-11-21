@@ -28,6 +28,7 @@ def test_dummy_get_data() -> None:
 def test_dummy_data_extraction() -> None:
     dataland_client = da.get_config().dataland_client
     dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
+
     dataset_section426 = dataset_by_year.data.general.general.nuclear_energy_related_activities_section426
     file_id = dataset_section426.data_source.file_reference
 
@@ -37,6 +38,6 @@ def test_dummy_data_extraction() -> None:
 
     data = da.get_relevant_page_of_pdf(int(dataset_section426.data_source.page), pdf_reader)
     text = da.extraxt_text_of_pdf(data)
-    da.extract_section_426(text)
+    result = da.extract_section_426(text)
 
-    assert True
+    assert result is not None
