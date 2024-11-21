@@ -33,8 +33,9 @@ class DocumentReferenceData(BaseModel):  # noqa: D101
     file_name: StrictStr | None
 
 
-def send_report_to_dataland_method(data_id: StrictStr, report_data: ReportData,
-                                   dataland_client: DatalandClient) -> None:
+def send_report_to_dataland_method(
+    data_id: StrictStr, report_data: ReportData, dataland_client: DatalandClient
+) -> None:
     """Sends a nuclear and gas QA report to the Dataland API."""
     selected_qa_report = NuclearAndGasData(
         general=m.NuclearAndGasGeneral(
@@ -46,9 +47,10 @@ def send_report_to_dataland_method(data_id: StrictStr, report_data: ReportData,
                         key: m.CompanyReport(
                             file_reference=report.file_reference,
                             file_name=report.file_name,
-                            publication_date=report.publication_date
-                        ) for key, report in report_data.corrected_data.items()
-                    }
+                            publication_date=report.publication_date,
+                        )
+                        for key, report in report_data.corrected_data.items()
+                    },
                 ),
                 nuclearEnergyRelatedActivitiesSection426=m.QaReportDataPointExtendedDataPointYesNo(
                     comment=report_data.commentqareportdatapointextendeddatapointyesno,
@@ -61,10 +63,10 @@ def send_report_to_dataland_method(data_id: StrictStr, report_data: ReportData,
                             fileReference=report_data.data_source.file_reference,
                             page=report_data.data_source.page,
                             tagName=report_data.data_source.tag_name,
-                            fileName=report_data.data_source.file_name
-                        )
-                    )
-                )
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
             )
         )
     )
