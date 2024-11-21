@@ -4,6 +4,7 @@ from unittest import mock
 
 from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
 from pypdf import PdfReader
+import pytest
 
 import dataland_qa_lab.dataland.data_extraction as da
 import dataland_qa_lab.dataland.get_data as qa
@@ -32,8 +33,13 @@ def create_document_intelligence_mock() -> AnalyzeResult:
     return AnalyzeResult(content="")
 
 
-@mock.patch("dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())
-def test_dummy_data_extraction(_: Any) -> None:  # noqa: ANN401, PT019
+def create_openai_mock() -> str:
+    return "No"
+
+
+@mock.patch("openai.resources.completions.Completions.create", return_value=create_openai_mock())
+@mock.patch("dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())  # noqa: E501
+def test_dummy_data_extraction(mock_create_: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = da.get_config().dataland_client
     dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
 
