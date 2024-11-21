@@ -3,8 +3,8 @@ from typing import Any
 from unittest import mock
 
 from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
+from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 from pypdf import PdfReader
-import pytest
 
 import dataland_qa_lab.dataland.data_extraction as da
 import dataland_qa_lab.dataland.get_data as qa
@@ -33,11 +33,26 @@ def create_document_intelligence_mock() -> AnalyzeResult:
     return AnalyzeResult(content="")
 
 
-def create_openai_mock() -> str:
-    return "No"
+def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
+    return ChatCompletion(
+        id="test",
+        choices=[
+            Choice(
+                finish_reason="stop",
+                index=0,
+                message=ChatCompletionMessage(
+                    content=message,
+                    role="assistant",
+                ),
+            )
+        ],
+        created=0,
+        model="test",
+        object="chat.completion",
+    )
 
 
-@mock.patch("openai.resources.completions.Completions.create", return_value=create_openai_mock())
+@mock.patch("openai.resources.completions.Completions.create", return_value=build_simple_openai_chat_completion("No"))
 @mock.patch("dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())  # noqa: E501
 def test_dummy_data_extraction(mock_create_: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = da.get_config().dataland_client
