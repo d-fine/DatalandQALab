@@ -38,8 +38,7 @@ def extract_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
         content_type="application/octet-stream",
         output_content_format=ContentFormat.MARKDOWN,
     )
-    result: AnalyzeResult = poller.result()
-    return result
+    return poller.result()
 
 
 def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa: D103

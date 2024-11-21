@@ -2,7 +2,7 @@ import io
 from typing import Any
 from unittest import mock
 
-from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
+from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 from pypdf import PdfReader
 
@@ -24,9 +24,9 @@ def test_dummy_get_data() -> None:
     qa.get_data_id_by_year(company_id=company_id, year=year)
     qa.get_dataset_by_year(company_id=company_id, year=year)
     qa.get_value1_by_year(company_id=company_id, year=year)
-    qa.get_datasource_reference_bytes(company_id=company_id, year=year)
+    test = qa.get_datasource_reference_bytes(company_id=company_id, year=year)
 
-    assert True
+    assert test is not None
 
 
 def create_document_intelligence_mock() -> AnalyzeResult:
@@ -53,7 +53,9 @@ def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
 
 
 @mock.patch("openai.resources.completions.Completions.create", return_value=build_simple_openai_chat_completion("No"))
-@mock.patch("dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())  # noqa: E501
+@mock.patch(
+    "dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock()
+)  # noqa: E501
 def test_dummy_data_extraction(mock_create_: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = da.get_config().dataland_client
     dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
