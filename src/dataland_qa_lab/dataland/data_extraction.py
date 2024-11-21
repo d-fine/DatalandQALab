@@ -62,10 +62,11 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
     - Your responses should avoid being vague, controversial or off-topic.
 
     # Task
-    Given the information from the [relevant documents], answer the following question with 'yes' or 'no':
-    The undertaking carries out, funds or has exposures to research, development, demonstration and deployment of
-    innovative electricity generation facilities that produce energy from nuclear processes with minimal waste
-    from the fuel cycle. Answer only with 'yes' or 'no'!
+    Given the information from the [relevant documents], is the company engaged in the research, development,
+    demonstration, and deployment of innovative power generation facilities that generate energy from nuclear
+    processes with minimal waste from the fuel cycle, finance such activities, or hold risk positions related
+    to these activities? Just answer the question with yes or no. The answer should not be longer than 3
+    characters, should not include punctation and start with a capital letter.
 
     # Relevant Documents
     {relevant_document.content}
