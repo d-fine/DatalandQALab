@@ -16,13 +16,3 @@ def test_dataland_connectivity() -> None:
     test_dataland = client.eu_taxonomy_nuclear_and_gas_api  # noqa: F841
 
     assert len(resolved_companies) > 0
-
-
-# def dummy_test() -> None:
-#     company_id = "4423c691-0436-423f-abcb-0a08127ee848"
-#     year = "2024"
-#     qa.get_data_id_by_year(company_id=company_id, year=year)
-#     qa.get_dataset_by_year(company_id=company_id, year=year)
-#     qa.get_value1_by_year(company_id=company_id, year=year)
-#     qa.get_datasource_reference_bytes(company_id=company_id, year=year)
-#     assert True
