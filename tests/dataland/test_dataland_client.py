@@ -24,9 +24,9 @@ def test_dummy_get_data() -> None:
     qa.get_data_id_by_year(company_id=company_id, year=year)
     qa.get_dataset_by_year(company_id=company_id, year=year)
     qa.get_value1_by_year(company_id=company_id, year=year)
-    qa.get_datasource_reference_bytes(company_id=company_id, year=year)
+    test = qa.get_datasource_reference_bytes(company_id=company_id, year=year)
 
-    assert True
+    assert test is not None
 
 
 def create_document_intelligence_mock() -> AnalyzeResult:
