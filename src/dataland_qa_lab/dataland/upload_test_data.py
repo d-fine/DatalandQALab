@@ -8,7 +8,7 @@ from dataland_backend.models.company_associated_data_nuclear_and_gas_data import
 from dataland_qa_lab.utils import config
 
 
-def upload_test_data() -> bool:
+def upload_test_data() -> None:
     """Function to upload 10 test cases for EU Taxonomy Nuclear and Gas to Dataland."""
     pdf_path = Path("../data/pdfs/")
     json_path = Path("../data/jsons/")
@@ -70,4 +70,3 @@ def upload_test_data() -> bool:
             dataland_client.eu_taxonomy_nuclear_and_gas_api.post_company_associated_nuclear_and_gas_data(
                 company_associated_data_nuclear_and_gas_data=nuclear_and_gas_data, bypass_qa=True
             )
-    return True
