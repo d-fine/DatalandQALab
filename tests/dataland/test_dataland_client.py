@@ -5,14 +5,16 @@ from dataland_qa_lab.utils import config
 def test_dataland_connectivity() -> None:
     client = config.get_config().dataland_client
     resolved_companies = client.company_api.get_companies(chunk_size=1)
+    company_id = "4423c691-0436-423f-abcb-0a08127ee848"
+    qa.get_all_company_datasets(company_id=company_id)
     assert len(resolved_companies) > 0
 
 
 def dummy_test() -> None:
     company_id = "4423c691-0436-423f-abcb-0a08127ee848"
     year = "2024"
-    qa.get_all_company_datasets(company_id=company_id)
-    qa.get_data_id_by_year(company_id=company_id, year=year)
+    # qa.get_all_company_datasets(company_id=company_id)
+    #qa.get_data_id_by_year(company_id=company_id, year=year)
     qa.get_dataset_by_year(company_id=company_id, year=year)
     qa.get_value1_by_year(company_id=company_id, year=year)
     qa.get_datasource_reference_bytes(company_id=company_id, year=year)
