@@ -1,7 +1,5 @@
 import io
-from unittest.mock import patch
 
-from azure.ai.documentintelligence.models import AnalyzeResult
 from pypdf import PdfReader
 
 import dataland_qa_lab.dataland.data_extraction as da
