@@ -1,5 +1,8 @@
 import io
+from typing import Any
+from unittest import mock
 
+from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
 from pypdf import PdfReader
 
 import dataland_qa_lab.dataland.data_extraction as da
@@ -25,7 +28,12 @@ def test_dummy_get_data() -> None:
     assert True
 
 
-def test_dummy_data_extraction() -> None:
+def create_document_intelligence_mock() -> AnalyzeResult:
+    return AnalyzeResult(content="")
+
+
+@mock.patch("dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())
+def test_dummy_data_extraction(_: Any) -> None:  # noqa: ANN401, PT019
     dataland_client = da.get_config().dataland_client
     dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
 
@@ -37,7 +45,7 @@ def test_dummy_data_extraction() -> None:
     pdf_reader = PdfReader(pdf_stream)
 
     data = da.get_relevant_page_of_pdf(int(dataset_section426.data_source.page), pdf_reader)
-    text = da.extraxt_text_of_pdf(data)
+    text = da.extract_text_of_pdf(data)
     result = da.extract_section_426(text)
 
     assert result is not None

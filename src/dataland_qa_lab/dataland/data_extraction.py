@@ -25,7 +25,7 @@ def get_relevant_page_of_pdf(page: int, full_pdf: pypdf.PdfReader) -> io.BytesIO
     return partial_pdf_stream
 
 
-def extraxt_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
+def extract_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
     conf = get_config()
     docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
