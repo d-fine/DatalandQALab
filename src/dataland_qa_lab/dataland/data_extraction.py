@@ -47,7 +47,7 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
         api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint
     )
 
-    deployment_name = "gpt-4o"
+    deployment_name = "davinci-002"
 
     prompt = f"""
     Answer only with 'yes' or 'no'!
