@@ -40,6 +40,9 @@ def extraxt_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
     return result
 
 
+def splitString(s: str) -> list[str]: 
+    return s.split('\n')
+
 def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa: D103
     conf = get_config()
     client = AzureOpenAI(

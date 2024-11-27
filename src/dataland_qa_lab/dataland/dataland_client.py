@@ -77,3 +77,12 @@ class DatalandClient:
     def eu_taxonomy_nf_qa_api(self) -> dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi:
         """Function to run the QA report controller for EU Taxonomy non-financials."""
         return dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi(self.qa_client)
+
+    @property
+    def nuclear_and_gas_api(self) -> dataland_backend.NuclearAndGasDataControllerApi:
+        """Function to run the nuclear-and-gas-controller API."""
+        return dataland_backend.NuclearAndGasDataControllerApi(self.backend_client)
+    @property
+    def nuclear_and_gas_qa_api(self) -> dataland_qa.NuclearAndGasDataQaReportControllerApi:
+        """Function to run the QA report controller for Nuclear and Gas."""
+        return dataland_qa.NuclearAndGasDataQaReportControllerApi(self.qa_client)
