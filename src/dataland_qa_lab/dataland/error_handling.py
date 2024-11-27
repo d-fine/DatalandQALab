@@ -1,3 +1,5 @@
+from collections import Counter
+
 class DuplicateIDError(Exception):
     def __init__(self, data_id) -> None:
         super().__init__(f"Duplicate ID detected: {data_id}")
@@ -22,10 +24,10 @@ class ErrorHandling:
         self.network_errors = []
         self.unknown_errors = []
 
-    def log_duplicate_id(self, data_ids, current_data_id) -> any:
-        if current_data_id in data_ids:
-            self.duplicate_ids.add(current_data_id)
-            raise DuplicateIDError(current_data_id)
+    def log_duplicate_id(self, data_ids) -> any:
+        counts = Counter(data_ids)
+        if(any(count > 1 for count in counts.values())):
+            raise DuplicateIDError
 
     def log_network_error(self, error) -> any:
         self.network_errors.append(str(error))
