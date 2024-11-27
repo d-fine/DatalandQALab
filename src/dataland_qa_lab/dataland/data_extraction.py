@@ -6,7 +6,6 @@ from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
 from azure.core.credentials import AzureKeyCredential
 from openai import AzureOpenAI
 
-
 from dataland_qa_lab.utils import config
 
 
@@ -79,5 +78,3 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
         ],
     )
     return initial_openai_response.choices[0].message.content
-
-

@@ -1,0 +1,443 @@
+{
+    "companyId": "dfbbcff4-ba4d-46ee-ad53-4a4a91159a77",
+    "reportingPeriod": "2023",
+    "data": {
+        "general": {
+            "general": {
+                "referencedReports": {
+                    "Deka_Nachhaltigkeitsbericht_2023": {
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3",
+                        "fileName": null,
+                        "publicationDate": null
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection426": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection427": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection428": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection429": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection430": {
+                    "value": "Yes",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection431": {
+                    "value": "No",
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "116",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                }
+            },
+            "taxonomyAlignedDenominator": {
+                "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": 0.03,
+                            "mitigation": 0.03,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 0.82,
+                            "mitigation": 0.82,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 0.85,
+                            "mitigation": 0.85,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "117",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexDenominator": {
+                    "value": {
+                        "taxonomyAlignedShareDenominatorNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG427": {
+                            "mitigationAndAdaptation": 0.01,
+                            "mitigation": 0.01,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG428": {
+                            "mitigationAndAdaptation": 0.05,
+                            "mitigation": 0.05,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominatorOtherActivities": {
+                            "mitigationAndAdaptation": 1.22,
+                            "mitigation": 1.22,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareDenominator": {
+                            "mitigationAndAdaptation": 1.27,
+                            "mitigation": 1.27,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "117",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                }
+            },
+            "taxonomyAlignedNumerator": {
+                "nuclearAndGasTaxonomyAlignedRevenueNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": 3.61,
+                            "mitigation": 3.61,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 96.39,
+                            "mitigation": 96.3,
+                            "adaptation": 100
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 100
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "117",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearAndGasTaxonomyAlignedCapexNumerator": {
+                    "value": {
+                        "taxonomyAlignedShareNumeratorNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG427": {
+                            "mitigationAndAdaptation": 0.51,
+                            "mitigation": 0.51,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG428": {
+                            "mitigationAndAdaptation": 3.93,
+                            "mitigation": 3.93,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG429": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyAlignedShareNumeratorOtherActivities": {
+                            "mitigationAndAdaptation": 95.56,
+                            "mitigation": 95.56,
+                            "adaptation": 100
+                        },
+                        "taxonomyAlignedShareNumerator": {
+                            "mitigationAndAdaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 100
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "118",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                }
+            },
+            "taxonomyEligibleButNotAligned": {
+                "nuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0.04,
+                            "mitigation": 0.04,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 7.33,
+                            "mitigation": 7.33,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 7.37,
+                            "mitigation": 7.37,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "118",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+                    "value": {
+                        "taxonomyEligibleButNotAlignedShareNAndG426": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG427": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG428": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG429": {
+                            "mitigationAndAdaptation": 0.03,
+                            "mitigation": 0.03,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG430": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareNAndG431": {
+                            "mitigationAndAdaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShareOtherActivities": {
+                            "mitigationAndAdaptation": 7.29,
+                            "mitigation": 7.29,
+                            "adaptation": 0
+                        },
+                        "taxonomyEligibleButNotAlignedShare": {
+                            "mitigationAndAdaptation": 7.32,
+                            "mitigation": 7.32,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "118",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                }
+            },
+            "taxonomyNonEligible": {
+                "nuclearAndGasTaxonomyNonEligibleRevenue": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": 0,
+                        "taxonomyNonEligibleShareNAndG427": 0.01,
+                        "taxonomyNonEligibleShareNAndG428": 0,
+                        "taxonomyNonEligibleShareNAndG429": 0,
+                        "taxonomyNonEligibleShareNAndG430": 0,
+                        "taxonomyNonEligibleShareNAndG431": 0,
+                        "taxonomyNonEligibleShareOtherActivities": 91.77,
+                        "taxonomyNonEligibleShare": 91.78
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "119",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                },
+                "nuclearAndGasTaxonomyNonEligibleCapex": {
+                    "value": {
+                        "taxonomyNonEligibleShareNAndG426": 0,
+                        "taxonomyNonEligibleShareNAndG427": 0.05,
+                        "taxonomyNonEligibleShareNAndG428": 0,
+                        "taxonomyNonEligibleShareNAndG429": 0,
+                        "taxonomyNonEligibleShareNAndG430": 0,
+                        "taxonomyNonEligibleShareNAndG431": 0,
+                        "taxonomyNonEligibleShareOtherActivities": 91.36,
+                        "taxonomyNonEligibleShare": 91.41
+                    },
+                    "quality": "Audited",
+                    "comment": "",
+                    "dataSource": {
+                        "page": "119",
+                        "tagName": null,
+                        "fileName": "Deka_Nachhaltigkeitsbericht_2023",
+                        "fileReference": "b31dfa1143e9e518cfdacd95b2d4f6c531e50bc33c0dabbbe35cccfe14dd83f3"
+                    }
+                }
+            }
+        }
+    }
+}
