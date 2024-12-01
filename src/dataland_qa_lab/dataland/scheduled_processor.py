@@ -1,21 +1,22 @@
-from dataland_qa_lab.dataland.error_handling import ErrorHandling, DuplicateIDError, NetworkError, UnknownError
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 import time
 
-def schedule_processing():
+def run_scheduled_processing():
     while True:
         try:
             unreviewed_datasets = UnreviewedDatasets()
+            list_of_data_ids = unreviewed_datasets.list_of_data_ids
 
-            if len (unreviewed_datasets.list_of_data_ids) == 0:
+            if not list_of_data_ids:
                 time.sleep(600)
                 continue
 
-            for data_id in reversed(unreviewed_datasets.list_of_data_ids):
+            # Process datasets from end to start
+            for data_id in reversed(list_of_data_ids[:]):
                 try:
-                    successfully_processed = True  # Replace with reviewDataset(data_id)
+                    successfully_processed = True # Replace logic with actual call of the revieweDataset
                     if successfully_processed:
-                        unreviewed_datasets.list_of_data_ids.remove(data_id)
+                        list_of_data_ids.remove(data_id) 
 
                 except Exception as e:
                     print(f"Error processing dataset {data_id}: {e}")
@@ -23,4 +24,3 @@ def schedule_processing():
         except Exception as e:
             print(f"Critical error: {e}")
             break
-        
