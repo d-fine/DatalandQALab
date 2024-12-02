@@ -30,7 +30,7 @@ class TestUnreviewedDatasets(TestCase):
                 MagicMock(data_id="datasetid2"),
                 MagicMock(data_id="datasetid3"),
             ],
-            exception=None
+            exception=None,
         )
         mock_get_config.return_value = mock_conf
 
