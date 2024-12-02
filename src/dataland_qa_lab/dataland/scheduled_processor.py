@@ -1,7 +1,11 @@
-from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
+import logging
 import time
 
-def run_scheduled_processing():
+from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
+
+
+def run_scheduled_processing() -> None:
+    """Continuously processes unreviewed datasets at scheduled intervals."""
     while True:
         try:
             unreviewed_datasets = UnreviewedDatasets()
@@ -18,9 +22,9 @@ def run_scheduled_processing():
                     if successfully_processed:
                         list_of_data_ids.remove(data_id) 
 
-                except Exception as e:
-                    print(f"Error processing dataset {data_id}: {e}")
+                except Exception:
+                    logging.exception("Error processing dataset %s", data_id)
 
-        except Exception as e:
-            print(f"Critical error: {e}")
+        except Exception as e:  # noqa: BLE001
+            logging.critical("Critical error: %s", e)
             break
