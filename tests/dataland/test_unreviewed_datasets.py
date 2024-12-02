@@ -39,7 +39,7 @@ class TestUnreviewedDatasets(TestCase):
         assert unreviewed_datasets.list_of_data_ids == ["datasetid1", "datasetid2", "datasetid3"]
 
     def test_initialization_with_no_datasets(self, mock_get_config: MagicMock) -> None:
-        mock_conf = self.set_up_mock_client(dataset_count=0, datasets=[],exception=None)
+        mock_conf = self.set_up_mock_client(dataset_count=0, datasets=[], exception=None)
         mock_get_config.return_value = mock_conf
 
         unreviewed_datasets = UnreviewedDatasets()

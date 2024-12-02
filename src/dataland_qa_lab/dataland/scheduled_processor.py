@@ -18,9 +18,9 @@ def run_scheduled_processing() -> None:
             # Process datasets from end to start
             for data_id in reversed(list_of_data_ids[:]):
                 try:
-                    successfully_processed = True # Replace logic with actual call of the revieweDataset
+                    successfully_processed = True  # Replace logic with actual call of the revieweDataset
                     if successfully_processed:
-                        list_of_data_ids.remove(data_id) 
+                        list_of_data_ids.remove(data_id)
 
                 except Exception:
                     logging.exception("Error processing dataset %s", data_id)
