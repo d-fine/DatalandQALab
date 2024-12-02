@@ -1,11 +1,15 @@
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 
 
-@patch('dataland_qa_lab.dataland.unreviewed_datasets.config.get_config')
+@patch("dataland_qa_lab.dataland.unreviewed_datasets.config.get_config")
 class TestUnreviewedDatasets(TestCase):
-    def setUpMockClient(self, dataset_count=None, datasets=None, exception=None):
+    @staticmethod
+    def set_up_mock_client(dataset_count: int, datasets: list[MagicMock], exception: Exception) -> MagicMock:
         mock_client = MagicMock()
 
         if exception:
@@ -18,40 +22,40 @@ class TestUnreviewedDatasets(TestCase):
         mock_conf.dataland_client = mock_client
         return mock_conf
 
-    def test_initialization_with_valid_data(self, mock_get_config):
-        mock_conf = self.setUpMockClient(
+    def test_initialization_with_valid_data(self, mock_get_config: MagicMock) -> None:
+        mock_conf = self.set_up_mock_client(
             dataset_count=3,
             datasets=[
                 MagicMock(data_id="datasetid1"),
                 MagicMock(data_id="datasetid2"),
                 MagicMock(data_id="datasetid3"),
-            ]
+            ],
+            exception=None
         )
         mock_get_config.return_value = mock_conf
 
         unreviewed_datasets = UnreviewedDatasets()
-        self.assertEqual(len(unreviewed_datasets.datasets), 3)
-        self.assertEqual(unreviewed_datasets.list_of_data_ids, ["datasetid1", "datasetid2", "datasetid3"])
+        assert len(unreviewed_datasets.datasets) == 3
+        assert unreviewed_datasets.list_of_data_ids == ["datasetid1", "datasetid2", "datasetid3"]
 
-    def test_initialization_with_no_datasets(self, mock_get_config):
-        mock_conf = self.setUpMockClient(dataset_count=0, datasets=[])
+    def test_initialization_with_no_datasets(self, mock_get_config: MagicMock) -> None:
+        mock_conf = self.set_up_mock_client(dataset_count=0, datasets=[],exception=None)
         mock_get_config.return_value = mock_conf
 
         unreviewed_datasets = UnreviewedDatasets()
-        self.assertEqual(len(unreviewed_datasets.datasets), 0)
-        self.assertEqual(unreviewed_datasets.list_of_data_ids, [])
+        assert len(unreviewed_datasets.datasets) == 0
+        assert unreviewed_datasets.list_of_data_ids == []
 
-    def test_initialization_with_invalid_number_of_datasets(self, mock_get_config):
-        mock_conf = self.setUpMockClient(dataset_count=-1)
+    def test_initialization_with_invalid_number_of_datasets(self, mock_get_config: MagicMock) -> None:
+        mock_conf = self.set_up_mock_client(dataset_count=-1, datasets=None, exception=None)
         mock_get_config.return_value = mock_conf
 
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError, match="Received an invalid number of pending datasets."):
             UnreviewedDatasets()
 
-    def test_initialization_with_api_error(self, mock_get_config):
-        mock_conf = self.setUpMockClient(exception=Exception("API Error"))
+    def test_initialization_with_api_error(self, mock_get_config: MagicMock) -> None:
+        mock_conf = self.set_up_mock_client(dataset_count=1, datasets=None, exception=Exception())
         mock_get_config.return_value = mock_conf
 
-        with self.assertRaises(Exception) as context:
+        with pytest.raises(Exception):  # noqa: B017, PT011
             UnreviewedDatasets()
-        self.assertEqual(str(context.exception), "API Error")
