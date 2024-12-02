@@ -4,11 +4,12 @@ import time
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 
 
-def run_scheduled_processing(max_iterations: int) -> None:
+def run_scheduled_processing(iterations: int) -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
-    iterations = 0
-    while max_iterations is None or iterations < max_iterations:
-        iterations += 1
+    max_iterations = 10
+    counter = 0
+    while counter < iterations and counter < max_iterations:
+        counter += 1
         try:
             unreviewed_datasets = UnreviewedDatasets()
             list_of_data_ids = unreviewed_datasets.list_of_data_ids
@@ -27,6 +28,6 @@ def run_scheduled_processing(max_iterations: int) -> None:
                 except Exception:
                     logging.exception("Error processing dataset %s", data_id)
 
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             logging.critical("Critical error: %s", e)
-            break
+            raise
