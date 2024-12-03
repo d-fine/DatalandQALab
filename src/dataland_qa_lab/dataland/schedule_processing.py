@@ -13,7 +13,7 @@ def schedule_processing():
 
             for data_id in reversed(unreviewed_datasets.list_of_data_ids):
                 try:
-                    successfully_processed = True  # Replace with reviewDataset(data_id)
+                    successfully_processed = True  # Replace with review_dataset(data_id)
                     if successfully_processed:
                         unreviewed_datasets.list_of_data_ids.remove(data_id)
 
@@ -23,4 +23,3 @@ def schedule_processing():
         except Exception as e:
             print(f"Critical error: {e}")
             break
-        

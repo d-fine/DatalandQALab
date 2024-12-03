@@ -10,6 +10,6 @@ class DatasetReviewer:
     def review_dataset(self, data_id):
         """Hello"""
 
-        # data_id -> Section426 -> PDF -> FindPageNumber/PDFtoText -> AllValues426 -> Vergleich
-        # send_report_to_dataland (data_id)
-        # erstellt
+        # data_id -> section426 -> pdf -> findPageNumber/PDFtoText -> allValues426 -> vergleich
+        # Hier kommt der "5-Zeiler" hin, welcher die aus dem E2E-Test ausgelagerten Methoden aufruft mit Parameter data_id
+        # Zum aktuellen Zeitpunkte wurde diese Funktionalität jedoch noch nicht umgesetzt
