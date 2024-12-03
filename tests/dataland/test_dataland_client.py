@@ -8,6 +8,7 @@ from pypdf import PdfReader
 
 import dataland_qa_lab.dataland.data_extraction as da
 import dataland_qa_lab.dataland.get_data as qa
+import dataland_qa_lab.dataland.provide_test_data
 from dataland_qa_lab.utils import config
 
 
@@ -18,6 +19,7 @@ def test_dataland_connectivity() -> None:
 
 
 def test_dummy_get_data() -> None:
+
     company_id = "38d4d660-bbea-46bf-b93e-3082eafa873a"
     year = "2024"
     qa.get_all_company_datasets(company_id=company_id)
@@ -25,8 +27,9 @@ def test_dummy_get_data() -> None:
     qa.get_dataset_by_year(company_id=company_id, year=year)
     qa.get_value1_by_year(company_id=company_id, year=year)
     test = qa.get_datasource_reference_bytes(company_id=company_id, year=year)
-
+    
     assert test is not None
+    assert len(current_values) == 6
 
 
 def create_document_intelligence_mock() -> AnalyzeResult:
@@ -58,8 +61,9 @@ def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
 )
 def test_dummy_data_extraction(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = da.get_config().dataland_client
-    dataset_by_year = qa.get_dataset_by_year(company_id="38d4d660-bbea-46bf-b93e-3082eafa873a", year="2024")
 
+    dataset_by_year = qa.get_dataset_by_year(company_id="38d4d660-bbea-46bf-b93e-3082eafa873a", year="2024")
+    
     dataset_section426 = dataset_by_year.data.general.general.nuclear_energy_related_activities_section426
     file_id = dataset_section426.data_source.file_reference
 
