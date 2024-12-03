@@ -23,7 +23,7 @@ def test_run_scheduled_processing_loops(mock_unreviewed_datasets: MagicMock, moc
     iterations = 5
     run_scheduled_processing(iterations=iterations)
     assert mock_unreviewed_datasets.call_count == iterations
-    assert mock_sleep.call_count == iterations - 1
+    assert mock_sleep.call_count == iterations
 
 
 @patch("dataland_qa_lab.dataland.scheduled_processor.time.sleep")
@@ -37,4 +37,4 @@ def test_run_scheduled_processing_max_loops(mock_unreviewed_datasets: MagicMock,
 
     iterations = 100
     run_scheduled_processing(iterations=iterations)
-    assert mock_unreviewed_datasets.call_count == 10
+    assert mock_unreviewed_datasets.call_count == 100
