@@ -6,7 +6,7 @@ from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 
 def run_scheduled_processing(iterations: int) -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
-    max_iterations = 10
+    max_iterations = 100
     counter = 0
     while counter < iterations and counter < max_iterations:
         counter += 1
@@ -18,7 +18,6 @@ def run_scheduled_processing(iterations: int) -> None:
                 time.sleep(600)
                 continue
 
-            # Process datasets from end to start
             for data_id in reversed(list_of_data_ids[:]):
                 try:
                     successfully_processed = True  # Replace logic with actual call of the revieweDataset
