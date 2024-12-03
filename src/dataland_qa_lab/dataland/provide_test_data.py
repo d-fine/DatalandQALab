@@ -5,10 +5,10 @@ from dataland_backend.models.company_associated_data_nuclear_and_gas_data import
     CompanyAssociatedDataNuclearAndGasData,
 )
 
-from dataland_qa_lab.utils import config
+from dataland_qa_lab.dataland.dataland_client import DatalandClient
 
 
-def provide_test_data(pdf_path: Path, json_path: Path) -> list[str]:
+def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: DatalandClient) -> list[str]:
     """Upload 10 test cases.
 
     Upload 10 test cases for EU Taxonomy Nuclear and Gas to Dataland.
@@ -39,10 +39,9 @@ def provide_test_data(pdf_path: Path, json_path: Path) -> list[str]:
 
     for company, pdf_id in zip(companies, pdfs, strict=False):
         # if needed upload pdf file to dataland
-        upload_pdf(pdf_path=pdf_path, pdf_id=pdf_id, company=company)
-
+        upload_pdf(pdf_path=pdf_path, pdf_id=pdf_id, company=company, dataland_client=dataland_client)
         # get companyIDs of company to test
-        company_id = get_company_id(company=company)
+        company_id = get_company_id(company=company, dataland_client=dataland_client)
 
         # change companyID in json file
         json_file_path = json_path / f"{company}.json"
@@ -54,33 +53,30 @@ def provide_test_data(pdf_path: Path, json_path: Path) -> list[str]:
         json_file_path.write_text(json_str, encoding="utf-8")
 
         # if needed upload dataset
-        new_data_ids.append(upload_dataset(company_id=company_id, json_str=json_str))
+        new_data_ids.append(upload_dataset(company_id=company_id, json_str=json_str, dataland_client=dataland_client))
 
     return new_data_ids
 
 
-def upload_pdf(pdf_path: Path, pdf_id: str, company: str) -> None:
+# Doesn't work because of rights, needs to be fixed in future sprints
+def upload_pdf(pdf_path: Path, pdf_id: str, company: str, dataland_client: DatalandClient) -> None:
     """Uploads pdf file to dataland if needed.
 
     Checks if pdf file already exists on dataland and if not uploads it
 
     :param pdf_path: absolute path to pdf file (required)
     :type pdf_path: Path
-    :param pdf_id: absolute path to json files (required)
-    :type pdf_id: Path
+    :param pdf_id: id of pdf file (required)
+    :type pdf_id: str
     :param company: name of the company
     :type company: str
     """
-    conf = config.get_config()
-    dataland_client = conf.dataland_client
-
-    if not dataland_client.documents_api.get_document(document_id=pdf_id):
+    if not dataland_client.documents_api.check_document(document_id=pdf_id):
         pdf_content = (pdf_path / f"{company}.pdf").read_bytes()
-
         dataland_client.documents_api.post_document(document=pdf_content)
 
 
-def get_company_id(company: str) -> str:
+def get_company_id(company: str, dataland_client: DatalandClient) -> str:
     """Get company id of given company.
 
     Searches dataland for id for company with given name
@@ -89,9 +85,6 @@ def get_company_id(company: str) -> str:
     :type company: str
     :return: Returns the id of the given company
     """
-    conf = config.get_config()
-    dataland_client = conf.dataland_client
-
     if company == "eon":
         dataset = dataland_client.company_api.get_companies_by_search_string(search_string="E.ON SE", result_limit=1)
     elif company == "munichre":
@@ -104,7 +97,7 @@ def get_company_id(company: str) -> str:
     return dataset[0].company_id
 
 
-def upload_dataset(company_id: str, json_str: any) -> str:
+def upload_dataset(company_id: str, json_str: any, dataland_client: DatalandClient) -> str:
     """Upload dataset.
 
     Upload dataset for EU Taxonomy Nuclear and Gas to Dataland.
@@ -113,11 +106,8 @@ def upload_dataset(company_id: str, json_str: any) -> str:
     :type company_id: str
     :param json_str: json content to be uploaded
     :type json_str: Any
-    :return: Returns data_ids with one appended id
+    :return: Returns data_id
     """
-    conf = config.get_config()
-    dataland_client = conf.dataland_client
-
     old_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
         company_id=company_id
     )
