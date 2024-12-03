@@ -47,7 +47,7 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
         api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint
     )
 
-    deployment_name = "davinci-002"
+    deployment_name = "gpt-4o"
 
     prompt = f"""
     Answer only with 'yes' or 'no'!
@@ -80,3 +80,22 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
         ],
     )
     return initial_openai_response.choices[0].message.content
+
+
+def ectract_page(page_tmp: int, pdf_tmp: str) -> AnalyzeResult:
+    """Extracts text from a specific page of a PDF and returns the analysis result.
+
+    Args:
+        page_tmp (int): The page number to extract.
+        pdf_tmp (str): The path to the PDF file.
+
+    Returns:
+        AnalyzeResult: The result of the text extraction analysis.
+    """
+    path = pdf_tmp
+    page = page_tmp
+
+    reader = pypdf.PdfReader(path)
+    pdf_bytes = get_relevant_page_of_pdf(page=page, full_pdf=reader)
+    analyze_result = extract_text_of_pdf(pdf_bytes)
+    return analyze_result

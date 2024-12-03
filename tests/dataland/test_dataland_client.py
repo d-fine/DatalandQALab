@@ -18,7 +18,7 @@ def test_dataland_connectivity() -> None:
 
 
 def test_dummy_get_data() -> None:
-    company_id = "4423c691-0436-423f-abcb-0a08127ee848"
+    company_id = "34e8b4ab-9c19-41b9-96da-3c106dac9a3c"
     year = "2024"
     qa.get_all_company_datasets(company_id=company_id)
     qa.get_data_id_by_year(company_id=company_id, year=year)
@@ -58,7 +58,7 @@ def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
 )
 def test_dummy_data_extraction(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = da.get_config().dataland_client
-    dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
+    dataset_by_year = qa.get_dataset_by_year(company_id="34e8b4ab-9c19-41b9-96da-3c106dac9a3c", year="2024")
 
     dataset_section426 = dataset_by_year.data.general.general.nuclear_energy_related_activities_section426
     file_id = dataset_section426.data_source.file_reference
