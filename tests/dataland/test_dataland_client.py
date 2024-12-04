@@ -21,12 +21,10 @@ def test_dataland_connectivity() -> None:
 def test_dummy_get_data() -> None:
     dataland_client = config.get_config().dataland_client
     company_name = "rwe"
-    company_id = dataland_qa_lab.dataland.provide_test_data.get_company_id(
+    dataland_qa_lab.dataland.provide_test_data.get_company_id(
         company=company_name, dataland_client=dataland_client
-    )
-    data_id = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
-        company_id=company_id
-    )[0].meta_info.data_id
+    )  # not used method to make merge possible; will be removed later
+    data_id = "9ae2300a-db98-4815-abee-152a24cd3039"
     data = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(data_id=data_id)
     current_values = qa.get_values_by_data(data=data)
     test = qa.get_datasource_reference_bytes(data=data)
