@@ -235,7 +235,7 @@ def test_extract_page(mock_create: Any, mock_extract_text_of_pdf: Any) -> None: 
     pdf_bytes = data_extraction.get_relevant_page_of_pdf(page=page[0], full_pdf=reader)
     result = data_extraction.extract_text_of_pdf(pdf_bytes)
 
-    assert result is not None
+    assert result == AnalyzeResult(content="")
 
 
 def test_extract_template() -> None:
