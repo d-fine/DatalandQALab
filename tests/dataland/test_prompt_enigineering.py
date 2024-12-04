@@ -198,42 +198,6 @@ def test_generate_schema_template5() -> None:
     assert actual_schema == expected_schema
 
 
-def test_extract_template() -> None:
-    # Simulierte Argument-Daten, wie sie aus tool_call.arguments kommen würden
-    arguments = json.dumps(
-        {
-            "answer_value_€_row1": 12345,
-            "answer_currency_€_row1": "Mio €",
-            "answer_value_%_row1": 5.6,
-            "answer_currency_%_row1": "%",
-            "answer_value_€_row2": 67890,
-            "answer_currency_€_row2": "Mio €",
-        }
-    )
-
-    # Konvertiere den Argument-String in ein Python-Dictionary
-    data = json.loads(arguments)
-
-    # Gruppiere nach Zeilen, aber nur mit Werten
-    grouped_data = {}
-    for key, value in data.items():
-        row_key = key.split("_row")[-1]
-        group_key = f"row{row_key}"
-        grouped_data.setdefault(group_key, [])
-        grouped_data[group_key].append(value)
-
-    # Erstelle die resultierende Liste
-    result = []
-    for row, values in grouped_data.items():
-        result.append(f"{row}: {values}")
-
-    # Erwartetes Ergebnis
-    expected_result = ["row1: [12345, 'Mio €', 5.6, '%']", "row2: [67890, 'Mio €']"]
-
-    # Test
-    assert result == expected_result, f"Expected {expected_result}, but got {result}"
-
-
 def create_document_intelligence_mock() -> AnalyzeResult:
     return AnalyzeResult(content="")
 
@@ -272,3 +236,40 @@ def test_extract_page(mock_create: Any, mock_extract_text_of_pdf: Any) -> None: 
     result = data_extraction.extract_text_of_pdf(pdf_bytes)
 
     assert result is not None
+
+
+def test_extract_template() -> None:
+    # Simulierte Argument-Daten, wie sie aus tool_call.arguments kommen würden
+
+    arguments = json.dumps(
+        {
+            "answer_value_€_row1": 12345,
+            "answer_currency_€_row1": "Mio €",
+            "answer_value_%_row1": 5.6,
+            "answer_currency_%_row1": "%",
+            "answer_value_€_row2": 67890,
+            "answer_currency_€_row2": "Mio €",
+        }
+    )
+
+    # Konvertiere den Argument-String in ein Python-Dictionary
+    data = json.loads(arguments)
+
+    # Gruppiere nach Zeilen, aber nur mit Werten
+    grouped_data = {}
+    for key, value in data.items():
+        row_key = key.split("_row")[-1]
+        group_key = f"row{row_key}"
+        grouped_data.setdefault(group_key, [])
+        grouped_data[group_key].append(value)
+
+    # Erstelle die resultierende Liste
+    result = []
+    for row, values in grouped_data.items():
+        result.append(f"{row}: {values}")
+
+    # Erwartetes Ergebnis
+    expected_result = ["row1: [12345, 'Mio €', 5.6, '%']", "row2: [67890, 'Mio €']"]
+
+    # Test
+    assert result == expected_result, f"Expected {expected_result}, but got {result}"
