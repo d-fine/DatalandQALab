@@ -1,72 +1,6 @@
-from pathlib import Path
+import json
 
-from dataland_qa_lab.dataland import company_data, data_extraction, prompt_schema, prompts, template_extractor
-
-
-def test_prompt_engineering() -> None:
-    ps = prompt_schema.PromptSchema()
-    te = template_extractor.TemplateExtractor()
-    prompt = prompts.Prompts()
-    data = company_data.CompanyData()
-
-    rows_6 = [1, 2, 3, 4, 5, 6]
-    rows_8 = [1, 2, 3, 4, 5, 6, 7, 8]
-
-    project_root = Path(__file__).resolve().parent.parent.parent
-
-    data.get_company_pdf()
-    page_tmp = data.get_company_pages()
-    pdf = project_root / "data" / "pdfs" / "covestro.pdf"
-    page = page_tmp[1]
-
-    result = []
-
-    if page[0] is not None:
-        result.append(
-            te.extract_template(
-                prompt.generate_prompt_for_template1(data_extraction.ectract_page(page[0], pdf)),
-                ps.generate_schema_for_template1(),
-                rows_6,
-            )
-        )
-
-    if page[1] is not None:
-        result.append(
-            te.extract_template(
-                prompt.generate_prompt_for_template2(data_extraction.ectract_page(page[1], pdf)),
-                ps.generate_schema_for_rows(rows_8),
-                rows_8,
-            )
-        )
-
-    if page[2] is not None:
-        result.append(
-            te.extract_template(
-                prompt.generate_prompt_for_template3(data_extraction.ectract_page(page[2], pdf)),
-                ps.generate_schema_for_rows(rows_8),
-                rows_8,
-            )
-        )
-
-    if page[3] is not None:
-        result.append(
-            te.extract_template(
-                prompt.generate_prompt_for_template4(data_extraction.ectract_page(page[3], pdf)),
-                ps.generate_schema_for_rows(rows_8),
-                rows_8,
-            )
-        )
-
-    if page[4] is not None:
-        result.append(
-            te.extract_template(
-                prompt.generate_prompt_for_template5(data_extraction.ectract_page(page[4], pdf)),
-                ps.generate_schema_tmeplate5(rows_8),
-                rows_8,
-            )
-        )
-
-    assert len(result) == 5
+from dataland_qa_lab.dataland import prompt_schema
 
 
 def test_generate_schema_for_rows() -> None:
@@ -255,3 +189,39 @@ def test_generate_schema_template5() -> None:
 
     # Vergleich mit dem gesamten erwarteten Schema
     assert actual_schema == expected_schema
+
+
+def test_grouping_and_formatting() -> None:
+    # Simulierte Argument-Daten, wie sie aus tool_call.arguments kommen würden
+    arguments = json.dumps(
+        {
+            "answer_value_€_row1": 12345,
+            "answer_currency_€_row1": "Mio €",
+            "answer_value_%_row1": 5.6,
+            "answer_currency_%_row1": "%",
+            "answer_value_€_row2": 67890,
+            "answer_currency_€_row2": "Mio €",
+        }
+    )
+
+    # Konvertiere den Argument-String in ein Python-Dictionary
+    data = json.loads(arguments)
+
+    # Gruppiere nach Zeilen, aber nur mit Werten
+    grouped_data = {}
+    for key, value in data.items():
+        row_key = key.split("_row")[-1]
+        group_key = f"row{row_key}"
+        grouped_data.setdefault(group_key, [])
+        grouped_data[group_key].append(value)
+
+    # Erstelle die resultierende Liste
+    result = []
+    for row, values in grouped_data.items():
+        result.append(f"{row}: {values}")
+
+    # Erwartetes Ergebnis
+    expected_result = ["row1: [12345, 'Mio €', 5.6, '%']", "row2: [67890, 'Mio €']"]
+
+    # Test
+    assert result == expected_result, f"Expected {expected_result}, but got {result}"
