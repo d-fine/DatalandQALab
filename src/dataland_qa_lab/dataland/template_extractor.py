@@ -12,7 +12,7 @@ class TemplateExtractor:
         """Initializes the class."""
 
     @staticmethod
-    def extract_template(prompt: str, schema: dict, rows: list) -> list:
+    def extract_template(prompt: str, schema: dict) -> list:
         """Extracts information from any template using Azure OpenAI and returns a list of results.
 
         Args:
@@ -30,8 +30,6 @@ class TemplateExtractor:
             api_version="2024-07-01-preview",
             azure_endpoint=conf.azure_openai_endpoint,
         )
-
-        row = rows
 
         updated_openai_response = client.chat.completions.create(
             model="gpt-4o",
@@ -53,11 +51,18 @@ class TemplateExtractor:
             ],
         )
         tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
+        return TemplateExtractor.format_json(tool_call.arguments)
 
-        # Dein Argument-String (vollständig)
-        arguments = tool_call.arguments
+    @staticmethod
+    def format_json(arguments: str) -> list:
+        """Format the JSON arguments.
 
-        # Konvertiere den String in ein Python-Dictionary
+        Args:
+            arguments (dict): The arguments to be formatted.
+
+        Returns:
+            str: The formatted JSON arguments.
+        """
         data = json.loads(arguments)
 
         # Gruppiere nach Zeilen, aber nur mit Werten
