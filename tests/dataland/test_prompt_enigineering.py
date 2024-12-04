@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from dataland_qa_lab.dataland import company_data, data_extraction, prompt_schema, prompts, template_extractor
 
 
@@ -10,9 +12,11 @@ def test_prompt_engineering() -> None:
     rows_6 = [1, 2, 3, 4, 5, 6]
     rows_8 = [1, 2, 3, 4, 5, 6, 7, 8]
 
-    pdf_tmp = data.get_company_pdf()
+    project_root = Path(__file__).resolve().parent.parent.parent
+
+    data.get_company_pdf()
     page_tmp = data.get_company_pages()
-    pdf = pdf_tmp[1]
+    pdf = project_root / "data" / "pdfs" / "concordia.pdf"
     page = page_tmp[1]
 
     result = []
