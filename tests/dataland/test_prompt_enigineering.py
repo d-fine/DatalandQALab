@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any
 from unittest import mock
 
-import pypdf
 from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 
@@ -221,17 +220,19 @@ def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
     )
 
 
-def test_extract_page() -> None:  # noqa: ANN401, ARG001
+@mock.patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion("No"))
+@mock.patch(
+    "dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock()
+)
+def test_extract_page(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     project_root = Path(__file__).resolve().parent.parent.parent
-    pdf_tmp = project_root / "data" / "pdfs" / "covestro.pdf"
+    path = project_root / "data" / "pdfs" / "covestro.pdf"
     page_tmp = company_data.CompanyData.get_company_pages()
     page = page_tmp[1]
 
-    reader = pypdf.PdfReader(pdf_tmp)
-    pdf_bytes = data_extraction.get_relevant_page_of_pdf(page=page[0], full_pdf=reader)
-    data_extraction.extract_text_of_pdf(pdf_bytes)
-    result = AnalyzeResult(content="")
-    assert result == AnalyzeResult(content="")
+    actual_result = data_extraction.ectract_page(page[0], path)
+
+    assert actual_result == AnalyzeResult(content="")
 
 
 def test_extract_template() -> None:
