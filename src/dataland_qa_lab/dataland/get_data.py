@@ -1,6 +1,8 @@
 from dataland_backend.models.company_associated_data_nuclear_and_gas_data import CompanyAssociatedDataNuclearAndGasData
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 
+from dataland_qa_lab.utils import config
+
 
 def get_values_by_data(data: CompanyAssociatedDataNuclearAndGasData) -> list[str]:
     """Get Yes/No values of given dataset."""
@@ -50,3 +52,10 @@ def get_datasource_reference_bytes(
         )
     )
     return document_byte_list
+
+
+def get_data_id_by_company_id(company_id: str) -> str:
+    """Get data id using company id."""
+    client = config.get_config().dataland_client
+    datasets = client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(company_id=company_id)
+    return datasets[0].meta_info.data_id
