@@ -10,7 +10,7 @@ class DatasetReviewer:
 
     def __init__(self) -> None:
         """Initialize any necessary resources or configurations for the dataset reviewer."""
-        self.conf = config.DatalandClient
+        self.conf = config.get_config().dataland_client
 
     def review_dataset(self, data_id: str) -> str | None:
         """Review a dataset."""
@@ -22,4 +22,6 @@ class DatasetReviewer:
 
         report = ReportGenerator().generate_report(relevant_pages=readable_text, dataset=dataset)
 
-        self.conf.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(data_id, report)
+        self.conf.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+            data_id=data_id,
+            nuclear_and_gas_data=report)
