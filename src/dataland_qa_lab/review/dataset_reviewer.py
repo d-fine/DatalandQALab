@@ -14,13 +14,13 @@ class DatasetReviewer:
 
     def review_dataset(self, data_id: str) -> str | None:
         """Review a dataset."""
-        dataset = DatasetProvider(data_id).get_dataset_by_id()
+        dataset = DatasetProvider().get_dataset_by_id(data_id)
 
-        relevant_pages_pdf_reader = PagesProvider().get_relevant_pages_of_pdf(dataset)
+        relevant_pages_pdf_reader = PagesProvider().get_relevant_pages_of_pdf(dataset.data)
 
         readable_text = TextToDocIntelligence().extract_text_of_pdf(relevant_pages_pdf_reader)
 
-        report = ReportGenerator().generate_report(relevant_pages=readable_text, dataset=dataset)
+        report = ReportGenerator().generate_report(relevant_pages=readable_text, dataset=dataset.data)
 
         self.conf.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id,
