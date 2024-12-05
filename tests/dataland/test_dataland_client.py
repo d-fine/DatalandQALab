@@ -54,9 +54,7 @@ def build_simple_openai_chat_completion(message: str) -> ChatCompletion:
 
 
 @mock.patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion("No"))
-@mock.patch(
-    "data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock()
-)
+@mock.patch("data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock())
 def test_dummy_data_extraction(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
     dataland_client = data_extraction.get_config().dataland_client
 
