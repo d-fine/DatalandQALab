@@ -18,7 +18,7 @@ class TextToDocIntelligence:
         """Use Azure Document Intelligence to make text readable for azure open ai."""
         docintel_cred = AzureKeyCredential(self.conf.azure_docintel_api_key)
         document_intelligence_client = DocumentIntelligenceClient(
-        endpoint=self.conf.azure_docintel_endpoint, credential=docintel_cred
+            endpoint=self.conf.azure_docintel_endpoint, credential=docintel_cred
         )
 
         poller = document_intelligence_client.begin_analyze_document(

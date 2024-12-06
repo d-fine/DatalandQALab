@@ -14,8 +14,9 @@ class YesNoValueGenerator:
     def extract_section_426(self, relevant_document: AnalyzeResult) -> str | None:
         """Get values from yes and no section."""
         client = AzureOpenAI(
-            api_key=self.conf.azure_openai_api_key, api_version="2024-07-01-preview",
-            azure_endpoint=self.conf.azure_openai_endpoint
+            api_key=self.conf.azure_openai_api_key,
+            api_version="2024-07-01-preview",
+            azure_endpoint=self.conf.azure_openai_endpoint,
         )
 
         deployment_name = "gpt-4o"

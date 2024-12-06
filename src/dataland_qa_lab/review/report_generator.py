@@ -47,7 +47,7 @@ class ReportGenerator:
                 taxonomyAlignedDenominator=NuclearAndGasGeneralTaxonomyAlignedDenominator(),
                 taxonomyAlignedNumerator=NuclearAndGasGeneralTaxonomyAlignedNumerator(),
                 taxonomyEligibleButNotAligned=NuclearAndGasGeneralTaxonomyEligibleButNotAligned(),
-                taxonomyNonEligible=NuclearAndGasGeneralTaxonomyNonEligible()
+                taxonomyNonEligible=NuclearAndGasGeneralTaxonomyNonEligible(),
             )
         )
 
@@ -70,15 +70,12 @@ class ReportGenerator:
                     comment="tbd",
                     verdict=QaReportDataPointVerdict.QAACCEPTED,
                     correctedData=ExtendedDataPointYesNo(
-                        value=corrected_value,
-                        quality="?",
-                        comment="justification",
-                        dataSource=data_sources[i])
+                        value=corrected_value, quality="?", comment="justification", dataSource=data_sources[i]
+                    ),
                 )
             else:
                 qa_data_points[i] = QaReportDataPointExtendedDataPointYesNo(
-                comment="tbd",
-                verdict=QaReportDataPointVerdict.QAREJECTED
+                    comment="tbd", verdict=QaReportDataPointVerdict.QAREJECTED
                 )
 
         self.report.general.general.nuclear_energy_related_activities_section426 = qa_data_points[0]

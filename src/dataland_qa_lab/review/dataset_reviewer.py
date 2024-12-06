@@ -23,5 +23,5 @@ class DatasetReviewer:
         report = ReportGenerator().generate_report(relevant_pages=readable_text, dataset=dataset.data)
 
         self.conf.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-            data_id=data_id,
-            nuclear_and_gas_data=report)
+            data_id=data_id, nuclear_and_gas_data=report
+        )

@@ -1,12 +1,3 @@
-import io
-from typing import Any
-from unittest import mock
-
-from azure.ai.documentintelligence.models import AnalyzeResult
-from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
-from pypdf import PdfReader
-
-from dataland_qa_lab.dataland import data_extraction, get_data, provide_test_data
 from dataland_qa_lab.utils import config
 
 
@@ -59,7 +50,7 @@ def test_dataland_connectivity() -> None:
 # @mock.patch(
 #     "dataland_qa_lab.dataland.data_extraction.extract_text_of_pdf", return_value=create_document_intelligence_mock()
 # )
-# def test_dummy_data_extraction(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:  # noqa: ANN401, ARG001
+# def test_dummy_data_extraction(mock_create: Any, mock_extract_text_of_pdf: Any) -> None:
 #     dataland_client = da.get_config().dataland_client
 #     dataset_by_year = qa.get_dataset_by_year(company_id="4423c691-0436-423f-abcb-0a08127ee848", year="2024")
 #     company_name = "rwe"

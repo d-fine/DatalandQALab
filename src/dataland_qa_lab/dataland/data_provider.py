@@ -4,6 +4,7 @@ from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
 
 class DataProvider:
     """Provide certain data from Nuclear and Gas datasets."""
+
     @classmethod
     def get_values_by_data(cls, data: NuclearAndGasData) -> list[str]:
         """Get Yes/No values of given dataset."""
@@ -35,7 +36,8 @@ class DataProvider:
         return document_value_list
 
     @classmethod
-    def get_datasources_of_data_points(cls,
+    def get_datasources_of_data_points(
+        cls,
         data: NuclearAndGasData,
     ) -> list[ExtendedDocumentReference | None]:
         """Get list of data references in bytes from given dataset."""
