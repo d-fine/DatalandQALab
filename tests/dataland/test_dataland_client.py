@@ -6,9 +6,7 @@ from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 from pypdf import PdfReader
 
-import dataland_qa_lab.dataland.data_extraction as da
-import dataland_qa_lab.dataland.get_data as qa
-import dataland_qa_lab.dataland.provide_test_data
+from dataland_qa_lab.dataland import data_extraction, get_data, provide_test_data
 from dataland_qa_lab.utils import config
 
 

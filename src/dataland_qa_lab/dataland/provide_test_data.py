@@ -4,6 +4,7 @@ from pathlib import Path
 from dataland_backend.models.company_associated_data_nuclear_and_gas_data import (
     CompanyAssociatedDataNuclearAndGasData,
 )
+from dataland_documents.exceptions import NotFoundException
 
 from dataland_qa_lab.dataland.dataland_client import DatalandClient
 
@@ -71,8 +72,8 @@ def upload_pdf(pdf_path: Path, pdf_id: str, company: str, dataland_client: Datal
     :param company: name of the company
     :type company: str
     """
-    if not dataland_client.documents_api.check_document(document_id=pdf_id):
-        pdf_content = (pdf_path / f"{company}.pdf").read_bytes()
+    if not check_if_document_exists_in_dataland(dataland_client=dataland_client, pdf_id=pdf_id):
+        pdf_content = str((pdf_path / f"{company}.pdf").resolve())
         dataland_client.documents_api.post_document(document=pdf_content)
 
 
@@ -119,3 +120,12 @@ def upload_dataset(company_id: str, json_str: any, dataland_client: DatalandClie
         )
         return new_dataset.data_id
     return old_dataset[0].meta_info.data_id
+
+
+def check_if_document_exists_in_dataland(pdf_id: str, dataland_client: DatalandClient) -> bool:
+    """Helper method to catch 404 Error if file does not exist in Dataland."""
+    try:
+        dataland_client.documents_api.check_document(document_id=pdf_id)
+        return True  # noqa: TRY300
+    except NotFoundException:
+        return False
