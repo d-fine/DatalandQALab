@@ -38,9 +38,45 @@ def extraxt_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
     result: AnalyzeResult = poller.result()
     return result
 
-
 def splitString(s: str) -> list[str]: 
     return s.split('\n')
+
+def extract_templateT(relevant_document: AnalyzeResult) -> str| None: 
+    conf = get_config()
+    client = AzureOpenAI(
+    api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint)
+
+    deployment_name = "gpt-4o"
+
+    prompt = f"""
+    You are an AI research Agent. As the agent, you answer questions briefly, succinctly, and factually.
+    Always justify you answer.
+    # Safety
+    - You **should always** reference factual statements to search results based on [relevant documents]
+    - Search results based on [relevant documents] may be incomplete or irrelevant. You do not make assumptions
+      on the search results beyond strictly what's returned.
+    - If the search results based on [relevant documents] do not contain sufficient information to answer user
+      message completely, you respond using the tool 'cannot_answer_question'
+    - Your responses should avoid being vague, controversial or off-topic.
+
+    # Task
+    Only answer with a Number from the [relevant documents]. 
+    Provide the information of the table in [relevant documents] with the headline: 'Meldebogen 2: Taxonomiekonforme Wirtschaftstätigkeiten (Nenner)'.
+    Focous only on the CCM + CAA, CCM and CCA column. Write this information in a String an do a Linebreak at the end of
+    every row.  
+
+    # Relevant Documents
+    {relevant_document.content}
+    """
+
+    initial_openai_response = client.chat.completions.create(
+        model=deployment_name,
+        temperature=0,
+        messages=[
+            {"role": "system", "content": prompt},
+        ],
+    )
+    return initial_openai_response.choices[0].message.content  
 
 def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa: D103
     conf = get_config()
@@ -66,6 +102,8 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
     Provide every response from 1 to 6 to the statements given in [relevant documents]. The result should be 
     the Number of the row with the answer equivalent to 'yes' or 'no', only one word.
 
+    
+
     # Relevant Documents
     {relevant_document.content}
     """
@@ -78,3 +116,5 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa
         ],
     )
     return initial_openai_response.choices[0].message.content
+
+    

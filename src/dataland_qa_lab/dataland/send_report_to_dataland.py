@@ -2,6 +2,8 @@ from datetime import date
 
 from dataland_qa import models as m
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_qa.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_aligned_denominator import NuclearAndGasGeneralTaxonomyAlignedDenominator
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from pydantic import BaseModel, StrictStr
 
@@ -33,9 +35,9 @@ class DocumentReferenceData(BaseModel):  # noqa: D101
     file_name: StrictStr | None
 
 
-def send_report_to_dataland_method(
+def create_qa_report(
     data_id: StrictStr, report_data: ReportData, dataland_client: DatalandClient
-) -> None:
+) -> NuclearAndGasData:
     """Sends a nuclear and gas QA report to the Dataland API."""
     selected_qa_report = NuclearAndGasData(
         general=m.NuclearAndGasGeneral(
@@ -67,7 +69,91 @@ def send_report_to_dataland_method(
                         ),
                     ),
                 ),
+                
+                nuclearEnergyRelatedActivitiesSection427=m.QaReportDataPointExtendedDataPointYesNo(
+                    comment=report_data.commentqareportdatapointextendeddatapointyesno,
+                    verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
+                    correctedData=m.ExtendedDataPointYesNo(
+                        value=report_data.value,
+                        quality=report_data.quality,
+                        comment=report_data.commentextendeddatapointyesno,
+                        dataSource=m.ExtendedDocumentReference(
+                            fileReference=report_data.data_source.file_reference,
+                            page=report_data.data_source.page,
+                            tagName=report_data.data_source.tag_name,
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
+                nuclearEnergyRelatedActivitiesSection428=m.QaReportDataPointExtendedDataPointYesNo(
+                    comment=report_data.commentqareportdatapointextendeddatapointyesno,
+                    verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
+                    correctedData=m.ExtendedDataPointYesNo(
+                        value=report_data.value,
+                        quality=report_data.quality,
+                        comment=report_data.commentextendeddatapointyesno,
+                        dataSource=m.ExtendedDocumentReference(
+                            fileReference=report_data.data_source.file_reference,
+                            page=report_data.data_source.page,
+                            tagName=report_data.data_source.tag_name,
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
+                fossilGasRelatedActivitiesSection429=m.QaReportDataPointExtendedDataPointYesNo(
+                    comment=report_data.commentqareportdatapointextendeddatapointyesno,
+                    verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
+                    correctedData=m.ExtendedDataPointYesNo(
+                        value=report_data.value,
+                        quality=report_data.quality,
+                        comment=report_data.commentextendeddatapointyesno,
+                        dataSource=m.ExtendedDocumentReference(
+                            fileReference=report_data.data_source.file_reference,
+                            page=report_data.data_source.page,
+                            tagName=report_data.data_source.tag_name,
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
+                fossilGasRelatedActivitiesSection430=m.QaReportDataPointExtendedDataPointYesNo(
+                    comment=report_data.commentqareportdatapointextendeddatapointyesno,
+                    verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
+                    correctedData=m.ExtendedDataPointYesNo(
+                        value=report_data.value,
+                        quality=report_data.quality,
+                        comment=report_data.commentextendeddatapointyesno,
+                        dataSource=m.ExtendedDocumentReference(
+                            fileReference=report_data.data_source.file_reference,
+                            page=report_data.data_source.page,
+                            tagName=report_data.data_source.tag_name,
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
+                fossilGasRelatedActivitiesSection431=m.QaReportDataPointExtendedDataPointYesNo(
+                    comment=report_data.commentqareportdatapointextendeddatapointyesno,
+                    verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
+                    correctedData=m.ExtendedDataPointYesNo(
+                        value=report_data.value,
+                        quality=report_data.quality,
+                        comment=report_data.commentextendeddatapointyesno,
+                        dataSource=m.ExtendedDocumentReference(
+                            fileReference=report_data.data_source.file_reference,
+                            page=report_data.data_source.page,
+                            tagName=report_data.data_source.tag_name,
+                            fileName=report_data.data_source.file_name,
+                        ),
+                    ),
+                ),
+                #NuclearAndGasGeneralTaxonomyAlignedRevenueDenominator = m.NuclearAndGasAlignedDenominator(
+                #   comment = ""
+                #    ,verdict = ""
+                #    , correctedData = m.ExtendedDataPoint
+                #)
             )
         )
     )
-    dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(data_id, selected_qa_report)
+    return selected_qa_report
+
+def send_report_to_dataland(data_id: StrictStr, qa_report: NuclearAndGasData, dataland_client: DatalandClient) -> None: 
+    dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(data_id, qa_report)
