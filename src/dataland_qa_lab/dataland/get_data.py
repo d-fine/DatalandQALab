@@ -1,49 +1,61 @@
 from dataland_backend.models.company_associated_data_nuclear_and_gas_data import CompanyAssociatedDataNuclearAndGasData
+from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 
 from dataland_qa_lab.utils import config
 
-conf = config.get_config()
-dataland_client = conf.dataland_client
+
+def get_values_by_data(data: CompanyAssociatedDataNuclearAndGasData) -> list[str]:
+    """Get Yes/No values of given dataset."""
+    referenced_reports = data.data.general.general
+    document_value_list = []
+
+    document_value_list.extend(
+        (
+            referenced_reports.nuclear_energy_related_activities_section426.value.value
+            if referenced_reports.nuclear_energy_related_activities_section426.value is not None
+            else None,
+            referenced_reports.nuclear_energy_related_activities_section427.value.value
+            if referenced_reports.nuclear_energy_related_activities_section427.value is not None
+            else None,
+            referenced_reports.nuclear_energy_related_activities_section428.value.value
+            if referenced_reports.nuclear_energy_related_activities_section428.value is not None
+            else None,
+            referenced_reports.fossil_gas_related_activities_section429.value.value
+            if referenced_reports.fossil_gas_related_activities_section429.value is not None
+            else None,
+            referenced_reports.fossil_gas_related_activities_section430.value.value
+            if referenced_reports.fossil_gas_related_activities_section430.value is not None
+            else None,
+            referenced_reports.fossil_gas_related_activities_section431.value.value
+            if referenced_reports.fossil_gas_related_activities_section431.value is not None
+            else None,
+        )
+    )
+    return document_value_list
 
 
-def get_all_company_datasets(company_id: str) -> str:
-    """Laden aller Datasets aus jeder Periode."""
-    api = dataland_client.eu_taxonomy_nuclear_and_gas_api
-    dataset = api.get_all_company_nuclear_and_gas_data(company_id=company_id)
+def get_datasource_reference_bytes(
+    data: CompanyAssociatedDataNuclearAndGasData,
+) -> list[ExtendedDocumentReference | None]:
+    """Get list of data references in bytes from given dataset."""
+    referenced_reports = data.data.general.general
+    document_byte_list = []
 
-    return dataset
-
-
-def get_data_id_by_year(company_id: str, year: str) -> str:
-    """Data_ID der gewünschten Periode des Datensets erhalten."""
-    dataset = get_all_company_datasets(company_id=company_id)
-    # Eintragen aus welcher Periode man das Dataset haben will -> In diesem Fall 2024
-    data_id = "test"
-    for t in range(len(dataset)):
-        if dataset[t].meta_info.reporting_period == year:
-            data_id = dataset[t].meta_info.data_id
-            break
-
-    return data_id
-
-
-def get_dataset_by_year(company_id: str, year: str) -> CompanyAssociatedDataNuclearAndGasData:
-    """Laden eines bestimmten Datensets einer bestimmten Periode."""
-    data_id = get_data_id_by_year(company_id=company_id, year=year)
-    data = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(data_id=data_id)
-    return data
+    document_byte_list.extend(
+        (
+            referenced_reports.nuclear_energy_related_activities_section426.data_source,
+            referenced_reports.nuclear_energy_related_activities_section427.data_source,
+            referenced_reports.nuclear_energy_related_activities_section428.data_source,
+            referenced_reports.fossil_gas_related_activities_section429.data_source,
+            referenced_reports.fossil_gas_related_activities_section430.data_source,
+            referenced_reports.fossil_gas_related_activities_section431.data_source,
+        )
+    )
+    return document_byte_list
 
 
-def get_value1_by_year(company_id: str, year: str) -> str:
-    """Rückgabe des ersten Wertes in dem bestimmten Datenset."""
-    data = get_dataset_by_year(company_id=company_id, year=year)
-    value1 = data.data.general.general.nuclear_energy_related_activities_section426.value.value
-    return value1
-
-
-def get_datasource_reference_bytes(company_id: str, year: str) -> str:
-    """Erhalten der Datenreferenz in Bytes, wenn eine Datenquelle hinterlegt ist."""
-    data = get_dataset_by_year(company_id=company_id, year=year)
-    value1 = data.data.general.general.nuclear_energy_related_activities_section426
-    document_bytes = dataland_client.documents_api.get_document(value1.data_source.file_reference)
-    return document_bytes
+def get_data_id_by_company_id(company_id: str) -> str:
+    """Get data id using company id."""
+    client = config.get_config().dataland_client
+    datasets = client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(company_id=company_id)
+    return datasets[0].meta_info.data_id

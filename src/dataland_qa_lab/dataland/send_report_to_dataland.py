@@ -2,8 +2,6 @@ from datetime import date
 
 from dataland_qa import models as m
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
-from dataland_qa.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
-from dataland_qa.models.nuclear_and_gas_general_taxonomy_aligned_denominator import NuclearAndGasGeneralTaxonomyAlignedDenominator
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from pydantic import BaseModel, StrictStr
 
@@ -35,9 +33,7 @@ class DocumentReferenceData(BaseModel):  # noqa: D101
     file_name: StrictStr | None
 
 
-def create_qa_report(
-    data_id: StrictStr, report_data: ReportData, dataland_client: DatalandClient
-) -> NuclearAndGasData:
+def create_qa_report(report_data: ReportData) -> NuclearAndGasData:
     """Sends a nuclear and gas QA report to the Dataland API."""
     selected_qa_report = NuclearAndGasData(
         general=m.NuclearAndGasGeneral(
@@ -69,7 +65,6 @@ def create_qa_report(
                         ),
                     ),
                 ),
-                
                 nuclearEnergyRelatedActivitiesSection427=m.QaReportDataPointExtendedDataPointYesNo(
                     comment=report_data.commentqareportdatapointextendeddatapointyesno,
                     verdict=report_data.verdictqareportdatapointextendeddatapointyesno,
@@ -145,15 +140,17 @@ def create_qa_report(
                         ),
                     ),
                 ),
-                #NuclearAndGasGeneralTaxonomyAlignedRevenueDenominator = m.NuclearAndGasAlignedDenominator(
+                # NuclearAndGasGeneralTaxonomyAlignedRevenueDenominator = m.NuclearAndGasAlignedDenominator(
                 #   comment = ""
                 #    ,verdict = ""
                 #    , correctedData = m.ExtendedDataPoint
-                #)
+                # )
             )
         )
     )
     return selected_qa_report
 
-def send_report_to_dataland(data_id: StrictStr, qa_report: NuclearAndGasData, dataland_client: DatalandClient) -> None: 
+
+def send_report_to_dataland(data_id: StrictStr, qa_report: NuclearAndGasData, dataland_client: DatalandClient) -> None:
+    """Send report to dataland."""
     dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(data_id, qa_report)
