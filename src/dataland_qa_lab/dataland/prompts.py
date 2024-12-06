@@ -16,8 +16,8 @@ class Prompts:
         """
         return f"""
         Given the information from the [relevant documents],
-        provide the answers of all questions in template 1.
-        Only answer with 'Yes' or 'No'.
+        provide the answers of all 6 questions in template 1.
+        Only answer with 'Yes' or 'No'. You need to provide 6 answers.
         # Relevant Documents
         {analyze_result.content}
         """
@@ -32,11 +32,11 @@ class Prompts:
         return f"""
         For each row 1-8 of template 2 (revenue) it's called
         "Taxonomy-aligned economic activities (denominator)",
-        give me all the values of "CCM+CCA", "CCM" and "CCA" for all rows.
+        give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
         Focus on the row numbers on the left side of the table.
-        If you can't find the value, write "0", but alwasy provide the currency.
+        If you can't find the percentage value, write "0".
         Consider translating for this given task like Meldebogen instead of template.
-        Make sure to provides the right units. Like €, Mio €, Mio, € in thousends or %.
+        Make sure to provide the % sign.
         # Relevant Documents
         {analyze_result.content}
         """
@@ -51,11 +51,11 @@ class Prompts:
         return f"""
         For each row 1-8 of template 3 (revenue) it's called
         "Taxonomy-aligned economic activities (numerator)",
-        give me all the values of "CCM+CCA", "CCM" and "CCA" for all rows.
+        give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
         Focus on the row numbers on the left side of the table.
-        If you can't find the value, write "0", but alwasy provide the currency.
+        If you can't find the percentage value, write "0".
         Consider translating for this given task like Meldebogen instead of template.
-        Make sure to provides the right units. Like €, Mio €, Mio, € in thousends or %.
+        Make sure to provide the % sign.
         # Relevant Documents
         {analyze_result.content}
         """
@@ -70,11 +70,11 @@ class Prompts:
         return f"""
         For each row 1-8 of template 4 (revenue) it's called
         "Taxonomy-eligible but not taxonomy-aligned economic activities",
-        give me all the values of "CCM+CCA", "CCM" and "CCA" for all rows.
+        give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
         Focus on the row numbers on the left side of the table.
-        If you can't find the value, write "0", but alwasy provide the currency.
+        If you can't find the percentage value, write "0".
         Consider translating for this given task like Meldebogen instead of template.
-        Make sure to provides the right units. Like €, Mio €, Mio, € in thousends or %.
+        Make sure to provide the % sign.
         # Relevant Documents
         {analyze_result.content}
         """
@@ -89,11 +89,11 @@ class Prompts:
         return f"""
         For each row 1-8 of template 5 (revenue) it's called
         "Taxonomy non-eligible economic activities",
-        give me one value and one percentage per row.
+        give me the percentage for all rows.
         Focus on the row numbers on the left side of the table.
-        If you can't find the value, write "0", but alwasy provide the currency.
+        If you can't find the percentage value, write "0".
         Consider translating for this given task like Meldebogen instead of template.
-        Make sure to provides the right units. Like €, Mio €, Mio, € in thousends or %.
+        Make sure to provide the % sign.
         # Relevant Documents
         {analyze_result.content}
         """
