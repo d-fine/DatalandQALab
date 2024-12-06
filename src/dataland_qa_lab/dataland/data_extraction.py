@@ -9,12 +9,8 @@ from openai import AzureOpenAI
 from dataland_qa_lab.utils import config
 
 
-def get_config() -> config.DatalandQaLabSettings:  # noqa: D103
-    conf = config.get_config()
-    return conf
-
-
-def get_relevant_page_of_pdf(page: int, full_pdf: pypdf.PdfReader) -> io.BytesIO:  # noqa: D103
+def get_relevant_page_of_pdf(page: int, full_pdf: pypdf.PdfReader) -> io.BytesIO:
+    """Returns the relevant pages as byteStream."""
     partial_pdf_stream = io.BytesIO()
     partial_pdf = pypdf.PdfWriter()
 
@@ -25,8 +21,9 @@ def get_relevant_page_of_pdf(page: int, full_pdf: pypdf.PdfReader) -> io.BytesIO
     return partial_pdf_stream
 
 
-def extract_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
-    conf = get_config()
+def extract_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:
+    """Make Text machine readable."""
+    conf = config.get_config()
     docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
         endpoint=conf.azure_docintel_endpoint, credential=docintel_cred
@@ -41,8 +38,9 @@ def extract_text_of_pdf(pdf: io.BytesIO) -> AnalyzeResult:  # noqa: D103
     return poller.result()
 
 
-def extract_section_426(relevant_document: AnalyzeResult) -> str | None:  # noqa: D103
-    conf = get_config()
+def extract_section_426(relevant_document: AnalyzeResult) -> str | None:
+    """Get correct values from LLM."""
+    conf = config.get_config()
     client = AzureOpenAI(
         api_key=conf.azure_openai_api_key, api_version="2024-07-01-preview", azure_endpoint=conf.azure_openai_endpoint
     )
