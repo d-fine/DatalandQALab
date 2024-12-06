@@ -1,6 +1,6 @@
 import pytest
 
-from dataland_qa_lab.dataland.error_handling import ErrorHandling, NetworkError, UnknownError
+from dataland_qa_lab.utils.error_handling import ErrorHandling, NetworkError, UnknownError
 
 
 def test_network_error() -> None:

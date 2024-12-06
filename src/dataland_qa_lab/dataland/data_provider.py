@@ -27,22 +27,26 @@ class DataProvider:
         return document_value_list
 
     @classmethod
-    def get_datasources_of_data_points(
+    def get_datasources_of_dataset(
         cls,
         data: NuclearAndGasData,
     ) -> list[ExtendedDocumentReference | None]:
-        """Get list of data references in bytes from given dataset."""
+        """Get list of extended document references from given dataset."""
         referenced_reports = data.general.general
-        document_byte_list = []
 
-        document_byte_list.extend(
-            (
-                referenced_reports.nuclear_energy_related_activities_section426.data_source,
-                referenced_reports.nuclear_energy_related_activities_section427.data_source,
-                referenced_reports.nuclear_energy_related_activities_section428.data_source,
-                referenced_reports.fossil_gas_related_activities_section429.data_source,
-                referenced_reports.fossil_gas_related_activities_section430.data_source,
-                referenced_reports.fossil_gas_related_activities_section431.data_source,
-            )
-        )
-        return document_byte_list
+        sections = [
+                referenced_reports.nuclear_energy_related_activities_section426,
+                referenced_reports.nuclear_energy_related_activities_section427,
+                referenced_reports.nuclear_energy_related_activities_section428,
+                referenced_reports.fossil_gas_related_activities_section429,
+                referenced_reports.fossil_gas_related_activities_section430,
+                referenced_reports.fossil_gas_related_activities_section431
+        ]
+
+        datasource_list = [
+            section.data_source
+            if section is not None and section.data_source is not None else None
+            for section in sections
+        ]
+
+        return datasource_list

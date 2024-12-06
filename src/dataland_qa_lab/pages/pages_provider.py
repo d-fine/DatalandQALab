@@ -3,6 +3,7 @@ import io
 import pypdf
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 
+from dataland_qa_lab.dataland.data_provider import DataProvider
 from dataland_qa_lab.utils import config
 
 
@@ -29,21 +30,12 @@ class PagesProvider:
     @classmethod
     def get_relevant_pages_of_yes_no(cls, dataset: NuclearAndGasData) -> list[int]:
         """Get page numbers of yes and no questions."""
-        data = dataset.general.general
-
-        sections = [
-            data.nuclear_energy_related_activities_section426,
-            data.nuclear_energy_related_activities_section427,
-            data.nuclear_energy_related_activities_section428,
-            data.fossil_gas_related_activities_section429,
-            data.fossil_gas_related_activities_section430,
-            data.fossil_gas_related_activities_section431,
-        ]
+        data_sources = DataProvider().get_datasources_of_dataset(dataset)
 
         page_numbers = [
-            int(section.data_source.page)
-            for section in sections
-            if section is not None and section.data_source is not None
+            int(data_source.page)
+            for data_source in data_sources
+            if data_source is not None and data_source.page is not None
         ]
 
         return page_numbers

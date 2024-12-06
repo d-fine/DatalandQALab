@@ -26,7 +26,6 @@ from dataland_backend.models.nuclear_and_gas_general_taxonomy_non_eligible impor
 )
 
 from dataland_qa_lab.pages.pages_provider import PagesProvider
-from dataland_qa_lab.pages.text_to_doc_intelligence import TextToDocIntelligence
 
 
 def test_get_relevant_pages_yes_no() -> None:
@@ -75,8 +74,8 @@ def test_get_relevant_pages_numeric() -> None:
     assert {21, 22}.issubset(page_numbers)
 
 
-def create_document_intelligence_mock() -> AnalyzeResult:
-    return AnalyzeResult(content="")
+# def create_document_intelligence_mock() -> AnalyzeResult:
+#     return AnalyzeResult(content="")
 
 
 # @mock.patch(
