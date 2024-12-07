@@ -28,7 +28,7 @@ from dataland_qa_lab.review.yes_no_value_generator import YesNoValueGenerator
 class ReportGenerator:
     """Generate a quality assurance report."""
 
-    def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasDataBackend) -> None:
+    def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasDataBackend) -> NuclearAndGasData:
         """_summary."""
         self.relevant_pages = relevant_pages
 
@@ -71,7 +71,7 @@ class ReportGenerator:
 
         qa_data_points = []
 
-        for i in range(5):
+        for i in range(6):
             corrected_value = yes_no_values[i]
             dataland_value = yes_no_values_from_dataland[i]
 

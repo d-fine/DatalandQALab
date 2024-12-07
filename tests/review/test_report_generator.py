@@ -56,3 +56,20 @@ def test_compare_yes_no_values(_mock_create: Mock) -> None:  # noqa: PT019
     assert corrected_values[0].corrected_data.value is None
     assert corrected_values[0].comment == "Geprüft durch AzureOpenAI"
     assert corrected_values[4].corrected_data.value == "Yes"
+
+
+@patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
+def test_generate_report(_mock_create: Mock) -> None:  # noqa: PT019
+    test_dataset = NuclearAndGasData(
+        general=NuclearAndGasGeneral(
+            general=NuclearAndGasGeneralGeneral(
+                nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(value="Yes"),
+                fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(value="No"),
+            )
+        )
+    )
+
+    report = ReportGenerator().generate_report(relevant_pages=AnalyzeResult(), dataset=test_dataset)
+
+    assert report is not None
+    assert report.general.general.fossil_gas_related_activities_section430.corrected_data.value == "Yes"

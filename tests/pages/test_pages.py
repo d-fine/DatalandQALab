@@ -1,6 +1,6 @@
 import json
-import os
 from pathlib import Path
+
 from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -77,7 +77,6 @@ def test_get_relevant_pages_of_pdf() -> None:
         data = json.load(file)
 
     file_ref = data["data"]["general"]["general"]["referencedReports"]["covestro-ar23-entire"]["fileReference"]
-    print(file_ref)
 
     test_dataset = NuclearAndGasData(
         general=NuclearAndGasGeneral(
