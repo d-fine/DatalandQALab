@@ -1,3 +1,5 @@
+import ast
+
 from azure.ai.documentintelligence.models import AnalyzeResult
 from openai import AzureOpenAI
 
@@ -36,7 +38,8 @@ class YesNoValueGenerator:
         Only answer with one word per row, either Yes or No.
         Given the information from the [relevant documents], answer the following statements with 'yes' or 'no':
         Provide every response from 1 to 6 to the statements given in [relevant documents]. The result should be
-        the answer of each row equivalent to 'Yes' or 'No', only one word.
+        in the format ['Yes', 'Yes', 'Yes', 'No', 'No', 'No'] with the value of the first question being the first
+        element in the row.
 
         # Relevant Documents
         {relevant_document.content}
@@ -51,4 +54,4 @@ class YesNoValueGenerator:
         )
         value = initial_openai_response.choices[0].message.content
 
-        return value.split()
+        return ast.literal_eval(value)

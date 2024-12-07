@@ -22,7 +22,7 @@ def create_document_intelligence_mock() -> AnalyzeResult:
 
 
 def build_simple_openai_chat_completion() -> ChatCompletion:
-    msg = "Yes No Yes Yes Yes No"
+    msg = "['Yes', 'No', 'Yes', 'Yes', 'Yes', 'No']"
     return ChatCompletion(
         id="test",
         choices=[
