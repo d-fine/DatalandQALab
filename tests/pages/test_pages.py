@@ -1,3 +1,6 @@
+import json
+import os
+from pathlib import Path
 from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -23,6 +26,7 @@ from dataland_backend.models.nuclear_and_gas_general_taxonomy_non_eligible impor
 )
 
 from dataland_qa_lab.pages.pages_provider import PagesProvider
+from dataland_qa_lab.pages.text_to_doc_intelligence import TextToDocIntelligence
 
 
 def test_get_relevant_pages_yes_no() -> None:
@@ -67,34 +71,40 @@ def test_get_relevant_pages_numeric() -> None:
 
 
 def test_get_relevant_pages_of_pdf() -> None:
+    current_dir = Path(__file__).resolve().parent.parent.parent
+    file_path = current_dir / "data" / "jsons" / "covestro.json"
+    with Path.open(file_path) as file:
+        data = json.load(file)
+
+    file_ref = data["data"]["general"]["general"]["referencedReports"]["covestro-ar23-entire"]["fileReference"]
+    print(file_ref)
+
     test_dataset = NuclearAndGasData(
         general=NuclearAndGasGeneral(
             general=NuclearAndGasGeneralGeneral(
                 nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(
-                    dataSource=ExtendedDocumentReference(page="21", fileReference="test")
+                    dataSource=ExtendedDocumentReference(page="21", fileReference=file_ref)
                 ),
                 fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(
-                    dataSource=ExtendedDocumentReference(page="22", fileReference="test")
+                    dataSource=ExtendedDocumentReference(page="22", fileReference=file_ref)
                 ),
             ),
             taxonomyAlignedDenominator=NuclearAndGasGeneralTaxonomyAlignedDenominator(
                 nuclearAndGasTaxonomyAlignedCapexDenominator=ExtendedDataPointNuclearAndGasAlignedDenominator(
-                    dataSource=ExtendedDocumentReference(page="21", fileReference="test")
+                    dataSource=ExtendedDocumentReference(page="21", fileReference=file_ref)
                 )
             ),
             taxonomyAlignedNumerator=NuclearAndGasGeneralTaxonomyAlignedNumerator(),
             taxonomyEligibleButNotAligned=NuclearAndGasGeneralTaxonomyEligibleButNotAligned(),
             taxonomyNonEligible=NuclearAndGasGeneralTaxonomyNonEligible(
                 nuclearAndGasTaxonomyNonEligibleRevenue=ExtendedDataPointNuclearAndGasNonEligible(
-                    dataSource=ExtendedDocumentReference(page="22", fileReference="test")
+                    dataSource=ExtendedDocumentReference(page="22", fileReference=file_ref)
                 )
             ),
         )
     )
 
     pages = PagesProvider().get_relevant_pages_of_pdf(test_dataset)
-
-    # use one of the test data pdfs
 
     assert pages is not None
 
@@ -107,6 +117,6 @@ def test_get_relevant_pages_of_pdf() -> None:
 #     "dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf",
 #     return_value=create_document_intelligence_mock()
 # )
-# def test_extract_text_of_pdf() -> None:
-#     extractor = TextToDocIntelligence()
-#     extractor.extract_text_of_pdf()
+def test_extract_text_of_pdf() -> None:
+    extractor = TextToDocIntelligence()
+    assert extractor is not None
