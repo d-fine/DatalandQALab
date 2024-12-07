@@ -15,13 +15,11 @@ class DataProvider:
             referenced_reports.nuclear_energy_related_activities_section428,
             referenced_reports.fossil_gas_related_activities_section429,
             referenced_reports.fossil_gas_related_activities_section430,
-            referenced_reports.fossil_gas_related_activities_section431
+            referenced_reports.fossil_gas_related_activities_section431,
         ]
 
         document_value_list = [
-            section.value
-            if section is not None and section.value is not None else None
-            for section in sections
+            section.value if section is not None and section.value is not None else None for section in sections
         ]
 
         return document_value_list
@@ -35,17 +33,16 @@ class DataProvider:
         referenced_reports = data.general.general
 
         sections = [
-                referenced_reports.nuclear_energy_related_activities_section426,
-                referenced_reports.nuclear_energy_related_activities_section427,
-                referenced_reports.nuclear_energy_related_activities_section428,
-                referenced_reports.fossil_gas_related_activities_section429,
-                referenced_reports.fossil_gas_related_activities_section430,
-                referenced_reports.fossil_gas_related_activities_section431
+            referenced_reports.nuclear_energy_related_activities_section426,
+            referenced_reports.nuclear_energy_related_activities_section427,
+            referenced_reports.nuclear_energy_related_activities_section428,
+            referenced_reports.fossil_gas_related_activities_section429,
+            referenced_reports.fossil_gas_related_activities_section430,
+            referenced_reports.fossil_gas_related_activities_section431,
         ]
 
         datasource_list = [
-            section.data_source
-            if section is not None and section.data_source is not None else None
+            section.data_source if section is not None and section.data_source is not None else None
             for section in sections
         ]
 

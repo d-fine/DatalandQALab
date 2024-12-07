@@ -11,12 +11,8 @@ def test_get_yes_no_values_by_data() -> None:
     test_dataset = NuclearAndGasData(
         general=NuclearAndGasGeneral(
             general=NuclearAndGasGeneralGeneral(
-                nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(
-                    value="Yes"
-                ),
-                fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(
-                    value="No"
-                ),
+                nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(value="Yes"),
+                fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(value="No"),
             )
         )
     )
@@ -42,10 +38,8 @@ def test_get_datasources_of_dataset() -> None:
                 ),
                 fossilGasRelatedActivitiesSection431=ExtendedDataPointYesNo(
                     dataSource=ExtendedDocumentReference(
-                        page="22",
-                        tag_name="d-fine",
-                        fileName="test-file",
-                        fileReference="test")
+                        page="22", tag_name="d-fine", fileName="test-file", fileReference="test"
+                    )
                 ),
             )
         )

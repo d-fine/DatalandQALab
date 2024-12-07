@@ -1,6 +1,3 @@
-from unittest import mock
-
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -52,26 +49,54 @@ def test_get_relevant_pages_numeric() -> None:
             general=NuclearAndGasGeneralGeneral(),
             taxonomyAlignedDenominator=NuclearAndGasGeneralTaxonomyAlignedDenominator(
                 nuclearAndGasTaxonomyAlignedCapexDenominator=ExtendedDataPointNuclearAndGasAlignedDenominator(
-                    dataSource=ExtendedDocumentReference(
-                        page="21",
-                        fileReference="test")
+                    dataSource=ExtendedDocumentReference(page="21", fileReference="test")
                 )
             ),
             taxonomyAlignedNumerator=NuclearAndGasGeneralTaxonomyAlignedNumerator(),
             taxonomyEligibleButNotAligned=NuclearAndGasGeneralTaxonomyEligibleButNotAligned(),
             taxonomyNonEligible=NuclearAndGasGeneralTaxonomyNonEligible(
                 nuclearAndGasTaxonomyNonEligibleRevenue=ExtendedDataPointNuclearAndGasNonEligible(
-                     dataSource=ExtendedDocumentReference(
-                        page="22",
-                        fileReference="test"
-                    )
+                    dataSource=ExtendedDocumentReference(page="22", fileReference="test")
                 )
-            )
+            ),
         )
     )
     page_numbers = PagesProvider().get_relevant_pages_of_numeric(test_dataset)
 
     assert {21, 22}.issubset(page_numbers)
+
+
+def test_get_relevant_pages_of_pdf() -> None:
+    test_dataset = NuclearAndGasData(
+        general=NuclearAndGasGeneral(
+            general=NuclearAndGasGeneralGeneral(
+                nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(
+                    dataSource=ExtendedDocumentReference(page="21", fileReference="test")
+                ),
+                fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(
+                    dataSource=ExtendedDocumentReference(page="22", fileReference="test")
+                ),
+            ),
+            taxonomyAlignedDenominator=NuclearAndGasGeneralTaxonomyAlignedDenominator(
+                nuclearAndGasTaxonomyAlignedCapexDenominator=ExtendedDataPointNuclearAndGasAlignedDenominator(
+                    dataSource=ExtendedDocumentReference(page="21", fileReference="test")
+                )
+            ),
+            taxonomyAlignedNumerator=NuclearAndGasGeneralTaxonomyAlignedNumerator(),
+            taxonomyEligibleButNotAligned=NuclearAndGasGeneralTaxonomyEligibleButNotAligned(),
+            taxonomyNonEligible=NuclearAndGasGeneralTaxonomyNonEligible(
+                nuclearAndGasTaxonomyNonEligibleRevenue=ExtendedDataPointNuclearAndGasNonEligible(
+                    dataSource=ExtendedDocumentReference(page="22", fileReference="test")
+                )
+            ),
+        )
+    )
+
+    pages = PagesProvider().get_relevant_pages_of_pdf(test_dataset)
+
+    # use one of the test data pdfs
+
+    assert pages is not None
 
 
 # def create_document_intelligence_mock() -> AnalyzeResult:

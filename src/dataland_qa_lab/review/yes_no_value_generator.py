@@ -11,7 +11,7 @@ class YesNoValueGenerator:
         """Extract the sections 426 to 431."""
         self.conf = config.get_config()
 
-    def extract_section_426(self, relevant_document: AnalyzeResult) -> str | None:
+    def extract_yes_no_template(self, relevant_document: AnalyzeResult) -> list[str | None]:
         """Get values from yes and no section."""
         client = AzureOpenAI(
             api_key=self.conf.azure_openai_api_key,
@@ -22,23 +22,21 @@ class YesNoValueGenerator:
         deployment_name = "gpt-4o"
 
         prompt = f"""
-        Answer only with 'yes' or 'no'!
         You are an AI research Agent. As the agent, you answer questions briefly, succinctly, and factually.
         Always justify you answer.
         # Safety
         - You **should always** reference factual statements to search results based on [relevant documents]
         - Search results based on [relevant documents] may be incomplete or irrelevant. You do not make assumptions
-        on the search results beyond strictly what's returned.
+          on the search results beyond strictly what's returned.
         - If the search results based on [relevant documents] do not contain sufficient information to answer user
-        message completely, you respond using the tool 'cannot_answer_question'
+          message completely, you respond using the tool 'cannot_answer_question'
         - Your responses should avoid being vague, controversial or off-topic.
 
         # Task
-        Given the information from the [relevant documents], is the company engaged in the research, development,
-        demonstration, and deployment of innovative power generation facilities that generate energy from nuclear
-        processes with minimal waste from the fuel cycle, finance such activities, or hold risk positions related
-        to these activities? Just answer the question with yes or no. The answer should not be longer than 3
-        characters, should not include punctation and start with a capital letter.
+        Only answer with one word per row, either Yes or No.
+        Given the information from the [relevant documents], answer the following statements with 'yes' or 'no':
+        Provide every response from 1 to 6 to the statements given in [relevant documents]. The result should be
+        the answer of each row equivalent to 'Yes' or 'No', only one word.
 
         # Relevant Documents
         {relevant_document.content}
@@ -51,4 +49,6 @@ class YesNoValueGenerator:
                 {"role": "system", "content": prompt},
             ],
         )
-        return initial_openai_response.choices[0].message.content
+        value = initial_openai_response.choices[0].message.content
+
+        return value.split()

@@ -16,8 +16,9 @@ class PagesProvider:
     def get_relevant_pages_of_pdf(self, dataset: NuclearAndGasData) -> pypdf.PdfReader:
         """Get page numbers of relevant data."""
         page_numbers = []
-        page_numbers.extend((self.get_relevant_pages_of_yes_no(dataset=dataset),
-                            self.get_relevant_pages_of_numeric(dataset=dataset)))
+        page_numbers.extend(
+            (self.get_relevant_pages_of_yes_no(dataset=dataset), self.get_relevant_pages_of_numeric(dataset=dataset))
+        )
 
         file_reference = dataset.general.general.nuclear_energy_related_activities_section426.data_source.file_reference
 
@@ -54,13 +55,11 @@ class PagesProvider:
             data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex,
             data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue,
             data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_capex,
-            data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue
+            data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue,
         ]
 
         page_numbers.extend(
-            int(target.data_source.page)
-            for target in targets
-            if target is not None and target.data_source is not None
+            int(target.data_source.page) for target in targets if target is not None and target.data_source is not None
         )
 
         return page_numbers

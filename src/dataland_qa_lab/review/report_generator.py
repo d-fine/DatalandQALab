@@ -1,4 +1,5 @@
 from azure.ai.documentintelligence.models import AnalyzeResult
+from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData as NuclearAndGasDataBackend
 from dataland_qa.models.extended_data_point_yes_no import ExtendedDataPointYesNo
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_qa.models.nuclear_and_gas_general import NuclearAndGasGeneral
@@ -27,16 +28,22 @@ from dataland_qa_lab.review.yes_no_value_generator import YesNoValueGenerator
 class ReportGenerator:
     """Generate a quality assurance report."""
 
-    def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasData) -> None:
+    def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasDataBackend) -> None:
         """_summary."""
         self.relevant_pages = relevant_pages
-        self.dataset = dataset
 
         self.report = self.build_report_frame()
 
-        return self.report
+        yes_no_data_points = self.compare_yes_no_values(dataset=dataset, relevant_pages=relevant_pages)
 
-        # compare
+        self.report.general.general.nuclear_energy_related_activities_section426 = yes_no_data_points[0]
+        self.report.general.general.nuclear_energy_related_activities_section427 = yes_no_data_points[1]
+        self.report.general.general.nuclear_energy_related_activities_section428 = yes_no_data_points[2]
+        self.report.general.general.fossil_gas_related_activities_section429 = yes_no_data_points[3]
+        self.report.general.general.fossil_gas_related_activities_section430 = yes_no_data_points[4]
+        self.report.general.general.fossil_gas_related_activities_section431 = yes_no_data_points[5]
+
+        return self.report
 
     @classmethod
     def build_report_frame(cls) -> NuclearAndGasData:
@@ -53,11 +60,14 @@ class ReportGenerator:
 
         return report_frame
 
-    def compare_yes_no_values(self) -> None:
+    @classmethod
+    def compare_yes_no_values(
+        cls, dataset: NuclearAndGasDataBackend, relevant_pages: AnalyzeResult
+    ) -> list[QaReportDataPointExtendedDataPointYesNo | None]:
         """Build first yes no data point."""
-        yes_no_values = YesNoValueGenerator().extract_section_426(relevant_document=self.relevant_pages)
-        yes_no_values_from_dataland = DataProvider().get_values_by_data(data=self.dataset)
-        data_sources = DataProvider().get_datasources_of_data_points(data=self.dataset)
+        yes_no_values = YesNoValueGenerator().extract_yes_no_template(relevant_document=relevant_pages)
+        yes_no_values_from_dataland = DataProvider().get_yes_no_values_by_data(data=dataset)
+        data_sources = DataProvider().get_datasources_of_dataset(data=dataset)
 
         qa_data_points = []
 
@@ -66,21 +76,25 @@ class ReportGenerator:
             dataland_value = yes_no_values_from_dataland[i]
 
             if corrected_value != dataland_value:
-                qa_data_points[i] = QaReportDataPointExtendedDataPointYesNo(
-                    comment="tbd",
-                    verdict=QaReportDataPointVerdict.QAACCEPTED,
-                    correctedData=ExtendedDataPointYesNo(
-                        value=corrected_value, quality="?", comment="justification", dataSource=data_sources[i]
-                    ),
+                qa_data_points.append(
+                    QaReportDataPointExtendedDataPointYesNo(
+                        comment="tbd",
+                        verdict=QaReportDataPointVerdict.QAREJECTED,
+                        correctedData=ExtendedDataPointYesNo(
+                            value=corrected_value,
+                            quality="Audited",
+                            comment="justification",
+                            dataSource=data_sources[i],
+                        ),
+                    )
                 )
             else:
-                qa_data_points[i] = QaReportDataPointExtendedDataPointYesNo(
-                    comment="tbd", verdict=QaReportDataPointVerdict.QAREJECTED
+                qa_data_points.append(
+                    QaReportDataPointExtendedDataPointYesNo(
+                        comment="Geprüft durch AzureOpenAI",
+                        verdict=QaReportDataPointVerdict.QAACCEPTED,
+                        correctedData=ExtendedDataPointYesNo(),
+                    )
                 )
 
-        self.report.general.general.nuclear_energy_related_activities_section426 = qa_data_points[0]
-        self.report.general.general.nuclear_energy_related_activities_section427 = qa_data_points[1]
-        self.report.general.general.nuclear_energy_related_activities_section428 = qa_data_points[2]
-        self.report.general.general.fossil_gas_related_activities_section429 = qa_data_points[3]
-        self.report.general.general.fossil_gas_related_activities_section430 = qa_data_points[4]
-        self.report.general.general.fossil_gas_related_activities_section431 = qa_data_points[5]
+        return qa_data_points

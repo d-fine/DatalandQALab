@@ -16,7 +16,8 @@ def test_dataland_connectivity() -> None:
 #     data_id = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
 #         company_id=company_id
 #     )[0].meta_info.data_id
-#     data = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(data_id=data_id)
+#     data = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(
+#       data_id=data_id)
 #     current_values = qa.get_values_by_data(data=data)
 #     test = qa.get_datasource_reference_bytes(data=data)
 #     assert test is not None
