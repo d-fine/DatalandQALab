@@ -1,21 +1,22 @@
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_backend.models.yes_no import YesNo
 
 
 class DataProvider:
     """Provide certain data from Nuclear and Gas datasets."""
 
     @classmethod
-    def get_yes_no_values_by_data(cls, data: NuclearAndGasData) -> list[str]:
+    def get_yes_no_values_by_data(cls, data: NuclearAndGasData) -> list[YesNo | None]:
         """Get Yes/No values of given dataset."""
-        referenced_reports = data.general.general
+        general_data_points = data.general.general
         sections = [
-            referenced_reports.nuclear_energy_related_activities_section426,
-            referenced_reports.nuclear_energy_related_activities_section427,
-            referenced_reports.nuclear_energy_related_activities_section428,
-            referenced_reports.fossil_gas_related_activities_section429,
-            referenced_reports.fossil_gas_related_activities_section430,
-            referenced_reports.fossil_gas_related_activities_section431,
+            general_data_points.nuclear_energy_related_activities_section426,
+            general_data_points.nuclear_energy_related_activities_section427,
+            general_data_points.nuclear_energy_related_activities_section428,
+            general_data_points.fossil_gas_related_activities_section429,
+            general_data_points.fossil_gas_related_activities_section430,
+            general_data_points.fossil_gas_related_activities_section431,
         ]
 
         document_value_list = [

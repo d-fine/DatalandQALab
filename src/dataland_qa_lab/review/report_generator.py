@@ -29,7 +29,7 @@ class ReportGenerator:
     """Generate a quality assurance report."""
 
     def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasDataBackend) -> NuclearAndGasData:
-        """_summary."""
+        """Assemble the QA Report based on the corrected values from Azure."""
         self.relevant_pages = relevant_pages
 
         self.report = self.build_report_frame()
@@ -82,7 +82,7 @@ class ReportGenerator:
                         verdict=QaReportDataPointVerdict.QAREJECTED,
                         correctedData=ExtendedDataPointYesNo(
                             value=corrected_value,
-                            quality="Audited",
+                            quality="automatically generated",
                             comment="justification",
                             dataSource=data_sources[i],
                         ),
