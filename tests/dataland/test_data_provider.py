@@ -46,7 +46,7 @@ def test_get_datasources_of_dataset() -> None:
     )
 
     provider = DataProvider()
-    values = provider.get_datasources_of_dataset(test_dataset)
+    values = provider.get_datasources_of_nuclear_and_gas_yes_no_questions(test_dataset)
 
     assert values[0].page == "21"
     assert len(values) == 6

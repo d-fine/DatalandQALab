@@ -26,7 +26,7 @@ class DataProvider:
         return document_value_list
 
     @classmethod
-    def get_datasources_of_dataset(
+    def get_datasources_of_nuclear_and_gas_yes_no_questions(
         cls,
         data: NuclearAndGasData,
     ) -> list[ExtendedDocumentReference | None]:
@@ -40,6 +40,30 @@ class DataProvider:
             referenced_reports.fossil_gas_related_activities_section429,
             referenced_reports.fossil_gas_related_activities_section430,
             referenced_reports.fossil_gas_related_activities_section431,
+        ]
+
+        datasource_list = [
+            section.data_source if section is not None and section.data_source is not None else None
+            for section in sections
+        ]
+
+        return datasource_list
+
+    @classmethod
+    def get_datasources_of_nuclear_and_gas_numeric_values(
+        cls,
+        data: NuclearAndGasData,
+    ) -> list[ExtendedDocumentReference | None]:
+        """Get list of extended document references from given dataset."""
+        sections = [
+            data.general.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_capex_denominator,
+            data.general.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_revenue_denominator,
+            data.general.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_capex_numerator,
+            data.general.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_revenue_numerator,
+            data.general.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex,
+            data.general.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue,
+            data.general.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_capex,
+            data.general.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue,
         ]
 
         datasource_list = [

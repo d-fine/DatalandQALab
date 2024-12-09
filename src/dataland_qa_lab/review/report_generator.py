@@ -28,6 +28,9 @@ from dataland_qa_lab.review.yes_no_value_generator import YesNoValueGenerator
 class ReportGenerator:
     """Generate a quality assurance report."""
 
+    relevant_pages: AnalyzeResult
+    report: NuclearAndGasData
+
     def generate_report(self, relevant_pages: AnalyzeResult, dataset: NuclearAndGasDataBackend) -> NuclearAndGasData:
         """Assemble the QA Report based on the corrected values from Azure."""
         self.relevant_pages = relevant_pages
@@ -67,7 +70,7 @@ class ReportGenerator:
         """Build first yes no data point."""
         yes_no_values = YesNoValueGenerator().extract_yes_no_template(relevant_document=relevant_pages)
         yes_no_values_from_dataland = DataProvider().get_yes_no_values_by_data(data=dataset)
-        data_sources = DataProvider().get_datasources_of_dataset(data=dataset)
+        data_sources = DataProvider().get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
         qa_data_points = []
 

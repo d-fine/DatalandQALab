@@ -44,29 +44,17 @@ class PagesProvider:
     @classmethod
     def get_relevant_pages_of_numeric(cls, dataset: NuclearAndGasData) -> list[int]:
         """Get page numbers of numeric values."""
-        data = dataset.general
-
-        targets = [
-            data.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_capex_denominator,
-            data.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_revenue_denominator,
-            data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_capex_numerator,
-            data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_revenue_numerator,
-            data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex,
-            data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue,
-            data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_capex,
-            data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue,
-        ]
-
-        return cls.__collect_page_numbers(targets)
+        data_sources = DataProvider().get_datasources_of_nuclear_and_gas_numeric_values(dataset)
+        return cls.__collect_page_numbers(data_sources)
 
     @classmethod
-    def __collect_page_numbers(cls, sections: any) -> list[int]:
+    def __collect_page_numbers(cls, data_sources: any) -> list[int]:
         unique_pages = set()
         page_numbers = []
 
-        for section in sections:
-            if section is not None and section.data_source is not None:
-                page = int(section.data_source.page)
+        for data_source in data_sources:
+            if data_source is not None and data_source.page is not None:
+                page = int(data_source.page)
                 if page not in unique_pages:
                     unique_pages.add(page)
                     page_numbers.append(page)
