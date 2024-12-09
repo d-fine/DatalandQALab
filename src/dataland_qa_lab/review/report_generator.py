@@ -82,7 +82,7 @@ class ReportGenerator:
                         verdict=QaReportDataPointVerdict.QAREJECTED,
                         correctedData=ExtendedDataPointYesNo(
                             value=corrected_value,
-                            quality="automatically generated",
+                            quality="Incomplete",
                             comment="justification",
                             dataSource=data_sources[i],
                         ),
