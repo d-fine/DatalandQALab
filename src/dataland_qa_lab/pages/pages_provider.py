@@ -38,7 +38,7 @@ class PagesProvider:
     @classmethod
     def get_relevant_pages_of_nuclear_and_gas_yes_no_questions(cls, dataset: NuclearAndGasData) -> list[int]:
         """Get page numbers of yes and no questions."""
-        data_sources = DataProvider().get_datasources_of_dataset(dataset)
+        data_sources = DataProvider().get_datasources_of_nuclear_and_gas_yes_no_questions(dataset)
         return cls.__collect_page_numbers(data_sources)
 
     @classmethod
