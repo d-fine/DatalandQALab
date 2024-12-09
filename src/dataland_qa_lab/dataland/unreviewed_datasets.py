@@ -1,14 +1,12 @@
 import logging
 
-from dataland_qa.models.review_queue_response import ReviewQueueResponse
-
 from dataland_qa_lab.utils import config
 
 
 class UnreviewedDatasets:
     """Class representing the unreviewed datasets from the API."""
 
-    datasets: list[ReviewQueueResponse]
+    datasets: list[any]
     list_of_data_ids: list[str]
 
     def __init__(self) -> None:
