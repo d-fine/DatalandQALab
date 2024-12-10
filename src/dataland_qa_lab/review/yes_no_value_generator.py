@@ -1,12 +1,13 @@
 import ast
 
 from azure.ai.documentintelligence.models import AnalyzeResult
+from dataland_backend.models.yes_no import YesNo
 from openai import AzureOpenAI
 
 from dataland_qa_lab.utils import config
 
 
-def extract_yes_no_template(relevant_document: AnalyzeResult) -> list[str | None]:
+def extract_yes_no_template(relevant_document: AnalyzeResult) -> dict[str, YesNo | None]:
     """Get values from yes and no section."""
     conf = config.get_config()
     client = AzureOpenAI(
@@ -42,4 +43,15 @@ def extract_yes_no_template(relevant_document: AnalyzeResult) -> list[str | None
         ],
     )
     value = initial_openai_response.choices[0].message.content
-    return ast.literal_eval(value)
+    value_list = ast.literal_eval(value)
+
+    sections = {
+        "nuclear_energy_related_activities_section426": YesNo(value_list[0]),
+        "nuclear_energy_related_activities_section427": YesNo(value_list[1]),
+        "nuclear_energy_related_activities_section428": YesNo(value_list[2]),
+        "fossil_gas_related_activities_section429": YesNo(value_list[3]),
+        "fossil_gas_related_activities_section430": YesNo(value_list[4]),
+        "fossil_gas_related_activities_section431": YesNo(value_list[5]),
+    }
+
+    return sections

@@ -56,9 +56,9 @@ def test_compare_yes_no_values(_mock_create: Mock) -> None:  # noqa: PT019
         dataset=test_dataset, relevant_pages=AnalyzeResult()
     )
 
-    assert corrected_values[0].corrected_data.value is None
-    assert corrected_values[0].comment == "Geprüft durch AzureOpenAI"
-    assert corrected_values[4].corrected_data.value == "Yes"
+    assert corrected_values.get("nuclear_energy_related_activities_section426").corrected_data.value is None
+    assert corrected_values.get("nuclear_energy_related_activities_section426").comment == "Geprüft durch AzureOpenAI"
+    assert corrected_values.get("fossil_gas_related_activities_section430").corrected_data.value == "Yes"
 
 
 @patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())

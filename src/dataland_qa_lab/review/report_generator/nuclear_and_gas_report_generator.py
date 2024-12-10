@@ -67,38 +67,34 @@ class NuclearAndGasReportGenerator(ReportGenerator):
     @classmethod
     def compare_yes_no_values(
         cls, dataset: NuclearAndGasDataBackend, relevant_pages: AnalyzeResult
-    ) -> list[QaReportDataPointExtendedDataPointYesNo | None]:
+    ) -> dict[str, QaReportDataPointExtendedDataPointYesNo | None]:
         """Build first yes no data point."""
         yes_no_values = yes_no_value_generator.extract_yes_no_template(relevant_document=relevant_pages)
         yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
         data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
-        qa_data_points = []
+        qa_data_points = {}
 
-        for i in range(6):
-            corrected_value = yes_no_values[i]
-            dataland_value = yes_no_values_from_dataland[i]
+        for key, dataland_value in yes_no_values_from_dataland.items():
+            corrected_value = yes_no_values.get(key)
+            data_source = data_sources.get(key)
 
             if corrected_value != dataland_value:
-                qa_data_points.append(
-                    QaReportDataPointExtendedDataPointYesNo(
-                        comment="tbd",
-                        verdict=QaReportDataPointVerdict.QAREJECTED,
-                        correctedData=ExtendedDataPointYesNo(
-                            value=corrected_value,
-                            quality="Incomplete",
-                            comment="justification",
-                            dataSource=data_sources[i],
-                        ),
-                    )
+                qa_data_points[key] = QaReportDataPointExtendedDataPointYesNo(
+                    comment="tbd",
+                    verdict=QaReportDataPointVerdict.QAREJECTED,
+                    correctedData=ExtendedDataPointYesNo(
+                        value=corrected_value,
+                        quality="Incomplete",
+                        comment="justification",
+                        dataSource=data_source,
+                    ),
                 )
             else:
-                qa_data_points.append(
-                    QaReportDataPointExtendedDataPointYesNo(
-                        comment="Geprüft durch AzureOpenAI",
-                        verdict=QaReportDataPointVerdict.QAACCEPTED,
-                        correctedData=ExtendedDataPointYesNo(),
-                    )
+                qa_data_points[key] = QaReportDataPointExtendedDataPointYesNo(
+                    comment="Geprüft durch AzureOpenAI",
+                    verdict=QaReportDataPointVerdict.QAACCEPTED,
+                    correctedData=ExtendedDataPointYesNo(),
                 )
 
         return qa_data_points
