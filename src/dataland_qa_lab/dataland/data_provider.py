@@ -53,8 +53,12 @@ def get_datasources_of_nuclear_and_gas_numeric_values(
         "revenue_denominator": data.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_revenue_denominator,
         "capex_numerator": data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_capex_numerator,
         "revenue_numerator": data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_revenue_numerator,
-        "not_aligned_capex": data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex,
-        "not_aligned_revenue": data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue,
+        "not_aligned_capex": (
+            data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex
+        ),
+        "not_aligned_revenue": (
+            data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue
+        ),
         "non_eligible_capex": data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_capex,
         "non_eligible_revenue": data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue,
     }
