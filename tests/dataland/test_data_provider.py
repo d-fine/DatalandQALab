@@ -19,10 +19,10 @@ def test_get_yes_no_values_by_data() -> None:
 
     values = data_provider.get_yes_no_values_by_data(test_dataset)
 
-    assert values[0] == "Yes"
+    assert values.get("nuclear_energy_related_activities_section426") == "Yes"
     assert len(values) == 6
-    assert values[2] is None
-    assert values[4] == "No"
+    assert values.get("nuclear_energy_related_activities_section428") is None
+    assert values.get("fossil_gas_related_activities_section430") == "No"
 
 
 def test_get_datasources_of_dataset() -> None:
@@ -46,9 +46,9 @@ def test_get_datasources_of_dataset() -> None:
 
     values = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(test_dataset)
 
-    assert values[0].page == "21"
+    assert values.get("nuclear_energy_related_activities_section426").page == "21"
     assert len(values) == 6
-    assert values[2] is None
-    assert values[4].file_reference == "test"
-    assert values[5].tag_name is not None
-    assert values[5].file_name == "test-file"
+    assert values.get("nuclear_energy_related_activities_section427") is None
+    assert values.get("fossil_gas_related_activities_section430").file_reference == "test"
+    assert values.get("fossil_gas_related_activities_section431").tag_name is not None
+    assert values.get("fossil_gas_related_activities_section431").file_name == "test-file"

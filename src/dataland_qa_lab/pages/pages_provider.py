@@ -1,6 +1,7 @@
 import io
 
 import pypdf
+from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 
 from dataland_qa_lab.dataland import data_provider
@@ -46,13 +47,11 @@ def get_relevant_pages_of_numeric(dataset: NuclearAndGasData) -> list[int]:
     return collect_page_numbers(data_sources)
 
 
-def collect_page_numbers(data_sources: any) -> list[int]:
+def collect_page_numbers(data_sources: dict[str, ExtendedDocumentReference | None]) -> list[int]:
     """Helper function to gather page numbers."""
     unique_pages = set()
-    for data_source in data_sources:
-        if data_source is not None and data_source.page is not None:
-            page = int(data_source.page)
-            if page not in unique_pages:
-                unique_pages.add(page)
+    for data_source in data_sources.values():
+        if data_source and data_source.page is not None:
+            unique_pages.add(int(data_source.page))
 
     return sorted(unique_pages)

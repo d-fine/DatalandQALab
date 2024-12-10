@@ -1,5 +1,5 @@
-from dataland_qa_lab.dataland.dataset_provider import DatasetProvider
-from dataland_qa_lab.pages.pages_provider import PagesProvider
+from dataland_qa_lab.dataland import dataset_provider
+from dataland_qa_lab.pages import pages_provider
 from dataland_qa_lab.pages.text_to_doc_intelligence import TextToDocIntelligence
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import ReportGenerator
 from dataland_qa_lab.utils import config
@@ -7,9 +7,9 @@ from dataland_qa_lab.utils import config
 
 def review_dataset(data_id: str) -> str | None:
     """Review a dataset."""
-    dataset = DatasetProvider().get_dataset_by_id(data_id)
+    dataset = dataset_provider.get_dataset_by_id(data_id)
 
-    relevant_pages_pdf_reader = PagesProvider().get_relevant_pages_of_pdf(dataset.data)
+    relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(dataset.data)
 
     readable_text = TextToDocIntelligence().extract_text_of_pdf(relevant_pages_pdf_reader)
 

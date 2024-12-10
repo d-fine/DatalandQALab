@@ -40,12 +40,8 @@ class NuclearAndGasReportGenerator(ReportGenerator):
 
         yes_no_data_points = self.compare_yes_no_values(dataset=dataset, relevant_pages=relevant_pages)
 
-        self.report.general.general.nuclear_energy_related_activities_section426 = yes_no_data_points[0]
-        self.report.general.general.nuclear_energy_related_activities_section427 = yes_no_data_points[1]
-        self.report.general.general.nuclear_energy_related_activities_section428 = yes_no_data_points[2]
-        self.report.general.general.fossil_gas_related_activities_section429 = yes_no_data_points[3]
-        self.report.general.general.fossil_gas_related_activities_section430 = yes_no_data_points[4]
-        self.report.general.general.fossil_gas_related_activities_section431 = yes_no_data_points[5]
+        for key, value in yes_no_data_points.items():
+            setattr(self.report.general.general, key, value)
 
         return self.report
 
