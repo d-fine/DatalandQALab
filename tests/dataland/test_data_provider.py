@@ -4,7 +4,7 @@ from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_backend.models.nuclear_and_gas_general import NuclearAndGasGeneral
 from dataland_backend.models.nuclear_and_gas_general_general import NuclearAndGasGeneralGeneral
 
-from dataland_qa_lab.dataland.data_provider import DataProvider
+from dataland_qa_lab.dataland import data_provider
 
 
 def test_get_yes_no_values_by_data() -> None:
@@ -17,8 +17,7 @@ def test_get_yes_no_values_by_data() -> None:
         )
     )
 
-    provider = DataProvider()
-    values = provider.get_yes_no_values_by_data(test_dataset)
+    values = data_provider.get_yes_no_values_by_data(test_dataset)
 
     assert values[0] == "Yes"
     assert len(values) == 6
@@ -45,8 +44,7 @@ def test_get_datasources_of_dataset() -> None:
         )
     )
 
-    provider = DataProvider()
-    values = provider.get_datasources_of_nuclear_and_gas_yes_no_questions(test_dataset)
+    values = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(test_dataset)
 
     assert values[0].page == "21"
     assert len(values) == 6

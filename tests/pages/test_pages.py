@@ -25,7 +25,7 @@ from dataland_backend.models.nuclear_and_gas_general_taxonomy_non_eligible impor
     NuclearAndGasGeneralTaxonomyNonEligible,
 )
 
-from dataland_qa_lab.pages.pages_provider import PagesProvider
+from dataland_qa_lab.pages import pages_provider
 
 
 def test_get_relevant_pages_yes_no() -> None:
@@ -41,7 +41,7 @@ def test_get_relevant_pages_yes_no() -> None:
             )
         )
     )
-    page_numbers = PagesProvider().get_relevant_pages_of_nuclear_and_gas_yes_no_questions(test_dataset)
+    page_numbers = pages_provider.get_relevant_pages_of_nuclear_and_gas_yes_no_questions(test_dataset)
 
     assert {21, 22}.issubset(page_numbers)
 
@@ -64,7 +64,7 @@ def test_get_relevant_pages_numeric() -> None:
             ),
         )
     )
-    page_numbers = PagesProvider().get_relevant_pages_of_numeric(test_dataset)
+    page_numbers = pages_provider.get_relevant_pages_of_numeric(test_dataset)
 
     assert {21, 22}.issubset(page_numbers)
 
@@ -102,6 +102,6 @@ def test_get_relevant_pages_of_pdf() -> None:
         )
     )
 
-    pages = PagesProvider().get_relevant_pages_of_pdf(test_dataset)
+    pages = pages_provider.get_relevant_pages_of_pdf(test_dataset)
 
     assert pages is not None

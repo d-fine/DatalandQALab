@@ -21,11 +21,12 @@ from dataland_qa.models.qa_report_data_point_extended_data_point_yes_no import (
 )
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
-from dataland_qa_lab.dataland.data_provider import DataProvider
-from dataland_qa_lab.review.yes_no_value_generator import YesNoValueGenerator
+from dataland_qa_lab.dataland import data_provider
+from dataland_qa_lab.review import yes_no_value_generator
+from dataland_qa_lab.review.report_generator.abstract_report_generator import ReportGenerator
 
 
-class ReportGenerator:
+class NuclearAndGasReportGenerator(ReportGenerator):
     """Generate a quality assurance report."""
 
     relevant_pages: AnalyzeResult
@@ -68,9 +69,9 @@ class ReportGenerator:
         cls, dataset: NuclearAndGasDataBackend, relevant_pages: AnalyzeResult
     ) -> list[QaReportDataPointExtendedDataPointYesNo | None]:
         """Build first yes no data point."""
-        yes_no_values = YesNoValueGenerator().extract_yes_no_template(relevant_document=relevant_pages)
-        yes_no_values_from_dataland = DataProvider().get_yes_no_values_by_data(data=dataset)
-        data_sources = DataProvider().get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
+        yes_no_values = yes_no_value_generator.extract_yes_no_template(relevant_document=relevant_pages)
+        yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
+        data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
         qa_data_points = []
 
