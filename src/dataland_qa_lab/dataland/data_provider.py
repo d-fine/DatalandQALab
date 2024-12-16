@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 from dataland_backend.models.yes_no import YesNo
 
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
+
+if TYPE_CHECKING:
+    from dataland_backend.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
 
 
 def get_yes_no_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, YesNo | None]:
@@ -13,6 +18,30 @@ def get_yes_no_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, Ye
         for key, data in sections.items()
     }
     return section_values
+
+def get_taxonomy_aligned_revenue_denominator_values_by_data(data: NuclearAndGasDataCollection):
+    """Get taxonomy aligned revenue denominator values of the given dataset as a dictionary with section names as keys."""
+    value = {"value": {}}
+    values: NuclearAndGasAlignedDenominator = (
+        data.taxonomy_aligned_denominator
+        .get("taxonomy_aligned_revenue_denominator")
+        .datapoint.value
+    )
+    for field_name, field_value in values.to_dict().items():
+        if field_value is None:
+            value["value"][field_name] = {
+                "mitigationAndAdaptation": None,
+                "mitigation": None,
+                "adaptation": None,
+            }
+        else:
+            value["value"][field_name] = {
+                "mitigationAndAdaptation": field_value.mitigation_and_adaptation,
+                "mitigation": field_value.mitigation,
+                "adaptation": field_value.adaptation,
+            }
+
+    return value
 
 
 def get_datasources_of_nuclear_and_gas_yes_no_questions(
