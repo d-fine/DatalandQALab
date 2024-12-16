@@ -50,32 +50,30 @@ class TemplateExtractor:
                 }
             ],
         )
+
         tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
-        return TemplateExtractor.format_json(tool_call.arguments)
+        return TemplateExtractor.format_json(tool_call)
 
     @staticmethod
-    def format_json(arguments: str) -> list:
+    def format_json(tool_call) -> list:  # noqa: ANN001
         """Format the JSON arguments.
 
         Args:
-            arguments (dict): The arguments to be formatted.
+            tool_call: The output of the gpt request.
 
         Returns:
             str: The formatted JSON arguments.
         """
-        data = json.loads(arguments)
+        # Simulierte Rückgabe
+        response = tool_call
 
-        # Gruppiere nach Zeilen, aber nur mit Werten
-        grouped_data = {}
-        for key, value in data.items():
-            row_key = key.split("_row")[-1]
-            group_key = f"row{row_key}"
-            grouped_data.setdefault(group_key, [])
-            grouped_data[group_key].append(value)
+        # Extrahiere den JSON-Teil aus der Rückgabe
+        start_index = response.find("arguments='") + len("arguments='")
+        end_index = response.find("', name=")
+        json_string = response[start_index:end_index]
 
-        result = []
-        # Jede Zeile in einer Zeile ausgeben
-        for row, values in grouped_data.items():
-            result.append(f"{row}: {values}")
+        # Lade den JSON-String in ein Python-Dictionary
+        data = json.loads(json_string)
 
-        return result
+        # Erstelle eine Liste der Werte
+        return list(data.values())
