@@ -34,7 +34,7 @@ def get_taxonomy_aligned_revenue_denominator_values_by_data(data: NuclearAndGasD
 
 
 def get_taxonomy_aligned_capex_denominator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned revenue denominator values from the dataset."""
+    """Retrieve taxonomy-aligned capex denominator values from the dataset."""
     denominator_values_dict = {}
     denominator_values = (
         data.taxonomy_aligned_denominator
@@ -47,7 +47,7 @@ def get_taxonomy_aligned_capex_denominator_values_by_data(data: NuclearAndGasDat
 
 
 def get_taxonomy_aligned_revenue_numerator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy-aligned revenue numerator values from the dataset."""
     numerator_values_dict = {}
     numerator_values = (
         data.taxonomy_aligned_numerator
@@ -60,7 +60,7 @@ def get_taxonomy_aligned_revenue_numerator_values_by_data(data: NuclearAndGasDat
 
 
 def get_taxonomy_aligned_capex_numerator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy-aligned capex numerator values from the dataset."""
     numerator_values_dict = {}
     numerator_values = (
         data.taxonomy_aligned_numerator
@@ -73,7 +73,7 @@ def get_taxonomy_aligned_capex_numerator_values_by_data(data: NuclearAndGasDataC
 
 
 def get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy eligible but not aligned revenue numerator values from the dataset."""
     eligible_but_not_aligned_dict = {}
     eligible_values = (
         data.taxonomy_eligble_but_not_aligned
@@ -86,7 +86,7 @@ def get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(data: NuclearAn
 
 
 def get_taxonomy_eligible_but_not_aligned_capex_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy eligible but not aligned capex from the dataset."""
     eligible_but_not_aligned_dict = {}
     eligible_values = (
         data.taxonomy_eligble_but_not_aligned
@@ -99,7 +99,7 @@ def get_taxonomy_eligible_but_not_aligned_capex_values_by_data(data: NuclearAndG
 
 
 def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy non eligible revenue numerator values from the dataset."""
     non_eligible_dict = {}
     non_eligible_values = (
         data.taxonomy_non_eligible
@@ -112,7 +112,7 @@ def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataColl
 
 
 def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollection) -> dict:
-    """Retrieve taxonomy-aligned share numerator values from the dataset."""
+    """Retrieve taxonomy non eligible capex numerator values from the dataset."""
     non_eligible_dict = {}
     non_eligible_values = (
         data.taxonomy_non_eligible
