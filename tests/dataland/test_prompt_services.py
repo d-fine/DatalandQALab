@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from dataland_qa_lab.prompting_services import prompting_service
+from dataland_qa_lab.review import generate_gpt_request
 
 
 @pytest.fixture
@@ -150,3 +151,22 @@ def test_create_sub_prompt_template5() -> None:
         assert "description" in properties[key], f"'{key}' sollte eine Beschreibung haben."
         assert f"percentage of row {row}" in properties[key]["description"], \
             f"Die Beschreibung von '{key}' ist nicht korrekt."
+
+
+@pytest.fixture
+def mock_liste() -> Mock:
+    liste = Mock()
+    liste.content = "[Yes, Yes, Yes, No, No, No]"
+    return liste
+
+
+def test_get_correct_values_from_report(mock_liste: Mock) -> list:
+
+    result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        prompting_service.PromptingService.create_main_prompt(1, mock_liste),
+        prompting_service.PromptingService.create_sub_prompt_template1()
+        )
+
+    excepted = ['Yes', 'Yes', 'Yes', 'No', 'No', 'No']  # noqa: Q000
+
+    assert result == excepted
