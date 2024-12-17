@@ -142,112 +142,92 @@ def test_create_sub_prompt_template5() -> None:
     result = prompting_service.PromptingService.create_sub_prompt_template5()
     properties = result["properties"]
 
-    assert len(properties) == len(rows), "Die Anzahl der 'properties' sollte der Anzahl der Reihen entsprechen."
+    assert len(properties) == len(rows), "The number of properties should match the number of rows."
 
     for row in rows:
         key = f"answer_value_%_row{row}"
-        assert key in properties, f"Der Schlüssel '{key}' fehlt in den Properties."
-        assert properties[key]["type"] == "string", f"Der Typ von '{key}' sollte 'string' sein."
-        assert "description" in properties[key], f"'{key}' sollte eine Beschreibung haben."
-        assert (
-            f"percentage of row {row}" in properties[key]["description"]
-        ), f"Die Beschreibung von '{key}' ist nicht korrekt."
+        assert key in properties, f"The key '{key}' is missing."
+        assert properties[key]["type"] == "string", f"The type of '{key}' should be of type string."
+        assert "description" in properties[key], f"'{key}' should have a description."
+        assert f"percentage of row {row}" in properties[key]["description"], f"The discription '{key}' is not correct."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_correct_values_from_report(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
 
-    # Rufe die zu testende Methode auf
     result = yes_no_value_generator.get_correct_values_from_report(mock_pdf)
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template1(),
     )
-    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
 
-    # Rufe die zu testende Methode auf
     result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
         prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template1(),
     )
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template1(),
     )
-    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_alligned_denominator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
 
-    # Rufe die zu testende Methode auf
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(mock_pdf)
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(2, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_alligned_numerator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
 
-    # Rufe die zu testende Methode auf
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(mock_pdf)
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(3, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_eligible_not_alligned(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
 
-    # Rufe die zu testende Methode auf
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_eligible_not_alligned(mock_pdf)
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(4, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_non_eligible(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    # Simuliere die Rückgabe der GPT-Funktion
     mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
 
-    # Rufe die zu testende Methode auf
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_non_eligible(mock_pdf)
 
-    # Assertions
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(5, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template5(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "Die Rückgabewerte stimmen nicht überein."
+    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
