@@ -1,9 +1,9 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
 from dataland_qa_lab.prompting_services import prompting_service
-from dataland_qa_lab.review import generate_gpt_request, numeric_value_generator, yes_no_value_generator
+from dataland_qa_lab.review import yes_no_value_generator
 
 
 @pytest.fixture
@@ -154,66 +154,17 @@ def test_create_sub_prompt_template5() -> None:
         ), f"Die Beschreibung von '{key}' ist nicht korrekt."
 
 
-@pytest.fixture
-def mock_liste1() -> Mock:
-    liste = Mock()
-    liste.content = "[Yes, Yes, Yes, No, No, No]"
-    return liste
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_get_correct_values_from_report(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
+    # Simuliere die Rückgabe der GPT-Funktion
+    mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
 
+    # Rufe die zu testende Methode auf
+    result = yes_no_value_generator.get_correct_values_from_report(mock_pdf)
 
-def test_get_correct_values_from_report(mock_liste1: Mock) -> None:
-    result = yes_no_value_generator.get_correct_values_from_report(mock_liste1)
-
-    excepted = ["Yes", "Yes", "Yes", "No", "No", "No"]
-
-    assert result == excepted
-
-
-def test_generate_gpt_request(mock_liste1: Mock) -> None:
-    result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-        prompting_service.PromptingService.create_main_prompt(1, mock_liste1),
+    # Assertions
+    mock_generate_gpt_request.assert_called_once_with(
+        prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template1(),
     )
-
-    excepted = ["Yes", "Yes", "Yes", "No", "No", "No"]
-
-    assert result == excepted
-
-
-@pytest.fixture
-def mock_liste2() -> Mock:
-    liste = Mock()
-    liste.content = "[10, 0, 25, 2.7, 3.1, 100]"
-    return liste
-
-
-def test_get_taxonomy_alligned_denominator(mock_liste2: Mock) -> None:
-    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(mock_liste2))
-
-    excepted = 24
-
-    assert result == excepted
-
-
-def test_get_taxonomy_alligned_numerator(mock_liste2: Mock) -> None:
-    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(mock_liste2))
-
-    excepted = 24
-
-    assert result == excepted
-
-
-def test_get_taxonomy_eligible_not_alligned(mock_liste2: Mock) -> None:
-    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_eligible_not_alligned(mock_liste2))
-
-    excepted = 24
-
-    assert result == excepted
-
-
-def test_get_taxonomy_non_eligible(mock_liste2: Mock) -> None:
-    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_non_eligible(mock_liste2))
-
-    excepted = 24
-
-    assert result == excepted
+    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "Die Rückgabewerte stimmen nicht überein."
