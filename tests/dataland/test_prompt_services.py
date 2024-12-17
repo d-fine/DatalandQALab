@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from dataland_qa_lab.prompting_services import prompting_service
-from dataland_qa_lab.review import yes_no_value_generator
+from dataland_qa_lab.review import generate_gpt_request, yes_no_value_generator
 
 
 @pytest.fixture
@@ -161,6 +161,25 @@ def test_get_correct_values_from_report(mock_generate_gpt_request: Mock, mock_pd
 
     # Rufe die zu testende Methode auf
     result = yes_no_value_generator.get_correct_values_from_report(mock_pdf)
+
+    # Assertions
+    mock_generate_gpt_request.assert_called_once_with(
+        prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
+        prompting_service.PromptingService.create_sub_prompt_template1(),
+    )
+    assert result == ["Yes", "No", "Yes", "No", "Yes", "No"], "Die Rückgabewerte stimmen nicht überein."
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
+    # Simuliere die Rückgabe der GPT-Funktion
+    mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
+
+    # Rufe die zu testende Methode auf
+    result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        prompting_service.PromptingService.create_main_prompt(1, mock_pdf),
+        prompting_service.PromptingService.create_sub_prompt_template1(),
+    )
 
     # Assertions
     mock_generate_gpt_request.assert_called_once_with(
