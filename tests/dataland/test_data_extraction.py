@@ -1,50 +1,40 @@
-from unittest.mock import Mock, patch
+import io
 
 import pytest
+from pypdf import PdfReader, PdfWriter
 
-from dataland_qa_lab.prompting_services import prompting_service
-from dataland_qa_lab.review import generate_gpt_request
-
-
-@pytest.fixture
-def mock_openai_response() -> list:
-    """Erstellt eine simulierte GPT-Antwort mit tool_calls."""
-    class MockToolCall:
-        arguments = "{'1': 'Yes', '2': 'No', '3': 'Yes', '4': 'No', '5': 'Yes', '6': 'No'}"
-
-    class MockMessage:
-        tool_calls = [MockToolCall()]  # noqa: RUF012
-
-    class MockChoice:
-        message = MockMessage()
-
-    class MockResponse:
-        choices = [MockChoice()]  # noqa: RUF012
-
-    return MockResponse()
+from dataland_qa_lab.dataland import data_extraction
 
 
 @pytest.fixture
-def mock_pdf() -> Mock:
-    pdf = Mock()
-    pdf.content = "This is a test PDF content."
-    return pdf
+def mock_pdf_with_pages() -> PdfReader:
+    """Erstellt eine PDF-Datei mit mehreren Seiten zum Testen."""
+    pdf_writer = PdfWriter()
+    # Erstelle Seiten mit Testinhalten
+    for _i in range(1, 4):  # Eine 3-seitige PDF
+        pdf_writer.add_blank_page(width=200, height=200)
+
+    # Schreibe die PDF in einen BytesIO-Stream
+    pdf_stream = io.BytesIO()
+    pdf_writer.write(pdf_stream)
+    pdf_stream.seek(0)  # Setze den Zeiger auf den Anfang des Streams
+
+    return PdfReader(pdf_stream)
 
 
-@patch("openai.AzureOpenAI")
-@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
-def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_azure_openai: Mock, mock_pdf: Mock) -> None:  # noqa: ARG001
+def test_get_relevant_page_of_pdf(mock_pdf_with_pages: PdfReader) -> None:
+    """Testet die Extraktion einer Seite aus einer PDF-Datei."""
     # Arrange
-    mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
-
-    mainprompt = prompting_service.PromptingService.create_main_prompt(1, mock_pdf)
-    subprompt = prompting_service.PromptingService.create_sub_prompt_template1()
+    page_number = 2  # Die 2. Seite extrahieren
+    full_pdf = mock_pdf_with_pages
 
     # Act
-    result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(mainprompt, subprompt)
+    result_stream = data_extraction.get_relevant_page_of_pdf(page_number, full_pdf)
 
     # Assert
-    mock_generate_gpt_request.assert_called_once_with(mainprompt, subprompt)
+    # Prüfen, ob das Ergebnis ein BytesIO-Objekt ist
+    assert isinstance(result_stream, io.BytesIO), "Das Ergebnis sollte ein BytesIO-Objekt sein."
 
-    expected_result = ["Yes", "No", "Yes", "No", "Yes", "No"]
-    assert result == expected_result, "Die Rückgabewerte stimmen nicht überein."
+    # Prüfen, ob die extrahierte Seite gültig ist
+    extracted_pdf = PdfReader(result_stream)
+    assert len(extracted_pdf.pages) == 1, "Die extrahierte PDF sollte genau eine Seite enthalten."
