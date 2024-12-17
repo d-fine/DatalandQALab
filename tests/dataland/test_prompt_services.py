@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from dataland_qa_lab.prompting_services import prompting_service
-from dataland_qa_lab.review import generate_gpt_request
+from dataland_qa_lab.review import generate_gpt_request, numeric_value_generator, yes_no_value_generator
 
 
 @pytest.fixture
@@ -45,21 +45,21 @@ def test_invalid_template(mock_pdf: Mock) -> None:
 
 def test_create_sub_prompt_template1() -> None:
     expected = {
-            "type": "object",
-            "properties": {
-                "1": {
-                    "type": "string",
-                    "description": """The precise answer to the first question
+        "type": "object",
+        "properties": {
+            "1": {
+                "type": "string",
+                "description": """The precise answer to the first question
                         of Nuclear energy related activities. "The undertaking carries out,
                         funds or has exposures to research, development, demonstration and
                         deployment of innovative electricity generation facilities that
                         produce energy from nuclear processes with minimal waste from
                         the fuel cycle." Write only Yes or No.
                         You need to answer this question.""",
-                },
-                "2": {
-                    "type": "string",
-                    "description": """The precise answer to the second question
+            },
+            "2": {
+                "type": "string",
+                "description": """The precise answer to the second question
                         of Nuclear energy related activities. "The undertaking carries out,
                         funds or has exposures to construction and safe operation of new
                         nuclear installations to produce electricity or process heat,
@@ -67,10 +67,10 @@ def test_create_sub_prompt_template1() -> None:
                         processes such as hydrogen production, as well as their safety
                         upgrades, using best available technologies." Write only Yes or No
                         You need to answer this question.""",
-                },
-                "3": {
-                    "type": "string",
-                    "description": """The precise answer to the third question
+            },
+            "3": {
+                "type": "string",
+                "description": """The precise answer to the third question
                         of Nuclear energy related activities. "The undertaking carries out,
                         funds or has exposures to safe operation of existing nuclear
                         installations that produce electricity or process heat, including
@@ -78,44 +78,44 @@ def test_create_sub_prompt_template1() -> None:
                         as hydrogen production from nuclear energy, as well as their safety
                         upgrades." Write only Yes or No
                         You need to answer this question.""",
-                },
-                "4": {
-                    "type": "string",
-                    "description": """The precise answer to question
+            },
+            "4": {
+                "type": "string",
+                "description": """The precise answer to question
                         of Fossil gas related activities. "The undertaking carries out,
                         funds or has exposures to construction or operation of
                         electricity generation facilities that produce electricity
                         using fossil gaseous fuels." Write only Yes or No
                         You need to answer this question.""",
-                },
-                "5": {
-                    "type": "string",
-                    "description": """The precise answer to the second or fifth question
+            },
+            "5": {
+                "type": "string",
+                "description": """The precise answer to the second or fifth question
                         of Fossil gas related activities. "The undertaking carries out,
                         funds or has exposures to construction, refurbishment, and
                         operation of combined heat/cool and power generation facilities
                         using fossil gaseous fuels." Write only Yes or No
                         You need to answer this question.""",
-                },
-                "6": {
-                    "type": "string",
-                    "description": """The precise answer to the third or sixth question
+            },
+            "6": {
+                "type": "string",
+                "description": """The precise answer to the third or sixth question
                         of Fossil gas related activities. "The undertaking carries out,
                         funds or has exposures to construction, refurbishment and
                         operation of heat generation facilities that produce heat/cool
                         using fossil gaseous fuels." Write only Yes or No
                         You need to answer this question.""",
-                },
             },
-            "required": [
-                "answer_value_1",
-                "answer_value_2",
-                "answer_value_3",
-                "answer_value_4",
-                "answer_value_5",
-                "answer_value_6",
-            ],
-        }
+        },
+        "required": [
+            "answer_value_1",
+            "answer_value_2",
+            "answer_value_3",
+            "answer_value_4",
+            "answer_value_5",
+            "answer_value_6",
+        ],
+    }
     result = prompting_service.PromptingService.create_sub_prompt_template1()
     assert expected == result
 
@@ -149,24 +149,71 @@ def test_create_sub_prompt_template5() -> None:
         assert key in properties, f"Der Schlüssel '{key}' fehlt in den Properties."
         assert properties[key]["type"] == "string", f"Der Typ von '{key}' sollte 'string' sein."
         assert "description" in properties[key], f"'{key}' sollte eine Beschreibung haben."
-        assert f"percentage of row {row}" in properties[key]["description"], \
-            f"Die Beschreibung von '{key}' ist nicht korrekt."
+        assert (
+            f"percentage of row {row}" in properties[key]["description"]
+        ), f"Die Beschreibung von '{key}' ist nicht korrekt."
 
 
 @pytest.fixture
-def mock_liste() -> Mock:
+def mock_liste1() -> Mock:
     liste = Mock()
     liste.content = "[Yes, Yes, Yes, No, No, No]"
     return liste
 
 
-def test_get_correct_values_from_report(mock_liste: Mock) -> list:
+def test_get_correct_values_from_report(mock_liste1: Mock) -> None:
+    result = yes_no_value_generator.get_correct_values_from_report(mock_liste1)
 
+    excepted = ["Yes", "Yes", "Yes", "No", "No", "No"]
+
+    assert result == excepted
+
+
+def test_generate_gpt_request(mock_liste1: Mock) -> None:
     result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-        prompting_service.PromptingService.create_main_prompt(1, mock_liste),
-        prompting_service.PromptingService.create_sub_prompt_template1()
-        )
+        prompting_service.PromptingService.create_main_prompt(1, mock_liste1),
+        prompting_service.PromptingService.create_sub_prompt_template1(),
+    )
 
-    excepted = ['Yes', 'Yes', 'Yes', 'No', 'No', 'No']  # noqa: Q000
+    excepted = ["Yes", "Yes", "Yes", "No", "No", "No"]
+
+    assert result == excepted
+
+
+@pytest.fixture
+def mock_liste2() -> Mock:
+    liste = Mock()
+    liste.content = "[10, 0, 25, 2.7, 3.1, 100]"
+    return liste
+
+
+def test_get_taxonomy_alligned_denominator(mock_liste2: Mock) -> None:
+    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(mock_liste2))
+
+    excepted = 24
+
+    assert result == excepted
+
+
+def test_get_taxonomy_alligned_numerator(mock_liste2: Mock) -> None:
+    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(mock_liste2))
+
+    excepted = 24
+
+    assert result == excepted
+
+
+def test_get_taxonomy_eligible_not_alligned(mock_liste2: Mock) -> None:
+    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_eligible_not_alligned(mock_liste2))
+
+    excepted = 24
+
+    assert result == excepted
+
+
+def test_get_taxonomy_non_eligible(mock_liste2: Mock) -> None:
+    result = len(numeric_value_generator.NumericValueGenerator.get_taxonomy_non_eligible(mock_liste2))
+
+    excepted = 24
 
     assert result == excepted
