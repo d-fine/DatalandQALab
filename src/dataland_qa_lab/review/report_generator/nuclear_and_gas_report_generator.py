@@ -25,7 +25,7 @@ from dataland_qa.models.qa_report_data_point_extended_data_point_yes_no import (
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 from dataland_qa_lab.dataland import data_provider
-from dataland_qa_lab.review import numeric_value_generator, yes_no_value_generator
+from dataland_qa_lab.review import yes_no_value_generator
 from dataland_qa_lab.review.report_generator.abstract_report_generator import ReportGenerator
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
@@ -43,12 +43,6 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         self.report = self.build_report_frame()
 
         yes_no_data_points = self.compare_yes_no_values(dataset=dataset, relevant_pages=relevant_pages)
-
-        print(yes_no_value_generator.get_correct_values_from_report(relevant_pages))  # noqa: T201
-        print(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages))  # noqa: T201
-        print(numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages))  # noqa: T201
-        print(numeric_value_generator.NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages))  # noqa: T201
-        print(numeric_value_generator.NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages))  # noqa: T201
 
         for key, value in yes_no_data_points.items():
             setattr(self.report.general.general, key, value)
