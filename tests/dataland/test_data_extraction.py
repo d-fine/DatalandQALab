@@ -32,16 +32,19 @@ def mock_pdf() -> Mock:
 
 
 @patch("openai.AzureOpenAI")
-def test_generate_gpt_request(mock_azure_openai: Mock, mock_openai_response: list, mock_pdf: Mock) -> None:
-
-    mock_client_instance = Mock()
-    mock_client_instance.chat.completions.create.return_value = mock_openai_response
-    mock_azure_openai.return_value = mock_client_instance
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_azure_openai: Mock, mock_pdf: Mock) -> None:  # noqa: ARG001
+    # Arrange
+    mock_generate_gpt_request.return_value = ["Yes", "No", "Yes", "No", "Yes", "No"]
 
     mainprompt = prompting_service.PromptingService.create_main_prompt(1, mock_pdf)
     subprompt = prompting_service.PromptingService.create_sub_prompt_template1()
 
+    # Act
     result = generate_gpt_request.GenerateGptRequest.generate_gpt_request(mainprompt, subprompt)
 
-    expected_result = ['No', 'No', 'No', 'No', 'No', 'No']  # noqa: Q000
+    # Assert
+    mock_generate_gpt_request.assert_called_once_with(mainprompt, subprompt)
+
+    expected_result = ["Yes", "No", "Yes", "No", "Yes", "No"]
     assert result == expected_result, "Die Rückgabewerte stimmen nicht überein."
