@@ -1,28 +1,23 @@
-from dataland_qa_lab.dataland import company_data, data_extraction
+from azure.ai.documentintelligence.models import AnalyzeResult
 
 
 class PromptingService:
     """Service for handling prompt requests."""
 
     @staticmethod
-    def create_main_prompt(template: int) -> str:
+    def create_main_prompt(template: int, pdf: AnalyzeResult) -> str:
         """Creates the main prompt for each template.
 
         Returns:
             str: The string of the main prompt.
         """
-        pdf_tmp = company_data.CompanyData.get_company_pdf()
-        page_tmp = company_data.CompanyData.get_company_pages()
-        page = page_tmp[0]
-        pdf = pdf_tmp[0]
-
-        match (template):
+        match template:
             case 1:
                 return f"""Given the information from the [relevant documents],
                 provide the answers of all 6 questions in template 1.
                 Only answer with 'Yes' or 'No'. You need to provide 6 answers.
                 # Relevant Documents
-                {data_extraction.ectract_page(page[0], pdf)}
+                {pdf.content}
                 """
             case 2:
                 return f"""For each row 1-8 of template 2 (revenue) it's called
@@ -33,7 +28,7 @@ class PromptingService:
                 Consider translating for this given task like Meldebogen instead of template.
                 Make sure to provide the % sign.
                 # Relevant Documents
-                {data_extraction.ectract_page(page[1], pdf)}
+                {pdf.content}
                 """
             case 3:
                 return f"""For each row 1-8 of template 3 (revenue) it's called
@@ -44,7 +39,7 @@ class PromptingService:
                 Consider translating for this given task like Meldebogen instead of template.
                 Make sure to provide the % sign.
                 # Relevant Documents
-                {data_extraction.ectract_page(page[2], pdf)}
+                {pdf.content}
                 """
             case 4:
                 return f"""For each row 1-8 of template 4 (revenue) it's called
@@ -55,7 +50,7 @@ class PromptingService:
                 Consider translating for this given task like Meldebogen instead of template.
                 Make sure to provide the % sign.
                 # Relevant Documents
-                {data_extraction.ectract_page(page[3], pdf)}
+                {pdf.content}
                 """
             case 5:
                 return f"""For each row 1-8 of template 5 (revenue) it's called
@@ -66,7 +61,7 @@ class PromptingService:
                 Consider translating for this given task like Meldebogen instead of template.
                 Make sure to provide the % sign.
                 # Relevant Documents
-                {data_extraction.ectract_page(page[4], pdf)}
+                {pdf.content}
                 """
             case _:
                 return "Invalid template"
@@ -168,7 +163,7 @@ class PromptingService:
                 schema["properties"][value_key] = {
                     "type": "string",
                     "description": f"""The precise answer to the percentage of {category} of row {row}.
-                    Just write down the number without % symbol. If the value is 0 write 0"""
+                    Just write down the number without % symbol. If the value is 0 or n.a. write 0""",
                 }
 
                 # Hinzufügen zu required
@@ -193,7 +188,7 @@ class PromptingService:
             schema["properties"][value_key] = {
                 "type": "string",
                 "description": f"""The precise answer to the percentage of row {row}.
-                 Just write down the number without % symbol. If the value is 0 write 0"""
+                 Just write down the number without % symbol. If the value is 0 or n.a. write 0""",
             }
 
             schema["required"].extend([value_key])

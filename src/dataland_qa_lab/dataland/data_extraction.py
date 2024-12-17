@@ -78,22 +78,3 @@ def extract_section_426(relevant_document: AnalyzeResult) -> str | None:
         ],
     )
     return initial_openai_response.choices[0].message.content
-
-
-def ectract_page(page_tmp: int, pdf_tmp: str) -> AnalyzeResult:
-    """Extracts text from a specific page of a PDF and returns the analysis result.
-
-    Args:
-        page_tmp (int): The page number to extract.
-        pdf_tmp (str): The path to the PDF file.
-
-    Returns:
-        AnalyzeResult: The result of the text extraction analysis.
-    """
-    path = pdf_tmp
-    page = page_tmp
-
-    reader = pypdf.PdfReader(path)
-    pdf_bytes = get_relevant_page_of_pdf(page=page, full_pdf=reader)
-    analyze_result = extract_text_of_pdf(pdf_bytes)
-    return analyze_result

@@ -26,7 +26,6 @@ class GenerateGptRequest:
             api_version="2024-07-01-preview",
             azure_endpoint=conf.azure_openai_endpoint,
         )
-
         updated_openai_response = client.chat.completions.create(
             model="gpt-4o",
             temperature=0,
