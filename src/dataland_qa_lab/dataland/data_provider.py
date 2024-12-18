@@ -124,27 +124,13 @@ def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollec
     return non_eligible_dict
 
 
-def extract_field_data(values: any, field_name: str) -> dict:
-    """Extract mitigation, adaptation, and mitigationAndAdaptation values from a field.
-
-    Returns:
-        dict: A dictionary containing mitigationAndAdaptation, mitigation, and adaptation values.
-    """
-    # Safely access the field
+def extract_field_data(values: any, field_name: str) -> list:
+    """Extract mitigation, adaptation, and mitigationAndAdaptation values from a field and return them as a list."""
     field_value = getattr(values, field_name, None)
-
-    # Return a dictionary with appropriate subfields
-    if field_value is None:
-        return {
-            "mitigationAndAdaptation": None,
-            "mitigation": None,
-            "adaptation": None,
-        }
-    return {
-        "mitigationAndAdaptation": getattr(field_value, "mitigation_and_adaptation", None),
-        "mitigation": getattr(field_value, "mitigation", None),
-        "adaptation": getattr(field_value, "adaptation", None),
-    }
+    mitigation_and_adaptation = str(getattr(field_value, "mitigation_and_adaptation", 0) or 0)
+    mitigation = str(getattr(field_value, "mitigation", 0) or 0)
+    adaptation = str(getattr(field_value, "adaptation", 0) or 0)
+    return [mitigation_and_adaptation, mitigation, adaptation]
 
 
 def get_datasources_of_nuclear_and_gas_yes_no_questions(
