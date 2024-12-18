@@ -30,7 +30,7 @@ def test_e2e_valid_data() -> None:
 
         # correct values for section 426 are taken from dataland
         assert (
-            get_yes_no_values_by_data(data=data_collection)["nuclear_energy_related_activities_section426"] == YesNo.No
+            get_yes_no_values_by_data(data=data_collection)["nuclear_energy_related_activities_section426"] == YesNo.NO
         )
 
         assert review_dataset(data_id)
