@@ -1,6 +1,4 @@
-from dataland_backend.models.extended_document_reference import (
-    ExtendedDocumentReference as ExtendedDocumentReferenceBackend,
-)
+from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -13,8 +11,8 @@ from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 from dataland_qa_lab.dataland import data_provider
-from dataland_qa_lab.pages.pages_provider import AnalyzeResult
-from dataland_qa_lab.review import NumericValueGenerator
+from dataland_qa_lab.review.numeric_value_generator import NumericValueGenerator
+from dataland_qa_lab.utils.doc_ref_to_qa_ref_mapper import map_doc_ref_to_qa_doc_ref
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
@@ -31,7 +29,7 @@ def build_report(
         correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(
             value=aligned_denominator,
             quality="Incomplete",
-            comment="Checked by AzureOpenAI",
+            comment=comment,
             dataSource=get_data_source(dataset),
         ),
     )
@@ -47,7 +45,7 @@ def compare_denominator_values(
 
     aligned_denominator = NuclearAndGasAlignedDenominator()
     verdict = QaReportDataPointVerdict.QAACCEPTED
-    comment = "Checked by AzureOpenAI"
+    comment = ""
     current_index = 0
 
     for field_name, value_list in dataland_dominator_values.items():
@@ -78,15 +76,3 @@ def get_data_source(dataset: NuclearAndGasDataCollection) -> ExtendedDocumentRef
     data_sources = data_provider.get_datasources_of_nuclear_and_gas_numeric_values(data=dataset)
     data_source = data_sources.get("taxonomy_aligned_denominator")
     return map_doc_ref_to_qa_doc_ref(data_source)
-
-
-def map_doc_ref_to_qa_doc_ref(
-    ref: ExtendedDocumentReferenceBackend | None
-) -> ExtendedDocumentReference | None:
-    """Map backend document reference to QA document reference."""
-    if ref is None:
-        return None
-
-    return ExtendedDocumentReference(
-        page=ref.page, fileName=ref.file_name, tagName=ref.tag_name, fileReference=ref.file_reference
-    )
