@@ -22,3 +22,26 @@ services:
       AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
       AZURE_DOCINTEL_API_KEY: ${AZURE_DOCINTEL_API_KEY}
       AZURE_DOCINTEL_ENDPOINT: ${AZURE_DOCINTEL_ENDPOINT}
+  database:
+    image: postgres:17.2
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: default_database
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+  pgadmin:
+    depends_on:
+      - database
+    image: dpage/pgadmin4:8.14
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "127.0.0.1:5050:80" 
+
+volumes:
+  pgdata:
