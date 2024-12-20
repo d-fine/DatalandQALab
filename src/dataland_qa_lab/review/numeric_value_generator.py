@@ -48,7 +48,7 @@ class NumericValueGenerator:
         """Extracts information from template 5 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list: A list including the etracted values of template 5.
+            list: A list including the extracted values of template 5.
         """
         return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(5, readable_text),
