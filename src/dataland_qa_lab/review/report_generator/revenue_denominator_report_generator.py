@@ -17,8 +17,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_report(
-    dataset: NuclearAndGasDataCollection,
-    relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build report frame for the revenue denominator."""
     aligned_denominator, verdict, comment = compare_denominator_values(dataset, relevant_pages)
@@ -36,8 +35,7 @@ def build_report(
 
 
 def compare_denominator_values(
-    dataset: NuclearAndGasDataCollection,
-    relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> tuple[NuclearAndGasAlignedDenominator, QaReportDataPointVerdict, str]:
     """Compare denominator values and return results."""
     dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages)
@@ -50,7 +48,7 @@ def compare_denominator_values(
 
     for field_name, value_list in dataland_dominator_values.items():
         # Extract the corresponding slice from dominator_values
-        comparison_slice = dominator_values[current_index:current_index + 3]
+        comparison_slice = dominator_values[current_index : current_index + 3]
 
         if value_list != comparison_slice:
             verdict = QaReportDataPointVerdict.QAREJECTED
@@ -63,7 +61,7 @@ def compare_denominator_values(
                 mitigationAndAdaptation=comparison_slice[0],
                 mitigation=comparison_slice[1],
                 adaptation=comparison_slice[2],
-            )
+            ),
         )
         # Update the current index for the next slice
         current_index += 3

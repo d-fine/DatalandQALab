@@ -4,9 +4,7 @@ from dataland_backend.models.extended_document_reference import (
 from dataland_qa.models.extended_document_reference import ExtendedDocumentReference
 
 
-def map_doc_ref_to_qa_doc_ref(
-    ref: ExtendedDocumentReferenceBackend | None
-) -> ExtendedDocumentReference | None:
+def map_doc_ref_to_qa_doc_ref(ref: ExtendedDocumentReferenceBackend | None) -> ExtendedDocumentReference | None:
     """Map backend document reference to QA document reference."""
     if ref is None:
         return None

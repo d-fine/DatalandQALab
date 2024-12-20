@@ -1,4 +1,3 @@
-
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 from dataland_backend.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
 from dataland_backend.models.nuclear_and_gas_aligned_numerator import NuclearAndGasAlignedNumerator
@@ -23,11 +22,7 @@ def get_yes_no_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, Ye
 def get_taxonomy_aligned_revenue_denominator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy-aligned revenue denominator values from the dataset."""
     denominator_values_dict = {}
-    denominator_values = (
-        data.taxonomy_aligned_denominator
-        .get("taxonomy_aligned_revenue_denominator")
-        .datapoint.value
-    )
+    denominator_values = data.taxonomy_aligned_denominator.get("taxonomy_aligned_revenue_denominator").datapoint.value
     for field_name in NuclearAndGasAlignedDenominator.model_fields:
         denominator_values_dict[field_name] = extract_field_data(denominator_values, field_name)
     return denominator_values_dict
@@ -36,11 +31,7 @@ def get_taxonomy_aligned_revenue_denominator_values_by_data(data: NuclearAndGasD
 def get_taxonomy_aligned_capex_denominator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy-aligned capex denominator values from the dataset."""
     denominator_values_dict = {}
-    denominator_values = (
-        data.taxonomy_aligned_denominator
-        .get("taxonomy_aligned_capex_denominator")
-        .datapoint.value
-    )
+    denominator_values = data.taxonomy_aligned_denominator.get("taxonomy_aligned_capex_denominator").datapoint.value
     for field_name in NuclearAndGasAlignedDenominator.model_fields:
         denominator_values_dict[field_name] = extract_field_data(denominator_values, field_name)
     return denominator_values_dict
@@ -49,11 +40,7 @@ def get_taxonomy_aligned_capex_denominator_values_by_data(data: NuclearAndGasDat
 def get_taxonomy_aligned_revenue_numerator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy-aligned revenue numerator values from the dataset."""
     numerator_values_dict = {}
-    numerator_values = (
-        data.taxonomy_aligned_numerator
-        .get("taxonomy_aligned_revenue_numerator")
-        .datapoint.value
-    )
+    numerator_values = data.taxonomy_aligned_numerator.get("taxonomy_aligned_revenue_numerator").datapoint.value
     for field_name in NuclearAndGasAlignedNumerator.model_fields:
         numerator_values_dict[field_name] = extract_field_data(numerator_values, field_name)
     return numerator_values_dict
@@ -62,11 +49,7 @@ def get_taxonomy_aligned_revenue_numerator_values_by_data(data: NuclearAndGasDat
 def get_taxonomy_aligned_capex_numerator_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy-aligned capex numerator values from the dataset."""
     numerator_values_dict = {}
-    numerator_values = (
-        data.taxonomy_aligned_numerator
-        .get("taxonomy_aligned_capex_numerator")
-        .datapoint.value
-    )
+    numerator_values = data.taxonomy_aligned_numerator.get("taxonomy_aligned_capex_numerator").datapoint.value
     for field_name in NuclearAndGasAlignedNumerator.model_fields:
         numerator_values_dict[field_name] = extract_field_data(numerator_values, field_name)
     return numerator_values_dict
@@ -75,11 +58,7 @@ def get_taxonomy_aligned_capex_numerator_values_by_data(data: NuclearAndGasDataC
 def get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy eligible but not aligned revenue numerator values from the dataset."""
     eligible_but_not_aligned_dict = {}
-    eligible_values = (
-        data.taxonomy_eligble_but_not_aligned
-        .get("taxonomy_not_aligned_revenue")
-        .datapoint.value
-    )
+    eligible_values = data.taxonomy_eligble_but_not_aligned.get("taxonomy_not_aligned_revenue").datapoint.value
     for field_name in NuclearAndGasEligibleButNotAligned.model_fields:
         eligible_but_not_aligned_dict[field_name] = extract_field_data(eligible_values, field_name)
     return eligible_but_not_aligned_dict
@@ -88,11 +67,7 @@ def get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(data: NuclearAn
 def get_taxonomy_eligible_but_not_aligned_capex_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy eligible but not aligned capex from the dataset."""
     eligible_but_not_aligned_dict = {}
-    eligible_values = (
-        data.taxonomy_eligble_but_not_aligned
-        .get("taxonomy_not_aligned_capex")
-        .datapoint.value
-    )
+    eligible_values = data.taxonomy_eligble_but_not_aligned.get("taxonomy_not_aligned_capex").datapoint.value
     for field_name in NuclearAndGasEligibleButNotAligned.model_fields:
         eligible_but_not_aligned_dict[field_name] = extract_field_data(eligible_values, field_name)
     return eligible_but_not_aligned_dict
@@ -101,11 +76,7 @@ def get_taxonomy_eligible_but_not_aligned_capex_values_by_data(data: NuclearAndG
 def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy non eligible revenue numerator values from the dataset."""
     non_eligible_dict = {}
-    non_eligible_values = (
-        data.taxonomy_non_eligible
-        .get("taxonomy_non_eligible_revenue")
-        .datapoint.value
-    )
+    non_eligible_values = data.taxonomy_non_eligible.get("taxonomy_non_eligible_revenue").datapoint.value
     for field_name in NuclearAndGasNonEligible.model_fields:
         non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, None)
     return non_eligible_dict
@@ -114,11 +85,7 @@ def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataColl
 def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollection) -> dict:
     """Retrieve taxonomy non eligible capex numerator values from the dataset."""
     non_eligible_dict = {}
-    non_eligible_values = (
-        data.taxonomy_non_eligible
-        .get("taxonomy_non_eligible_capex")
-        .datapoint.value
-    )
+    non_eligible_values = data.taxonomy_non_eligible.get("taxonomy_non_eligible_capex").datapoint.value
     for field_name in NuclearAndGasNonEligible.model_fields:
         non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, None)
     return non_eligible_dict

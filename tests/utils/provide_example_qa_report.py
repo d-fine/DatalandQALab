@@ -62,28 +62,52 @@ def provide_example_qa_report() -> NuclearAndGasData:
 def create_template_1_reportframe() -> NuclearAndGasGeneralGeneral:
     return NuclearAndGasGeneralGeneral(
         nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(
-            value="No", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="No",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
         nuclearEnergyRelatedActivitiesSection427=ExtendedDataPointYesNo(
-            value="No", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="No",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
         nuclearEnergyRelatedActivitiesSection428=ExtendedDataPointYesNo(
-            value="No", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="No",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
         nuclearEnergyRelatedActivitiesSection429=ExtendedDataPointYesNo(
-            value="Yes", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="Yes",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
         fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(
-            value="Yes", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="Yes",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
         fossilGasRelatedActivitiesSection431=ExtendedDataPointYesNo(
-            value="Yes", quality="Audited", comment="",
-            dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            value="Yes",
+            quality="Audited",
+            comment="",
+            dataSource=ExtendedDocumentReference(
+                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         ),
     )
 
@@ -122,13 +146,15 @@ def create_template_2_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedDenomi
                 ),
                 quality="Audited",
                 comment="",
-                dataSource=ExtendedDocumentReference(page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         )
     )
 
 
-def create_template_3_reportframe() -> 	NuclearAndGasGeneralTaxonomyAlignedNumerator:
+def create_template_3_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedNumerator:
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
         nuclear_and_gas_taxonomy_aligned_revenue_numerator=QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
             comment="",
@@ -162,13 +188,15 @@ def create_template_3_reportframe() -> 	NuclearAndGasGeneralTaxonomyAlignedNumer
                 ),
                 quality="Audited",
                 comment="",
-                dataSource=ExtendedDocumentReference(page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+                dataSource=ExtendedDocumentReference(
+                    page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         )
     )
 
 
-def create_template_4_reportframe() ->	NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
+def create_template_4_reportframe() -> NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
         nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue=QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
             value=NuclearAndGasEligibleButNotAligned(
@@ -199,7 +227,9 @@ def create_template_4_reportframe() ->	NuclearAndGasGeneralTaxonomyEligibleButNo
             ),
             quality="Audited",
             comment="",
-            dataSource=ExtendedDocumentReference(page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+            dataSource=ExtendedDocumentReference(
+                page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            ),
         )
     )
 
@@ -222,7 +252,9 @@ def create_template_5_reportframe() -> NuclearAndGasGeneralTaxonomyNonEligible:
                 ),
                 quality="Audited",
                 comment="",
-                dataSource=ExtendedDocumentReference(page="58-59", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234")  # noqa: E501
+                dataSource=ExtendedDocumentReference(
+                    page="58-59", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         )
     )
