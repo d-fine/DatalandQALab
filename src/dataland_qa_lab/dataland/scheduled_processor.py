@@ -2,6 +2,7 @@ import logging
 import time
 
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
+from dataland_qa_lab.review.dataset_reviewer import review_dataset
 
 
 def run_scheduled_processing(iterations: int) -> None:
@@ -20,9 +21,8 @@ def run_scheduled_processing(iterations: int) -> None:
 
             for data_id in reversed(list_of_data_ids[:]):
                 try:
-                    successfully_processed = True  # Replace logic with actual call of the revieweDataset
-                    if successfully_processed:
-                        list_of_data_ids.remove(data_id)
+                    review_dataset(data_id)
+                    list_of_data_ids.remove(data_id)
 
                 except Exception:
                     logging.exception("Error processing dataset %s", data_id)

@@ -4,6 +4,8 @@ from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_backend.models.yes_no import YesNo
 from openai import AzureOpenAI
 
+from dataland_qa_lab.prompting_services import prompting_service
+from dataland_qa_lab.review import generate_gpt_request
 from dataland_qa_lab.utils import config
 
 
@@ -55,3 +57,15 @@ def extract_yes_no_template(relevant_document: AnalyzeResult) -> dict[str, YesNo
     }
 
     return sections
+
+
+def get_correct_values_from_report(readable_text: AnalyzeResult) -> list:
+    """Extracts information from template 1 using Azure OpenAI and returns a list of results.
+
+    Returns:
+        list: A list including the etracted values of template 1
+    """
+    return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        prompting_service.PromptingService.create_main_prompt(1, readable_text),
+        prompting_service.PromptingService.create_sub_prompt_template1(),
+    )
