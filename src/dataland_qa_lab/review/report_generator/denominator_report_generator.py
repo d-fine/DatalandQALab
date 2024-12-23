@@ -5,6 +5,9 @@ from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_denominator 
 from dataland_qa.models.extended_document_reference import ExtendedDocumentReference
 from dataland_qa.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
 from dataland_qa.models.nuclear_and_gas_environmental_objective import NuclearAndGasEnvironmentalObjective
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_aligned_denominator import (
+    NuclearAndGasGeneralTaxonomyAlignedDenominator,
+)
 from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas_aligned_denominator import (
     QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -16,7 +19,18 @@ from dataland_qa_lab.utils.doc_ref_to_qa_ref_mapper import map_doc_ref_to_qa_doc
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
-def build_report(
+def build_report_frame(
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: AnalyzeResult
+) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
+    """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
+    return NuclearAndGasGeneralTaxonomyAlignedDenominator(
+        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_revenue_denominator_report(dataset, relevant_pages),
+        nuclearAndGasTaxonomyAlignedCapexDenominator=build_capex_denominator_report(dataset, relevant_pages)
+    )
+
+
+def build_revenue_denominator_report(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build report frame for the revenue denominator."""
@@ -34,12 +48,19 @@ def build_report(
     )
 
 
+def build_capex_denominator_report(dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult  # noqa: ARG001
+) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
+    """Build report frame for the capex denominator."""
+    # to be done
+    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator()
+
+
 def compare_denominator_values(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> tuple[NuclearAndGasAlignedDenominator, QaReportDataPointVerdict, str]:
     """Compare denominator values and return results."""
     dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages)
-    dataland_dominator_values = data_provider.get_taxonomy_aligned_denominator_values_by_data(dataset)
+    dataland_dominator_values = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
 
     aligned_denominator = NuclearAndGasAlignedDenominator()
     verdict = QaReportDataPointVerdict.QAACCEPTED
