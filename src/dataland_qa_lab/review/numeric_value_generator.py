@@ -8,40 +8,48 @@ class NumericValueGenerator:
     """Extracts and stores all values of template 2 to 5 and compares them to the values in dataland."""
 
     @staticmethod
-    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult) -> list:
+    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult) -> list[float]:
         """Extracts information from template 2 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list: A list including the etracted values of template 2
+            list[float]: A list including the extracted values of template 2 as floats.
         """
-        return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(2, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
+        float_results = [float(value) for value in string_results]
+        return float_results
+
 
     @staticmethod
     def get_taxonomy_alligned_numerator(readable_text: AnalyzeResult) -> list:
         """Extracts information from template 3 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list: A list including the etracted values of template 3.
+            list[float]: A list including the extracted values of template 3 as floats.
         """
-        return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(3, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
+        float_results = [float(value) for value in string_results]
+        return float_results
 
     @staticmethod
     def get_taxonomy_eligible_not_alligned(readable_text: AnalyzeResult) -> list:
         """Extracts information from template 4 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list: A list including the etracted values of template 4.
+            list[float]: A list including the extracted values of template 4 as floats.
+
         """
-        return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(4, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
+        float_results = [float(value) for value in string_results]
+        return float_results
 
     @staticmethod
     def get_taxonomy_non_eligible(readable_text: AnalyzeResult) -> list:
