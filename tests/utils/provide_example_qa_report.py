@@ -1,34 +1,37 @@
-from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
+from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
-from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_numerator import (
+from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_numerator import (
     ExtendedDataPointNuclearAndGasAlignedNumerator,
 )
-from dataland_backend.models.extended_data_point_nuclear_and_gas_non_eligible import (
+from dataland_qa.models.extended_data_point_nuclear_and_gas_eligible_but_not_aligned import (
+    ExtendedDataPointNuclearAndGasEligibleButNotAligned,
+)
+from dataland_qa.models.extended_data_point_nuclear_and_gas_non_eligible import (
     ExtendedDataPointNuclearAndGasNonEligible,
 )
-from dataland_backend.models.extended_data_point_yes_no import ExtendedDataPointYesNo
-from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
-from dataland_backend.models.nuclear_and_gas_aligned_numerator import NuclearAndGasAlignedNumerator
-from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
-from dataland_backend.models.nuclear_and_gas_eligible_but_not_aligned import NuclearAndGasEligibleButNotAligned
-from dataland_backend.models.nuclear_and_gas_general import NuclearAndGasGeneral
-from dataland_backend.models.nuclear_and_gas_general_general import NuclearAndGasGeneralGeneral
-from dataland_backend.models.nuclear_and_gas_general_taxonomy_aligned_denominator import (
+from dataland_qa.models.extended_data_point_yes_no import ExtendedDataPointYesNo
+from dataland_qa.models.extended_document_reference import ExtendedDocumentReference
+from dataland_qa.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
+from dataland_qa.models.nuclear_and_gas_aligned_numerator import NuclearAndGasAlignedNumerator
+from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_qa.models.nuclear_and_gas_eligible_but_not_aligned import NuclearAndGasEligibleButNotAligned
+from dataland_qa.models.nuclear_and_gas_environmental_objective import NuclearAndGasEnvironmentalObjective
+from dataland_qa.models.nuclear_and_gas_general import NuclearAndGasGeneral
+from dataland_qa.models.nuclear_and_gas_general_general import NuclearAndGasGeneralGeneral
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_aligned_denominator import (
     NuclearAndGasGeneralTaxonomyAlignedDenominator,
 )
-from dataland_backend.models.nuclear_and_gas_general_taxonomy_aligned_numerator import (
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_aligned_numerator import (
     NuclearAndGasGeneralTaxonomyAlignedNumerator,
 )
-from dataland_backend.models.nuclear_and_gas_general_taxonomy_eligible_but_not_aligned import (
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_eligible_but_not_aligned import (
     NuclearAndGasGeneralTaxonomyEligibleButNotAligned,
 )
-from dataland_backend.models.nuclear_and_gas_general_taxonomy_non_eligible import (
+from dataland_qa.models.nuclear_and_gas_general_taxonomy_non_eligible import (
     NuclearAndGasGeneralTaxonomyNonEligible,
 )
-from dataland_backend.models.nuclear_and_gas_non_eligible import NuclearAndGasNonEligible
-from dataland_qa.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
-from dataland_qa.models.nuclear_and_gas_environmental_objective import NuclearAndGasEnvironmentalObjective
+from dataland_qa.models.nuclear_and_gas_non_eligible import NuclearAndGasNonEligible
 from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas_aligned_denominator import (
     QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -41,6 +44,7 @@ from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas
 from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas_non_eligible import (
     QaReportDataPointExtendedDataPointNuclearAndGasNonEligible,
 )
+from dataland_qa.models.qa_report_data_point_extended_data_point_yes_no import QaReportDataPointExtendedDataPointYesNo
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 
@@ -61,52 +65,76 @@ def provide_example_qa_report() -> NuclearAndGasData:
 
 def create_template_1_reportframe() -> NuclearAndGasGeneralGeneral:
     return NuclearAndGasGeneralGeneral(
-        nuclearEnergyRelatedActivitiesSection426=ExtendedDataPointYesNo(
-            value="No",
-            quality="Audited",
+        nuclearEnergyRelatedActivitiesSection426=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="No",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
-        nuclearEnergyRelatedActivitiesSection427=ExtendedDataPointYesNo(
-            value="No",
-            quality="Audited",
+        nuclearEnergyRelatedActivitiesSection427=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="No",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
-        nuclearEnergyRelatedActivitiesSection428=ExtendedDataPointYesNo(
-            value="No",
-            quality="Audited",
+        nuclearEnergyRelatedActivitiesSection428=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="No",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
-        nuclearEnergyRelatedActivitiesSection429=ExtendedDataPointYesNo(
-            value="Yes",
-            quality="Audited",
+        nuclearEnergyRelatedActivitiesSection429=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="Yes",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
-        fossilGasRelatedActivitiesSection430=ExtendedDataPointYesNo(
-            value="Yes",
-            quality="Audited",
+        fossilGasRelatedActivitiesSection430=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="Yes",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
-        fossilGasRelatedActivitiesSection431=ExtendedDataPointYesNo(
-            value="Yes",
-            quality="Audited",
+        fossilGasRelatedActivitiesSection431=QaReportDataPointExtendedDataPointYesNo(
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointYesNo(
+                value="No",
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="57", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         ),
     )
@@ -120,28 +148,28 @@ def create_template_2_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedDenomi
             correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(
                 value=NuclearAndGasAlignedDenominator(
                     taxonomy_aligned_share_denominator_n_and_g426=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g427=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g428=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0.04", mitigation="0.03", adaptation="0"
+                        mitigationAndAdaptation=0.04, mitigation=0.03, adaptation=0.0
                     ),
                     taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0.04", mitigation="0.03", adaptation="0"
+                        mitigationAndAdaptation=0.04, mitigation=0.03, adaptation=0.0
                     ),
                 ),
                 quality="Audited",
@@ -162,28 +190,28 @@ def create_template_3_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedNumera
             correctedData=ExtendedDataPointNuclearAndGasAlignedNumerator(
                 value=NuclearAndGasAlignedNumerator(
                     taxonomy_aligned_share_denominator_n_and_g426=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g427=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g428=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="0", mitigation="0", adaptation="0"
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                     ),
                     taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="100", mitigation="84.84", adaptation="0"
+                        mitigationAndAdaptation=100.0, mitigation=84.84, adaptation=0.0
                     ),
                     taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
-                        mitigationAndAdaptation="100", mitigation="84.84", adaptation="0"
+                        mitigationAndAdaptation=100.0, mitigation=84.84, adaptation=0.0
                     ),
                 ),
                 quality="Audited",
@@ -199,36 +227,40 @@ def create_template_3_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedNumera
 def create_template_4_reportframe() -> NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
         nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue=QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
-            value=NuclearAndGasEligibleButNotAligned(
-                taxonomy_aligned_share_denominator_n_and_g426=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomy_aligned_share_denominator_n_and_g427=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomy_aligned_share_denominator_n_and_g428=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0", mitigation="0", adaptation="0"
-                ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0.26", mitigation="0.2", adaptation="0"
-                ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
-                    mitigationAndAdaptation="0.26", mitigation="0.3", adaptation="0"
-                ),
-            ),
-            quality="Audited",
             comment="",
-            dataSource=ExtendedDocumentReference(
-                page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+            verdict=QaReportDataPointVerdict.QAACCEPTED,
+            correctedData=ExtendedDataPointNuclearAndGasEligibleButNotAligned(
+                value=NuclearAndGasEligibleButNotAligned(
+                    taxonomy_aligned_share_denominator_n_and_g426=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomy_aligned_share_denominator_n_and_g427=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomy_aligned_share_denominator_n_and_g428=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
+                    ),
+                    taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.26, mitigation=0.2, adaptation=0.0
+                    ),
+                    taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                        mitigationAndAdaptation=0.26, mitigation=0.3, adaptation=0.0
+                    ),
+                ),
+                quality="Audited",
+                comment="",
+                dataSource=ExtendedDocumentReference(
+                    page="58", fileName="2023_DNK_Concordia_Versicherungen", fileReference="1234"
+                ),
             ),
         )
     )
