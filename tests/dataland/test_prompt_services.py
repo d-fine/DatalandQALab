@@ -183,7 +183,7 @@ def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_pdf: Mock) -
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_alligned_denominator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
+    mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(mock_pdf)
 
@@ -191,12 +191,12 @@ def test_get_taxonomy_alligned_denominator(mock_generate_gpt_request: Mock, mock
         prompting_service.PromptingService.create_main_prompt(2, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
+    assert result == [0.1, 0, 0, 3.2, 0, 100], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_alligned_numerator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
+    mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(mock_pdf)
 
@@ -204,12 +204,12 @@ def test_get_taxonomy_alligned_numerator(mock_generate_gpt_request: Mock, mock_p
         prompting_service.PromptingService.create_main_prompt(3, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
+    assert result == [0.1, 0, 0, 3.2, 0, 100], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_eligible_not_alligned(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
+    mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_eligible_not_alligned(mock_pdf)
 
@@ -217,12 +217,12 @@ def test_get_taxonomy_eligible_not_alligned(mock_generate_gpt_request: Mock, moc
         prompting_service.PromptingService.create_main_prompt(4, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template2to4(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
+    assert result == [0.1, 0, 0, 3.2, 0, 100], "The return values do not match."
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_get_taxonomy_non_eligible(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
-    mock_generate_gpt_request.return_value = ["0.1", "0", "0", "3,2", "0", "100"]
+    mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
     result = numeric_value_generator.NumericValueGenerator.get_taxonomy_non_eligible(mock_pdf)
 
@@ -230,4 +230,4 @@ def test_get_taxonomy_non_eligible(mock_generate_gpt_request: Mock, mock_pdf: Mo
         prompting_service.PromptingService.create_main_prompt(5, mock_pdf),
         prompting_service.PromptingService.create_sub_prompt_template5(),
     )
-    assert result == ["0.1", "0", "0", "3,2", "0", "100"], "The return values do not match."
+    assert result == [0.1, 0, 0, 3.2, 0, 100], "The return values do not match."

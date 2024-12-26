@@ -8,32 +8,31 @@ class NumericValueGenerator:
     """Extracts and stores all values of template 2 to 5 and compares them to the values in dataland."""
 
     @staticmethod
-    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult) -> list[float]:
+    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult) -> list:
         """Extracts information from template 2 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list[float]: A list including the extracted values of template 2 as floats.
+            list: A list including the etracted values of template 2
         """
-        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        dominator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(2, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
-        float_results = [float(value) for value in string_results]
+        float_results = [float(value) for value in dominator_values]
         return float_results
-
 
     @staticmethod
     def get_taxonomy_alligned_numerator(readable_text: AnalyzeResult) -> list:
         """Extracts information from template 3 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list[float]: A list including the extracted values of template 3 as floats.
+            list: A list including the etracted values of template 3.
         """
-        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        numerator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(3, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
-        float_results = [float(value) for value in string_results]
+        float_results = [float(value) for value in numerator_values]
         return float_results
 
     @staticmethod
@@ -41,14 +40,13 @@ class NumericValueGenerator:
         """Extracts information from template 4 using Azure OpenAI and returns a list of results.
 
         Returns:
-            list[float]: A list including the extracted values of template 4 as floats.
-
+            list: A list including the etracted values of template 4.
         """
-        string_results = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(4, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template2to4(),
         )
-        float_results = [float(value) for value in string_results]
+        float_results = [float(value) for value in eligible_values]
         return float_results
 
     @staticmethod
