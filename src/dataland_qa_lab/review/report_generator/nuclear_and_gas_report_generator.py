@@ -28,7 +28,11 @@ from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVer
 
 from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.review import yes_no_value_generator
-from dataland_qa_lab.review.report_generator import denominator_report_generator, numerator_report_generator
+from dataland_qa_lab.review.report_generator import (
+    denominator_report_generator,
+    eligible_not_aligned_report_generator,
+    numerator_report_generator,
+)
 from dataland_qa_lab.review.report_generator.abstract_report_generator import ReportGenerator
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
@@ -54,12 +58,17 @@ class NuclearAndGasReportGenerator(ReportGenerator):
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
-
         self.report.general.taxonomy_aligned_numerator = (
             numerator_report_generator.build_taxonomy_aligned_numerator_report(
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
+        self.report.general.taxonomy_eligible_but_not_aligned = (
+            eligible_not_aligned_report_generator.build_taxonomy_eligible_but_not_aligned_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
+
         return self.report
 
     @classmethod
