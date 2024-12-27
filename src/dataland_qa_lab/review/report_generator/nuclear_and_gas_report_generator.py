@@ -49,8 +49,10 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         for key, value in yes_no_data_points.items():
             setattr(self.report.general.general, key, value)
 
-        self.report.general.taxonomy_aligned_denominator = denominator_report_generator.build_report_frame(
-            dataset=dataset, relevant_pages=relevant_pages
+        self.report.general.taxonomy_aligned_denominator = (
+            denominator_report_generator.build_taxonomy_aligned_denominator_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
         )
 
         return self.report

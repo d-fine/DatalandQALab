@@ -20,8 +20,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_denominator_report(
-    dataset: NuclearAndGasDataCollection,
-    relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(

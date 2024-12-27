@@ -35,8 +35,30 @@ def test_build_taxonomy_aligned_denominator_report_frame(mock_get_taxonomy_allig
     dataset, relevant_pages = provide_test_data()
 
     mock_get_taxonomy_alligned_denominator.return_value = [
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04, 0.03, 0.0,
-        0.04, 0.03, 0.0, 0.04, 0.03, 0.0, 0.04, 0.03, 0.0, 0.04, 0.03, 0.0
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
     ]
 
     # Call the function under test
@@ -46,9 +68,7 @@ def test_build_taxonomy_aligned_denominator_report_frame(mock_get_taxonomy_allig
     assert denominator_report is not None
     assert denominator_report.nuclear_and_gas_taxonomy_aligned_revenue_denominator is not None
     assert denominator_report.nuclear_and_gas_taxonomy_aligned_revenue_denominator.corrected_data is not None
-    assert (
-        denominator_report.nuclear_and_gas_taxonomy_aligned_revenue_denominator.corrected_data.value is not None
-    )
+    assert denominator_report.nuclear_and_gas_taxonomy_aligned_revenue_denominator.corrected_data.value is not None
 
 
 @patch("dataland_qa_lab.review.numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator")
@@ -56,8 +76,30 @@ def test_compare_denominator_values(mock_get_taxonomy_alligned_denominator: Mock
     # Provide test data
     dataset, relevant_pages = provide_test_data()
     mock_get_taxonomy_alligned_denominator.return_value = [
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.04, 0.03, 0.0, 0.04, 0.03, 0.1
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.1,
     ]
 
     aligned_denominator, verdict, comment = report_genaerator.compare_denominator_values(dataset, relevant_pages)
