@@ -19,18 +19,17 @@ from dataland_qa_lab.utils.doc_ref_to_qa_ref_mapper import map_doc_ref_to_qa_doc
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
-def build_report_frame(
+def build_taxonomy_aligned_denominator_report(
     dataset: NuclearAndGasDataCollection,
     relevant_pages: AnalyzeResult
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
-        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_revenue_denominator_report(dataset, relevant_pages),
-        nuclearAndGasTaxonomyAlignedCapexDenominator=build_capex_denominator_report(dataset, relevant_pages)
+        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_revenue_denominator_report_frame(dataset, relevant_pages),
     )
 
 
-def build_revenue_denominator_report(
+def build_revenue_denominator_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build report frame for the revenue denominator."""
@@ -46,13 +45,6 @@ def build_revenue_denominator_report(
             dataSource=get_data_source(dataset),
         ),
     )
-
-
-def build_capex_denominator_report(dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult  # noqa: ARG001
-) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
-    """Build report frame for the capex denominator."""
-    # to be done
-    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator()
 
 
 def compare_denominator_values(
@@ -73,7 +65,10 @@ def compare_denominator_values(
 
         if value_list != comparison_slice:
             verdict = QaReportDataPointVerdict.QAREJECTED
-            comment += f" Discrepancy in {field_name}: {value_list} != {comparison_slice}."
+            discrepancies = ", ".join(
+                f"{v1} != {v2}" for v1, v2 in zip(value_list, comparison_slice, strict=False) if v1 != v2
+            )
+            comment += f" Discrepancy in '{field_name}': {discrepancies}."
 
         setattr(
             aligned_denominator,
