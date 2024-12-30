@@ -1,11 +1,9 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 from dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
-from dataland_qa_lab.pages.pages_provider import get_relevant_pages_of_pdf
-from dataland_qa_lab.pages.text_to_doc_intelligence import extract_text_of_pdf
 from dataland_qa_lab.review.report_generator import eligible_not_aligned_report_generator
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
@@ -15,8 +13,9 @@ def provide_test_data() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
     dataset = get_dataset_by_id(dataset_id).data
     data_collection = NuclearAndGasDataCollection(dataset)
 
-    relevant_pages = get_relevant_pages_of_pdf(data_collection)
-    return data_collection, extract_text_of_pdf(relevant_pages)
+    relevant_pages = MagicMock(spec=AnalyzeResult)
+
+    return data_collection, relevant_pages
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
