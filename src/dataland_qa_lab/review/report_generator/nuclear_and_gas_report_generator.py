@@ -31,6 +31,7 @@ from dataland_qa_lab.review import yes_no_value_generator
 from dataland_qa_lab.review.report_generator import (
     denominator_report_generator,
     eligible_not_aligned_report_generator,
+    non_eligible_report_generator,
     numerator_report_generator,
 )
 from dataland_qa_lab.review.report_generator.abstract_report_generator import ReportGenerator
@@ -68,6 +69,7 @@ class NuclearAndGasReportGenerator(ReportGenerator):
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
+        self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report
 
         return self.report
 

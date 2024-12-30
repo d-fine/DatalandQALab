@@ -56,7 +56,9 @@ class NumericValueGenerator:
         Returns:
             list: A list including the extracted values of template 5.
         """
-        return generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+        non_eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(5, readable_text),
             prompting_service.PromptingService.create_sub_prompt_template5(),
         )
+        float_results = [float(value) for value in non_eligible_values]
+        return float_results
