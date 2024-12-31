@@ -33,6 +33,24 @@ def get_datasources_of_nuclear_and_gas_yes_no_questions(
     return section_values
 
 
+def get_numeric_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, YesNo | None]:
+    """Get Numeric values of the given dataset as a dictionary with types as keys."""
+    sections = {
+        "taxonomy_aligned_denominator": data.taxonomy_aligned_denominator,
+        "taxonomy_aligned_numerator": data.taxonomy_aligned_numerator,
+        "taxonomy_eligble_but_not_aligned": data.taxonomy_eligble_but_not_aligned,
+        "taxonomy_non_eligible": data.taxonomy_non_eligible,
+    }
+
+    section_list = {
+        key: (data.datapoint.value if data and data.datapoint and data.datapoint.value is not None else None)
+        for section in sections.values()
+        for key, data in section.items()
+    }
+
+    return section_list
+
+
 def get_datasources_of_nuclear_and_gas_numeric_values(
     data: NuclearAndGasDataCollection,
 ) -> dict[str, ExtendedDocumentReference | None]:
@@ -45,9 +63,7 @@ def get_datasources_of_nuclear_and_gas_numeric_values(
     }
 
     section_list = {
-        identifier: data_source
-        for section in sections.values()
-        for identifier, data_source in extract_data_source(section).items()
+        key: data_source for section in sections.values() for key, data_source in extract_data_source(section).items()
     }
 
     return section_list
