@@ -47,7 +47,7 @@ def compare_non_eligible_values(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> tuple[NuclearAndGasNonEligible, QaReportDataPointVerdict, str]:
     """Compare non_eligible_values values and return results."""
-    non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages)
+    promt_non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages)
     dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
 
     value = NuclearAndGasNonEligible()
@@ -56,20 +56,21 @@ def compare_non_eligible_values(
 
     for index, (field_name, dataland_value) in enumerate(dataland_non_eligible_values.items()):
         try:
-            comparison_value = non_eligible_values[index]
+            prompt_value = promt_non_eligible_values[index]
         except IndexError:
             verdict = QaReportDataPointVerdict.QAREJECTED
             comment += f" Missing value for '{field_name}' in non_eligible_values."
             continue
-
-        if dataland_value != comparison_value:
+        correct_value = dataland_value
+        if dataland_value != prompt_value:
             verdict = QaReportDataPointVerdict.QAREJECTED
-            comment += f" Discrepancy in '{field_name}': {dataland_value} != {comparison_value}."
+            comment += f" Discrepancy in '{field_name}': {dataland_value} != {prompt_value}."
+            correct_value = prompt_value
 
         setattr(
             value,
             field_name,
-            dataland_value,
+            correct_value,
         )
 
     return value, verdict, comment

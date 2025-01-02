@@ -50,7 +50,7 @@ def compare_denominator_values(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
 ) -> tuple[NuclearAndGasAlignedDenominator, QaReportDataPointVerdict, str]:
     """Compare denominator values and return results."""
-    dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages)
+    promted_dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages)
     dataland_dominator_values = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
 
     aligned_denominator = NuclearAndGasAlignedDenominator()
@@ -58,24 +58,25 @@ def compare_denominator_values(
     comment = ""
     current_index = 0
 
-    for field_name, value_list in dataland_dominator_values.items():
+    for field_name, dataland_value_list in dataland_dominator_values.items():
         # Extract the corresponding slice from dominator_values
-        comparison_slice = dominator_values[current_index : current_index + 3]
-
-        if value_list != comparison_slice:
+        prompt_value_list = promted_dominator_values[current_index : current_index + 3]
+        correct_value_list = dataland_value_list
+        if dataland_value_list != prompt_value_list:
             verdict = QaReportDataPointVerdict.QAREJECTED
             discrepancies = ", ".join(
-                f"{v1} != {v2}" for v1, v2 in zip(value_list, comparison_slice, strict=False) if v1 != v2
+                f"{v1} != {v2}" for v1, v2 in zip(dataland_value_list, prompt_value_list, strict=False) if v1 != v2
             )
             comment += f" Discrepancy in '{field_name}': {discrepancies}."
+            correct_value_list = prompt_value_list
 
         setattr(
             aligned_denominator,
             field_name,
             NuclearAndGasEnvironmentalObjective(
-                mitigationAndAdaptation=comparison_slice[0],
-                mitigation=comparison_slice[1],
-                adaptation=comparison_slice[2],
+                mitigationAndAdaptation=correct_value_list[0],
+                mitigation=correct_value_list[1],
+                adaptation=correct_value_list[2],
             ),
         )
         # Update the current index for the next slice
