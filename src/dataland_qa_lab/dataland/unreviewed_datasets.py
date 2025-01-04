@@ -2,6 +2,8 @@ import logging
 
 from dataland_qa_lab.utils import config
 
+logger = logging.getLogger(__name__)
+
 
 class UnreviewedDatasets:
     """Class representing the unreviewed datasets from the API."""
@@ -26,5 +28,5 @@ class UnreviewedDatasets:
             self.list_of_data_ids = [dataset.data_id for dataset in self.datasets]
 
         except Exception:
-            logging.exception("An error occurred")
+            logger.exception("An error occurred")
             raise

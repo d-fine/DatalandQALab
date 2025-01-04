@@ -6,6 +6,7 @@ Base = declarative_base()
 
 class ReviewedDataset(Base):
     """Database entity review_dataset."""
+
     __tablename__ = "reviewed_dataset"
     data_id = Column("data_id", String, primary_key=True)
     review_start_time = Column("review_start_time", String, nullable=False)

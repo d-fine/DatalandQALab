@@ -1,6 +1,8 @@
+import logging
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from dataland_qa_lab.database.database_tables import Base
@@ -10,6 +12,8 @@ DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(bind=engine)
+
+logger = logging.getLogger(__name__)
 
 
 def create_tables() -> None:
@@ -23,13 +27,14 @@ def add_entity(entity: any) -> bool:
 
     try:
         session.add(entity)
-    except Exception as e:
-        # log error
-        session.close()
+    except SQLAlchemyError:
+        logger.exception("Error while adding entity to database")
+        session.rollback()
         return False
+    finally:
+        session.close()
 
     session.commit()
-    session.close()
     return True
 
 
@@ -38,14 +43,16 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     session = SessionLocal()
 
     try:
-        entity = session.query(entity_class).filter(entity_class.data_id == entity_id).first()
-    except Exception as e:
-        # log error
-        print(f"Error retrieving entity with id {entity_id}: {e}")
-        session.close()
+        primary_key_column = inspect(entity_class).primary_key[0]
+        entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
+    except SQLAlchemyError:
+        logger.exception("Error retrieving entity")
+        session.rollback()
         return None
+    finally:
+        session.close()
 
-    session.close()
+    session.commit()
     return entity
 
 
@@ -55,14 +62,14 @@ def update_entity(entity: any) -> bool:
 
     try:
         session.merge(entity)
-    except Exception as e:
-        # log error
-        print(f"Error updating entity: {e}")
+    except SQLAlchemyError:
+        logger.exception("Error updating entity")
         session.close()
         return False
+    finally:
+        session.close()
 
     session.commit()
-    session.close()
     return True
 
 
@@ -71,18 +78,19 @@ def delete_entity(entity_id: int, entity_class: any) -> bool:
     session = SessionLocal()
 
     try:
-        entity = session.query(entity_class).filter(entity_class.data_id == entity_id).first()
+        primary_key_column = inspect(entity_class).primary_key[0]
+        entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
         if entity:
             session.delete(entity)
         else:
-            print("Entity not found.")
+            logger.error("Entity not found")
             return False
-    except Exception as e:
-        # log error
-        print(f"Error deleting entity: {e}")
-        session.close()
+    except SQLAlchemyError:
+        logger.exception("Error updating entity")
+        session.rollback()
         return False
+    finally:
+        session.close()
 
     session.commit()
-    session.close()
     return True
