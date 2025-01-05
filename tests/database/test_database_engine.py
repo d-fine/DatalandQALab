@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from dataland_qa_lab.database import database_engine
@@ -88,3 +89,17 @@ def test_delete_entity(mock_session_local: MagicMock) -> None:
     mock_session.delete.assert_called_once_with(mock_entity)
     mock_session.commit.assert_called_once()
     assert result is True
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_sqlalchemy_errors(mock_session_local: MagicMock) -> None:
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+
+    mock_entity = MagicMock()
+    mock_session.add.side_effect = SQLAlchemyError("DB Error")
+    result = database_engine.add_entity(mock_entity)
+
+    mock_session.rollback.assert_called_once()
+    mock_session.close.assert_called_once()
+    assert result is False
