@@ -16,6 +16,7 @@ jobs:
       AZURE_OPENAI_ENDPOINT: "null"
       AZURE_DOCINTEL_API_KEY: "null"
       AZURE_DOCINTEL_ENDPOINT: "null"
+      DATABASE_CONNECTION_STRING: ""
     steps:
       - uses: actions/checkout@v4
         with:
