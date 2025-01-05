@@ -24,15 +24,16 @@ def build_taxonomy_aligned_denominator_report(
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
-        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_revenue_denominator_report_frame(dataset, relevant_pages),
+        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_denominator_report_frame(dataset, relevant_pages, "Revenue"),
+        nuclearAndGasTaxonomyAlignedCapexDenominator=build_denominator_report_frame(dataset, relevant_pages, "CapEx")
     )
 
 
-def build_revenue_denominator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+def build_denominator_report_frame(
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build report frame for the revenue denominator."""
-    aligned_denominator, verdict, comment = compare_denominator_values(dataset, relevant_pages)
+    aligned_denominator, verdict, comment = compare_denominator_values(dataset, relevant_pages, kpi)
 
     return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
         comment=comment,
@@ -47,12 +48,15 @@ def build_revenue_denominator_report_frame(
 
 
 def compare_denominator_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> tuple[NuclearAndGasAlignedDenominator, QaReportDataPointVerdict, str]:
     """Compare denominator values and return results."""
-    promted_dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages)
-    dataland_dominator_values = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
-
+    promted_dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages, kpi)
+    dataland_dominator_values = None
+    if (kpi == "Revenue"):
+        dataland_dominator_values = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
+    else:
+        dataland_dominator_values = data_provider.get_taxonomy_aligned_capex_denominator_values_by_data(dataset)
     aligned_denominator = NuclearAndGasAlignedDenominator()
     verdict = QaReportDataPointVerdict.QAACCEPTED
     comment = ""

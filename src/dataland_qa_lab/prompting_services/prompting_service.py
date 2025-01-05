@@ -5,7 +5,7 @@ class PromptingService:
     """Service for handling prompt requests."""
 
     @staticmethod
-    def create_main_prompt(template: int, pdf: AnalyzeResult) -> str:
+    def create_main_prompt(template: int, pdf: AnalyzeResult, kpi: str) -> str:
         """Creates the main prompt for each template.
 
         Returns:
@@ -20,46 +20,42 @@ class PromptingService:
                 {pdf.content}
                 """
             case 2:
-                return f"""For each row 1-8 of template 2 (revenue) it's called
+                return f"""For each row 1-8 of template 2 ({kpi}) it's called
                 "Taxonomy-aligned economic activities (denominator)",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
-                Make sure to provide the % sign.
                 # Relevant Documents
                 {pdf.content}
                 """
             case 3:
-                return f"""For each row 1-8 of template 3 (revenue) it's called
+                return f"""For each row 1-8 of template 3 ({kpi}) it's called
                 "Taxonomy-aligned economic activities (numerator)",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
-                Make sure to provide the % sign.
                 # Relevant Documents
                 {pdf.content}
                 """
             case 4:
-                return f"""For each row 1-8 of template 4 (revenue) it's called
+                return f"""For each row 1-8 of template 4 ({kpi}) it's called
                 "Taxonomy-eligible but not taxonomy-aligned economic activities",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
-                Make sure to provide the % sign.
                 # Relevant Documents
                 {pdf.content}
                 """
             case 5:
-                return f"""For each row 1-8 of template 5 (revenue) it's called
+                return f"""For each row 1-8 of template 5 ({kpi}) it's called
                 "Taxonomy non-eligible economic activities",
                 give me the percentage for all rows.
                 Focus on the row numbers on the left side of the table.
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
-                Make sure to provide the % sign.
                 # Relevant Documents
                 {pdf.content}
                 """
@@ -147,7 +143,7 @@ class PromptingService:
         }
 
     @staticmethod
-    def create_sub_prompt_template2to4() -> dict:
+    def create_sub_prompt_template2to4(kpi: str) -> dict:
         """Generates a schema for template 2 to 4.
 
         Returns:
@@ -163,7 +159,8 @@ class PromptingService:
                 schema["properties"][value_key] = {
                     "type": "string",
                     "description": f"""The precise answer to the percentage of {category} of row {row}.
-                    Just write down the number without % symbol. If the value is 0 or n.a. write 0""",
+                    Just write down the number without % symbol. If the value is 0 or n.a. write 0.
+                    Make sure to use the {kpi} value""",
                 }
 
                 # Hinzufügen zu required
@@ -172,7 +169,7 @@ class PromptingService:
         return schema
 
     @staticmethod
-    def create_sub_prompt_template5() -> dict:
+    def create_sub_prompt_template5(kpi: str) -> dict:
         """Generates a schema for template 5.
 
         Returns:
@@ -188,7 +185,8 @@ class PromptingService:
             schema["properties"][value_key] = {
                 "type": "string",
                 "description": f"""The precise answer to the percentage of row {row}.
-                 Just write down the number without % symbol. If the value is 0 or n.a. write 0""",
+                 Just write down the number without % symbol. If the value is 0 or n.a. write 0.
+                 Make sure to use the {kpi} value""",
             }
 
             schema["required"].extend([value_key])

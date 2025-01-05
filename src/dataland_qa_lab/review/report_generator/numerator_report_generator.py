@@ -24,15 +24,16 @@ def build_taxonomy_aligned_numerator_report(
 ) -> NuclearAndGasGeneralTaxonomyAlignedNumerator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
-        nuclear_and_gas_taxonomy_aligned_revenue_numerator=build_revenue_numerator_report_frame(dataset, relevant_pages)
+        nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(dataset, relevant_pages, "Revenue"),
+        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(dataset, relevant_pages, "CapEx")
     )
 
 
-def build_revenue_numerator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+def build_numerator_report_frame(
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
     """Build report frame for the revenue Numerator."""
-    aligned_numerator, verdict, comment = compare_numerator_values(dataset, relevant_pages)
+    aligned_numerator, verdict, comment = compare_numerator_values(dataset, relevant_pages, kpi)
 
     return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
         comment=comment,
@@ -47,12 +48,15 @@ def build_revenue_numerator_report_frame(
 
 
 def compare_numerator_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> tuple[NuclearAndGasAlignedNumerator, QaReportDataPointVerdict, str]:
     """Compare Numerator values and return results."""
-    numerator_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages)
-    dataland_numeator_values = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
-
+    numerator_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
+    dataland_numeator_values = None
+    if (kpi == "Revenue"):
+        dataland_numeator_values = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
+    else:
+        dataland_numeator_values = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
     aligned_numerator = NuclearAndGasAlignedNumerator()
     verdict = QaReportDataPointVerdict.QAACCEPTED
     comment = ""

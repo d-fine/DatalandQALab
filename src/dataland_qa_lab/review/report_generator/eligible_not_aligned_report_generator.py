@@ -24,17 +24,16 @@ def build_taxonomy_eligible_but_not_aligned_report(
 ) -> NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
     """Create Report Frame for the Nuclear and Gas General Taxonomy eligible but not alinged data."""
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
-        nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue=build_revenue_eligible_but_not_aligned_frame(
-            dataset, relevant_pages
-        )
+        nuclearAndGasTaxonomyEligibleButNotAlignedRevenue=build_revenue_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue"),
+        nuclearAndGasTaxonomyEligibleButNotAlignedCapex=build_revenue_eligible_but_not_aligned_frame(dataset, relevant_pages, "CapEx")
     )
 
 
 def build_revenue_eligible_but_not_aligned_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned:
     """Build report frame for the taxonomy eligible but not alinged data."""
-    eligible_but_not_aligned, verdict, comment = compare_eligible_but_not_aligned_values(dataset, relevant_pages)
+    eligible_but_not_aligned, verdict, comment = compare_eligible_but_not_aligned_values(dataset, relevant_pages, kpi)
 
     return QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
         comment=comment,
@@ -49,14 +48,19 @@ def build_revenue_eligible_but_not_aligned_frame(
 
 
 def compare_eligible_but_not_aligned_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> tuple[NuclearAndGasEligibleButNotAligned, QaReportDataPointVerdict, str]:
     """Compare taxonomy eligible but not alingned values and return results."""
-    eligble_but_not_aligned_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages)
-    dataland_taxonomy_eligble_but_not_aligned = (
-        data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
-    )
-
+    eligble_but_not_aligned_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi)
+    dataland_taxonomy_eligble_but_not_aligned = None
+    if (kpi == "Revenue"):
+        dataland_taxonomy_eligble_but_not_aligned = (
+            data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
+        )
+    else:
+        dataland_taxonomy_eligble_but_not_aligned = (
+            data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data(dataset)
+        )
     eligible_but_not_aligned = NuclearAndGasEligibleButNotAligned()
     verdict = QaReportDataPointVerdict.QAACCEPTED
     comment = ""

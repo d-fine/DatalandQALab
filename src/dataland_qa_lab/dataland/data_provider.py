@@ -87,7 +87,7 @@ def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollec
     non_eligible_dict = {}
     non_eligible_values = data.taxonomy_non_eligible.get("taxonomy_non_eligible_capex").datapoint.value
     for field_name in NuclearAndGasNonEligible.model_fields:
-        non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, None)
+        non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, 0.0) or 0.0
     return non_eligible_dict
 
 

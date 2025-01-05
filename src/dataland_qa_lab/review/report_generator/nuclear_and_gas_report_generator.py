@@ -69,7 +69,11 @@ class NuclearAndGasReportGenerator(ReportGenerator):
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
-        self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report
+        self.report.general.taxonomy_non_eligible = (
+            non_eligible_report_generator.build_taxonomy_non_eligible_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
 
         return self.report
 
@@ -93,7 +97,7 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         cls, dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
     ) -> dict[str, QaReportDataPointExtendedDataPointYesNo | None]:
         """Build first yes no data point."""
-        yes_no_values = yes_no_value_generator.extract_yes_no_template(relevant_document=relevant_pages)
+        yes_no_values = yes_no_value_generator.get_yes_no_values_from_report(relevant_pages)
         yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
         data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
         qa_data_points = {}

@@ -21,15 +21,16 @@ def build_taxonomy_non_eligible_report(
 ) -> NuclearAndGasGeneralTaxonomyNonEligible:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Non Eligible."""
     return NuclearAndGasGeneralTaxonomyNonEligible(
-        nuclear_and_gas_taxonomy_non_eligible_revenue=build_revenue_non_eligible_report_frame(dataset, relevant_pages)
+        nuclearAndGasTaxonomyNonEligibleRevenue=build_non_eligible_report_frame(dataset, relevant_pages, "Revenue"),
+        nuclearAndGasTaxonomyNonEligibleCapex=build_non_eligible_report_frame(dataset, relevant_pages, "CapEx")
     )
 
 
-def build_revenue_non_eligible_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+def build_non_eligible_report_frame(
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
     """Build report frame for the revenue non_eligible."""
-    non_eligible, verdict, comment = compare_non_eligible_values(dataset, relevant_pages)
+    non_eligible, verdict, comment = compare_non_eligible_values(dataset, relevant_pages, kpi)
 
     return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
         comment=comment,
@@ -44,12 +45,15 @@ def build_revenue_non_eligible_report_frame(
 
 
 def compare_non_eligible_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> tuple[NuclearAndGasNonEligible, QaReportDataPointVerdict, str]:
     """Compare non_eligible_values values and return results."""
-    promt_non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages)
-    dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
-
+    promt_non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
+    dataland_non_eligible_values = None
+    if (kpi == "Revenue"):
+        dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
+    else:
+        dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
     value = NuclearAndGasNonEligible()
     verdict = QaReportDataPointVerdict.QAACCEPTED
     comment = ""
