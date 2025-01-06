@@ -16,6 +16,11 @@ jobs:
       AZURE_OPENAI_ENDPOINT: "null"
       AZURE_DOCINTEL_API_KEY: "null"
       AZURE_DOCINTEL_ENDPOINT: "null"
+      POSTGRES_PASSWORD: "null"
+      POSTGRES_USER: "null"
+      PGADMIN_DEFAULT_EMAIL: "null"
+      PGADMIN_DEFAULT_PASSWORD: "null"
+      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
     steps:
       - uses: actions/checkout@v4
         with:
