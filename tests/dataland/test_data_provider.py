@@ -103,6 +103,6 @@ def test_taxonomy_non_eligible_capex_values_by_data(test_data_collection: Nuclea
 
 @pytest.fixture
 def test_data_collection() -> NuclearAndGasDataCollection:
-    dataset_id = "fae59f2e-c438-4457-9a74-55c0db006fee"
+    dataset_id = "7b7c7ea2-7d74-4161-afc8-4aa6bcde66c7"
     dataset = get_dataset_by_id(dataset_id).data
     return NuclearAndGasDataCollection(dataset)
