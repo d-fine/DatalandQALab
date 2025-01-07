@@ -9,7 +9,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def provide_test_data() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
-    dataset_id = "fae59f2e-c438-4457-9a74-55c0db006fee"
+    dataset_id = "7b7c7ea2-7d74-4161-afc8-4aa6bcde66c7"
     dataset = get_dataset_by_id(dataset_id).data
     data_collection = NuclearAndGasDataCollection(dataset)
 
@@ -88,8 +88,8 @@ def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mo
         0.2,
         0.0,
     ]
-    report_frame = eligible_not_aligned_report_generator.build_revenue_eligible_but_not_aligned_frame(
-        dataset, relevant_pages
+    report_frame = eligible_not_aligned_report_generator.build_eligible_but_not_aligned_frame(
+        dataset, relevant_pages, "Revenue"
     )
 
     assert report_frame is not None
@@ -129,7 +129,9 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
         0.1,
     ]
     aligned_denominator, verdict, comment = (
-        eligible_not_aligned_report_generator.compare_eligible_but_not_aligned_values(dataset, relevant_pages)
+        eligible_not_aligned_report_generator.compare_eligible_but_not_aligned_values(
+            dataset, relevant_pages, "Revenue"
+        )
     )
 
     assert aligned_denominator is not None

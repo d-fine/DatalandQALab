@@ -39,10 +39,17 @@ def build_simple_openai_chat_completion() -> ChatCompletion:
     )
 
 
-@patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
-def test_compare_yes_no_values(_mock_create: Mock) -> None:  # noqa: PT019
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
     test_data_collection = provide_test_data_collection()
-
+    mock_generate_gpt_request.return_value = [
+        "Yes",
+        "No",
+        "Yes",
+        "No",
+        "Yes",
+        "No",
+    ]
     corrected_values = NuclearAndGasReportGenerator().compare_yes_no_values(
         dataset=test_data_collection, relevant_pages=AnalyzeResult()
     )

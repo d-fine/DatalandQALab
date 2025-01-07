@@ -22,7 +22,7 @@ def build_taxonomy_non_eligible_report(
     """Create Report Frame for the Nuclear and Gas General Taxonomy Non Eligible."""
     return NuclearAndGasGeneralTaxonomyNonEligible(
         nuclearAndGasTaxonomyNonEligibleRevenue=build_non_eligible_report_frame(dataset, relevant_pages, "Revenue"),
-        nuclearAndGasTaxonomyNonEligibleCapex=build_non_eligible_report_frame(dataset, relevant_pages, "CapEx")
+        nuclearAndGasTaxonomyNonEligibleCapex=build_non_eligible_report_frame(dataset, relevant_pages, "CapEx"),
     )
 
 
@@ -50,7 +50,7 @@ def compare_non_eligible_values(
     """Compare non_eligible_values values and return results."""
     promt_non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
     dataland_non_eligible_values = None
-    if (kpi == "Revenue"):
+    if kpi == "Revenue":
         dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
     else:
         dataland_non_eligible_values = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)

@@ -24,8 +24,10 @@ def build_taxonomy_aligned_denominator_report(
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
-        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_denominator_report_frame(dataset, relevant_pages, "Revenue"),
-        nuclearAndGasTaxonomyAlignedCapexDenominator=build_denominator_report_frame(dataset, relevant_pages, "CapEx")
+        nuclearAndGasTaxonomyAlignedRevenueDenominator=build_denominator_report_frame(
+            dataset, relevant_pages, "Revenue"
+        ),
+        nuclearAndGasTaxonomyAlignedCapexDenominator=build_denominator_report_frame(dataset, relevant_pages, "CapEx"),
     )
 
 
@@ -53,7 +55,7 @@ def compare_denominator_values(
     """Compare denominator values and return results."""
     promted_dominator_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages, kpi)
     dataland_dominator_values = None
-    if (kpi == "Revenue"):
+    if kpi == "Revenue":
         dataland_dominator_values = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
     else:
         dataland_dominator_values = data_provider.get_taxonomy_aligned_capex_denominator_values_by_data(dataset)

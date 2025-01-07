@@ -25,7 +25,7 @@ def build_taxonomy_aligned_numerator_report(
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
         nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(dataset, relevant_pages, "Revenue"),
-        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(dataset, relevant_pages, "CapEx")
+        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(dataset, relevant_pages, "CapEx"),
     )
 
 
@@ -53,7 +53,7 @@ def compare_numerator_values(
     """Compare Numerator values and return results."""
     numerator_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
     dataland_numeator_values = None
-    if (kpi == "Revenue"):
+    if kpi == "Revenue":
         dataland_numeator_values = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
     else:
         dataland_numeator_values = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
