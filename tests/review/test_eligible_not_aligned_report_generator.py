@@ -20,7 +20,7 @@ def provide_test_data() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_build_taxonomy_eligible_but_not_aligned_report(mock_generate_gpt_request: Mock) -> None:
-    """Tests the generation of taxonomy-aligned numerator report."""
+    """Tests the generation of taxonomy Eligible but not aligned report."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
         0.0,
@@ -54,13 +54,12 @@ def test_build_taxonomy_eligible_but_not_aligned_report(mock_generate_gpt_reques
 
     assert report is not None
     assert report.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue is not None
-    assert report.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue.corrected_data is not None
-    assert report.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue.corrected_data.value is not None
+    assert report.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue.corrected_data.value is None
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mock) -> None:
-    """Tests the generation of revenue numerator report frame."""
+    """Tests the generation of revenue Eligible but not aligned report frame."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
         0.0,
@@ -95,12 +94,12 @@ def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mo
     assert report_frame is not None
     assert not report_frame.comment
     assert report_frame.verdict == QaReportDataPointVerdict.QAACCEPTED
-    assert report_frame.corrected_data is not None
+    assert report_frame.corrected_data.value is None
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) -> None:
-    """Tests the comparison of taxonomy numerator values."""
+    """Tests the comparison of taxonomy Eligible but not aligned values."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
         0.0,
@@ -128,12 +127,16 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
         0.3,
         0.1,
     ]
-    aligned_denominator, verdict, comment = (
+    eligible_but_not_aligned, verdict, comment = (
         eligible_not_aligned_report_generator.compare_eligible_but_not_aligned_values(
             dataset, relevant_pages, "Revenue"
         )
     )
 
-    assert aligned_denominator is not None
+    assert eligible_but_not_aligned is not None
+    assert eligible_but_not_aligned.taxonomy_eligible_but_not_aligned_share is not None
+    assert eligible_but_not_aligned.taxonomy_eligible_but_not_aligned_share.adaptation == 0.1
+    assert eligible_but_not_aligned.taxonomy_eligible_but_not_aligned_share.mitigation == 0.3
+
     assert verdict == QaReportDataPointVerdict.QAREJECTED
-    assert comment == (" Discrepancy in 'taxonomy_eligible_but_not_aligned_share': 0.2 != 0.3, 0.0 != 0.1.")
+    assert comment == ("Discrepancy in 'taxonomy_eligible_but_not_aligned_share': 0.2 != 0.3, 0.0 != 0.1.")
