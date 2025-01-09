@@ -51,9 +51,7 @@ def build_eligible_but_not_aligned_frame(
     )
 
     return QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
-        comment=comment,
-        verdict=verdict,
-        correctedData=corrected_data
+        comment=comment, verdict=verdict, correctedData=corrected_data
     )
 
 

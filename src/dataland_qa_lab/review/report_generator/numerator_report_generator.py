@@ -47,9 +47,7 @@ def build_numerator_report_frame(
     )
 
     return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
-        comment=comment,
-        verdict=verdict,
-        correctedData=corrected_data
+        comment=comment, verdict=verdict, correctedData=corrected_data
     )
 
 
@@ -72,9 +70,7 @@ def compare_numerator_values(
             verdict = QaReportDataPointVerdict.QAREJECTED
             discrepancies = generate_discrepancies(dataland_vals, prompt_vals)
             comments.append(f"Discrepancy in '{field_name}': {discrepancies}.")
-            aligned_numerator = (
-                NuclearAndGasAlignedNumerator() if aligned_numerator is None else aligned_numerator
-            )
+            aligned_numerator = NuclearAndGasAlignedNumerator() if aligned_numerator is None else aligned_numerator
             update_attribute(aligned_numerator, field_name, prompt_vals)
 
     return aligned_numerator, verdict, "".join(comments)
