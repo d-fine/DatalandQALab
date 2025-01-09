@@ -35,15 +35,21 @@ def build_numerator_report_frame(
     """Build report frame for the revenue Numerator."""
     aligned_numerator, verdict, comment = compare_numerator_values(dataset, relevant_pages, kpi)
 
-    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
-        comment=comment,
-        verdict=verdict,
-        correctedData=ExtendedDataPointNuclearAndGasAlignedNumerator(
+    corrected_data = (
+        ExtendedDataPointNuclearAndGasAlignedNumerator(
             value=aligned_numerator,
             quality="Incomplete",
             comment=comment,
             dataSource=get_data_source(dataset),
-        ),
+        )
+        if verdict != QaReportDataPointVerdict.QAACCEPTED
+        else ExtendedDataPointNuclearAndGasAlignedNumerator()
+    )
+
+    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
+        comment=comment,
+        verdict=verdict,
+        correctedData=corrected_data
     )
 
 
@@ -51,41 +57,52 @@ def compare_numerator_values(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> tuple[NuclearAndGasAlignedNumerator, QaReportDataPointVerdict, str]:
     """Compare Numerator values and return results."""
-    numerator_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
-    dataland_numeator_values = None
-    if kpi == "Revenue":
-        dataland_numeator_values = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
-    else:
-        dataland_numeator_values = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
-    aligned_numerator = NuclearAndGasAlignedNumerator()
+    # Generate prompted values and split them into chunks
+    prompted_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
+    chunked_prompted_values = [prompted_values[i : i + 3] for i in range(0, len(prompted_values), 3)]
+
+    dataland_values = get_dataland_values(dataset, kpi)
+
+    aligned_numerator = None
     verdict = QaReportDataPointVerdict.QAACCEPTED
-    comment = ""
-    current_index = 0
+    comments = []
 
-    for field_name, dataland_value_list in dataland_numeator_values.items():
-        # Extract the corresponding slice from dominator_values
-        prompt_value_list = numerator_values[current_index : current_index + 3]
-        correct_value_list = dataland_value_list
-        if dataland_value_list != prompt_value_list:
+    for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompted_values, strict=False):
+        if dataland_vals != prompt_vals:
             verdict = QaReportDataPointVerdict.QAREJECTED
-            discrepancies = ", ".join(
-                f"{v1} != {v2}" for v1, v2 in zip(dataland_value_list, prompt_value_list, strict=False) if v1 != v2
+            discrepancies = generate_discrepancies(dataland_vals, prompt_vals)
+            comments.append(f"Discrepancy in '{field_name}': {discrepancies}.")
+            aligned_numerator = (
+                NuclearAndGasAlignedNumerator() if aligned_numerator is None else aligned_numerator
             )
-            comment += f" Discrepancy in '{field_name}': {discrepancies}."
+            update_attribute(aligned_numerator, field_name, prompt_vals)
 
-        setattr(
-            aligned_numerator,
-            field_name,
-            NuclearAndGasEnvironmentalObjective(
-                mitigationAndAdaptation=correct_value_list[0],
-                mitigation=correct_value_list[1],
-                adaptation=correct_value_list[2],
-            ),
-        )
-        # Update the current index for the next slice
-        current_index += 3
+    return aligned_numerator, verdict, "".join(comments)
 
-    return aligned_numerator, verdict, comment
+
+def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
+    """Retrieve dataland Numerator values based on KPI."""
+    if kpi == "Revenue":
+        return data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
+    return data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
+
+
+def generate_discrepancies(dataland_values: list, prompted_values: list) -> str:
+    """Generate a string describing discrepancies between two lists of values."""
+    return ", ".join(f"{v1} != {v2}" for v1, v2 in zip(dataland_values, prompted_values, strict=False) if v1 != v2)
+
+
+def update_attribute(obj: NuclearAndGasAlignedNumerator, field_name: str, values: list) -> None:
+    """Set an attribute of the aligned Numerator by field name."""
+    setattr(
+        obj,
+        field_name,
+        NuclearAndGasEnvironmentalObjective(
+            mitigationAndAdaptation=values[0],
+            mitigation=values[1],
+            adaptation=values[2],
+        ),
+    )
 
 
 def get_data_source(dataset: NuclearAndGasDataCollection) -> ExtendedDocumentReference | None:
