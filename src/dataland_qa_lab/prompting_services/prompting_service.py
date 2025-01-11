@@ -159,7 +159,7 @@ class PromptingService:
                 schema["properties"][value_key] = {
                     "type": "string",
                     "description": f"""The precise answer to the percentage of {category} of row {row}.
-                    Just write down the number without % symbol. If the value is 0 or n.a. write 0.
+                    Write the number without the % symbol. If the value is not available, write '-1'.
                     Make sure to use the {kpi} value""",
                 }
 
@@ -185,8 +185,8 @@ class PromptingService:
             schema["properties"][value_key] = {
                 "type": "string",
                 "description": f"""The precise answer to the percentage of row {row}.
-                 Just write down the number without % symbol. If the value is 0 or n.a. write 0.
-                 Make sure to use the {kpi} value""",
+                Write the number without the % symbol. If the value is not available, write '-1'.
+                Make sure to use the {kpi} value""",
             }
 
             schema["required"].extend([value_key])

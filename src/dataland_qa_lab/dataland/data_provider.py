@@ -94,9 +94,13 @@ def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollec
 def extract_field_data(values: any, field_name: str) -> list:
     """Extract mitigation, adaptation, and mitigationAndAdaptation values from a field and return them as a list."""
     field_value = getattr(values, field_name, None)
-    mitigation_and_adaptation = getattr(field_value, "mitigation_and_adaptation", 0) or 0.0
-    mitigation = getattr(field_value, "mitigation", 0.0) or 0.0
-    adaptation = getattr(field_value, "adaptation", 0.0) or 0.0
+
+    mitigation_and_adaptation = (
+        -1 if getattr(field_value, "mitigation_and_adaptation", None) is None else field_value.mitigation_and_adaptation
+    )
+    mitigation = -1 if getattr(field_value, "mitigation", None) is None else field_value.mitigation
+    adaptation = -1 if getattr(field_value, "adaptation", None) is None else field_value.adaptation
+
     return [mitigation_and_adaptation, mitigation, adaptation]
 
 

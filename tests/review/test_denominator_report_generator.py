@@ -12,26 +12,32 @@ def provide_test_data() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
     dataset_id = "7b7c7ea2-7d74-4161-afc8-4aa6bcde66c7"
     dataset = get_dataset_by_id(dataset_id).data
     data_collection = NuclearAndGasDataCollection(dataset)
-
     relevant_pages = MagicMock(spec=AnalyzeResult)
+
+    """pages= pages_provider.get_relevant_pages_of_pdf(data_collection)
+    relevant_pages = text_to_doc_intelligence.extract_text_of_pdf(pages)"""
 
     return data_collection, relevant_pages
 
 
+"""data_collection = provide_test_data()
+dataland = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(data_collection)
+print(dataland)"""
+
+
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_taxonomy_aligned_denominator_report(mock_generate_gpt_request: Mock) -> None:
-    """Tests the generation of taxonomy-aligned denominator report."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         0.0,
         0.0,
         0.0,
@@ -57,18 +63,17 @@ def test_generate_taxonomy_aligned_denominator_report(mock_generate_gpt_request:
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mock) -> None:
-    """Tests the generation of revenue denominator report frame."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         0.0,
         0.0,
         0.0,
@@ -95,18 +100,17 @@ def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mo
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) -> None:
-    """Tests the comparison of taxonomy denominator values."""
     dataset, relevant_pages = provide_test_data()
     mock_generate_gpt_request.return_value = [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         0.0,
         0.0,
         0.0,
@@ -123,12 +127,22 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
         0.03,
         0.1,
     ]
-    aligned_denominator, verdict, comment = report_generator.compare_denominator_values(
-        dataset, relevant_pages, "Revenue"
-    )
+    revenue_report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
-    assert aligned_denominator.taxonomy_aligned_share_denominator_n_and_g426 is None
-    assert aligned_denominator.taxonomy_aligned_share_denominator_n_and_g427 is None
-    assert aligned_denominator.taxonomy_aligned_share_denominator is not None
-    assert verdict == QaReportDataPointVerdict.QAREJECTED
-    assert comment == "Discrepancy in 'taxonomy_aligned_share_denominator': 0.0 != 0.1."
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g426 is None
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g427 is None
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator is not None
+    assert revenue_report.verdict == QaReportDataPointVerdict.QAREJECTED
+    assert revenue_report.comment == "Discrepancy in 'taxonomy_aligned_share_denominator': 0 != 0.1."
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_generate_taxonomy_aligned_denominator_report_edge_cases(mock_generate_gpt_request: Mock) -> None:
+    dataset, relevant_pages = provide_test_data()
+    mock_generate_gpt_request.return_value = [-1.0] * 24
+
+    report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QAINCONCLUSIVE
+    assert report.corrected_data.quality == "NoDataFound"
