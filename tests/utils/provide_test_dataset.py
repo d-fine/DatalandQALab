@@ -108,10 +108,10 @@ def create_template_2_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedDenomi
                 taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_denominator_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.04, mitigation=0.03, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_denominator=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.04, mitigation=0.03, adaptation=0.0
                 ),
             ),
@@ -134,10 +134,10 @@ def create_template_2_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedDenomi
                 taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_denominator_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.07, mitigation=0.05, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_denominator=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.07, mitigation=0.05, adaptation=0.0
                 ),
             ),
@@ -156,19 +156,19 @@ def create_template_3_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedNumera
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
         nuclear_and_gas_taxonomy_aligned_revenue_numerator=ExtendedDataPointNuclearAndGasAlignedNumerator(
             value=NuclearAndGasAlignedNumerator(
-                taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g429=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g430=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=100.0, mitigation=84.84, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=100.0, mitigation=84.84, adaptation=0.0
                 ),
             ),
@@ -182,19 +182,19 @@ def create_template_3_reportframe() -> NuclearAndGasGeneralTaxonomyAlignedNumera
             ),
         nuclearAndGasTaxonomyAlignedCapexNumerator=ExtendedDataPointNuclearAndGasAlignedNumerator(
             value=NuclearAndGasAlignedNumerator(
-                taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g429=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g430=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=100.0, mitigation=81.57, adaptation=0.1
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_aligned_share_numerator=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=100.0, mitigation=81.57, adaptation=0.1
                 ),
             ),
@@ -213,19 +213,19 @@ def create_template_4_reportframe() -> NuclearAndGasGeneralTaxonomyEligibleButNo
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
         nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue=ExtendedDataPointNuclearAndGasEligibleButNotAligned(
             value=NuclearAndGasEligibleButNotAligned(
-                taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g429=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g430=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.26, mitigation=0.2, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.26, mitigation=0.2, adaptation=0.0
                 ),
             ),
@@ -239,19 +239,19 @@ def create_template_4_reportframe() -> NuclearAndGasGeneralTaxonomyEligibleButNo
         ),
         nuclearAndGasTaxonomyEligibleButNotAlignedCapex=ExtendedDataPointNuclearAndGasEligibleButNotAligned(
             value=NuclearAndGasEligibleButNotAligned(
-                taxonomy_aligned_share_denominator_n_and_g429=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g429=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g430=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g430=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomy_aligned_share_denominator_n_and_g431=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_n_and_g431=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.0, mitigation=0.0, adaptation=0.0
                 ),
-                taxonomyAlignedShareDenominatorOtherActivities=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share_other_activities=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.28, mitigation=0.18, adaptation=0.16
                 ),
-                taxonomyAlignedShareDenominator=NuclearAndGasEnvironmentalObjective(
+                taxonomy_eligible_but_not_aligned_share=NuclearAndGasEnvironmentalObjective(
                     mitigationAndAdaptation=0.28, mitigation=0.18, adaptation=0.16
                 ),
             ),

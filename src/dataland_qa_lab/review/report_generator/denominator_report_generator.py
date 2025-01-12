@@ -41,7 +41,6 @@ def build_denominator_report_frame(
     dataland_values = get_dataland_values(dataset, kpi)
 
     corrected_values, verdict, comment, quality = compare_denominator_values(prompted_values, dataland_values)
-
     if verdict == QaReportDataPointVerdict.QAACCEPTED:
         corrected_data = ExtendedDataPointNuclearAndGasAlignedDenominator()  # left empty if no corrections are made
     else:
@@ -69,13 +68,12 @@ def compare_denominator_values(
     quality = "Reported"
     comments = []
 
-    # Iterate over the fields and compare the values
     for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompt_vals, strict=False):
         for prompt_val, dataland_val in zip(prompt_vals, dataland_vals, strict=False):
-            if prompt_val == -1 and dataland_val != -1:  # Prompt did not contain a valid value
+            if prompt_val == -1 and dataland_val != -1:  # Prompt did not contain a value
                 quality = "NoDataFound"
                 verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
-                comments.append(f"Discrepancy in '{field_name}': {dataland_val} != {prompt_val}.")
+                comments.append(f"No Data found for '{field_name}': {dataland_val} != {prompt_val}.")
             elif prompt_val != dataland_val:
                 verdict = QaReportDataPointVerdict.QAREJECTED
                 comments.append(f"Discrepancy in '{field_name}': {dataland_val} != {prompt_val}.")
@@ -101,7 +99,6 @@ def update_attribute(obj: NuclearAndGasAlignedDenominator, field_name: str, valu
     """Set an attribute of the aligned denominator by field name."""
     # Replace -1 with None in the values list
     values = [None if v == -1 else v for v in values]
-
     setattr(
         obj,
         field_name,

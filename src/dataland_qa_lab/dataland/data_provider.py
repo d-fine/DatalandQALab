@@ -95,11 +95,12 @@ def extract_field_data(values: any, field_name: str) -> list:
     """Extract mitigation, adaptation, and mitigationAndAdaptation values from a field and return them as a list."""
     field_value = getattr(values, field_name, None)
 
-    mitigation_and_adaptation = (
-        -1 if getattr(field_value, "mitigation_and_adaptation", None) is None else field_value.mitigation_and_adaptation
-    )
-    mitigation = -1 if getattr(field_value, "mitigation", None) is None else field_value.mitigation
-    adaptation = -1 if getattr(field_value, "adaptation", None) is None else field_value.adaptation
+    value = getattr(field_value, "mitigation_and_adaptation", None)
+    mitigation_and_adaptation = -1 if value is None else value
+    value = getattr(field_value, "mitigation", None)
+    mitigation = -1 if value is None else value
+    value = getattr(field_value, "adaptation", None)
+    adaptation = -1 if value is None else value
 
     return [mitigation_and_adaptation, mitigation, adaptation]
 

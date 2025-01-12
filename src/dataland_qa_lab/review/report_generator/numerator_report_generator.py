@@ -1,3 +1,5 @@
+import logging
+
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_numerator import (
     ExtendedDataPointNuclearAndGasAlignedNumerator,
@@ -32,64 +34,68 @@ def build_taxonomy_aligned_numerator_report(
 def build_numerator_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
-    """Build report frame for the revenue Numerator."""
-    aligned_numerator, verdict, comment = compare_numerator_values(dataset, relevant_pages, kpi)
+    """Build a report frame for a specific KPI numerator (Revenue or CapEx)."""
+    prompted_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
+    dataland_values = get_dataland_values(dataset, kpi)
 
-    corrected_data = (
-        ExtendedDataPointNuclearAndGasAlignedNumerator(
-            value=aligned_numerator,
-            quality="Incomplete",
+    corrected_values, verdict, comment, quality = compare_numerator_values(prompted_values, dataland_values)
+    if verdict == QaReportDataPointVerdict.QAACCEPTED:
+        corrected_data = ExtendedDataPointNuclearAndGasAlignedNumerator()
+    else:
+        corrected_data = ExtendedDataPointNuclearAndGasAlignedNumerator(
+            value=corrected_values,
+            quality=quality,
             comment=comment,
             dataSource=get_data_source(dataset),
         )
-        if verdict != QaReportDataPointVerdict.QAACCEPTED
-        else ExtendedDataPointNuclearAndGasAlignedNumerator()
-    )
-
     return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
-        comment=comment, verdict=verdict, correctedData=corrected_data
+        comment=comment,
+        verdict=verdict,
+        correctedData=corrected_data
     )
 
 
 def compare_numerator_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
-) -> tuple[NuclearAndGasAlignedNumerator, QaReportDataPointVerdict, str]:
-    """Compare Numerator values and return results."""
-    # Generate prompted values and split them into chunks
-    prompted_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
-    chunked_prompted_values = [prompted_values[i : i + 3] for i in range(0, len(prompted_values), 3)]
-
-    dataland_values = get_dataland_values(dataset, kpi)
-
-    aligned_numerator = None
+    prompted_values: list, dataland_values: dict
+) -> tuple[NuclearAndGasAlignedNumerator, QaReportDataPointVerdict, str, str]:
+    """Compare denominator values from the dataset with the prompted values."""
+    chunked_prompt_vals = [prompted_values[i : i + 3] for i in range(0, len(prompted_values), 3)]
+    corrected_values = NuclearAndGasAlignedNumerator()
     verdict = QaReportDataPointVerdict.QAACCEPTED
+    quality = "Reported"
     comments = []
 
-    for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompted_values, strict=False):
-        if dataland_vals != prompt_vals:
-            verdict = QaReportDataPointVerdict.QAREJECTED
-            discrepancies = generate_discrepancies(dataland_vals, prompt_vals)
-            comments.append(f"Discrepancy in '{field_name}': {discrepancies}.")
-            aligned_numerator = NuclearAndGasAlignedNumerator() if aligned_numerator is None else aligned_numerator
-            update_attribute(aligned_numerator, field_name, prompt_vals)
+    for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompt_vals, strict=False):
+        for prompt_val, dataland_val in zip(prompt_vals, dataland_vals, strict=False):
+            if prompt_val == -1 and dataland_val != -1:  # Prompt did not contain a value
+                quality = "NoDataFound"
+                verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
+                comments.append(f"No Data found for '{field_name}': {dataland_val} != {prompt_val}.")
+            elif prompt_val != dataland_val:
+                verdict = QaReportDataPointVerdict.QAREJECTED
+                comments.append(f"Discrepancy in '{field_name}': {dataland_val} != {prompt_val}.")
+        update_attribute(corrected_values, field_name, prompt_vals)
 
-    return aligned_numerator, verdict, "".join(comments)
+    return corrected_values, verdict, "".join(comments), quality
 
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
-    """Retrieve dataland Numerator values based on KPI."""
+    """Retrieve dataland numerator values based on KPI."""
     if kpi == "Revenue":
-        return data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
-    return data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
+        data = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
+    else:
+        data = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
 
+    if data is None:
+        logging.error("Retrieved data is None for KPI: %s", kpi)
 
-def generate_discrepancies(dataland_values: list, prompted_values: list) -> str:
-    """Generate a string describing discrepancies between two lists of values."""
-    return ", ".join(f"{v1} != {v2}" for v1, v2 in zip(dataland_values, prompted_values, strict=False) if v1 != v2)
+    return data
 
 
 def update_attribute(obj: NuclearAndGasAlignedNumerator, field_name: str, values: list) -> None:
-    """Set an attribute of the aligned Numerator by field name."""
+    """Set an attribute of the aligned numerator by field name."""
+    # Replace -1 with None in the values list
+    values = [None if v == -1 else v for v in values]
     setattr(
         obj,
         field_name,
