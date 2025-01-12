@@ -49,9 +49,7 @@ def build_numerator_report_frame(
             dataSource=get_data_source(dataset),
         )
     return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
-        comment=comment,
-        verdict=verdict,
-        correctedData=corrected_data
+        comment=comment, verdict=verdict, correctedData=corrected_data
     )
 
 

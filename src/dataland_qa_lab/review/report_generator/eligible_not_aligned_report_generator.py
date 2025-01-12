@@ -1,3 +1,5 @@
+import logging
+
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_eligible_but_not_aligned import (
     ExtendedDataPointNuclearAndGasEligibleButNotAligned,
@@ -36,66 +38,68 @@ def build_taxonomy_eligible_but_not_aligned_report(
 def build_eligible_but_not_aligned_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned:
-    """Build report frame for the taxonomy eligible but not alinged data."""
-    eligible_but_not_aligned, verdict, comment = compare_eligible_but_not_aligned_values(dataset, relevant_pages, kpi)
+    """Build a report frame for a specific KPI (Revenue or CapEx)."""
+    prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi)
+    dataland_values = get_dataland_values(dataset, kpi)
 
-    corrected_data = (
-        ExtendedDataPointNuclearAndGasEligibleButNotAligned(
-            value=eligible_but_not_aligned,
-            quality="Incomplete",
+    corrected_values, verdict, comment, quality = compare_eligible_but_not_aligned_values(
+        prompted_values, dataland_values
+    )
+
+    if verdict == QaReportDataPointVerdict.QAACCEPTED:
+        corrected_data = ExtendedDataPointNuclearAndGasEligibleButNotAligned()
+    else:
+        corrected_data = ExtendedDataPointNuclearAndGasEligibleButNotAligned(
+            value=corrected_values,
+            quality=quality,
             comment=comment,
             dataSource=get_data_source(dataset),
         )
-        if verdict != QaReportDataPointVerdict.QAACCEPTED
-        else ExtendedDataPointNuclearAndGasEligibleButNotAligned()
-    )
-
     return QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
         comment=comment, verdict=verdict, correctedData=corrected_data
     )
 
 
 def compare_eligible_but_not_aligned_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
-) -> tuple[NuclearAndGasEligibleButNotAligned, QaReportDataPointVerdict, str]:
-    """Compare Eligible but not aligned values and return results."""
-    # Generate prompted values and split them into chunks
-    prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi)
-    chunked_prompted_values = [prompted_values[i : i + 3] for i in range(0, len(prompted_values), 3)]
-
-    dataland_values = get_dataland_values(dataset, kpi)
-
-    eligible_but_not_aligned = None
+    prompted_values: list, dataland_values: dict
+) -> tuple[NuclearAndGasEligibleButNotAligned, QaReportDataPointVerdict, str, str]:
+    """Compare eligible but not aligned values from the dataset with the prompted values."""
+    chunked_prompt_vals = [prompted_values[i : i + 3] for i in range(0, len(prompted_values), 3)]
+    corrected_values = NuclearAndGasEligibleButNotAligned()
     verdict = QaReportDataPointVerdict.QAACCEPTED
+    quality = "Reported"
     comments = []
 
-    for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompted_values, strict=False):
-        if dataland_vals != prompt_vals:
-            verdict = QaReportDataPointVerdict.QAREJECTED
-            discrepancies = generate_discrepancies(dataland_vals, prompt_vals)
-            comments.append(f"Discrepancy in '{field_name}': {discrepancies}.")
-            eligible_but_not_aligned = (
-                NuclearAndGasEligibleButNotAligned() if eligible_but_not_aligned is None else eligible_but_not_aligned
-            )
-            update_attribute(eligible_but_not_aligned, field_name, prompt_vals)
+    for (field_name, dataland_vals), prompt_vals in zip(dataland_values.items(), chunked_prompt_vals, strict=False):
+        for prompt_val, dataland_val in zip(prompt_vals, dataland_vals, strict=False):
+            if prompt_val == -1 and dataland_val != -1:  # Prompt did not contain a value
+                quality = "NoDataFound"
+                verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
+                comments.append(f"No Data found for '{field_name}': {dataland_val} != {prompt_val}.")
+            elif prompt_val != dataland_val:
+                verdict = QaReportDataPointVerdict.QAREJECTED
+                comments.append(f"Discrepancy in '{field_name}': {dataland_val} != {prompt_val}.")
+        update_attribute(corrected_values, field_name, prompt_vals)
 
-    return eligible_but_not_aligned, verdict, "".join(comments)
+    return corrected_values, verdict, "".join(comments), quality
 
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     """Retrieve dataland Eligible but not aligned values based on KPI."""
     if kpi == "Revenue":
-        return data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
-    return data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data(dataset)
+        data = data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
+    else:
+        data = data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data(dataset)
 
+    if data is None:
+        logging.error("Retrieved data is None for KPI: %s", kpi)
 
-def generate_discrepancies(dataland_values: list, prompted_values: list) -> str:
-    """Generate a string describing discrepancies between two lists of values."""
-    return ", ".join(f"{v1} != {v2}" for v1, v2 in zip(dataland_values, prompted_values, strict=False) if v1 != v2)
+    return data
 
 
 def update_attribute(obj: NuclearAndGasEligibleButNotAligned, field_name: str, values: list) -> None:
     """Set an attribute of the Eligible but not aligned by field name."""
+    values = [None if v == -1 else v for v in values]
     setattr(
         obj,
         field_name,
