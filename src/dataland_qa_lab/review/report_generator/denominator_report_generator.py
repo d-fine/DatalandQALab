@@ -79,7 +79,7 @@ def compare_denominator_values(
             elif prompt_val != dataland_val:
                 verdict = QaReportDataPointVerdict.QAREJECTED
                 comments.append(f"Discrepancy in '{field_name}': {dataland_val} != {prompt_val}.")
-    update_attribute(corrected_values, field_name, prompt_vals)
+        update_attribute(corrected_values, field_name, prompt_vals)
 
     return corrected_values, verdict, "".join(comments), quality
 

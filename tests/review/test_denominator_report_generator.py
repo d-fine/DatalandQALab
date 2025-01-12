@@ -128,9 +128,21 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
     ]
     revenue_report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g426 is None
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g427 is None
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator is not None
+    # assert none values
+    assert (
+        revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g426.mitigation_and_adaptation
+        is None
+    )
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g426.mitigation is None
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g426.adaptation is None
+    # assert 0.0 values
+    assert (
+        revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g430.mitigation_and_adaptation
+        == 0.0
+    )
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g430.mitigation == 0.0
+    assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g430.adaptation == 0.0
+
     assert revenue_report.verdict == QaReportDataPointVerdict.QAREJECTED
     assert revenue_report.comment == "Discrepancy in 'taxonomy_aligned_share_denominator': 0.0 != 0.1."
 
