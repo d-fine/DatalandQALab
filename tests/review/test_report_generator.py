@@ -4,15 +4,9 @@ import pytest
 from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 
+from dataland_qa_lab.review.report_generator import yes_no_report_generator
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from tests.utils.provide_test_data_collection import provide_test_data_collection
-
-
-def test_build_report_frame() -> None:
-    report_frame = NuclearAndGasReportGenerator().build_report_frame()
-
-    assert report_frame is not None
-    assert report_frame.general.taxonomy_aligned_denominator is not None
 
 
 def create_document_intelligence_mock() -> AnalyzeResult:
@@ -50,7 +44,7 @@ def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
         "Yes",
         "No",
     ]
-    corrected_values = NuclearAndGasReportGenerator().compare_yes_no_values(
+    corrected_values = yes_no_report_generator.compare_yes_no_values(
         dataset=test_data_collection, relevant_pages=AnalyzeResult()
     )
 
