@@ -1,3 +1,5 @@
+import logging
+
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_non_eligible import (
     ExtendedDataPointNuclearAndGasNonEligible,
@@ -30,72 +32,67 @@ def build_non_eligible_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
     """Build report frame for the revenue non_eligible."""
-    non_eligible, verdict, comment = compare_non_eligible_values(dataset, relevant_pages, kpi)
+    prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
+    dataland_values = get_dataland_values(dataset, kpi)
 
-    corrected_data = (
-        ExtendedDataPointNuclearAndGasNonEligible(
-            value=non_eligible,
-            quality="Incomplete",
+    value, verdict, comment, quality = compare_non_eligible_values(prompted_values, dataland_values)
+    if verdict == QaReportDataPointVerdict.QAACCEPTED:
+        corrected_data = ExtendedDataPointNuclearAndGasNonEligible()
+    else:
+        corrected_data = ExtendedDataPointNuclearAndGasNonEligible(
+            value=value,
+            quality=quality,
             comment=comment,
             dataSource=get_data_source(dataset),
         )
-        if verdict != QaReportDataPointVerdict.QAACCEPTED
-        else ExtendedDataPointNuclearAndGasNonEligible()
-    )
-
     return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
         comment=comment, verdict=verdict, correctedData=corrected_data
     )
 
 
 def compare_non_eligible_values(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
-) -> tuple[NuclearAndGasNonEligible, QaReportDataPointVerdict, str]:
+    prompted_values: list, dataland_values: dict
+) -> tuple[NuclearAndGasNonEligible, QaReportDataPointVerdict, str, str]:
     """Compare non_eligible_values values and return results."""
-    promt_non_eligible_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
-
-    dataland_values = get_dataland_values(dataset, kpi)
-
-    value = None
+    value = NuclearAndGasNonEligible()
     verdict = QaReportDataPointVerdict.QAACCEPTED
+    quality = "Reported"
     comment = ""
-
     for index, (field_name, dataland_value) in enumerate(dataland_values.items()):
-        try:
-            prompt_value = promt_non_eligible_values[index]
-        except IndexError:
+        prompt_value = prompted_values[index]
+        if prompt_value == -1 and dataland_value != -1:
+            quality = "NoDataFound"
+            verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
+            comment += f"No Data found for'{field_name}': {dataland_value} != {prompt_value}."
+        elif dataland_value != prompt_value:
             verdict = QaReportDataPointVerdict.QAREJECTED
-            comment += f" Missing value for '{field_name}' in non_eligible_values."
-            continue
+            comment += f"Discrepancy in '{field_name}': {dataland_value} != {prompt_value}."
+        update_attribute(value, field_name, prompt_value)
 
-        if dataland_value != prompt_value:
-            verdict = QaReportDataPointVerdict.QAREJECTED
-            discrepancies = generate_discrepancies([dataland_value], [prompt_value])
-            comment += f"Discrepancy in '{field_name}': {discrepancies}."
-            value = NuclearAndGasNonEligible() if value is None else value
-            update_attribute(value, field_name, prompt_value)
-
-    return value, verdict, comment
+    return value, verdict, comment, quality
 
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
-    """Retrieve dataland Numerator values based on KPI."""
+    """Retrieve dataland non_eligible values based on KPI."""
     if kpi == "Revenue":
-        return data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
-    return data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
+        data = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
+    else:
+        data = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
+
+    if data is None:
+        logging.error("Retrieved data is None for KPI: %s", kpi)
+
+    return data
 
 
-def generate_discrepancies(dataland_values: list, prompted_values: list) -> str:
-    """Generate a string describing discrepancies between two lists of values."""
-    return ", ".join(f"{v1} != {v2}" for v1, v2 in zip(dataland_values, prompted_values, strict=False) if v1 != v2)
-
-
-def update_attribute(obj: NuclearAndGasGeneralTaxonomyNonEligible, field_name: str, values: list) -> None:
-    """Set an attribute of the aligned Numerator by field name."""
+def update_attribute(obj: NuclearAndGasNonEligible, field_name: str, value: float) -> None:
+    """Set an attribute of the non_eligible by field name."""
+    if value == -1:
+        value = None
     setattr(
         obj,
         field_name,
-        values,
+        value,
     )
 
 
