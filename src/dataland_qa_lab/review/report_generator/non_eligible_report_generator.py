@@ -6,7 +6,6 @@ from dataland_qa.models.extended_data_point_nuclear_and_gas_non_eligible import 
 )
 from dataland_qa.models.extended_document_reference import ExtendedDocumentReference
 from dataland_qa.models.nuclear_and_gas_general_taxonomy_non_eligible import NuclearAndGasGeneralTaxonomyNonEligible
-from dataland_qa.models.nuclear_and_gas_non_eligible import NuclearAndGasNonEligible
 from dataland_qa.models.qa_report_data_point_extended_data_point_nuclear_and_gas_non_eligible import (
     QaReportDataPointExtendedDataPointNuclearAndGasNonEligible,
 )
@@ -14,7 +13,7 @@ from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVer
 
 from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.review.numeric_value_generator import NumericValueGenerator
-from dataland_qa_lab.utils.doc_ref_to_qa_ref_mapper import map_doc_ref_to_qa_doc_ref
+from dataland_qa_lab.utils import comparator
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
@@ -35,7 +34,7 @@ def build_non_eligible_report_frame(
     prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
     dataland_values = get_dataland_values(dataset, kpi)
 
-    value, verdict, comment, quality = compare_non_eligible_values(prompted_values, dataland_values)
+    value, verdict, comment, quality = comparator.compare_non_eligible_values(prompted_values, dataland_values)
     if verdict == QaReportDataPointVerdict.QAACCEPTED:
         corrected_data = ExtendedDataPointNuclearAndGasNonEligible()
     else:
@@ -48,28 +47,6 @@ def build_non_eligible_report_frame(
     return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
         comment=comment, verdict=verdict, correctedData=corrected_data
     )
-
-
-def compare_non_eligible_values(
-    prompted_values: list, dataland_values: dict
-) -> tuple[NuclearAndGasNonEligible, QaReportDataPointVerdict, str, str]:
-    """Compare non_eligible_values values and return results."""
-    value = NuclearAndGasNonEligible()
-    verdict = QaReportDataPointVerdict.QAACCEPTED
-    quality = "Reported"
-    comment = ""
-    for index, (field_name, dataland_value) in enumerate(dataland_values.items()):
-        prompt_value = prompted_values[index]
-        if prompt_value == -1 and dataland_value != -1:
-            quality = "NoDataFound"
-            verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
-            comment += f"No Data found for'{field_name}': {dataland_value} != {prompt_value}."
-        elif dataland_value != prompt_value:
-            verdict = QaReportDataPointVerdict.QAREJECTED
-            comment += f"Discrepancy in '{field_name}': {dataland_value} != {prompt_value}."
-        update_attribute(value, field_name, prompt_value)
-
-    return value, verdict, comment, quality
 
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
@@ -85,19 +62,8 @@ def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     return data
 
 
-def update_attribute(obj: NuclearAndGasNonEligible, field_name: str, value: float) -> None:
-    """Set an attribute of the non_eligible by field name."""
-    if value == -1:
-        value = None
-    setattr(
-        obj,
-        field_name,
-        value,
-    )
-
-
 def get_data_source(dataset: NuclearAndGasDataCollection) -> ExtendedDocumentReference | None:
     """Retrieve the data source mapped to a QA document reference."""
     data_sources = data_provider.get_datasources_of_nuclear_and_gas_numeric_values(data=dataset)
     data_source = data_sources.get("taxonomy_non_eligible")
-    return map_doc_ref_to_qa_doc_ref(data_source)
+    return comparator.map_doc_ref_to_qa_doc_ref(data_source)

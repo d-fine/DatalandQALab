@@ -44,13 +44,11 @@ def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
         "Yes",
         "No",
     ]
-    corrected_values = yes_no_report_generator.compare_yes_no_values(
-        dataset=test_data_collection, relevant_pages=AnalyzeResult()
-    )
+    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
 
-    assert corrected_values.get("nuclear_energy_related_activities_section426").corrected_data.value is None
-    assert corrected_values.get("nuclear_energy_related_activities_section426").comment == "Geprüft durch AzureOpenAI"
-    assert corrected_values.get("fossil_gas_related_activities_section430").corrected_data.value == "Yes"
+    assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
+    assert report.nuclear_energy_related_activities_section426.comment == "Geprüft durch AzureOpenAI"
+    assert report.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
 
 
 @patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
