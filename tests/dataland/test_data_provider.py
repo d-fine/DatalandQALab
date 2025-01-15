@@ -1,8 +1,10 @@
 import pytest
+from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_backend.models.nuclear_and_gas_general import NuclearAndGasGeneral
 
 from dataland_qa_lab.dataland import data_provider
-from dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
+from tests.utils import provide_test_dataset
 from tests.utils.provide_test_data_collection import provide_test_data_collection
 
 
@@ -103,6 +105,14 @@ def test_taxonomy_non_eligible_capex_values_by_data(test_data_collection: Nuclea
 
 @pytest.fixture
 def test_data_collection() -> NuclearAndGasDataCollection:
-    dataset_id = "7b7c7ea2-7d74-4161-afc8-4aa6bcde66c7"
-    dataset = get_dataset_by_id(dataset_id).data
+
+    dataset = NuclearAndGasData(
+        general=NuclearAndGasGeneral(
+            general=provide_test_dataset.create_template_1_reportframe(),
+            taxonomyAlignedDenominator=provide_test_dataset.create_template_2_reportframe(),
+            taxonomyAlignedNumerator=provide_test_dataset.create_template_3_reportframe(),
+            taxonomyEligibleButNotAligned=provide_test_dataset.create_template_4_reportframe(),
+            taxonomyNonEligible=provide_test_dataset.create_template_5_reportframe(),
+        )
+    )
     return NuclearAndGasDataCollection(dataset)
