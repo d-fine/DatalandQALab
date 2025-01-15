@@ -10,10 +10,7 @@ from dataland_qa_lab.pages.text_to_doc_intelligence import add_document_if_not_e
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.config.get_config")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.AzureKeyCredential")
-def test_extract_text_of_pdf(
-    mock_credential: MagicMock,
-    mock_client: MagicMock,
-    mock_config: MagicMock) -> None:
+def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock, mock_config: MagicMock) -> None:
     mock_pdf = MagicMock()
     mock_result = MagicMock(spec=AnalyzeResult)
     mock_poller = MagicMock()
@@ -29,7 +26,7 @@ def test_extract_text_of_pdf(
         "prebuilt-layout",
         analyze_request=mock_pdf,
         content_type="application/octet-stream",
-        output_content_format="markdown"
+        output_content_format="markdown",
     )
     assert result == mock_result
 
@@ -38,9 +35,8 @@ def test_extract_text_of_pdf(
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_tables")
 def test_add_document_if_not_exists_new_entry(
-    mock_tables: MagicMock,
-    mock_engine: MagicMock,
-    mock_extract_text: MagicMock) -> None:
+    mock_tables: MagicMock, mock_engine: MagicMock, mock_extract_text: MagicMock
+) -> None:
     mock_session = MagicMock()
     mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
     mock_engine.create_tables.return_value = None
@@ -63,9 +59,7 @@ def test_add_document_if_not_exists_new_entry(
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_tables")
-def test_add_document_if_not_exists_existing_entry(
-    mock_engine: MagicMock,
-    mock_extract_text: MagicMock) -> None:
+def test_add_document_if_not_exists_existing_entry(mock_engine: MagicMock, mock_extract_text: MagicMock) -> None:
     mock_session = MagicMock()
     mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
     mock_engine.create_tables.return_value = None
