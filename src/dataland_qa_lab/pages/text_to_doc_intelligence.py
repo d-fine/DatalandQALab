@@ -1,9 +1,11 @@
+from datetime import UTC, datetime, timedelta, timezone
+
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult, DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
-from datetime import UTC, datetime, timedelta, timezone
 from sqlalchemy.exc import SQLAlchemyError
+
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.utils import config
 

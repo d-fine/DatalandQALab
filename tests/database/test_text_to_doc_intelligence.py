@@ -14,7 +14,6 @@ def test_extract_text_of_pdf(
     mock_credential: MagicMock,
     mock_client: MagicMock,
     mock_config: MagicMock) -> None:
-    """Test to ensure that the text of a PDF is extracted correctly."""
     mock_pdf = MagicMock()
     mock_result = MagicMock(spec=AnalyzeResult)
     mock_poller = MagicMock()
@@ -42,7 +41,6 @@ def test_add_document_if_not_exists_new_entry(
     mock_tables: MagicMock,
     mock_engine: MagicMock,
     mock_extract_text: MagicMock) -> None:
-    """test to ensure adding a document works as intended."""
     mock_session = MagicMock()
     mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
     mock_engine.create_tables.return_value = None
@@ -68,7 +66,6 @@ def test_add_document_if_not_exists_new_entry(
 def test_add_document_if_not_exists_existing_entry(
     mock_engine: MagicMock,
     mock_extract_text: MagicMock) -> None:
-    """test to ensure updating a document works as intended."""
     mock_session = MagicMock()
     mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
     mock_engine.create_tables.return_value = None
@@ -92,7 +89,6 @@ def test_add_document_if_not_exists_existing_entry(
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
 def test_add_document_if_not_exists_sqlalchemy_error(mock_engine: MagicMock) -> None:
-    """Test to ensure that an SQLAlchemyError is caught."""
     mock_session = MagicMock()
     mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
     mock_engine.create_tables.return_value = None
