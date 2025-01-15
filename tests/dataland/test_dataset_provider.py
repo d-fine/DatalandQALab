@@ -10,7 +10,6 @@ from tests.utils import provide_test_dataset
 
 @patch("dataland_qa_lab.dataland.dataset_provider.get_dataset_by_id")
 def test_get_dataset(mock_get_dataset_by_id: Mock) -> None:
-
     mock_get_dataset_by_id.return_value = CompanyAssociatedDataNuclearAndGasData(
         companyId="90ba9a69-1612-42e1-aeff-681d3eb683ba",
         reportingPeriod="2023",
@@ -22,7 +21,7 @@ def test_get_dataset(mock_get_dataset_by_id: Mock) -> None:
                 taxonomyEligibleButNotAligned=provide_test_dataset.create_template_4_reportframe(),
                 taxonomyNonEligible=provide_test_dataset.create_template_5_reportframe(),
             )
-        )
+        ),
     )
 
     dataset = dataset_provider.get_dataset_by_id(data_id="test_data_id")

@@ -105,7 +105,6 @@ def test_taxonomy_non_eligible_capex_values_by_data(test_data_collection: Nuclea
 
 @pytest.fixture
 def test_data_collection() -> NuclearAndGasDataCollection:
-
     dataset = NuclearAndGasData(
         general=NuclearAndGasGeneral(
             general=provide_test_dataset.create_template_1_reportframe(),
