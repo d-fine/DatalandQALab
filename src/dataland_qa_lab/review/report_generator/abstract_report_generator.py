@@ -9,7 +9,3 @@ class ReportGenerator(ABC):
     @abstractmethod
     def generate_report(self, relevant_pages: AnalyzeResult, dataset: any) -> any:
         """Generate a QA Report for any framework."""
-
-    @abstractmethod
-    def build_report_frame(self) -> any:
-        """Create a dataless frame."""
