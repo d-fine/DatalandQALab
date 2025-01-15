@@ -150,5 +150,5 @@ def test_generate_taxonomy_aligned_numerator_report_edge_cases(mock_generate_gpt
     report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report is not None
-    assert report.verdict == QaReportDataPointVerdict.QAINCONCLUSIVE
+    assert report.verdict == QaReportDataPointVerdict.QAREJECTED
     assert report.corrected_data.quality == "NoDataFound"

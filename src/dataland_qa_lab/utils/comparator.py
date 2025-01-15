@@ -23,12 +23,12 @@ def compare_yes_no_values(
 
         if corrected_value != dataland_value:
             qa_data_points[field_name] = QaReportDataPointExtendedDataPointYesNo(
-                comment="tbd",
+                comment=(f"Discrepancy in '{field_name}': {dataland_value} != {corrected_value}."),
                 verdict=QaReportDataPointVerdict.QAREJECTED,
                 correctedData=ExtendedDataPointYesNo(
                     value=corrected_value,
-                    quality="Incomplete",
-                    comment=(f"Discrepancy in '{field_name}': {dataland_value} != {corrected_value}."),
+                    quality="Reported",
+                    comment="",
                     dataSource=map_doc_ref_to_qa_doc_ref(data_source),
                 ),
             )
@@ -56,7 +56,7 @@ def compare_values_template_2to4(
         for prompt_val, dataland_val in zip(prompt_vals, dataland_vals, strict=False):
             if prompt_val == -1 and dataland_val != -1:
                 quality = "NoDataFound"
-                verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
+                verdict = QaReportDataPointVerdict.QAREJECTED
                 comments.append(f"No Data found for '{field_name}': {dataland_val} != {prompt_val}.")
             elif prompt_val != dataland_val:
                 verdict = QaReportDataPointVerdict.QAREJECTED
@@ -78,7 +78,7 @@ def compare_non_eligible_values(
         prompt_value = prompted_values[index]
         if prompt_value == -1 and dataland_value != -1:
             quality = "NoDataFound"
-            verdict = QaReportDataPointVerdict.QAINCONCLUSIVE
+            verdict = QaReportDataPointVerdict.QAREJECTED
             comment += f"No Data found for'{field_name}': {dataland_value} != {prompt_value}."
         elif dataland_value != prompt_value:
             verdict = QaReportDataPointVerdict.QAREJECTED

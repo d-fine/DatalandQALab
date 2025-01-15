@@ -91,5 +91,5 @@ def test_compare_taxonomy_non_eligible_values_edge_cases(mock_generate_gpt_reque
     report = report_generator.build_non_eligible_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report is not None
-    assert report.verdict == QaReportDataPointVerdict.QAINCONCLUSIVE
+    assert report.verdict == QaReportDataPointVerdict.QAREJECTED
     assert report.corrected_data.quality == "NoDataFound"

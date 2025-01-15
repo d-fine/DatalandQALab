@@ -41,7 +41,7 @@ def build_non_eligible_report_frame(
         corrected_data = ExtendedDataPointNuclearAndGasNonEligible(
             value=value,
             quality=quality,
-            comment=comment,
+            comment="",
             dataSource=get_data_source(dataset),
         )
     return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
