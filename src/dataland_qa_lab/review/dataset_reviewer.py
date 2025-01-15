@@ -13,7 +13,7 @@ def review_dataset(data_id: str) -> str | None:
 
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
 
-    readable_text = text_to_doc_intelligence.extract_text_of_pdf(relevant_pages_pdf_reader)
+    readable_text = text_to_doc_intelligence.add_document_if_not_exists(data_id, relevant_pages_pdf_reader)
 
     report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
