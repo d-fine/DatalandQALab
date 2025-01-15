@@ -1,5 +1,3 @@
-import logging
-
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_non_eligible import (
     ExtendedDataPointNuclearAndGasNonEligible,
@@ -55,9 +53,6 @@ def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
         data = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
     else:
         data = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
-
-    if data is None:
-        logging.error("Retrieved data is None for KPI: %s", kpi)
 
     return data
 
