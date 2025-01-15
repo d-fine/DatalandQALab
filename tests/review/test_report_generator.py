@@ -56,7 +56,7 @@ def test_generate_report(_mock_create: Mock) -> None:  # noqa: PT019
     test_data_collection = provide_test_data_collection()
 
     report = None  # Initialize the variable to avoid UnboundLocalError
-    with pytest.raises(Exception, match="No tool calls found in the GPT response."):
+    with pytest.raises(Exception, match=r"No tool calls found in the GPT response."):
         report = NuclearAndGasReportGenerator().generate_report(
             relevant_pages=AnalyzeResult(), dataset=test_data_collection
         )
