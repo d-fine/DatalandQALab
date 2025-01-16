@@ -78,7 +78,9 @@ def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataColl
     non_eligible_dict = {}
     non_eligible_values = data.taxonomy_non_eligible.get("taxonomy_non_eligible_revenue").datapoint.value
     for field_name in NuclearAndGasNonEligible.model_fields:
-        non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, 0.0) or 0.0
+        value = getattr(non_eligible_values, field_name, None)
+        non_eligible_dict[field_name] = -1 if value is None else value
+
     return non_eligible_dict
 
 
@@ -87,16 +89,22 @@ def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollec
     non_eligible_dict = {}
     non_eligible_values = data.taxonomy_non_eligible.get("taxonomy_non_eligible_capex").datapoint.value
     for field_name in NuclearAndGasNonEligible.model_fields:
-        non_eligible_dict[field_name] = getattr(non_eligible_values, field_name, None)
+        value = getattr(non_eligible_values, field_name, None)
+        non_eligible_dict[field_name] = -1 if value is None else value
     return non_eligible_dict
 
 
 def extract_field_data(values: any, field_name: str) -> list:
     """Extract mitigation, adaptation, and mitigationAndAdaptation values from a field and return them as a list."""
     field_value = getattr(values, field_name, None)
-    mitigation_and_adaptation = getattr(field_value, "mitigation_and_adaptation", 0) or 0.0
-    mitigation = getattr(field_value, "mitigation", 0.0) or 0.0
-    adaptation = getattr(field_value, "adaptation", 0.0) or 0.0
+
+    value = getattr(field_value, "mitigation_and_adaptation", None)
+    mitigation_and_adaptation = -1 if value is None else value
+    value = getattr(field_value, "mitigation", None)
+    mitigation = -1 if value is None else value
+    value = getattr(field_value, "adaptation", None)
+    adaptation = -1 if value is None else value
+
     return [mitigation_and_adaptation, mitigation, adaptation]
 
 

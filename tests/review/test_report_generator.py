@@ -4,15 +4,9 @@ import pytest
 from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 
+from dataland_qa_lab.review.report_generator import yes_no_report_generator
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from tests.utils.provide_test_data_collection import provide_test_data_collection
-
-
-def test_build_report_frame() -> None:
-    report_frame = NuclearAndGasReportGenerator().build_report_frame()
-
-    assert report_frame is not None
-    assert report_frame.general.taxonomy_aligned_denominator is not None
 
 
 def create_document_intelligence_mock() -> AnalyzeResult:
@@ -39,17 +33,22 @@ def build_simple_openai_chat_completion() -> ChatCompletion:
     )
 
 
-@patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
-def test_compare_yes_no_values(_mock_create: Mock) -> None:  # noqa: PT019
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
     test_data_collection = provide_test_data_collection()
+    mock_generate_gpt_request.return_value = [
+        "Yes",
+        "No",
+        "Yes",
+        "No",
+        "Yes",
+        "No",
+    ]
+    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
 
-    corrected_values = NuclearAndGasReportGenerator().compare_yes_no_values(
-        dataset=test_data_collection, relevant_pages=AnalyzeResult()
-    )
-
-    assert corrected_values.get("nuclear_energy_related_activities_section426").corrected_data.value is None
-    assert corrected_values.get("nuclear_energy_related_activities_section426").comment == "Geprüft durch AzureOpenAI"
-    assert corrected_values.get("fossil_gas_related_activities_section430").corrected_data.value == "Yes"
+    assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
+    assert report.nuclear_energy_related_activities_section426.comment == "Geprüft durch AzureOpenAI"
+    assert report.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
 
 
 @patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
