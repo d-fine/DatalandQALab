@@ -27,6 +27,8 @@ def add_entity(entity: any) -> bool:
 
     try:
         session.add(entity)
+        session.commit()
+
     except SQLAlchemyError:
         logger.exception("Error while adding entity to database")
         session.rollback()
@@ -34,7 +36,6 @@ def add_entity(entity: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True
 
 
@@ -45,6 +46,7 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     try:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
+        session.commit()
     except SQLAlchemyError:
         logger.exception("Error retrieving entity")
         session.rollback()
@@ -52,7 +54,6 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     finally:
         session.close()
 
-    session.commit()
     return entity
 
 
@@ -62,6 +63,7 @@ def update_entity(entity: any) -> bool:
 
     try:
         session.merge(entity)
+        session.commit()
     except SQLAlchemyError:
         logger.exception("Error updating entity")
         session.close()
@@ -69,19 +71,20 @@ def update_entity(entity: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True
 
 
-def delete_entity(entity_id: int, entity_class: any) -> bool:
+def delete_entity(entity_id: str, entity_class: any) -> bool:
     """Generic method to delete an entity from the database by its ID."""
     session = SessionLocal()
 
     try:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
+        #session.commit()
         if entity:
             session.delete(entity)
+            session.commit()
         else:
             logger.error("Entity not found")
             return False
@@ -92,5 +95,4 @@ def delete_entity(entity_id: int, entity_class: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True

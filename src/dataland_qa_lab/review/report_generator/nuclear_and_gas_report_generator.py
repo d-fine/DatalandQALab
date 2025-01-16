@@ -69,7 +69,10 @@ class NuclearAndGasReportGenerator(ReportGenerator):
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
-        self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report
+        self.report.general.taxonomy_non_eligible = (non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
 
         return self.report
 

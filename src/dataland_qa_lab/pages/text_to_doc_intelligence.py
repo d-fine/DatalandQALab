@@ -1,3 +1,5 @@
+from io import BytesIO
+
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult, DocumentContentFormat
@@ -13,10 +15,15 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
     document_intelligence_client = DocumentIntelligenceClient(
         endpoint=conf.azure_docintel_endpoint, credential=docintel_cred
     )
+
+    
+
     poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-layout",
-        analyze_request=pdf,
+        model_id="prebuilt-layout",
+        body=pdf,
         content_type="application/octet-stream",
         output_content_format=DocumentContentFormat.MARKDOWN,
     )
     return poller.result()
+
+
