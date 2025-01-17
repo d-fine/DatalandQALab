@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime, timedelta, timezone
 
 from dataland_qa_lab.database.database_engine import add_entity, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
@@ -15,8 +15,12 @@ def review_dataset(data_id: str) -> str | None:
 
     existing_entity = get_entity(data_id, ReviewedDataset)
 
+    now_utc = datetime.now(UTC)
+    ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
+    formatted_german_time = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
+
     if existing_entity is None:
-        test = ReviewedDataset(data_id=data_id, review_start_time=datetime.now().strftime("%H + 1:%M:%S"))
+        test = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time)
 
         add_entity(test)
 
@@ -32,11 +36,11 @@ def review_dataset(data_id: str) -> str | None:
         data_id=data_id, nuclear_and_gas_data=report
         )
 
-        test.review_end_time = datetime.now().strftime("%H:%M:%S")
+        test.review_end_time = formatted_german_time
 
         test.review_completed = True
 
-        test.report_id = send_r
+        test.report_id = send_r.qa_report_id
 
         update_entity(test)
     else:
