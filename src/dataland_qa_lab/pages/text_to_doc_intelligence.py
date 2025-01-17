@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta, timezone
+from venv import logger
 
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
@@ -19,14 +20,14 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
     )
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
-        analyze_request=pdf,
+        body=pdf,
         content_type="application/octet-stream",
         output_content_format=DocumentContentFormat.MARKDOWN,
     )
     return poller.result()
 
 
-def add_document_if_not_exists(data_id: str, relevant_pages_pdf_reader: str) -> str:
+def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: str) -> str:
     """Adds or updates a markdown document in the database if necessary."""
     session = database_engine.SessionLocal()
     readable_text = None
@@ -58,9 +59,10 @@ def add_document_if_not_exists(data_id: str, relevant_pages_pdf_reader: str) -> 
             )
             session.add(new_document)
         session.commit()
-    except SQLAlchemyError as e:
-        database_engine.logger.exception(f"Database error: {e}")
-        raise
+    except SQLAlchemyError:
+        logger.exception("Error retrieving entity")
+        session.rollback()
+        return None
     finally:
         session.close()
     return readable_text
