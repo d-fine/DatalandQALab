@@ -17,10 +17,10 @@ def review_dataset(data_id: str) -> str | None:
 
     now_utc = datetime.now(UTC)
     ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
-    formatted_german_time = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
+    formatted_german_time1 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
     if existing_entity is None:
-        test = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time)
+        test = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time1)
 
         add_entity(test)
 
@@ -35,8 +35,14 @@ def review_dataset(data_id: str) -> str | None:
         send_r = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
+        now_utc = datetime.now(UTC)
+        if now_utc.astimezone(timezone(timedelta(hours=1))).dst():
+            ger_timezone = timedelta(hours=2)
+        else:
+            ger_timezone = timedelta(hours=1)
+        formatted_german_time2 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
-        test.review_end_time = formatted_german_time
+        test.review_end_time = formatted_german_time2
 
         test.review_completed = True
 
