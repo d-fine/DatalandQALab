@@ -33,7 +33,7 @@ def review_dataset(data_id: str) -> str | None:
         report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
         send_r = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-        data_id=data_id, nuclear_and_gas_data=report
+            data_id=data_id, nuclear_and_gas_data=report
         )
 
         test.review_end_time = formatted_german_time
