@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +45,10 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     try:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
+
+        if entity:
+            entity = session.merge(entity)
+
         session.commit()
     except SQLAlchemyError:
         logger.exception("Error retrieving entity")

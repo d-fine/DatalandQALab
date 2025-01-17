@@ -1,10 +1,9 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
+import pypdf
 from azure.ai.documentintelligence.models import AnalyzeResult
-from sqlalchemy.exc import SQLAlchemyError
 
-from dataland_qa_lab.pages.text_to_doc_intelligence import add_document_if_not_exists, extract_text_of_pdf
+from dataland_qa_lab.pages.text_to_doc_intelligence import extract_text_of_pdf, get_markdown_from_dataset
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.config.get_config")
@@ -24,7 +23,7 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
     mock_client.assert_called_once_with(endpoint="fake_endpoint", credential=mock_credential.return_value)
     mock_client_instance.begin_analyze_document.assert_called_once_with(
         "prebuilt-layout",
-        analyze_request=mock_pdf,
+        body=mock_pdf,
         content_type="application/octet-stream",
         output_content_format="markdown",
     )
@@ -32,68 +31,63 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_tables")
-def test_add_document_if_not_exists_new_entry(
-    mock_tables: MagicMock, mock_engine: MagicMock, mock_extract_text: MagicMock
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.update_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.create_tables")
+def test_get_markdown_from_dataset_new_entry(
+    mock_create_tables: MagicMock,
+    mock_get_entity: MagicMock,
+    mock_update_entity: MagicMock,
+    mock_add_entity: MagicMock,
+    mock_extract_text: MagicMock,
 ) -> None:
-    mock_session = MagicMock()
-    mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
-    mock_engine.create_tables.return_value = None
+    mock_create_tables.return_value = None
     mock_extract_text.return_value = "mocked_text"
-    mock_tables.ReviewedDatasetMarkdowns.return_value = None
+    mock_get_entity.return_value = None
 
     data_id = "test_id"
-    relevant_pages_pdf_reader = "test_reader"
+    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pages = [1, 2, 3]
 
-    result = add_document_if_not_exists(data_id, relevant_pages_pdf_reader)
+    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
-    mock_engine.create_tables.assert_called_once()
-    mock_session.query.return_value.filter_by.return_value.first.assert_called_once()
-    mock_extract_text.assert_called_once_with(relevant_pages_pdf_reader)
-    mock_session.add.assert_called_once()
-    mock_session.commit.assert_called_once()
+    mock_create_tables.assert_called_once()
+    mock_get_entity.assert_called_once()
+    mock_extract_text.assert_called_once_with(pdf_reader)
+    mock_add_entity.assert_called_once()
+    mock_update_entity.assert_not_called()
     assert result == "mocked_text"
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_tables")
-def test_add_document_if_not_exists_existing_entry(mock_engine: MagicMock, mock_extract_text: MagicMock) -> None:
-    mock_session = MagicMock()
-    mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
-    mock_engine.create_tables.return_value = None
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.update_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.create_tables")
+def test_get_markdown_from_dataset_existing_entry(
+    mock_create_tables: MagicMock,
+    mock_get_entity: MagicMock,
+    mock_update_entity: MagicMock,
+    mock_add_entity: MagicMock,
+    mock_extract_text: MagicMock,
+) -> None:
+    mock_create_tables.return_value = None
     mock_extract_text.return_value = "mocked_text"
+
     mock_existing_entry = MagicMock()
-    mock_existing_entry.relevant_pages_pdf_reader = "old_reader"
+    mock_existing_entry.pages = [1, 2]
     mock_existing_entry.markdown_text = "old_text"
-    mock_session.query.return_value.filter_by.return_value.first.return_value = mock_existing_entry
 
     data_id = "test_id"
-    relevant_pages_pdf_reader = "test_reader"
+    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pages = [1, 2, 3]
 
-    result = add_document_if_not_exists(data_id, relevant_pages_pdf_reader)
+    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
-    mock_engine.create_tables.assert_called_once()
-    mock_session.query.return_value.filter_by.return_value.first.assert_called_once()
-    mock_extract_text.assert_called_once_with(relevant_pages_pdf_reader)
-    mock_session.commit.assert_called_once()
+    mock_create_tables.assert_called_once()
+    mock_get_entity.assert_called_once()
+    mock_extract_text.assert_called_once_with(pdf_reader)
+    mock_update_entity.assert_called_once()
+    mock_add_entity.assert_not_called()
     assert result == "mocked_text"
-
-
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.database_engine")
-def test_add_document_if_not_exists_sqlalchemy_error(mock_engine: MagicMock) -> None:
-    mock_session = MagicMock()
-    mock_engine.SessionLocal.return_value.__enter__.return_value = mock_session
-    mock_engine.create_tables.return_value = None
-    mock_session.commit.side_effect = SQLAlchemyError
-
-    data_id = "test_id"
-    relevant_pages_pdf_reader = "test_reader"
-
-    with pytest.raises(SQLAlchemyError):
-        add_document_if_not_exists(data_id, relevant_pages_pdf_reader)
-
-    mock_engine.create_tables.assert_called_once()
-    mock_session.query.return_value.filter_by.return_value.first.assert_called_once()
-    mock_session.commit.assert_called_once()

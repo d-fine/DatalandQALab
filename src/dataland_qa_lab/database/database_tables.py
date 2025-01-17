@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, String
+from sqlalchemy import ARRAY, Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -22,7 +22,7 @@ class ReviewedDatasetMarkdowns(Base):
 
     __tablename__ = "reviewed_dataset_markdowns"
     data_id = Column("data_id", String, primary_key=True)
-    markdown_text = Column("markdown_text", String, nullable=False)
-    relevant_pages_pdf_reader = Column("relevant_pages_pdf_reader", String, nullable=True)
+    page_numbers = Column("page_numbers", ARRAY(Integer), nullable=True)
     last_saved = Column("last_saved", DateTime, default=datetime.utcnow)
     last_updated = Column("last_updated", DateTime, default=datetime.utcnow)
+    markdown_text = Column("markdown_text", String, nullable=False)

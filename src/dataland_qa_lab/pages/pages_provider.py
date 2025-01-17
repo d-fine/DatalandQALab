@@ -8,14 +8,19 @@ from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
+def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]:
+    """Get page numbers of relevant data."""
+    yes_no_pages = get_relevant_pages_of_nuclear_and_gas_yes_no_questions(dataset=dataset)
+    numeric_pages = get_relevant_pages_of_numeric(dataset=dataset)
+
+    return sorted(set(yes_no_pages + numeric_pages))
+
+
 def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
 
-    yes_no_pages = get_relevant_pages_of_nuclear_and_gas_yes_no_questions(dataset=dataset)
-    numeric_pages = get_relevant_pages_of_numeric(dataset=dataset)
-
-    page_numbers = sorted(set(yes_no_pages + numeric_pages))
+    page_numbers = get_relevant_page_numbers(dataset=dataset)
     file_reference = dataset.yes_no_data_points.get(
         "nuclear_energy_related_activities_section426"
     ).datapoint.data_source.file_reference
