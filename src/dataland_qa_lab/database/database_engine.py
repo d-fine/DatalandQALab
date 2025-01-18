@@ -45,10 +45,6 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     try:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
-
-        if entity:
-            entity = session.merge(entity)
-
         session.commit()
     except SQLAlchemyError:
         logger.exception("Error retrieving entity")
