@@ -20,7 +20,7 @@ jobs:
       POSTGRES_USER: "null"
       PGADMIN_DEFAULT_EMAIL: "null"
       PGADMIN_DEFAULT_PASSWORD: "null"
-      DATABASE_CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:55432/dataland_qa_lab"
     services:
       postgres:
         image: postgres:14
@@ -40,9 +40,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      
-      - name: Debug DATABASE_CONNECTION_STRING
-        run: echo '${{ secrets.DATABASE_CONNECTION_STRING }}'
 
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
@@ -63,7 +60,7 @@ jobs:
       - name: Run tests
         if: always()
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_CONNECTION_STRING }}
+          DATABASE_URL: "postgresql+pg8000://postgres:postgres@localhost:55432/dataland_qa_lab"
         run: pdm run test-cov
 
       - name: Run doctests
