@@ -36,13 +36,13 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    steps:
-      - name: Debug DATABASE_CONNECTION_STRING
-        run: echo "Database connection string is: '${{ secrets.DATABASE_CONNECTION_STRING }}'
-
+    steps:    
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: Debug DATABASE_CONNECTION_STRING
+        run: echo "Database connection string is: '${{ secrets.DATABASE_CONNECTION_STRING }}'
 
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
