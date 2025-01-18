@@ -1,12 +1,12 @@
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeResult, DocumentContentFormat
+from azure.ai.documentintelligence.models import DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
 
 from dataland_qa_lab.utils import config
 
 
-def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
+def extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
     """Use Azure Document Intelligence to make text readable for azure open ai."""
     conf = config.get_config()
     docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
@@ -19,4 +19,4 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
         content_type="application/octet-stream",
         output_content_format=DocumentContentFormat.MARKDOWN,
     )
-    return poller.result()
+    return poller.result().content
