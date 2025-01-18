@@ -41,13 +41,6 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Run migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_CONNECTION_STRING }}
-        run: |
-          source venv/bin/activate
-          alembic upgrade head
-
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
 
