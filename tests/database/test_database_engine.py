@@ -50,11 +50,11 @@ def test_get_entity(mock_session_local: MagicMock) -> None:
     mock_entity_class = MagicMock()
     mock_entity = MagicMock()
     mock_query = mock_session.query.return_value
-    mock_query.filter.return_value.first.return_value = mock_entity
+    mock_session.merge.return_value = mock_entity
 
     result = database_engine.get_entity("1", mock_entity_class)
 
-    mock_session.query.assert_called_once_with(mock_entity_class)
+    mock_session.merge.assert_called_once_with(mock_entity_class)
     mock_query.filter.assert_called_once()
     assert result == mock_entity
 

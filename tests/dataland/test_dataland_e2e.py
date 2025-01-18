@@ -1,7 +1,16 @@
 from unittest.mock import ANY, MagicMock, patch
 
 from azure.ai.documentintelligence.models import AnalyzeResult
+from dataland_backend.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
+    ExtendedDataPointNuclearAndGasAlignedDenominator,
+)
+from dataland_backend.models.extended_data_point_yes_no import ExtendedDataPointYesNo
+from dataland_backend.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_backend.models.nuclear_and_gas_environmental_objective import NuclearAndGasEnvironmentalObjective
+from dataland_backend.models.nuclear_and_gas_general_taxonomy_aligned_denominator import (
+    NuclearAndGasGeneralTaxonomyAlignedDenominator,
+)
 
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 
@@ -15,32 +24,18 @@ def create_mock_nuclear_and_gas_data() -> NuclearAndGasData:
     mock_data.general = MagicMock()
 
     mock_data.general.general = MagicMock(
-        nuclear_energy_related_activities_section426="Yes",
-        nuclear_energy_related_activities_section427="No",
-        nuclear_energy_related_activities_section428="Yes",
-        fossil_gas_related_activities_section429="Yes",
-        fossil_gas_related_activities_section430="Yes",
-        fossil_gas_related_activities_section431="No",
+        nuclear_energy_related_activities_section426=ExtendedDataPointYesNo(value="Yes", data_source=None),
+        nuclear_energy_related_activities_section427=ExtendedDataPointYesNo(value="No", data_source=None),
+        nuclear_energy_related_activities_section428=ExtendedDataPointYesNo(value="Yes", data_source=None),
+        fossil_gas_related_activities_section429=ExtendedDataPointYesNo(value="Yes", data_source=None),
+        fossil_gas_related_activities_section430=ExtendedDataPointYesNo(value="Yes", data_source=None),
+        fossil_gas_related_activities_section431=ExtendedDataPointYesNo(value="No", data_source=None),
     )
 
-    mock_data.general.taxonomy_aligned_denominator = MagicMock(
-        nuclear_and_gas_taxonomy_aligned_capex_denominator=100,
-        nuclear_and_gas_taxonomy_aligned_revenue_denominator=200,
-    )
-
-    mock_data.general.taxonomy_aligned_numerator = MagicMock(
-        nuclear_and_gas_taxonomy_aligned_capex_numerator=50,
-        nuclear_and_gas_taxonomy_aligned_revenue_numerator=150,
-    )
-
-    mock_data.general.taxonomy_eligible_but_not_aligned = MagicMock(
-        nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex=30,
-        nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue=70,
-    )
-
-    mock_data.general.taxonomy_non_eligible = MagicMock(
-        nuclear_and_gas_taxonomy_non_eligible_capex=20,
-        nuclear_and_gas_taxonomy_non_eligible_revenue=60,
+    mock_data.general.taxonomy_aligned_denominator = NuclearAndGasGeneralTaxonomyAlignedDenominator(
+        nuclear_and_gas_taxonomy_aligned_capex_denominator=ExtendedDataPointNuclearAndGasAlignedDenominator(value=NuclearAndGasAlignedDenominator(
+            taxonomyAlignedShareDenominatorNAndG426=NuclearAndGasEnvironmentalObjective()
+        ))
     )
 
     return mock_data

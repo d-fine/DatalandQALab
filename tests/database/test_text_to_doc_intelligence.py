@@ -12,6 +12,7 @@ from dataland_qa_lab.pages.text_to_doc_intelligence import extract_text_of_pdf, 
 def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock, mock_config: MagicMock) -> None:
     mock_pdf = MagicMock()
     mock_result = MagicMock(spec=AnalyzeResult)
+    mock_result.content = "content"
     mock_poller = MagicMock()
     mock_poller.result.return_value = mock_result
     mock_client_instance = mock_client.return_value
@@ -27,7 +28,7 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
         content_type="application/octet-stream",
         output_content_format="markdown",
     )
-    assert result == mock_result
+    assert result == "content"
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
