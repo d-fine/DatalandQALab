@@ -20,7 +20,7 @@ jobs:
       POSTGRES_USER: "null"
       PGADMIN_DEFAULT_EMAIL: "null"
       PGADMIN_DEFAULT_PASSWORD: "null"
-      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:55432/dataland_qa_lab"
+      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
     services:
       postgres:
         image: postgres:14
@@ -60,7 +60,7 @@ jobs:
       - name: Run tests
         if: always()
         env:
-          DATABASE_URL: "postgresql+pg8000://postgres:postgres@localhost:55432/dataland_qa_lab"
+          DATABASE_URL: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
         run: pdm run test-cov
 
       - name: Run doctests
