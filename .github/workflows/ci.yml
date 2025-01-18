@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       
       - name: Debug DATABASE_CONNECTION_STRING
-        run: echo "Database connection string is: '${{ secrets.DATABASE_CONNECTION_STRING }}'"
+        run: echo '${{ secrets.DATABASE_CONNECTION_STRING }}'
 
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
