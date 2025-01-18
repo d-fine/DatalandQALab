@@ -20,11 +20,32 @@ jobs:
       POSTGRES_USER: "null"
       PGADMIN_DEFAULT_EMAIL: "null"
       PGADMIN_DEFAULT_PASSWORD: "null"
-      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
+      DATABASE_CONNECTION_STRING: ${{ secrets.DATABASE_CONNECTION_STRING }}
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dataland_qa_lab
+        ports:
+         - 5432:5432
+         options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_CONNECTION_STRING }}
+        run: |
+          source venv/bin/activate
+          alembic upgrade head
 
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v4
@@ -44,6 +65,8 @@ jobs:
 
       - name: Run tests
         if: always()
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_CONNECTION_STRING }}
         run: pdm run test-cov
 
       - name: Run doctests

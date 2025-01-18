@@ -33,9 +33,11 @@ def create_mock_nuclear_and_gas_data() -> NuclearAndGasData:
     )
 
     mock_data.general.taxonomy_aligned_denominator = NuclearAndGasGeneralTaxonomyAlignedDenominator(
-        nuclear_and_gas_taxonomy_aligned_capex_denominator=ExtendedDataPointNuclearAndGasAlignedDenominator(value=NuclearAndGasAlignedDenominator(
-            taxonomyAlignedShareDenominatorNAndG426=NuclearAndGasEnvironmentalObjective()
-        ))
+        nuclear_and_gas_taxonomy_aligned_capex_denominator=ExtendedDataPointNuclearAndGasAlignedDenominator(
+            value=NuclearAndGasAlignedDenominator(
+                taxonomyAlignedShareDenominatorNAndG426=NuclearAndGasEnvironmentalObjective()
+            )
+        )
     )
 
     return mock_data
