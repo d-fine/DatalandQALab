@@ -1,11 +1,8 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
-
-
 class PromptingService:
     """Service for handling prompt requests."""
 
     @staticmethod
-    def create_main_prompt(template: int, pdf: AnalyzeResult, kpi: str) -> str:
+    def create_main_prompt(template: int, pdf: str, kpi: str) -> str:
         """Creates the main prompt for each template.
 
         Returns:
@@ -17,7 +14,7 @@ class PromptingService:
                 provide the answers of all 6 questions in template 1.
                 Only answer with 'Yes' or 'No'. You need to provide 6 answers.
                 # Relevant Documents
-                {pdf.content}
+                {pdf}
                 """
             case 2:
                 return f"""For each row 1-8 of template 2 ({kpi}) it's called
@@ -27,7 +24,7 @@ class PromptingService:
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
-                {pdf.content}
+                {pdf}
                 """
             case 3:
                 return f"""For each row 1-8 of template 3 ({kpi}) it's called
@@ -37,7 +34,7 @@ class PromptingService:
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
-                {pdf.content}
+                {pdf}
                 """
             case 4:
                 return f"""For each row 1-8 of template 4 ({kpi}) it's called
@@ -47,7 +44,7 @@ class PromptingService:
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
-                {pdf.content}
+                {pdf}
                 """
             case 5:
                 return f"""For each row 1-8 of template 5 ({kpi}) it's called
@@ -57,7 +54,7 @@ class PromptingService:
                 If you can't find the percentage value, write "0".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
-                {pdf.content}
+                {pdf}
                 """
             case _:
                 return "Invalid template"
