@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,6 @@ def add_entity(entity: any) -> bool:
     try:
         session.add(entity)
         session.commit()
-
     except SQLAlchemyError:
         logger.exception("Error while adding entity to database")
         session.rollback()
@@ -87,6 +86,7 @@ def delete_entity(entity_id: str, entity_class: any) -> bool:
         else:
             logger.error("Entity not found")
             return False
+        session.commit()
     except SQLAlchemyError:
         logger.exception("Error updating entity")
         session.rollback()
