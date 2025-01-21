@@ -54,6 +54,9 @@ def collect_page_numbers(data_points: dict[str, ExtendedDocumentReference | None
     unique_pages = set()
     for data in data_points.values():
         if data and data.page is not None:
-            unique_pages.add(int(data.page))
-
+            if "-" in data.page:
+                start, end = map(int, data.page.split("-"))
+                unique_pages.update(range(start, end + 1))
+            else:
+                unique_pages.add(int(data.page))
     return sorted(unique_pages)

@@ -1,6 +1,6 @@
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeResult, ContentFormat
+from azure.ai.documentintelligence.models import AnalyzeResult, DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
 
 from dataland_qa_lab.utils import config
@@ -17,6 +17,6 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
         "prebuilt-layout",
         analyze_request=pdf,
         content_type="application/octet-stream",
-        output_content_format=ContentFormat.MARKDOWN,
+        output_content_format=DocumentContentFormat.MARKDOWN,
     )
     return poller.result()

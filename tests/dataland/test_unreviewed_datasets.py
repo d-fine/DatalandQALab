@@ -50,7 +50,7 @@ class TestUnreviewedDatasets(TestCase):
         mock_conf = self.set_up_mock_client(dataset_count=-1, datasets=None, exception=None)
         mock_get_config.return_value = mock_conf
 
-        with pytest.raises(ValueError, match="Received an invalid number of pending datasets."):
+        with pytest.raises(ValueError, match=r"Recieved an invalid number of pending datasets."):
             UnreviewedDatasets()
 
     def test_initialization_with_api_error(self, mock_get_config: MagicMock) -> None:

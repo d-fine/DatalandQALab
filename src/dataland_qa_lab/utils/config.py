@@ -34,6 +34,14 @@ class DatalandQaLabSettings(BaseSettings):
     azure_docintel_api_key: str
     azure_docintel_endpoint: str
 
+    postgres_password: str
+    postgres_user: str
+
+    pgadmin_default_email: str
+    pgadmin_default_password: str
+
+    database_connection_string: str
+
     @property
     def dataland_client(self) -> DatalandClient:
         """Get the Dataland client."""
