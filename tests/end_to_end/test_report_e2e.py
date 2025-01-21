@@ -1,9 +1,13 @@
+import json
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import mock_constants
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
+from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
+from dataland_qa_lab.utils import config
 
 
 def test_report_generator_end_to_end() -> None:
@@ -14,8 +18,8 @@ def test_report_generator_end_to_end() -> None:
     should be tested during this test.
     """
 
-    # upload test dataset
-    data_id = "d026358f-39e0-4d00-8395-2ce821aa38ec"
+    # Upload test_dataset with partly wrong data
+    data_id = upload_test_dataset()
 
     mocked_review_dataset(data_id)
     # test if all error is test dataset were found
@@ -59,3 +63,36 @@ def mock_open_ai(**kwargs) -> any:  # noqa: ANN003
         return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_5_CAPEX
 
     return None
+
+
+def upload_test_dataset() -> str:
+    """Upload test dataset and save its data id"""
+
+    dataland_client = config.get_config().dataland_client
+    project_root = Path(__file__).resolve().parent.parent.parent
+    pdf_path = project_root / "data" / "pdfs"
+    json_path = project_root / "data" / "jsons"
+
+    upload_pdf(
+        pdf_path=pdf_path,
+        pdf_id="9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595",
+        company="enbw",
+        dataland_client=dataland_client,
+    )
+
+    # get companyIDs of company to test
+    company_id = get_company_id(company="enbw", dataland_client=dataland_client)
+
+    # change companyID in json file
+    json_file_path = json_path / "enbw.json"
+
+    with json_file_path.open(encoding="utf-8") as f:
+        json_data = json.load(f)
+    json_data["companyId"] = company_id
+    json_str = json.dumps(json_data, indent=4)
+    json_file_path.write_text(json_str, encoding="utf-8")
+
+    # if needed upload dataset
+    return upload_dataset(
+        company_id=company_id, json_str=json_str, dataland_client=dataland_client, reportingPeriod="2023"
+    )

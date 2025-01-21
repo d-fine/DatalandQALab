@@ -1,8 +1,8 @@
 from openai.types.chat import ChatCompletionMessageToolCall
 from openai.types.chat.chat_completion import (
-            ChatCompletion,
-            ChatCompletionMessage,
-            Choice,
+    ChatCompletion,
+    ChatCompletionMessage,
+    Choice,
 )
 from openai.types.chat.chat_completion_message_tool_call import Function
 
@@ -20,18 +20,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_1 = ChatCompletion(
                         id="call_EEG3soMwEWVsq3HVX3MGCdcE",
                         function=Function(
                             arguments='{"1": "No", "2": "No", "3": "No", "4": "Yes", "5": "Yes", "6": "No"}',
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_2_REVENUE = ChatCompletion(
     id="test2",
@@ -55,18 +55,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_2_REVENUE = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_2_CAPEX = ChatCompletion(
     id="test2",
@@ -90,18 +90,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_2_CAPEX = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_3_REVENUE = ChatCompletion(
     id="test3",
@@ -125,18 +125,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_3_REVENUE = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_3_CAPEX = ChatCompletion(
     id="test3",
@@ -160,18 +160,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_3_CAPEX = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_4_REVENUE = ChatCompletion(
     id="test4",
@@ -195,18 +195,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_4_REVENUE = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_4_CAPEX = ChatCompletion(
     id="test4",
@@ -230,18 +230,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_4_CAPEX = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_5_REVENUE = ChatCompletion(
     id="test5",
@@ -265,18 +265,18 @@ E2E_AZURE_OPEN_AI_TEMPLATE_5_REVENUE = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )
 E2E_AZURE_OPEN_AI_TEMPLATE_5_CAPEX = ChatCompletion(
     id="test5",
@@ -300,16 +300,16 @@ E2E_AZURE_OPEN_AI_TEMPLATE_5_CAPEX = ChatCompletion(
                             "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
                             "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
                             }""",
-                            name="requested_information_precisely_found_in_relevant_documents"
+                            name="requested_information_precisely_found_in_relevant_documents",
                         ),
-                        type="function"
+                        type="function",
                     )
-                ]
+                ],
             ),
-            content_filter_results={}
+            content_filter_results={},
         )
     ],
     created=0,
     model="test",
-    object="chat.completion"
+    object="chat.completion",
 )

@@ -98,7 +98,7 @@ def get_company_id(company: str, dataland_client: DatalandClient) -> str:
     return dataset[0].company_id
 
 
-def upload_dataset(company_id: str, json_str: any, dataland_client: DatalandClient) -> str:
+def upload_dataset(company_id: str, json_str: any, dataland_client: DatalandClient, reportingPeriod: str) -> str:
     """Upload dataset.
 
     Upload dataset for EU Taxonomy Nuclear and Gas to Dataland.
@@ -110,7 +110,7 @@ def upload_dataset(company_id: str, json_str: any, dataland_client: DatalandClie
     :return: Returns data_id
     """
     old_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
-        company_id=company_id
+        company_id=company_id, reporting_period=reportingPeriod
     )
     if not old_dataset:
         nuclear_and_gas_data = CompanyAssociatedDataNuclearAndGasData.from_json(json_str)

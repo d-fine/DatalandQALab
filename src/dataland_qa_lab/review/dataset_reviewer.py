@@ -19,8 +19,10 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
 
     report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
-    report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-        data_id=data_id, nuclear_and_gas_data=report
+    report_data = (
+        config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+            data_id=data_id, nuclear_and_gas_data=report
+        )
     )
 
     return report_data
