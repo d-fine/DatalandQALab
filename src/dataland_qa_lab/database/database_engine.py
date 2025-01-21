@@ -82,7 +82,6 @@ def delete_entity(entity_id: str, entity_class: any) -> bool:
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
         if entity:
             session.delete(entity)
-            session.commit()
         else:
             logger.error("Entity not found")
             return False

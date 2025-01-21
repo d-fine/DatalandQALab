@@ -20,9 +20,9 @@ def review_dataset(data_id: str) -> str | None:
     formatted_german_time1 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
     if existing_entity is None:
-        test = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time1)
+        review_dataset = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time1)
 
-        add_entity(test)
+        add_entity(review_dataset)
 
         data_collection = NuclearAndGasDataCollection(dataset.data)
 
@@ -32,22 +32,21 @@ def review_dataset(data_id: str) -> str | None:
 
         report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
-        send_r = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+        data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
+
         now_utc = datetime.now(UTC)
         if now_utc.astimezone(timezone(timedelta(hours=1))).dst():
             ger_timezone = timedelta(hours=2)
         else:
             ger_timezone = timedelta(hours=1)
+
         formatted_german_time2 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        review_dataset.review_end_time = formatted_german_time2
+        review_dataset.review_completed = True
+        review_dataset.report_id = data.qa_report_id
 
-        test.review_end_time = formatted_german_time2
-
-        test.review_completed = True
-
-        test.report_id = send_r.qa_report_id
-
-        update_entity(test)
+        update_entity(review_dataset)
     else:
         return
