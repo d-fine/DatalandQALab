@@ -54,7 +54,11 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
         json_file_path.write_text(json_str, encoding="utf-8")
 
         # if needed upload dataset
-        new_data_ids.append(upload_dataset(company_id=company_id, json_str=json_str, dataland_client=dataland_client))
+        new_data_ids.append(
+            upload_dataset(
+                company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period=None
+            )
+        )
 
     return new_data_ids
 
