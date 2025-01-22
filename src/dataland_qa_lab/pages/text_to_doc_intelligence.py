@@ -15,7 +15,7 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
     )
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
-        analyze_request=pdf,
+        body=pdf,
         content_type="application/octet-stream",
         output_content_format=DocumentContentFormat.MARKDOWN,
     )
