@@ -1,6 +1,6 @@
 {
     "companyId": "9720bda3-f40e-4bb1-9154-0dfb1512945f",
-    "reportingPeriod": "2023",
+    "reportingPeriod": "2020",
     "data": {
         "general": {
             "general": {
@@ -82,7 +82,7 @@
                 "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
                     "value": {
                         "taxonomyAlignedShareDenominatorNAndG426": {
-                            "mitigationAndAdaptation": 50,
+                            "mitigationAndAdaptation": 15,
                             "mitigation": null,
                             "adaptation": null
                         },
@@ -140,7 +140,7 @@
                         },
                         "taxonomyAlignedShareDenominatorNAndG427": {
                             "mitigationAndAdaptation": null,
-                            "mitigation": 100,
+                            "mitigation": 30,
                             "adaptation": null
                         },
                         "taxonomyAlignedShareDenominatorNAndG428": {
@@ -200,7 +200,7 @@
                         "taxonomyAlignedShareNumeratorNAndG428": {
                             "mitigationAndAdaptation": null,
                             "mitigation": null,
-                            "adaptation": 150
+                            "adaptation": 45
                         },
                         "taxonomyAlignedShareNumeratorNAndG429": {
                             "mitigationAndAdaptation": 0,
@@ -257,7 +257,7 @@
                         "taxonomyAlignedShareNumeratorNAndG429": {
                             "mitigationAndAdaptation": 6,
                             "mitigation": 6,
-                            "adaptation": 200
+                            "adaptation": 60
                         },
                         "taxonomyAlignedShareNumeratorNAndG430": {
                             "mitigationAndAdaptation": 2.3,
@@ -314,7 +314,7 @@
                             "adaptation": null
                         },
                         "taxonomyEligibleButNotAlignedShareNAndG430": {
-                            "mitigationAndAdaptation": 250,
+                            "mitigationAndAdaptation": 75,
                             "mitigation": 1.3,
                             "adaptation": null
                         },
@@ -372,7 +372,7 @@
                         },
                         "taxonomyEligibleButNotAlignedShareNAndG431": {
                             "mitigationAndAdaptation": null,
-                            "mitigation": 300,
+                            "mitigation": null,
                             "adaptation": null
                         },
                         "taxonomyEligibleButNotAlignedShareOtherActivities": {
@@ -400,7 +400,7 @@
                 "nuclearAndGasTaxonomyNonEligibleRevenue": {
                     "value": {
                         "taxonomyNonEligibleShareNAndG426": null,
-                        "taxonomyNonEligibleShareNAndG427": 350,
+                        "taxonomyNonEligibleShareNAndG427": 98,
                         "taxonomyNonEligibleShareNAndG428": 0.3,
                         "taxonomyNonEligibleShareNAndG429": null,
                         "taxonomyNonEligibleShareNAndG430": null,
@@ -425,7 +425,7 @@
                         "taxonomyNonEligibleShareNAndG429": null,
                         "taxonomyNonEligibleShareNAndG430": null,
                         "taxonomyNonEligibleShareNAndG431": null,
-                        "taxonomyNonEligibleShareOtherActivities": 400,
+                        "taxonomyNonEligibleShareOtherActivities": 99,
                         "taxonomyNonEligibleShare": 13.8
                     },
                     "quality": "Audited",

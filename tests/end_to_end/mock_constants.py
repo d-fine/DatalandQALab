@@ -19,7 +19,7 @@ E2E_AZURE_OPEN_AI_TEMPLATE_1 = ChatCompletion(
                     ChatCompletionMessageToolCall(
                         id="call_EEG3soMwEWVsq3HVX3MGCdcE",
                         function=Function(
-                            arguments='{"1": "No", "2": "No", "3": "No", "4": "Yes", "5": "Yes", "6": "No"}',
+                            arguments='{"1": "No", "2": "No", "3": "Yes", "4": "Yes", "5": "Yes", "6": "No"}',
                             name="requested_information_precisely_found_in_relevant_documents",
                         ),
                         type="function",
@@ -46,14 +46,14 @@ E2E_AZURE_OPEN_AI_TEMPLATE_2_REVENUE = ChatCompletion(
                         id="call_EEG3soMwEWVsq3HVX3MGCdcE",
                         function=Function(
                             arguments="""{
-                            "answer_value_CCM+CCA%_row1":"-1","answer_value_CCM%_row1":"-1","answer_value_CCA%_row1":"-1",
+                            "answer_value_CCM+CCA%_row1":"0","answer_value_CCM%_row1":"-1","answer_value_CCA%_row1":"-1",
                             "answer_value_CCM+CCA%_row2":"-1","answer_value_CCM%_row2":"-1","answer_value_CCA%_row2":"-1",
                             "answer_value_CCM+CCA%_row3":"-1","answer_value_CCM%_row3":"-1","answer_value_CCA%_row3":"-1",
-                            "answer_value_CCM+CCA%_row4":"-1","answer_value_CCM%_row4":"-1","answer_value_CCA%_row4":"-1",
-                            "answer_value_CCM+CCA%_row5":"-1","answer_value_CCM%_row5":"-1","answer_value_CCA%_row5":"-1",
+                            "answer_value_CCM+CCA%_row4":"0","answer_value_CCM%_row4":"0","answer_value_CCA%_row4":"-1",
+                            "answer_value_CCM+CCA%_row5":"0","answer_value_CCM%_row5":"0","answer_value_CCA%_row5":"-1",
                             "answer_value_CCM+CCA%_row6":"-1","answer_value_CCM%_row6":"-1","answer_value_CCA%_row6":"-1",
-                            "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
-                            "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
+                            "answer_value_CCM+CCA%_row7":"16.3","answer_value_CCM%_row7":"16.3","answer_value_CCA%_row7":"-1",
+                            "answer_value_CCM+CCA%_row8":"100","answer_value_CCM%_row8":"100","answer_value_CCA%_row8":"-1"
                             }""",
                             name="requested_information_precisely_found_in_relevant_documents",
                         ),
@@ -225,10 +225,10 @@ E2E_AZURE_OPEN_AI_TEMPLATE_4_CAPEX = ChatCompletion(
                             "answer_value_CCM+CCA%_row2":"-1","answer_value_CCM%_row2":"-1","answer_value_CCA%_row2":"-1",
                             "answer_value_CCM+CCA%_row3":"-1","answer_value_CCM%_row3":"-1","answer_value_CCA%_row3":"-1",
                             "answer_value_CCM+CCA%_row4":"-1","answer_value_CCM%_row4":"-1","answer_value_CCA%_row4":"-1",
-                            "answer_value_CCM+CCA%_row5":"-1","answer_value_CCM%_row5":"-1","answer_value_CCA%_row5":"-1",
+                            "answer_value_CCM+CCA%_row5":"0.1","answer_value_CCM%_row5":"0.1","answer_value_CCA%_row5":"-1",
                             "answer_value_CCM+CCA%_row6":"-1","answer_value_CCM%_row6":"-1","answer_value_CCA%_row6":"-1",
-                            "answer_value_CCM+CCA%_row7":"17","answer_value_CCM%_row7":"17","answer_value_CCA%_row7":"-1",
-                            "answer_value_CCM+CCA%_row8":"-1","answer_value_CCM%_row8":"-1","answer_value_CCA%_row8":"-1"
+                            "answer_value_CCM+CCA%_row7":"0","answer_value_CCM%_row7":"0","answer_value_CCA%_row7":"-1",
+                            "answer_value_CCM+CCA%_row8":"0.1","answer_value_CCM%_row8":"0.1","answer_value_CCA%_row8":"-1"
                             }""",
                             name="requested_information_precisely_found_in_relevant_documents",
                         ),

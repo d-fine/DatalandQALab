@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import mock_constants
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
+from clients.qa.dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import config
@@ -21,8 +22,68 @@ def test_report_generator_end_to_end() -> None:
     # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
 
-    mocked_review_dataset(data_id)
-    # test if all error is test dataset were found
+    report_metadata = mocked_review_dataset(data_id)
+
+    report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+        data_id=data_id, qa_report_id=report_metadata.qa_report_id
+    )
+    report_data_dict = report_data.to_dict()
+
+    # test section 426 in template 1
+    data_yes_no_426 = report_data_dict["report"]["general"]["general"]["nuclearEnergyRelatedActivitiesSection426"]
+
+    assert data_yes_no_426["comment"] == "Geprüft durch AzureOpenAI"
+    assert QaReportDataPointVerdict.QAACCEPTED in data_yes_no_426["verdict"]
+    assert data_yes_no_426["correctedData"] == {}
+
+    # test section 429 in template 1 with deliberate error
+    data_yes_no_429 = report_data_dict["report"]["general"]["general"]["fossilGasRelatedActivitiesSection429"]
+
+    assert (
+        data_yes_no_429["comment"]
+        == "Discrepancy in 'fossil_gas_related_activities_section429': YesNo.NO != YesNo.YES."
+    )
+    assert QaReportDataPointVerdict.QAREJECTED in data_yes_no_429["verdict"]
+    assert data_yes_no_429["correctedData"] == {
+        "value": "Yes",
+        "quality": "Reported",
+        "comment": "",
+        "dataSource": ANY,
+    }
+
+    # test taxonomy aligned revenue denominator with one deliberate error value
+    data_taxonomy_aligned_revenue_denominator = report_data_dict["report"]["general"]["taxonomyAlignedDenominator"][
+        "nuclearAndGasTaxonomyAlignedRevenueDenominator"
+    ]
+
+    assert (
+        data_taxonomy_aligned_revenue_denominator["comment"]
+        == "Discrepancy in 'taxonomy_aligned_share_denominator_n_and_g426': 15 != 0.0."
+    )
+    assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_aligned_revenue_denominator["verdict"]
+    assert data_taxonomy_aligned_revenue_denominator["correctedData"] == {
+        "value": {
+            "taxonomyAlignedShareDenominatorNAndG426": {"mitigationAndAdaptation": 0.0},
+            "taxonomyAlignedShareDenominatorNAndG427": ANY,
+            "taxonomyAlignedShareDenominatorNAndG428": ANY,
+            "taxonomyAlignedShareDenominatorNAndG429": ANY,
+            "taxonomyAlignedShareDenominatorNAndG430": ANY,
+            "taxonomyAlignedShareDenominatorNAndG431": ANY,
+            "taxonomyAlignedShareDenominatorOtherActivities": ANY,
+            "taxonomyAlignedShareDenominator": ANY,
+        },
+        "quality": "Reported",
+        "comment": "",
+    }
+
+    # test taxonomy aligned revenue denominator with one deliberate error value
+    data_taxonomy_eligible_but_not_aligned = report_data_dict["report"]["general"]["taxonomyEligibleButNotAligned"][
+        "nuclearAndGasTaxonomyEligibleButNotAlignedCapex"
+    ]
+
+    assert not data_taxonomy_eligible_but_not_aligned["comment"]
+    assert QaReportDataPointVerdict.QAACCEPTED in data_taxonomy_eligible_but_not_aligned["verdict"]
+    assert data_taxonomy_eligible_but_not_aligned["correctedData"] == {}
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
@@ -35,11 +96,10 @@ def mocked_review_dataset(
 
     with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai):
         report_data = review_dataset(data_id=data_id)
-        print(report_data)
         return report_data
 
 
-def mock_open_ai(**kwargs) -> any:  # noqa: ANN003
+def mock_open_ai(**kwargs) -> any:  # noqa: ANN003, PLR0911
     """Return the result of the Azure OpenAI call based on keywords in the prompt."""
     prompt = kwargs["messages"][-1]["content"].lower()
 
@@ -94,5 +154,5 @@ def upload_test_dataset() -> str:
 
     # if needed upload dataset
     return upload_dataset(
-        company_id=company_id, json_str=json_str, dataland_client=dataland_client, reportingPeriod="2023"
+        company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period="2020"
     )
