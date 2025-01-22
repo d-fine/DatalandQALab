@@ -24,7 +24,7 @@ class PromptingService:
                 "Taxonomy-aligned economic activities (denominator)",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
-                If you can't find the percentage value, write "0".
+                If you can't find the percentage value, write "-1".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
                 {pdf.content}
@@ -34,7 +34,7 @@ class PromptingService:
                 "Taxonomy-aligned economic activities (numerator)",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
-                If you can't find the percentage value, write "0".
+                If you can't find the percentage value, write "-1".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
                 {pdf.content}
@@ -44,7 +44,7 @@ class PromptingService:
                 "Taxonomy-eligible but not taxonomy-aligned economic activities",
                 give me the percentage of "CCM+CCA", "CCM" and "CCA" for all rows.
                 Focus on the row numbers on the left side of the table.
-                If you can't find the percentage value, write "0".
+                If you can't find the percentage value, write "-1".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
                 {pdf.content}
@@ -54,7 +54,7 @@ class PromptingService:
                 "Taxonomy non-eligible economic activities",
                 give me the percentage for all rows.
                 Focus on the row numbers on the left side of the table.
-                If you can't find the percentage value, write "0".
+                If you can't find the percentage value, write "-1".
                 Consider translating for this given task like Meldebogen instead of template.
                 # Relevant Documents
                 {pdf.content}
