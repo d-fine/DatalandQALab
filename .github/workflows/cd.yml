@@ -11,6 +11,11 @@ on:
         description: 'Select Environment'
         required: true
         type: environment
+      cleanup_database:
+        description: 'Delete the database'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build-docker:
@@ -46,11 +51,11 @@ jobs:
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
       AZURE_DOCINTEL_API_KEY: ${{ secrets.AZURE_DOCINTEL_API_KEY }}
       AZURE_DOCINTEL_ENDPOINT: ${{ secrets.AZURE_DOCINTEL_ENDPOINT }}
-      QALAB_SERVER_VERSION: ${{ github.sha }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
       PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      QALAB_SERVER_VERSION: ${{ github.sha }}
       SERVER_URL: ${{ vars.SERVER_URL }}
       SSH_HOST_KEY: ${{ vars.SSH_HOST_KEY }}
       PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
@@ -64,7 +69,11 @@ jobs:
           echo "$SSH_HOST_KEY" >  ~/.ssh/known_hosts
           echo "$PRIVATE_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-      
+
+      - name: Stop and remove containers and volumes
+        if: ${{ github.event.inputs.cleanup_database }}
+        run: ssh ubuntu@"$SERVER_URL" "cd ~/qalab && docker compose --profile prod down -v"
+
       - name: Push files for deployment
         run: scp docker-compose.yml ubuntu@"$SERVER_URL":~/qalab/docker-compose.yml
 

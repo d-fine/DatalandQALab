@@ -138,9 +138,7 @@ def get_datasources_of_nuclear_and_gas_numeric_values(
     }
 
     section_list = {
-        identifier: data_source
-        for section in sections.values()
-        for identifier, data_source in extract_data_source(section).items()
+        key: data_source for section in sections.values() for key, data_source in extract_data_source(section).items()
     }
 
     return section_list
