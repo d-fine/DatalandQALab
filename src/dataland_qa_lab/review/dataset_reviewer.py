@@ -1,3 +1,5 @@
+import logging
+
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
@@ -7,16 +9,31 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 def review_dataset(data_id: str) -> str | None:
     """Review a dataset."""
-    dataset = dataset_provider.get_dataset_by_id(data_id)
+    try:
+        # Fetch the dataset
+        dataset = dataset_provider.get_dataset_by_id(data_id)
+        if dataset is None:
+            logging.exception("Dataset with ID %s not found.", data_id)  # noqa: LOG015
+        # Create a data collection
+        data_collection = NuclearAndGasDataCollection(dataset.data)
+        if not data_collection:
+            logging.exception("Data collection for dataset ID %s is invalid.", data_id)  # noqa: LOG015
+        # Extract relevant pages and text
+        relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+        if not relevant_pages_pdf_reader:
+            logging.exception("Failed to extract relevant pages for dataset ID %s.", data_id)  # noqa: LOG015
+        # Extract text from the relevant pages
+        readable_text = text_to_doc_intelligence.extract_text_of_pdf(relevant_pages_pdf_reader)
+        if not readable_text:
+            logging.exception("No readable text extracted for dataset ID %s.", data_id)  # noqa: LOG015
+        # Generate report
+        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+        if not report:
+            logging.exception("Failed to generate report for dataset ID %s.", data_id)  # noqa: LOG015
 
-    data_collection = NuclearAndGasDataCollection(dataset.data)
-
-    relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
-
-    readable_text = text_to_doc_intelligence.extract_text_of_pdf(relevant_pages_pdf_reader)
-
-    report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
-
-    config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-        data_id=data_id, nuclear_and_gas_data=report
-    )
+        config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+            data_id=data_id, nuclear_and_gas_data=report
+        )
+    except Exception as e:
+        msg = f"Error reviewing dataset {data_id}: {e}"
+        raise RuntimeError(msg) from e
