@@ -29,8 +29,23 @@ def build_non_eligible_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
     """Build report frame for the revenue non_eligible."""
-    prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
-    dataland_values = get_dataland_values(dataset, kpi)
+    try:
+        prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
+    except Exception:  # noqa: BLE001
+        return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
+            comment="Error retrieving prompted values for template 5",
+            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+            correctedData=ExtendedDataPointNuclearAndGasNonEligible(),
+        )
+
+    try:
+        dataland_values = get_dataland_values(dataset, kpi)
+    except Exception:  # noqa: BLE001
+        return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
+            comment="Error retrieving dataland values for template 5",
+            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+            correctedData=ExtendedDataPointNuclearAndGasNonEligible(),
+        )
 
     value, verdict, comment, quality = comparator.compare_non_eligible_values(prompted_values, dataland_values)
     if verdict == QaReportDataPointVerdict.QAACCEPTED:
@@ -49,11 +64,14 @@ def build_non_eligible_report_frame(
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     """Retrieve dataland non_eligible values based on KPI."""
-    if kpi == "Revenue":
-        data = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
-    else:
-        data = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
-
+    try:
+        if kpi == "Revenue":
+            data = data_provider.get_taxonomy_non_eligible_revenue_values_by_data(dataset)
+        else:
+            data = data_provider.get_taxonomy_non_eligible_capex_values_by_data(dataset)
+    except Exception as e:
+        msg = f"Error retrieving dataland values for {kpi}: {e}"
+        raise RuntimeError(msg) from e
     return data
 
 

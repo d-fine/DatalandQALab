@@ -10,12 +10,17 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 def get_yes_no_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, YesNo | None]:
     """Get Yes/No values of the given dataset as a dictionary with section names as keys."""
-    sections = data.yes_no_data_points
+    try:
+        sections = data.yes_no_data_points
 
-    section_values = {
-        key: (data.datapoint.value if data and data.datapoint and data.datapoint.value is not None else None)
-        for key, data in sections.items()
-    }
+        section_values = {
+            key: (data.datapoint.value if data and data.datapoint and data.datapoint.value is not None else None)
+            for key, data in sections.items()
+        }
+    except (AttributeError, KeyError, TypeError) as e:
+        msg = f"Error retrieving yes/no values: {e}"
+        raise AttributeError(msg) from e
+
     return section_values
 
 

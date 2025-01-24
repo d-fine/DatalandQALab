@@ -12,16 +12,7 @@ def provide_test_data_collection() -> tuple[NuclearAndGasDataCollection, Analyze
     dataset = provide_test_dataset()
     data_collection = NuclearAndGasDataCollection(dataset)
     relevant_pages = MagicMock(spec=AnalyzeResult)
-
-    """pages= pages_provider.get_relevant_pages_of_pdf(data_collection)
-    relevant_pages = text_to_doc_intelligence.extract_text_of_pdf(pages)"""
-
     return data_collection, relevant_pages
-
-
-"""data_collection = provide_test_data()
-dataland = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(data_collection)
-print(dataland)"""
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
