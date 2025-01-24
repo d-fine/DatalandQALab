@@ -29,7 +29,8 @@ def get_taxonomy_aligned_revenue_denominator_values_by_data(data: NuclearAndGasD
         for field_name in NuclearAndGasAlignedDenominator.model_fields:
             denominator_values_dict[field_name] = extract_field_data(denominator_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy-aligned revenue denominator: {e}")
+        msg = f"Error retrieving taxonomy-aligned revenue denominator: {e}"
+        raise AttributeError(msg) from e
 
     return denominator_values_dict
 
@@ -42,8 +43,8 @@ def get_taxonomy_aligned_capex_denominator_values_by_data(data: NuclearAndGasDat
         for field_name in NuclearAndGasAlignedDenominator.model_fields:
             denominator_values_dict[field_name] = extract_field_data(denominator_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy-aligned capex denominator: {e}")
-
+        msg = f"Error retrieving taxonomy-aligned capex denominator: {e}"
+        raise AttributeError(msg) from e
     return denominator_values_dict
 
 
@@ -55,8 +56,8 @@ def get_taxonomy_aligned_revenue_numerator_values_by_data(data: NuclearAndGasDat
         for field_name in NuclearAndGasAlignedNumerator.model_fields:
             numerator_values_dict[field_name] = extract_field_data(numerator_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy-aligned revenue numerator: {e}")
-
+        msg = f"Error retrieving taxonomy-aligned revenue numerator: {e}"
+        raise AttributeError(msg) from e
     return numerator_values_dict
 
 
@@ -68,8 +69,8 @@ def get_taxonomy_aligned_capex_numerator_values_by_data(data: NuclearAndGasDataC
         for field_name in NuclearAndGasAlignedNumerator.model_fields:
             numerator_values_dict[field_name] = extract_field_data(numerator_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy-aligned capex numerator: {e}")
-
+        msg = f"Error retrieving taxonomy-aligned capex numerator: {e}"
+        raise AttributeError(msg) from e
     return numerator_values_dict
 
 
@@ -81,8 +82,8 @@ def get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(data: NuclearAn
         for field_name in NuclearAndGasEligibleButNotAligned.model_fields:
             eligible_but_not_aligned_dict[field_name] = extract_field_data(eligible_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy eligible but not aligned revenue: {e}")
-
+        msg = f"Error retrieving taxonomy eligible but not aligned revenue: {e}"
+        raise AttributeError(msg) from e
     return eligible_but_not_aligned_dict
 
 
@@ -94,8 +95,8 @@ def get_taxonomy_eligible_but_not_aligned_capex_values_by_data(data: NuclearAndG
         for field_name in NuclearAndGasEligibleButNotAligned.model_fields:
             eligible_but_not_aligned_dict[field_name] = extract_field_data(eligible_values, field_name)
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy eligible but not aligned capex: {e}")
-
+        msg = f"Error retrieving taxonomy eligible but not aligned capex: {e}"
+        raise AttributeError(msg) from e
     return eligible_but_not_aligned_dict
 
 
@@ -108,8 +109,8 @@ def get_taxonomy_non_eligible_revenue_values_by_data(data: NuclearAndGasDataColl
             value = getattr(non_eligible_values, field_name, None)
             non_eligible_dict[field_name] = -1 if value is None else value
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy non-eligible revenue: {e}")
-
+        msg = f"Error retrieving taxonomy non-eligible revenue: {e}"
+        raise AttributeError(msg) from e
     return non_eligible_dict
 
 
@@ -122,8 +123,8 @@ def get_taxonomy_non_eligible_capex_values_by_data(data: NuclearAndGasDataCollec
             value = getattr(non_eligible_values, field_name, None)
             non_eligible_dict[field_name] = -1 if value is None else value
     except (AttributeError, KeyError, TypeError) as e:
-        print(f"Error processing taxonomy non-eligible capex: {e}")
-
+        msg = f"Error retrieving taxonomy non-eligible capex: {e}"
+        raise AttributeError(msg) from e
     return non_eligible_dict
 
 

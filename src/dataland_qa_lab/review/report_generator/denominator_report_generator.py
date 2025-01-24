@@ -34,8 +34,23 @@ def build_denominator_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build a report frame for a specific KPI denominator (Revenue or CapEx)."""
-    prompted_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages, kpi)
-    dataland_values = get_dataland_values(dataset, kpi)
+    try:
+        prompted_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages, kpi)
+    except Exception:  # noqa: BLE001
+        return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
+            comment="Error retrieving prompted values for template 2",
+            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+            correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(),
+        )
+
+    try:
+        dataland_values = get_dataland_values(dataset, kpi)
+    except Exception:  # noqa: BLE001
+        return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
+            comment="Error retrieving dataland values for template 2",
+            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+            correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(),
+        )
 
     corrected_values, verdict, comment, quality = comparator.compare_values_template_2to4(
         prompted_values, dataland_values, NuclearAndGasAlignedDenominator
@@ -60,10 +75,14 @@ def build_denominator_report_frame(
 
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     """Retrieve dataland denominator values based on KPI."""
-    if kpi == "Revenue":
-        data = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
-    else:
-        data = data_provider.get_taxonomy_aligned_capex_denominator_values_by_data(dataset)
+    try:
+        if kpi == "Revenue":
+            data = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(dataset)
+        else:
+            data = data_provider.get_taxonomy_aligned_capex_denominator_values_by_data(dataset)
+    except Exception as e:
+        msg = f"Error retrieving dataland values for {kpi}: {e}"
+        raise RuntimeError(msg) from e
 
     return data
 

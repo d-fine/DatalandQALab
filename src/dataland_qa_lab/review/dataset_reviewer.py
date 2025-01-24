@@ -34,6 +34,7 @@ def review_dataset(data_id: str) -> str | None:
         config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
+        logging.info("Successfully reviewed dataset %s.", data_id)  # noqa: LOG015
     except Exception as e:
         msg = f"Error reviewing dataset {data_id}: {e}"
         raise RuntimeError(msg) from e
