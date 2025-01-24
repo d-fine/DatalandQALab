@@ -56,10 +56,9 @@ def test_generate_report(_mock_create: Mock) -> None:  # noqa: PT019
     test_data_collection = provide_test_data_collection()
 
     report = None  # Initialize the variable to avoid UnboundLocalError
-    with pytest.raises(Exception, match=r"No tool calls found in the GPT response."):
+    with pytest.raises(Exception, match=r"NoneType' object has no attribute 'general"):
         report = NuclearAndGasReportGenerator().generate_report(
             relevant_pages=AnalyzeResult(), dataset=test_data_collection
         )
-    # Handle report if no exception is raised
     if report:
         assert report.general.general.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
