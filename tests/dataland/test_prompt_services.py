@@ -5,6 +5,7 @@ from dataland_backend.models.yes_no import YesNo
 
 from dataland_qa_lab.prompting_services import prompting_service
 from dataland_qa_lab.review import generate_gpt_request, numeric_value_generator, yes_no_value_generator
+from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
 
 
 @pytest.fixture
@@ -12,6 +13,14 @@ def mock_pdf() -> Mock:
     pdf = Mock()
     pdf.content = "This is a test PDF content."
     return pdf
+
+
+@pytest.fixture
+def mock_config() -> Mock:
+    mock_conf = Mock()
+    mock_conf.azure_openai_api_key = "test_key"
+    mock_conf.azure_openai_endpoint = "https://test.endpoint.com"
+    return mock_conf
 
 
 def test_template_1(mock_pdf: Mock) -> None:
@@ -194,7 +203,7 @@ def test_generate_gpt_request(mock_generate_gpt_request: Mock, mock_pdf: Mock) -
 def test_get_taxonomy_alligned_denominator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
     mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
-    result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_denominator(mock_pdf, "Revenue")
+    result = numeric_value_generator.NumericValueGenerator.get_taxonomy_aligned_denominator(mock_pdf, "Revenue")
 
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(2, mock_pdf, "Revenue"),
@@ -207,7 +216,7 @@ def test_get_taxonomy_alligned_denominator(mock_generate_gpt_request: Mock, mock
 def test_get_taxonomy_alligned_numerator(mock_generate_gpt_request: Mock, mock_pdf: Mock) -> None:
     mock_generate_gpt_request.return_value = [0.1, 0, 0, 3.2, 0, 100]
 
-    result = numeric_value_generator.NumericValueGenerator.get_taxonomy_alligned_numerator(mock_pdf, "Revenue")
+    result = numeric_value_generator.NumericValueGenerator.get_taxonomy_aligned_numerator(mock_pdf, "Revenue")
 
     mock_generate_gpt_request.assert_called_once_with(
         prompting_service.PromptingService.create_main_prompt(3, mock_pdf, "Revenue"),
@@ -240,3 +249,34 @@ def test_get_taxonomy_non_eligible(mock_generate_gpt_request: Mock, mock_pdf: Mo
         prompting_service.PromptingService.create_sub_prompt_template5("Revenue"),
     )
     assert result == [0.1, 0, 0, 3.2, 0, 100], "The return values do not match."
+
+
+def test_generate_gpt_request_general_error() -> None:
+    """Test handling of a general unexpected error."""
+    with patch("dataland_qa_lab.utils.config.get_config", side_effect=Exception("Unexpected Error")):
+        with pytest.raises(ValueError, match="An unexpected error occurred") as exc:
+            GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
+
+        assert "An unexpected error occurred" in str(exc.value)
+
+
+def test_generate_gpt_request_creation_error(mock_config: Mock) -> None:
+    """Test error during GPT request creation."""
+    with (
+        patch("dataland_qa_lab.utils.config.get_config", return_value=mock_config),
+        patch("openai.AzureOpenAI") as mock_client,
+    ):
+        mock_client().chat.completions.create.side_effect = Exception("GPT Request Error")
+
+        with pytest.raises(ValueError, match="Error during GPT request creation") as exc:
+            GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
+        assert "Error during GPT request creation" in str(exc.value)
+
+
+def test_generate_gpt_request_config_error() -> None:
+    """Test error when loading configuration."""
+    with patch("dataland_qa_lab.utils.config.get_config", side_effect=Exception("Config Error")):
+        with pytest.raises(ValueError, match="Error loading configuration") as exc:
+            GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
+
+        assert "Error loading configuration" in str(exc.value)

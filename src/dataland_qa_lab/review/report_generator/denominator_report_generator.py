@@ -35,7 +35,7 @@ def build_denominator_report_frame(
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build a report frame for a specific KPI denominator (Revenue or CapEx)."""
     try:
-        prompted_values = NumericValueGenerator.get_taxonomy_alligned_denominator(relevant_pages, kpi)
+        prompted_values = NumericValueGenerator.get_taxonomy_aligned_denominator(relevant_pages, kpi)
     except Exception:  # noqa: BLE001
         return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
             comment="Error retrieving prompted values for template 2",

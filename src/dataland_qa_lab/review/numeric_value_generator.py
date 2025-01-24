@@ -12,7 +12,7 @@ class NumericValueGenerator:
     """Extracts and stores all values of template 2 to 5 and compares them to the values in dataland."""
 
     @staticmethod
-    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult, kpi: str) -> list:
+    def get_taxonomy_aligned_denominator(readable_text: AnalyzeResult, kpi: str) -> list:
         """Extracts information from template 2 using Azure OpenAI and returns a list of results.
 
         Returns:
@@ -43,7 +43,7 @@ class NumericValueGenerator:
             raise ValueError(msg) from e
 
     @staticmethod
-    def get_taxonomy_alligned_numerator(readable_text: AnalyzeResult, kpi: str) -> list:
+    def get_taxonomy_aligned_numerator(readable_text: AnalyzeResult, kpi: str) -> list:
         """Extracts information from template 3 using Azure OpenAI and returns a list of results.
 
         Returns:

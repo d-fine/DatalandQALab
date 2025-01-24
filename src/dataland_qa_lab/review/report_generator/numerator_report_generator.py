@@ -32,7 +32,7 @@ def build_numerator_report_frame(
     dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
     """Build a report frame for a specific KPI numerator (Revenue or CapEx)."""
-    prompted_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
+    prompted_values = NumericValueGenerator.get_taxonomy_aligned_numerator(relevant_pages, kpi)
     dataland_values = get_dataland_values(dataset, kpi)
 
     corrected_values, verdict, comment, quality = comparator.compare_values_template_2to4(
