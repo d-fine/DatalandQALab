@@ -1,11 +1,13 @@
+from collections.abc import Callable
+
 import pytest
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
-from dataland_backend.models.nuclear_and_gas_general import NuclearAndGasGeneral
 
 from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 from tests.utils import provide_test_dataset
 from tests.utils.provide_test_data_collection import provide_test_data_collection
+from tests.utils.provide_test_dataset import provide_test_dataset  # noqa: F811
 
 
 def test_get_yes_no_values_by_data() -> None:
@@ -29,6 +31,54 @@ def test_get_datasources_of_dataset() -> None:
     assert values.get("nuclear_energy_related_activities_section427") is None
     assert values.get("fossil_gas_related_activities_section431").tag_name is not None
     assert values.get("fossil_gas_related_activities_section431").file_name == "test-file"
+
+
+@pytest.mark.parametrize(
+    ("function_name", "exception_message"),
+    [
+        (
+            data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data,
+            "Error retrieving taxonomy-aligned revenue denominator",
+        ),
+        (
+            data_provider.get_taxonomy_aligned_capex_denominator_values_by_data,
+            "Error retrieving taxonomy-aligned capex denominator",
+        ),
+        (
+            data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data,
+            "Error retrieving taxonomy-aligned revenue numerator",
+        ),
+        (
+            data_provider.get_taxonomy_aligned_capex_numerator_values_by_data,
+            "Error retrieving taxonomy-aligned capex numerator",
+        ),
+        (
+            data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data,
+            "Error retrieving taxonomy eligible but not aligned revenue",
+        ),
+        (
+            data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data,
+            "Error retrieving taxonomy eligible but not aligned capex",
+        ),
+        (
+            data_provider.get_taxonomy_non_eligible_revenue_values_by_data,
+            "Error retrieving taxonomy non-eligible revenue",
+        ),
+        (data_provider.get_taxonomy_non_eligible_capex_values_by_data, "Error retrieving taxonomy non-eligible capex"),
+    ],
+)
+def test_function_exceptions(
+    function_name: Callable,
+    exception_message: str,
+    test_data_collection: NuclearAndGasDataCollection,  # noqa: ARG001
+) -> None:
+    """Retrieve taxonomy-aligned capex denominator values from the dataset."""
+
+    # Create a dataset with missing values to trigger exceptions
+    empty_data_collection = NuclearAndGasDataCollection(NuclearAndGasData())
+
+    with pytest.raises(AttributeError, match=exception_message):
+        function_name(empty_data_collection)
 
 
 def test_get_taxonomy_aligned_revenue_denominator_values_by_data(
@@ -105,13 +155,5 @@ def test_taxonomy_non_eligible_capex_values_by_data(test_data_collection: Nuclea
 
 @pytest.fixture
 def test_data_collection() -> NuclearAndGasDataCollection:
-    dataset = NuclearAndGasData(
-        general=NuclearAndGasGeneral(
-            general=provide_test_dataset.create_template_1_reportframe(),
-            taxonomyAlignedDenominator=provide_test_dataset.create_template_2_reportframe(),
-            taxonomyAlignedNumerator=provide_test_dataset.create_template_3_reportframe(),
-            taxonomyEligibleButNotAligned=provide_test_dataset.create_template_4_reportframe(),
-            taxonomyNonEligible=provide_test_dataset.create_template_5_reportframe(),
-        )
-    )
+    dataset = provide_test_dataset()
     return NuclearAndGasDataCollection(dataset)
