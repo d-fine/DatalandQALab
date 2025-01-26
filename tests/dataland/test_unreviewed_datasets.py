@@ -66,3 +66,18 @@ class TestUnreviewedDatasets(TestCase):
 
         with pytest.raises(TimeoutError):
             UnreviewedDatasets()
+
+    def test_initialization_with_no_client(self, mock_get_config: MagicMock) -> None:  # noqa: PLR6301
+        mock_conf = MagicMock()
+        mock_conf.dataland_client = None
+        mock_get_config.return_value = mock_conf
+
+        with pytest.raises(ValueError, match=r"Client Setup failed in the configuration."):
+            UnreviewedDatasets()
+
+    def test_initialization_with_runtime_error(self, mock_get_config: MagicMock) -> None:
+        mock_conf = self.set_up_mock_client(dataset_count=1, datasets=None, exception=RuntimeError())
+        mock_get_config.return_value = mock_conf
+
+        with pytest.raises(RuntimeError):
+            UnreviewedDatasets()
