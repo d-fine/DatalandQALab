@@ -30,9 +30,13 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
 
         data_collection = NuclearAndGasDataCollection(dataset.data)
 
+        page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
 
-        readable_text = text_to_doc_intelligence.get_markdown_from_dataset(relevant_pages_pdf_reader)
+        readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+            data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
+        )
 
         report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
