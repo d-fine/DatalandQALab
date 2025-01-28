@@ -1,5 +1,7 @@
 from datetime import UTC, datetime, timedelta, timezone
 
+from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
+
 from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
@@ -9,7 +11,7 @@ from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
-def review_dataset(data_id: str) -> str | None:
+def review_dataset(data_id: str) -> QaReportMetaInformation | None:
     """Review a dataset."""
     dataset = dataset_provider.get_dataset_by_id(data_id)
 
@@ -35,8 +37,8 @@ def review_dataset(data_id: str) -> str | None:
         report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
 
         data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-            data_id=data_id, nuclear_and_gas_data=report
-        )
+                data_id=data_id, nuclear_and_gas_data=report
+            )
 
         now_utc = datetime.now(UTC)
         if now_utc.astimezone(timezone(timedelta(hours=1))).dst():
@@ -50,5 +52,5 @@ def review_dataset(data_id: str) -> str | None:
         review_dataset.report_id = data.qa_report_id
 
         update_entity(review_dataset)
-    else:
-        return
+        return data
+    return None

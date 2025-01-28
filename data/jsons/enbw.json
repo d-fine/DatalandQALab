@@ -1,6 +1,6 @@
 {
-    "companyId": "1e6a979b-25a1-40b0-8f82-9f4bf1f85787",
-    "reportingPeriod": "2023",
+    "companyId": "9720bda3-f40e-4bb1-9154-0dfb1512945f",
+    "reportingPeriod": "2020",
     "data": {
         "general": {
             "general": {
@@ -45,7 +45,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection429": {
-                    "value": "Yes",
+                    "value": "No",
                     "quality": "Audited",
                     "comment": "",
                     "dataSource": {
@@ -56,7 +56,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection430": {
-                    "value": "Yes",
+                    "value": "No",
                     "quality": "Audited",
                     "comment": "",
                     "dataSource": {
@@ -67,7 +67,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection431": {
-                    "value": "No",
+                    "value": "Yes",
                     "quality": "Audited",
                     "comment": "",
                     "dataSource": {
@@ -82,7 +82,7 @@
                 "nuclearAndGasTaxonomyAlignedRevenueDenominator": {
                     "value": {
                         "taxonomyAlignedShareDenominatorNAndG426": {
-                            "mitigationAndAdaptation": null,
+                            "mitigationAndAdaptation": 15,
                             "mitigation": null,
                             "adaptation": null
                         },
@@ -140,7 +140,7 @@
                         },
                         "taxonomyAlignedShareDenominatorNAndG427": {
                             "mitigationAndAdaptation": null,
-                            "mitigation": null,
+                            "mitigation": 30,
                             "adaptation": null
                         },
                         "taxonomyAlignedShareDenominatorNAndG428": {
@@ -200,7 +200,7 @@
                         "taxonomyAlignedShareNumeratorNAndG428": {
                             "mitigationAndAdaptation": null,
                             "mitigation": null,
-                            "adaptation": null
+                            "adaptation": 45
                         },
                         "taxonomyAlignedShareNumeratorNAndG429": {
                             "mitigationAndAdaptation": 0,
@@ -257,7 +257,7 @@
                         "taxonomyAlignedShareNumeratorNAndG429": {
                             "mitigationAndAdaptation": 6,
                             "mitigation": 6,
-                            "adaptation": null
+                            "adaptation": 60
                         },
                         "taxonomyAlignedShareNumeratorNAndG430": {
                             "mitigationAndAdaptation": 2.3,
@@ -314,7 +314,7 @@
                             "adaptation": null
                         },
                         "taxonomyEligibleButNotAlignedShareNAndG430": {
-                            "mitigationAndAdaptation": 1.3,
+                            "mitigationAndAdaptation": 75,
                             "mitigation": 1.3,
                             "adaptation": null
                         },
@@ -400,7 +400,7 @@
                 "nuclearAndGasTaxonomyNonEligibleRevenue": {
                     "value": {
                         "taxonomyNonEligibleShareNAndG426": null,
-                        "taxonomyNonEligibleShareNAndG427": null,
+                        "taxonomyNonEligibleShareNAndG427": 98,
                         "taxonomyNonEligibleShareNAndG428": 0.3,
                         "taxonomyNonEligibleShareNAndG429": null,
                         "taxonomyNonEligibleShareNAndG430": null,
@@ -425,7 +425,7 @@
                         "taxonomyNonEligibleShareNAndG429": null,
                         "taxonomyNonEligibleShareNAndG430": null,
                         "taxonomyNonEligibleShareNAndG431": null,
-                        "taxonomyNonEligibleShareOtherActivities": 13.8,
+                        "taxonomyNonEligibleShareOtherActivities": 99,
                         "taxonomyNonEligibleShare": 13.8
                     },
                     "quality": "Audited",
