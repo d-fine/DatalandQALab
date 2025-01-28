@@ -5,7 +5,7 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
 
-from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity, update_entity
+from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity
 from dataland_qa_lab.database.database_tables import ReviewedDatasetMarkdowns
 from dataland_qa_lab.utils import config
 
