@@ -1,6 +1,6 @@
 from datetime import UTC, datetime, timedelta, timezone
 
-from dataland_qa_lab.database.database_engine import add_entity, get_entity, update_entity
+from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
@@ -12,6 +12,8 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 def review_dataset(data_id: str) -> str | None:
     """Review a dataset."""
     dataset = dataset_provider.get_dataset_by_id(data_id)
+
+    create_tables()
 
     existing_entity = get_entity(data_id, ReviewedDataset)
 
