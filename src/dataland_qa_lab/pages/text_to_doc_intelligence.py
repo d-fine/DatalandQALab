@@ -39,14 +39,7 @@ def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.Pdf
     exist_markdown = get_entity(entity_id=data_id, entity_class=ReviewedDatasetMarkdowns)
 
     if exist_markdown:
-        if exist_markdown.page_numbers != page_numbers:
-            readable_text = extract_text_of_pdf(relevant_pages_pdf_reader)
-            exist_markdown.markdown_text = readable_text
-            exist_markdown.page_numbers = page_numbers
-            exist_markdown.last_updated = formatted_german_time
-            update_entity(exist_markdown)
-        else:
-            readable_text = exist_markdown.markdown_text
+        readable_text = exist_markdown.markdown_text
     else:
         readable_text = extract_text_of_pdf(relevant_pages_pdf_reader)
 
