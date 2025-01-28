@@ -8,7 +8,7 @@ from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
-def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader:
+def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
 
@@ -16,8 +16,13 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
     numeric_pages = get_relevant_pages_of_numeric(dataset=dataset)
 
     page_numbers = sorted(set(yes_no_pages + numeric_pages))
+
+    if (dataset.yes_no_data_points.get("nuclear_energy_related_activities_section426"
+        ).datapoint.data_source is None):
+        return None
+
     file_reference = dataset.yes_no_data_points.get(
-        "nuclear_energy_related_activities_section426"
+            "nuclear_energy_related_activities_section426"
     ).datapoint.data_source.file_reference
 
     full_pdf = dataland_client.documents_api.get_document(file_reference)
@@ -31,9 +36,10 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
             output_pdf.add_page(original_pdf.pages[page_num - 1])
 
     extracted_pdf_stream = io.BytesIO()
+    if len(output_pdf.pages) == 0:
+        return None
     output_pdf.write(extracted_pdf_stream)
     extracted_pdf_stream.seek(0)
-
     return extracted_pdf_stream
 
 

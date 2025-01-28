@@ -13,7 +13,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_yes_no_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult | None
 ) -> NuclearAndGasGeneralGeneral:
     """Create yes no report."""
     report = NuclearAndGasGeneralGeneral()

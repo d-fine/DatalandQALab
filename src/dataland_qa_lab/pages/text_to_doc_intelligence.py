@@ -6,8 +6,11 @@ from azure.core.credentials import AzureKeyCredential
 from dataland_qa_lab.utils import config
 
 
-def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
+def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult | None:
     """Use Azure Document Intelligence to make text readable for azure open ai."""
+    if (pdf is None):
+        return None
+
     conf = config.get_config()
     docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
