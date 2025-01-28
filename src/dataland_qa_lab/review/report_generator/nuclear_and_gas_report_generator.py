@@ -1,5 +1,7 @@
 from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
+from dataland_qa.models.nuclear_and_gas_general import NuclearAndGasGeneral
+from dataland_qa.models.nuclear_and_gas_general_general import NuclearAndGasGeneralGeneral
 
 from dataland_qa_lab.review.report_generator import (
     denominator_report_generator,
@@ -22,7 +24,7 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         """Assemble the QA Report based on the corrected values from Azure."""
         # Initialize report and relevant pages
         self.relevant_pages = relevant_pages
-        self.report = NuclearAndGasData()
+        self.report = NuclearAndGasData(general=NuclearAndGasGeneral(general=NuclearAndGasGeneralGeneral()))
 
         self.report.general.general = yes_no_report_generator.build_yes_no_report(
             dataset=dataset, relevant_pages=relevant_pages
