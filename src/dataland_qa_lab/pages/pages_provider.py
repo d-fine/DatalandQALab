@@ -17,12 +17,11 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
 
     page_numbers = sorted(set(yes_no_pages + numeric_pages))
 
-    if (dataset.yes_no_data_points.get("nuclear_energy_related_activities_section426"
-        ).datapoint.data_source is None):
+    if dataset.yes_no_data_points.get("nuclear_energy_related_activities_section426").datapoint.data_source is None:
         return None
 
     file_reference = dataset.yes_no_data_points.get(
-            "nuclear_energy_related_activities_section426"
+        "nuclear_energy_related_activities_section426"
     ).datapoint.data_source.file_reference
 
     full_pdf = dataland_client.documents_api.get_document(file_reference)

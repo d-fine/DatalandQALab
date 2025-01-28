@@ -1,6 +1,5 @@
 import logging
 
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_backend.models.yes_no import YesNo
 
 from dataland_qa_lab.prompting_services import prompting_service
@@ -9,7 +8,7 @@ from dataland_qa_lab.review import generate_gpt_request
 logger = logging.getLogger(__name__)
 
 
-def get_yes_no_values_from_report(readable_text: AnalyzeResult) -> dict[str, YesNo | None]:
+def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]:
     """Extracts information from template 1 using Azure OpenAI and returns a list of results.
 
     Returns:

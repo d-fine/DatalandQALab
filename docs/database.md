@@ -6,11 +6,19 @@ In order to connect your local PostgreSQL database do the following steps:
 2. Download PGAdmin4 and inside it, create a database named "dataland_qa_lab"
 3. In the .env file of the dataland_qa_lab add your database connection string like this:
 
-DATABASE_CONNECTION_STRING=postgresql+pg8000://{username}.{password}@localhost:5432/dataland_qa_lab
+DATABASE_CONNECTION_STRING=postgresql+pg8000://{username}:{password}@localhost:5432/dataland_qa_lab
 
 Use your postgres credentials in the connection string.
 
-## Add a new table
+## Adding sqlalchemy and pg8000 to VSCode
+Open the terminal and execute the following commands one after the other:
+1. pdm add sqlalchemy
+2. pdm add pg8000
+
+## The local database should be successfully connected
+
+
+## If you want to add a new table
 1. Create a class in src/dataland_qa_lab/database/database_tables
 2. Call the method create_tables from src/dataland_qa_lab/database/database_engine
 
