@@ -43,20 +43,26 @@ def test_add_entity(mock_session_local: MagicMock) -> None:
 
 
 @patch("dataland_qa_lab.database.database_engine.SessionLocal")
-def test_get_entity(mock_session_local: MagicMock) -> None:
+@patch("dataland_qa_lab.database.database_engine.inspect")
+def test_get_entity(mock_inspect: MagicMock, mock_session_local: MagicMock) -> None:
     mock_session = MagicMock()
     mock_session_local.return_value = mock_session
 
     mock_entity_class = MagicMock()
-    mock_entity = MagicMock()
+    mock_entity_instance = MagicMock()
+
+    mock_primary_key = MagicMock()
+    mock_inspect.return_value.primary_key = [mock_primary_key]
+
     mock_query = mock_session.query.return_value
-    mock_query.filter.return_value.first.return_value = mock_entity
+    mock_query.filter.return_value.first.return_value = mock_entity_instance
 
     result = database_engine.get_entity("1", mock_entity_class)
 
     mock_session.query.assert_called_once_with(mock_entity_class)
-    mock_query.filter.assert_called_once()
-    assert result == mock_entity
+    mock_query.filter.assert_called_once_with(mock_primary_key == "1")
+    mock_session.commit.assert_called_once()
+    assert result == mock_entity_instance
 
 
 @patch("dataland_qa_lab.database.database_engine.SessionLocal")

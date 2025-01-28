@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ def add_entity(entity: any) -> bool:
 
     try:
         session.add(entity)
+        session.commit()
     except SQLAlchemyError:
         logger.exception(msg="Error while adding entity to database", exc_info=SQLAlchemyError)
         session.rollback()
@@ -34,7 +35,6 @@ def add_entity(entity: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True
 
 
@@ -45,6 +45,7 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     try:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
+        session.commit()
     except SQLAlchemyError:
         logger.exception(msg="Error retrieving entity", exc_info=SQLAlchemyError)
         session.rollback()
@@ -52,7 +53,6 @@ def get_entity(entity_id: str, entity_class: any) -> any:
     finally:
         session.close()
 
-    session.commit()
     return entity
 
 
@@ -62,6 +62,7 @@ def update_entity(entity: any) -> bool:
 
     try:
         session.merge(entity)
+        session.commit()
     except SQLAlchemyError:
         logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
         session.close()
@@ -69,7 +70,6 @@ def update_entity(entity: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True
 
 
@@ -85,6 +85,7 @@ def delete_entity(entity_id: int, entity_class: any) -> bool:
         else:
             logger.error(msg="Entity not found")
             return False
+        session.commit()
     except SQLAlchemyError:
         logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
         session.rollback()
@@ -92,5 +93,4 @@ def delete_entity(entity_id: int, entity_class: any) -> bool:
     finally:
         session.close()
 
-    session.commit()
     return True
