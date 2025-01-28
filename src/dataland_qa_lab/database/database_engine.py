@@ -28,7 +28,7 @@ def add_entity(entity: any) -> bool:
     try:
         session.add(entity)
     except SQLAlchemyError:
-        logger.exception("Error while adding entity to database")
+        logger.exception(msg="Error while adding entity to database", exc_info=SQLAlchemyError)
         session.rollback()
         return False
     finally:
@@ -46,7 +46,7 @@ def get_entity(entity_id: str, entity_class: any) -> any:
         primary_key_column = inspect(entity_class).primary_key[0]
         entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
     except SQLAlchemyError:
-        logger.exception("Error retrieving entity")
+        logger.exception(msg="Error retrieving entity", exc_info=SQLAlchemyError)
         session.rollback()
         return None
     finally:
@@ -63,7 +63,7 @@ def update_entity(entity: any) -> bool:
     try:
         session.merge(entity)
     except SQLAlchemyError:
-        logger.exception("Error updating entity")
+        logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
         session.close()
         return False
     finally:
@@ -83,10 +83,10 @@ def delete_entity(entity_id: int, entity_class: any) -> bool:
         if entity:
             session.delete(entity)
         else:
-            logger.error("Entity not found")
+            logger.error(msg="Entity not found")
             return False
     except SQLAlchemyError:
-        logger.exception("Error updating entity")
+        logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
         session.rollback()
         return False
     finally:
