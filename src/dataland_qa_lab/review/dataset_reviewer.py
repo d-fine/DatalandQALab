@@ -90,4 +90,4 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
         logger.info("Dataset with the Data-ID already exist in the database.")
     except Exception as e:
         logger.exception(msg="An error occured: ", exc_info=e)
-        return None
+        raise

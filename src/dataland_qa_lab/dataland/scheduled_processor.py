@@ -27,8 +27,9 @@ def run_scheduled_processing(iterations: int) -> None:
                     review_dataset(data_id)
                     list_of_data_ids.remove(data_id)
 
-                except Exception:
+                except Exception as e:
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
+                    raise ValueError from e
 
         except Exception as e:
             logger.critical("Critical error: %s", e)
