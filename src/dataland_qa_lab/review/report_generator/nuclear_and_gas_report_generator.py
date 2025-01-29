@@ -1,4 +1,5 @@
 from azure.ai.documentintelligence.models import AnalyzeResult
+from dataland_qa.models import NuclearAndGasGeneral, NuclearAndGasGeneralGeneral
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
 from dataland_qa.models.nuclear_and_gas_general import NuclearAndGasGeneral
 from dataland_qa.models.nuclear_and_gas_general_general import NuclearAndGasGeneralGeneral
