@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 def run_scheduled_processing() -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     while True:
-
         try:
             unreviewed_datasets = UnreviewedDatasets()
             list_of_data_ids = unreviewed_datasets.list_of_data_ids
