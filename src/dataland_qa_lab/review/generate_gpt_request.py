@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 class GenerateGptRequest:
     """Generates the actual GPT request."""
 
-
     @staticmethod
     def generate_gpt_request(mainprompt: str, subprompt: str) -> list:
         """Generates the actual GPT request.
