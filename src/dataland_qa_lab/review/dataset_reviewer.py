@@ -28,8 +28,9 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
         existing_entity = get_entity(data_id, ReviewedDataset)
 
         now_utc = datetime.now(UTC)
-        ger_timezone = timedelta(hours=2) if now_utc.astimezone(
-            timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
+        ger_timezone = (
+            timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
+        )
         formatted_german_time1 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
         logger.debug("Checking if the dataset is already existing in the database")
@@ -55,12 +56,14 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
             logger.debug("Text extracted from the relevant pages.")
 
             report = NuclearAndGasReportGenerator().generate_report(
-                relevant_pages=readable_text, dataset=data_collection)
+                relevant_pages=readable_text, dataset=data_collection
+            )
             logger.info("Report generated succesfully.")
 
-            data = config.get_config(
-            ).dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-                data_id=data_id, nuclear_and_gas_data=report
+            data = (
+                config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+                    data_id=data_id, nuclear_and_gas_data=report
+                )
             )
 
             now_utc = datetime.now(UTC)
