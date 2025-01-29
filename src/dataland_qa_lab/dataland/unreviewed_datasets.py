@@ -19,8 +19,9 @@ class UnreviewedDatasets:
         try:
             number_of_datasets = client.qa_api.get_number_of_pending_datasets()
             if number_of_datasets is None or number_of_datasets < 0:
-                logger.error(msg="Recieved an invalid number of pending datasets.", exc_info=ValueError)
-                raise ValueError  # noqa: TRY301
+                msg_p = "Recieved an invalid number of pending datasets."
+                logger.error(msg=msg_p, exc_info=ValueError)
+                raise ValueError(msg_p)  # noqa: TRY301
 
             self.datasets = client.qa_api.get_info_on_pending_datasets(
                 data_types=["nuclear-and-gas"], chunk_size=number_of_datasets
