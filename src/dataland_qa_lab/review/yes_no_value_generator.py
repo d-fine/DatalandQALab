@@ -20,14 +20,16 @@ def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]
             prompting_service.PromptingService.create_sub_prompt_template1(),
         )
         if not extracted_list:
-            logger.warning("Yes_No Values are empty. No results returned from GPT.")
             msg = "No results returned from GPT for Yes_No values."
             raise ValueError(msg)  # noqa: TRY301
 
     except Exception as e:
-        logger.critical("Unexpected error in generate_gpt_request: %s", e)
         msg = f"Error extracting values from template 1: {e}"
         raise ValueError(msg) from e
+
+    if len(extracted_list) != 6:  # noqa: PLR2004
+        msg = "Yes_No values are too short or too long from GPT."
+        raise ValueError(msg)
 
     sections = {
         "nuclear_energy_related_activities_section426": YesNo(extracted_list[0]),
