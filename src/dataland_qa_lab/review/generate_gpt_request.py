@@ -52,5 +52,6 @@ class GenerateGptRequest:
             tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
         else:
             logger.exception(msg="No tool calls found in the GPT response.", exc_info=ValueError)
+            raise ValueError
         data_dict = ast.literal_eval(tool_call.arguments)
         return list(data_dict.values())

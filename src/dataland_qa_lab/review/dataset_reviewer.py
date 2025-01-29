@@ -16,78 +16,75 @@ logger = logging.getLogger(__name__)
 
 def review_dataset(data_id: str) -> QaReportMetaInformation | None:
     """Review a dataset."""
-    try:
-        logger.info("Starting the review of the Dataset: %s", data_id)
+    logger.info("Starting the review of the Dataset: %s", data_id)
 
-        dataset = dataset_provider.get_dataset_by_id(data_id)
-        logger.debug("Dataset retrieved form the given Data-ID.")
+    dataset = dataset_provider.get_dataset_by_id(data_id)
+    logger.debug("Dataset retrieved form the given Data-ID.")
 
-        logger.info("Creating database.")
-        create_tables()
+    logger.info("Creating database.")
+    create_tables()
 
-        existing_entity = get_entity(data_id, ReviewedDataset)
+    existing_entity = get_entity(data_id, ReviewedDataset)
+
+    now_utc = datetime.now(UTC)
+    ger_timezone = (
+        timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
+    )
+    formatted_german_time1 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
+
+    logger.debug("Checking if the dataset is already existing in the database")
+    if existing_entity is None:
+        logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
+        review_dataset = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time1)
+
+        logger.debug("Adding the dataset in the database with the Data-ID and review start time.")
+        add_entity(review_dataset)
+
+        data_collection = NuclearAndGasDataCollection(dataset.data)
+        logger.debug("Data collection created.")
+
+        page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+        logger.debug("Relevant page numbers extracted.")
+
+        relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+        logger.debug("Relevant pages extracted.")
+
+        readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+            data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
+        )
+        logger.debug("Text extracted from the relevant pages.")
+
+        report = NuclearAndGasReportGenerator().generate_report(
+            relevant_pages=readable_text, dataset=data_collection
+        )
+        logger.info("Report generated succesfully.")
+
+        data = (
+            config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+                data_id=data_id, nuclear_and_gas_data=report
+            )
+        )
 
         now_utc = datetime.now(UTC)
-        ger_timezone = (
-            timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
-        )
-        formatted_german_time1 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        if now_utc.astimezone(timezone(timedelta(hours=1))).dst():
+            ger_timezone = timedelta(hours=2)
+        else:
+            ger_timezone = timedelta(hours=1)
 
-        logger.debug("Checking if the dataset is already existing in the database")
-        if existing_entity is None:
-            logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
-            review_dataset = ReviewedDataset(data_id=data_id, review_start_time=formatted_german_time1)
+        formatted_german_time2 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
-            logger.debug("Adding the dataset in the database with the Data-ID and review start time.")
-            add_entity(review_dataset)
+        logger.debug("Adding review end time in the database.")
+        review_dataset.review_end_time = formatted_german_time2
 
-            data_collection = NuclearAndGasDataCollection(dataset.data)
-            logger.debug("Data collection created.")
+        logger.debug("Adding review completed to the database.")
+        review_dataset.review_completed = True
 
-            page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-            logger.debug("Relevant page numbers extracted.")
+        logger.debug("Adding the Report-ID to the database.")
+        review_dataset.report_id = data.qa_report_id
 
-            relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
-            logger.debug("Relevant pages extracted.")
+        update_entity(review_dataset)
 
-            readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
-            )
-            logger.debug("Text extracted from the relevant pages.")
-
-            report = NuclearAndGasReportGenerator().generate_report(
-                relevant_pages=readable_text, dataset=data_collection
-            )
-            logger.info("Report generated succesfully.")
-
-            data = (
-                config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-                    data_id=data_id, nuclear_and_gas_data=report
-                )
-            )
-
-            now_utc = datetime.now(UTC)
-            if now_utc.astimezone(timezone(timedelta(hours=1))).dst():
-                ger_timezone = timedelta(hours=2)
-            else:
-                ger_timezone = timedelta(hours=1)
-
-            formatted_german_time2 = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
-
-            logger.debug("Adding review end time in the database.")
-            review_dataset.review_end_time = formatted_german_time2
-
-            logger.debug("Adding review completed to the database.")
-            review_dataset.review_completed = True
-
-            logger.debug("Adding the Report-ID to the database.")
-            review_dataset.report_id = data.qa_report_id
-
-            update_entity(review_dataset)
-
-            logger.info("Report posted successfully for dataset with ID: %s", data_id)
-            return data
-        logger.info("Dataset with the Data-ID already exist in the database.")
-    except Exception as e:
-        logger.exception(msg="An error occured: ", exc_info=e)
-        raise
+        logger.info("Report posted successfully for dataset with ID: %s", data_id)
+        return data
+    logger.info("Dataset with the Data-ID already exist in the database.")
+    return None
