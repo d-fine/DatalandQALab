@@ -73,7 +73,7 @@ def update_entity(entity: any) -> bool:
     return True
 
 
-def delete_entity(entity_id: int, entity_class: any) -> bool:
+def delete_entity(entity_id: str, entity_class: any) -> bool:
     """Generic method to delete an entity from the database by its ID."""
     session = SessionLocal()
 

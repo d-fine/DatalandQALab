@@ -33,13 +33,11 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.update_entity")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.create_tables")
 def test_get_markdown_from_dataset_new_entry(
     mock_create_tables: MagicMock,
     mock_get_entity: MagicMock,
-    mock_update_entity: MagicMock,
     mock_add_entity: MagicMock,
     mock_extract_text: MagicMock,
 ) -> None:
@@ -57,28 +55,24 @@ def test_get_markdown_from_dataset_new_entry(
     mock_get_entity.assert_called_once()
     mock_extract_text.assert_called_once_with(pdf_reader)
     mock_add_entity.assert_called_once()
-    mock_update_entity.assert_not_called()
     assert result == "mocked_text"
 
 
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.update_entity")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.create_tables")
 def test_get_markdown_from_dataset_existing_entry(
     mock_create_tables: MagicMock,
     mock_get_entity: MagicMock,
-    mock_update_entity: MagicMock,
     mock_add_entity: MagicMock,
-    mock_extract_text: MagicMock,
 ) -> None:
     mock_create_tables.return_value = None
-    mock_extract_text.return_value = "mocked_text"
 
     mock_existing_entry = MagicMock()
     mock_existing_entry.pages = [1, 2]
     mock_existing_entry.markdown_text = "old_text"
+
+    mock_get_entity.return_value = mock_existing_entry
 
     data_id = "test_id"
     pdf_reader = MagicMock(spec=pypdf.PdfReader)
@@ -88,7 +82,5 @@ def test_get_markdown_from_dataset_existing_entry(
 
     mock_create_tables.assert_called_once()
     mock_get_entity.assert_called_once()
-    mock_extract_text.assert_called_once_with(pdf_reader)
-    mock_update_entity.assert_called_once()
     mock_add_entity.assert_not_called()
-    assert result == "mocked_text"
+    assert result == "old_text"
