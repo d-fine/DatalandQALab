@@ -12,7 +12,7 @@ def main(single_pass_e2e: bool = False) -> None:
     console_logger.configure_console_logger()
     logger.info("Launching the Dataland QA Lab server")
 
-    scheduled_processor.run_scheduled_processing()
+    scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
 
     while True:
         logger.info("Still running")

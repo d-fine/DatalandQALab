@@ -11,13 +11,13 @@ from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 
-def review_dataset(data_id: str) -> QaReportMetaInformation | None:
+def review_dataset(data_id: str, single_pass_e2e: bool = False) -> QaReportMetaInformation | None:
     """Review a dataset."""
     dataset = dataset_provider.get_dataset_by_id(data_id)
 
     create_tables()
 
-    existing_entity = get_entity(data_id, ReviewedDataset)
+    existing_entity = None if single_pass_e2e else get_entity(data_id, ReviewedDataset)
 
     now_utc = datetime.now(UTC)
     ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
