@@ -161,7 +161,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
 ) -> None:
     dataset, relevant_pages = provide_test_data_collection()
 
-    # Simulate an exception in dataland value retrieval
     mock_generate_gpt_request.side_effect = Exception("Mock GPT error")
     report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")
 
@@ -169,7 +168,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
     assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert "Error retrieving prompted values for template 3" in report.comment
 
-    # Simulate an exception in dataland retrieval
     mock_generate_gpt_request.side_effect = None
     mock_get_dataland_values.side_effect = Exception("Mock dataland error")
     report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")

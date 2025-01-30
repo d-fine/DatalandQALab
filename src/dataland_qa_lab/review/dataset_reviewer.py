@@ -14,7 +14,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str) -> QaReportMetaInformation | None:
+def review_dataset(data_id: str, single_pass_e2e: bool = False) -> QaReportMetaInformation | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -24,7 +24,7 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
     logger.info("Creating database.")
     create_tables()
 
-    existing_entity = get_entity(data_id, ReviewedDataset)
+    existing_entity = None if single_pass_e2e else get_entity(data_id, ReviewedDataset)
 
     now_utc = datetime.now(UTC)
     ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
