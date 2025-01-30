@@ -1,8 +1,11 @@
 import ast
+import logging
 
 from openai import AzureOpenAI
 
 from dataland_qa_lab.utils import config
+
+logger = logging.getLogger(__name__)
 
 
 class GenerateGptRequest:
