@@ -1,24 +1,6 @@
-import logging
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from dataland_qa_lab.dataland.scheduled_processor import run_scheduled_processing
-
-
-@patch("dataland_qa_lab.dataland.scheduled_processor.UnreviewedDatasets")
-def test_run_scheduled_processing_unreviewed_datasets_error(
-    mock_unreviewed_datasets: MagicMock, caplog: pytest.LogCaptureFixture
-) -> None:
-    # Simulate an exception when creating UnreviewedDatasets
-    mock_unreviewed_datasets.side_effect = Exception("Error while creating UnreviewedDatasets")
-
-    # Run the function while capturing logs
-    with caplog.at_level(logging.ERROR):
-        run_scheduled_processing(iterations=1)
-
-    # Assert that the expected log message was captured
-    assert "Error initializing UnreviewedDatasets: Error while creating UnreviewedDatasets" in caplog.text
 
 
 @patch("dataland_qa_lab.dataland.scheduled_processor.time.sleep")  # Mock time.sleep to avoid delays

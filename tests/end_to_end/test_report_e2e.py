@@ -6,6 +6,8 @@ import mock_constants
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
 from clients.qa.dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
+from dataland_qa_lab.database.database_engine import delete_entity
+from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import config
@@ -21,9 +23,8 @@ def test_report_generator_end_to_end() -> None:
 
     # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
-
+    delete_entity(data_id, ReviewedDataset)
     report_metadata = mocked_review_dataset(data_id)
-
     report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
         data_id=data_id, qa_report_id=report_metadata.qa_report_id
     )

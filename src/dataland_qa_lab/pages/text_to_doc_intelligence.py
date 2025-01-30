@@ -10,7 +10,7 @@ from dataland_qa_lab.database.database_tables import ReviewedDatasetMarkdowns
 from dataland_qa_lab.utils import config
 
 
-def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult | None:
+def extract_text_of_pdf(pdf: pypdf.PdfReader) -> AnalyzeResult:
     """Use Azure Document Intelligence to make text readable for azure open ai."""
     if pdf is None:
         return None

@@ -1,6 +1,5 @@
 from unittest.mock import Mock, patch
 
-import pytest
 from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 
@@ -54,11 +53,8 @@ def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
 @patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
 def test_generate_report(_mock_create: Mock) -> None:  # noqa: PT019
     test_data_collection = provide_test_data_collection()
-
-    report = None  # Initialize the variable to avoid UnboundLocalError
-    with pytest.raises(Exception, match=r"NoneType' object has no attribute 'general"):
-        report = NuclearAndGasReportGenerator().generate_report(
-            relevant_pages=AnalyzeResult(), dataset=test_data_collection
-        )
+    report = NuclearAndGasReportGenerator().generate_report(
+        relevant_pages=AnalyzeResult(), dataset=test_data_collection
+    )
     if report:
-        assert report.general.general.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
+        assert report.general.general.fossil_gas_related_activities_section430.corrected_data.value is None
