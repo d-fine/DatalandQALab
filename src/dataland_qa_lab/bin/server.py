@@ -18,7 +18,7 @@ def main(single_pass_e2e: bool = False) -> None:
         logger.info("Still running")
         if single_pass_e2e:
             break
-        time.sleep(10)
+        time.sleep(30)
 
 
 if __name__ == "__main__":

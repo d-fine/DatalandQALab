@@ -11,7 +11,9 @@ console_logger.configure_console_logger()
 
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
+    logger.info("starting to process datasets")
     while True:
+        logger.info("entering while loop")
         try:
             unreviewed_datasets = UnreviewedDatasets()
             list_of_data_ids = unreviewed_datasets.list_of_data_ids
