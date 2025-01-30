@@ -7,8 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from dataland_qa_lab.database.database_tables import Base
 
-# DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
-DATABASE_URL = "postgresql+pg8000://data_reviewer:qwertz@localhost:5432/dataland_qa_lab"
+DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 
 engine = create_engine(DATABASE_URL)
 
