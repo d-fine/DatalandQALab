@@ -18,7 +18,7 @@ class UnreviewedDatasets:
         if client is None:
             logger.exception("Client Setup failed in the configuration.")
             msg = "Client Setup failed in the configuration."
-            raise ValueError(msg)  # noqa: B904
+            raise ValueError(msg)
         try:
             number_of_datasets = client.qa_api.get_number_of_pending_datasets()
             if number_of_datasets is None or number_of_datasets < 0:
