@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from dataland_qa_lab.dataland.scheduled_processor import run_scheduled_processing
 
 
