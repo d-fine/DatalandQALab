@@ -6,6 +6,7 @@ from dataland_qa_lab.review.dataset_reviewer import review_dataset
 
 logger = logging.getLogger(__name__)
 
+
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     while True:
