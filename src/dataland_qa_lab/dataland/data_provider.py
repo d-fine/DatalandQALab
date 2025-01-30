@@ -1,3 +1,5 @@
+import logging
+
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 from dataland_backend.models.nuclear_and_gas_aligned_denominator import NuclearAndGasAlignedDenominator
 from dataland_backend.models.nuclear_and_gas_aligned_numerator import NuclearAndGasAlignedNumerator
@@ -6,6 +8,8 @@ from dataland_backend.models.nuclear_and_gas_non_eligible import NuclearAndGasNo
 from dataland_backend.models.yes_no import YesNo
 
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
+
+logger = logging.getLogger(__name__)
 
 
 def get_yes_no_values_by_data(data: NuclearAndGasDataCollection) -> dict[str, YesNo | None]:

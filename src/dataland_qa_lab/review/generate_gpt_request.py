@@ -1,8 +1,11 @@
 import ast
+import logging
 
 from openai import AzureOpenAI
 
 from dataland_qa_lab.utils import config
+
+logger = logging.getLogger(__name__)
 
 
 class GenerateGptRequest:
@@ -48,7 +51,8 @@ class GenerateGptRequest:
         if updated_openai_response.choices[0].message.tool_calls:
             tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
         else:
-            msg = "No tool calls found in the GPT response."
-            raise ValueError(msg)
+            msg_p = "No tool calls found in the GPT response."
+            logger.exception(msg=msg_p, exc_info=ValueError)
+            raise ValueError(msg_p)
         data_dict = ast.literal_eval(tool_call.arguments)
         return list(data_dict.values())
