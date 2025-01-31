@@ -139,11 +139,11 @@ class NumericValueGenerator:
     @staticmethod
     def extract_number(value: str) -> float:
         """Extracts the first numeric part from a string and converts it to a float."""
-        if isinstance(value, float):
-            return value
-        if isinstance(value, int):
+        if isinstance(value, float | int):  # Directly return if it's already numeric
             return float(value)
-        match = re.search(r"-?\d+\.\d+|-?\d+", value)
+
+        # Safe regex: Match optional negative sign, then digits, optional dot, and more digits
+        match = re.search(r"-?\d+(?:\.\d+)?", value)
         if match:
             return float(match.group(0))  # Convert directly to float
 
