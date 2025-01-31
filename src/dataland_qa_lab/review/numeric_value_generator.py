@@ -1,4 +1,5 @@
 import logging
+import re
 
 from azure.ai.documentintelligence.models import AnalyzeResult
 
@@ -20,18 +21,18 @@ class NumericValueGenerator:
         """
         try:
             # Generate GPT request
-            dominator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+            denominator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
                 prompting_service.PromptingService.create_main_prompt(2, readable_text, kpi),
                 prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
             )
             # Check if the GPT response is empty
-            if not dominator_values:
+            if not denominator_values:
                 logger.warning("Denominator values are empty. No results returned from GPT.")
                 msg = "No results returned from GPT for denominator values."
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
-                float_results = [float(value) for value in dominator_values]
+                float_results = [NumericValueGenerator.extract_number(value) for value in denominator_values]
             except Exception as e:
                 logger.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
@@ -62,7 +63,7 @@ class NumericValueGenerator:
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
-                float_results = [float(value) for value in numerator_values]
+                float_results = [NumericValueGenerator.extract_number(value) for value in numerator_values]
             except Exception as e:
                 logger.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
@@ -93,7 +94,7 @@ class NumericValueGenerator:
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
-                float_results = [float(value) for value in eligible_values]
+                float_results = [NumericValueGenerator.extract_number(value) for value in eligible_values]
             except Exception as e:
                 logger.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
@@ -124,7 +125,7 @@ class NumericValueGenerator:
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
-                float_results = [float(value) for value in non_eligible_values]
+                float_results = [NumericValueGenerator.extract_number(value) for value in non_eligible_values]
             except Exception as e:
                 logger.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
@@ -134,3 +135,18 @@ class NumericValueGenerator:
             logger.critical("Unexpected error in generate_gpt_request: %s", e)
             msg = f"Error extracting values from template 5: {e}"
             raise ValueError(msg) from e
+
+    @staticmethod
+    def extract_number(value: str) -> float:
+        """Extracts the first numeric part from a string and converts it to a float."""
+        if isinstance(value, float):
+            return value
+        if isinstance(value, int):
+            return float(value)
+
+        # Updated regex: match numbers with a dot (.) as decimal separator
+        match = re.search(r"(\d+\.\d+|\d+)", value)
+        if match:
+            return float(match.group(0))  # Convert directly to float
+        msg = f"Could not extract a valid number from '{value}'"
+        raise ValueError(msg)
