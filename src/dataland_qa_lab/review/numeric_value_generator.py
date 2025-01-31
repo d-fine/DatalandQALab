@@ -143,10 +143,9 @@ class NumericValueGenerator:
             return value
         if isinstance(value, int):
             return float(value)
-
-        # Updated regex: match numbers with a dot (.) as decimal separator
-        match = re.search(r"(\d+\.\d+|\d+)", value)
+        match = re.search(r"-?\d+\.\d+|-?\d+", value)
         if match:
             return float(match.group(0))  # Convert directly to float
+
         msg = f"Could not extract a valid number from '{value}'"
         raise ValueError(msg)
