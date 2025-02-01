@@ -16,7 +16,7 @@ def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]
     return sorted(set(yes_no_pages + numeric_pages))
 
 
-def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader:
+def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
 

@@ -1,4 +1,3 @@
-import logging
 import re
 
 from dataland_qa_lab.prompting_services import prompting_service
@@ -23,19 +22,16 @@ class NumericValueGenerator:
             )
             # Check if the GPT response is empty
             if not denominator_values:
-                logging.warning("Denominator values are empty. No results returned from GPT.")
                 msg = "No results returned from GPT for denominator values."
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
                 float_results = [NumericValueGenerator.extract_number(value) for value in denominator_values]
             except Exception as e:
-                logging.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
                 raise ValueError(msg) from e
             return float_results  # noqa: TRY300
         except ValueError as e:
-            logging.critical("Unexpected error in generate_gpt_request: %s", e)
             msg = f"Error extracting values from template 2: {e}"
             raise ValueError(msg) from e
 
@@ -54,19 +50,16 @@ class NumericValueGenerator:
             )
             # Check if the GPT response is empty
             if not numerator_values:
-                logging.warning("Denominator values are empty. No results returned from GPT.")
                 msg = "No results returned from GPT for denominator values."
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
                 float_results = [NumericValueGenerator.extract_number(value) for value in numerator_values]
             except Exception as e:
-                logging.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
                 raise ValueError(msg) from e
             return float_results  # noqa: TRY300
         except ValueError as e:
-            logging.critical("Unexpected error in generate_gpt_request: %s", e)
             msg = f"Error extracting values from template 3: {e}"
             raise ValueError(msg) from e
 
@@ -85,19 +78,16 @@ class NumericValueGenerator:
             )
             # Check if the GPT response is empty
             if not eligible_values:
-                logging.warning("Denominator values are empty. No results returned from GPT.")
                 msg = "No results returned from GPT for denominator values."
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
                 float_results = [NumericValueGenerator.extract_number(value) for value in eligible_values]
             except Exception as e:
-                logging.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
                 raise ValueError(msg) from e
             return float_results  # noqa: TRY300
         except ValueError as e:
-            logging.critical("Unexpected error in generate_gpt_request: %s", e)
             msg = f"Error extracting values from template 4: {e}"
             raise ValueError(msg) from e
 
@@ -116,19 +106,16 @@ class NumericValueGenerator:
             )
             # Check if the GPT response is empty
             if not non_eligible_values:
-                logging.warning("Denominator values are empty. No results returned from GPT.")
                 msg = "No results returned from GPT for denominator values."
                 raise ValueError(msg)  # noqa: TRY301
             # Convert the results to floats
             try:
                 float_results = [NumericValueGenerator.extract_number(value) for value in non_eligible_values]
             except Exception as e:
-                logging.critical(f"Unexpected error during float conversion: {e}")  # noqa: G004
                 msg = f"Unexpected error during float conversion: {e}"
                 raise ValueError(msg) from e
             return float_results  # noqa: TRY300
         except ValueError as e:
-            logging.critical("Unexpected error in generate_gpt_request: %s", e)
             msg = f"Error extracting values from template 5: {e}"
             raise ValueError(msg) from e
 
