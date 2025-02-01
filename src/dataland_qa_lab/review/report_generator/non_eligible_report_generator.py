@@ -1,4 +1,3 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_non_eligible import (
     ExtendedDataPointNuclearAndGasNonEligible,
 )
@@ -16,7 +15,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_non_eligible_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: str
 ) -> NuclearAndGasGeneralTaxonomyNonEligible:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Non Eligible."""
     return NuclearAndGasGeneralTaxonomyNonEligible(
@@ -26,26 +25,19 @@ def build_taxonomy_non_eligible_report(
 
 
 def build_non_eligible_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
     """Build report frame for the revenue non_eligible."""
+    if relevant_pages is None:
+        return create_not_attempted_report("No relevant pages found")
     try:
         prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
-    except Exception:  # noqa: BLE001
-        return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
-            comment="Error retrieving prompted values for template 5",
-            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
-            correctedData=ExtendedDataPointNuclearAndGasNonEligible(),
-        )
-
+    except ValueError:
+        return create_not_attempted_report("Error retrieving prompted values for template 5")
     try:
         dataland_values = get_dataland_values(dataset, kpi)
-    except Exception:  # noqa: BLE001
-        return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
-            comment="Error retrieving dataland values for template 5",
-            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
-            correctedData=ExtendedDataPointNuclearAndGasNonEligible(),
-        )
+    except RuntimeError:
+        return create_not_attempted_report("Error retrieving dataland values for template 5")
 
     value, verdict, comment, quality = comparator.compare_non_eligible_values(prompted_values, dataland_values)
     if verdict == QaReportDataPointVerdict.QAACCEPTED:
@@ -59,6 +51,15 @@ def build_non_eligible_report_frame(
         )
     return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
         comment=comment, verdict=verdict, correctedData=corrected_data
+    )
+
+
+def create_not_attempted_report(error_message: str) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
+    """Create a not attempted report frame for the Nuclear and Gas General Non Eligible."""
+    return QaReportDataPointExtendedDataPointNuclearAndGasNonEligible(
+        comment=error_message,
+        verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+        correctedData=ExtendedDataPointNuclearAndGasNonEligible(),
     )
 
 

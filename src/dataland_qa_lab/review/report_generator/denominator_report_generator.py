@@ -1,4 +1,3 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_denominator import (
     ExtendedDataPointNuclearAndGasAlignedDenominator,
 )
@@ -19,7 +18,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_denominator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: str
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create a report frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
@@ -31,26 +30,19 @@ def build_taxonomy_aligned_denominator_report(
 
 
 def build_denominator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build a report frame for a specific KPI denominator (Revenue or CapEx)."""
+    if relevant_pages is None:
+        return create_not_attempted_report("No relevant pages found")
     try:
         prompted_values = NumericValueGenerator.get_taxonomy_aligned_denominator(relevant_pages, kpi)
-    except Exception:  # noqa: BLE001
-        return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
-            comment="Error retrieving prompted values for template 2",
-            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
-            correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(),
-        )
-
+    except ValueError:
+        return create_not_attempted_report("Error retrieving prompted values for template 2")
     try:
         dataland_values = get_dataland_values(dataset, kpi)
-    except Exception:  # noqa: BLE001
-        return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
-            comment="Error retrieving dataland values for template 2",
-            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
-            correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(),
-        )
+    except RuntimeError:
+        return create_not_attempted_report("Error retrieving dataland values for template 2")
 
     corrected_values, verdict, comment, quality = comparator.compare_values_template_2to4(
         prompted_values, dataland_values, NuclearAndGasAlignedDenominator
@@ -70,6 +62,17 @@ def build_denominator_report_frame(
         comment=comment,
         verdict=verdict,
         correctedData=corrected_data,
+    )
+
+
+def create_not_attempted_report(
+    error_message: str,
+) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
+    """Create a not attempted report frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
+    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator(
+        comment=error_message,
+        verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+        correctedData=ExtendedDataPointNuclearAndGasAlignedDenominator(),
     )
 
 

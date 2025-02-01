@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, Mock, patch
 
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 import dataland_qa_lab.review.report_generator.denominator_report_generator as report_generator
@@ -8,10 +7,10 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 from tests.utils.provide_test_dataset import provide_test_dataset
 
 
-def provide_test_data_collection() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
+def provide_test_data_collection() -> tuple[NuclearAndGasDataCollection, str]:
     dataset = provide_test_dataset()
     data_collection = NuclearAndGasDataCollection(dataset)
-    relevant_pages = MagicMock(spec=AnalyzeResult)
+    relevant_pages = MagicMock(spec=str)
     return data_collection, relevant_pages
 
 
@@ -158,7 +157,7 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
     dataset, relevant_pages = provide_test_data_collection()
 
     # Simulate an exception in dataland value retrieval
-    mock_generate_gpt_request.side_effect = Exception("Mock GPT error")
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
     report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report is not None
@@ -167,7 +166,7 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
 
     # Simulate an exception in dataland retrieval
     mock_generate_gpt_request.side_effect = None
-    mock_get_dataland_values.side_effect = Exception("Mock dataland error")
+    mock_get_dataland_values.side_effect = RuntimeError("Mock dataland error")
     report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report is not None
@@ -180,7 +179,7 @@ def test_generate_taxonomy_aligned_denominator_report_edge_cases_not_attempted(m
     dataset, relevant_pages = provide_test_data_collection()
 
     # Simulate an exception in the GPT request generation
-    mock_generate_gpt_request.side_effect = Exception("Mock GPT error")
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
 
     report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
