@@ -7,116 +7,64 @@ from dataland_qa_lab.review import generate_gpt_request
 class NumericValueGenerator:
     """Extracts and stores all values of template 2 to 5 and compares them to the values in dataland."""
 
+    TEMPLATE_ID_5 = 5
+
     @staticmethod
     def get_taxonomy_aligned_denominator(readable_text: str, kpi: str) -> list:
-        """Extracts information from template 2 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list of extracted and converted float values from template 2.
-        """
-        try:
-            # Generate GPT request
-            denominator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                prompting_service.PromptingService.create_main_prompt(2, readable_text, kpi),
-                prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-            )
-            # Check if the GPT response is empty
-            if not denominator_values:
-                msg = "No results returned from GPT for denominator values."
-                raise ValueError(msg)  # noqa: TRY301
-            # Convert the results to floats
-            try:
-                float_results = [NumericValueGenerator.extract_number(value) for value in denominator_values]
-            except Exception as e:
-                msg = f"Unexpected error during float conversion: {e}"
-                raise ValueError(msg) from e
-            return float_results  # noqa: TRY300
-        except ValueError as e:
-            msg = f"Error extracting values from template 2: {e}"
-            raise ValueError(msg) from e
+        """Extracts information from template 2 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(2, readable_text, kpi)
 
     @staticmethod
     def get_taxonomy_aligned_numerator(readable_text: str, kpi: str) -> list:
-        """Extracts information from template 3 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list of extracted and converted float values from template 3.
-        """
-        try:
-            # Generate GPT request
-            numerator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                prompting_service.PromptingService.create_main_prompt(3, readable_text, kpi),
-                prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-            )
-            # Check if the GPT response is empty
-            if not numerator_values:
-                msg = "No results returned from GPT for denominator values."
-                raise ValueError(msg)  # noqa: TRY301
-            # Convert the results to floats
-            try:
-                float_results = [NumericValueGenerator.extract_number(value) for value in numerator_values]
-            except Exception as e:
-                msg = f"Unexpected error during float conversion: {e}"
-                raise ValueError(msg) from e
-            return float_results  # noqa: TRY300
-        except ValueError as e:
-            msg = f"Error extracting values from template 3: {e}"
-            raise ValueError(msg) from e
+        """Extracts information from template 3 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(3, readable_text, kpi)
 
     @staticmethod
     def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str) -> list:
-        """Extracts information from template 4 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list including the etracted values of template 4.
-        """
-        try:
-            # Generate GPT request
-            eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                prompting_service.PromptingService.create_main_prompt(4, readable_text, kpi),
-                prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-            )
-            # Check if the GPT response is empty
-            if not eligible_values:
-                msg = "No results returned from GPT for denominator values."
-                raise ValueError(msg)  # noqa: TRY301
-            # Convert the results to floats
-            try:
-                float_results = [NumericValueGenerator.extract_number(value) for value in eligible_values]
-            except Exception as e:
-                msg = f"Unexpected error during float conversion: {e}"
-                raise ValueError(msg) from e
-            return float_results  # noqa: TRY300
-        except ValueError as e:
-            msg = f"Error extracting values from template 4: {e}"
-            raise ValueError(msg) from e
+        """Extracts information from template 4 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(4, readable_text, kpi)
 
     @staticmethod
     def get_taxonomy_non_eligible(readable_text: str, kpi: str) -> list:
-        """Extracts information from template 5 using Azure OpenAI and returns a list of results.
+        """Extracts information from template 5 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi)
 
-        Returns:
-            list: A list including the extracted values of template 5.
-        """
+    @staticmethod
+    def extract_values_from_template(template_id: int, readable_text: str, kpi: str) -> list:
+        """Generic method to extract values from a given template using Azure OpenAI."""
         try:
-            # Generate GPT request
-            non_eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                prompting_service.PromptingService.create_main_prompt(5, readable_text, kpi),
-                prompting_service.PromptingService.create_sub_prompt_template5(kpi),
+            prompt_method = (
+                prompting_service.PromptingService.create_sub_prompt_template5
+                if template_id == NumericValueGenerator.TEMPLATE_ID_5
+                else prompting_service.PromptingService.create_sub_prompt_template2to4
             )
-            # Check if the GPT response is empty
-            if not non_eligible_values:
-                msg = "No results returned from GPT for denominator values."
-                raise ValueError(msg)  # noqa: TRY301
-            # Convert the results to floats
-            try:
-                float_results = [NumericValueGenerator.extract_number(value) for value in non_eligible_values]
-            except Exception as e:
-                msg = f"Unexpected error during float conversion: {e}"
-                raise ValueError(msg) from e
-            return float_results  # noqa: TRY300
+
+            values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+                prompting_service.PromptingService.create_main_prompt(template_id, readable_text, kpi),
+                prompt_method(kpi),
+            )
+
+            if not values:
+                msg = f"No results returned from GPT for template {template_id} values."
+                NumericValueGenerator.throw_error(msg)
+
+            return NumericValueGenerator.convert_to_float(values, template_id)
         except ValueError as e:
-            msg = f"Error extracting values from template 5: {e}"
+            msg = f"Error extracting values from template {template_id}: {e}"
+            raise ValueError(msg) from e
+
+    @staticmethod
+    def throw_error(msg: str) -> ValueError:
+        """Raises a ValueError with the given message."""
+        raise ValueError(msg)
+
+    @staticmethod
+    def convert_to_float(values: list, template_id: int) -> list:
+        """Converts extracted values to floats."""
+        try:
+            return [NumericValueGenerator.extract_number(value) for value in values]
+        except Exception as e:
+            msg = f"Unexpected error during float conversion for template {template_id}: {e}"
             raise ValueError(msg) from e
 
     @staticmethod

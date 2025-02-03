@@ -68,32 +68,18 @@ class GenerateGptRequest:
                 msg = f"Error during GPT request creation: {e}"
                 raise ValueError(msg) from e
 
-            # Extract tool calls from GPT response
             try:
                 if updated_openai_response.choices[0].message.tool_calls:
                     tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
-                else:
-                    msg = "No tool calls found in the GPT response."
-                    raise ValueError(msg)  # noqa: TRY301
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 msg = f"Error extracting tool calls: {e}"
-                raise ValueError(e)  # noqa: B904
+                raise ValueError(e) from e
 
-            # Parse tool call arguments
-            try:
-                data_dict = ast.literal_eval(tool_call.arguments)
-            except Exception as e:  # noqa: BLE001
-                msg = f"Error parsing tool call arguments: {e}"
-                raise ValueError(msg)  # noqa: B904
+            data_dict = ast.literal_eval(tool_call.arguments)
 
-            # Convert to list and return
-            try:
-                return list(data_dict.values())
-            except Exception as e:  # noqa: BLE001
-                msg = f"Error converting parsed data to list: {e}"
-                raise ValueError(msg)  # noqa: B904
+            return list(data_dict.values())
 
-        except Exception as general_error:  # noqa: BLE001
+        except (ValueError, KeyError, TypeError) as general_error:
             # General error handling
             msg = f"An unexpected error occurred: {general_error}"
-            raise ValueError(msg)  # noqa: B904
+            raise ValueError(msg) from general_error

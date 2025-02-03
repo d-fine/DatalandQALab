@@ -8,6 +8,9 @@ from dataland_qa_lab.review import generate_gpt_request
 logger = logging.getLogger(__name__)
 
 
+NUM_EXPECTED_VALUES = 6
+
+
 def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]:
     """Extracts information from template 1 using Azure OpenAI and returns a list of results.
 
@@ -21,15 +24,13 @@ def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]
         )
         if not extracted_list:
             msg = "No results returned from GPT for Yes_No values."
-            raise ValueError(msg)  # noqa: TRY301
+            throw_error(msg)
 
-    except Exception as e:
+    except (ValueError, TypeError) as e:
         msg = f"Error extracting values from template 1: {e}"
-        raise ValueError(msg) from e
-
-    if len(extracted_list) != 6:  # noqa: PLR2004
+    if len(extracted_list) != NUM_EXPECTED_VALUES:
         msg = "Yes_No values are too short or too long from GPT."
-        raise ValueError(msg)
+        throw_error(msg)
 
     sections = {
         "nuclear_energy_related_activities_section426": YesNo(extracted_list[0]),
@@ -41,3 +42,8 @@ def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]
     }
 
     return sections
+
+
+def throw_error(msg: str) -> ValueError:
+    """Raises a ValueError with the given message."""
+    raise ValueError(msg)

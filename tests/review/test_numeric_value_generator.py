@@ -1,4 +1,3 @@
-import logging  # noqa: F401
 from unittest.mock import Mock, patch
 
 import pytest
@@ -39,16 +38,14 @@ def test_get_taxonomy_aligned_denominator_success(mock_generate_gpt_request: Moc
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
-def test_get_taxonomy_aligned_denominator_empty_response(
-    mock_generate_gpt_request: Mock, mock_analyze_result: Mock
-) -> None:
+def test_get_taxonomy_aligned_denominator_empty_response(mock_generate_gpt_request: Mock) -> None:
     """Test empty GPT response for taxonomy aligned denominator values."""
     mock_generate_gpt_request.return_value = []
 
-    with pytest.raises(ValueError) as exc:  # noqa: PT011
-        NumericValueGenerator.get_taxonomy_aligned_denominator(mock_analyze_result, "Revenue")
+    with pytest.raises(ValueError, match=r"No results returned from GPT for template 2 values.") as exc:
+        NumericValueGenerator.get_taxonomy_aligned_denominator("Some readable text", "Revenue")
 
-    assert "No results returned from GPT for denominator values." in str(exc.value)
+    assert "No results returned from GPT for template 2 values." in str(exc.value)
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
@@ -117,7 +114,7 @@ def test_get_taxonomy_non_eligible_empty_response(mock_generate_gpt_request: Moc
     with pytest.raises(ValueError) as exc:  # noqa: PT011
         NumericValueGenerator.get_taxonomy_non_eligible(mock_analyze_result, "Revenue")
 
-    assert "No results returned from GPT for denominator values." in str(exc.value)
+    assert "No results returned from GPT for template 5 values." in str(exc.value)
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")

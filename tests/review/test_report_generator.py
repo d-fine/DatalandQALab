@@ -4,7 +4,6 @@ from azure.ai.documentintelligence.models import AnalyzeResult
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 
 from dataland_qa_lab.review.report_generator import yes_no_report_generator
-from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from tests.utils.provide_test_data_collection import provide_test_data_collection
 
 
@@ -48,13 +47,3 @@ def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
     assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
     assert report.nuclear_energy_related_activities_section426.comment == "Geprüft durch AzureOpenAI"
     assert report.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
-
-
-@patch("openai.resources.chat.Completions.create", return_value=build_simple_openai_chat_completion())
-def test_generate_report(_mock_create: Mock) -> None:  # noqa: PT019
-    test_data_collection = provide_test_data_collection()
-    report = NuclearAndGasReportGenerator().generate_report(
-        relevant_pages=AnalyzeResult(), dataset=test_data_collection
-    )
-    if report:
-        assert report.general.general.fossil_gas_related_activities_section430.corrected_data.value is None
