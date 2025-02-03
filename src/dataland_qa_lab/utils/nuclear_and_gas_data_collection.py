@@ -20,14 +20,24 @@ class NuclearAndGasDataCollection:
     taxonomy_non_eligible: dict[str, TaxonomyNonEligibleDatapoint | None]
 
     def __init__(self, dataset: NuclearAndGasData) -> None:
-        """Intialize class."""
+        """Initialize class."""
         self.dataset = dataset
-        self.map_dataset_to_yes_no_dict()
-        self.map_dataset_to_numeric_dict()
+        self.yes_no_data_points = {}
+        self.taxonomy_aligned_denominator = {}
+        self.taxonomy_aligned_numerator = {}
+        self.taxonomy_eligble_but_not_aligned = {}
+        self.taxonomy_non_eligible = {}
+
+        # Safely map datasets
+        if self.dataset and self.dataset.general:
+            self.map_dataset_to_yes_no_dict()
+            self.map_dataset_to_numeric_dict()
 
     def map_dataset_to_yes_no_dict(self) -> dict[str, YesNoDatapoint | None]:
         """Mapper function."""
-        data = self.dataset.general.general
+        data = getattr(self.dataset.general, "general", None)
+        if data is None:
+            return
 
         self.yes_no_data_points = {
             "nuclear_energy_related_activities_section426": YesNoDatapoint(
@@ -53,39 +63,57 @@ class NuclearAndGasDataCollection:
     def map_dataset_to_numeric_dict(self) -> None:
         """Mapper function."""
         data = self.dataset.general
+        if data is None:
+            return  # Skip if numeric data is missing
 
         self.taxonomy_aligned_denominator = {
             "taxonomy_aligned_capex_denominator": TaxononmyAlignedDenominatorDatapoint(
                 data.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_capex_denominator
+                if data.taxonomy_aligned_denominator
+                else None
             ),
             "taxonomy_aligned_revenue_denominator": TaxononmyAlignedDenominatorDatapoint(
                 data.taxonomy_aligned_denominator.nuclear_and_gas_taxonomy_aligned_revenue_denominator
+                if data.taxonomy_aligned_denominator
+                else None
             ),
         }
 
         self.taxonomy_aligned_numerator = {
             "taxonomy_aligned_capex_numerator": TaxonomyAlignedNumeratorDatapoint(
                 data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_capex_numerator
+                if data.taxonomy_aligned_numerator
+                else None
             ),
             "taxonomy_aligned_revenue_numerator": TaxonomyAlignedNumeratorDatapoint(
                 data.taxonomy_aligned_numerator.nuclear_and_gas_taxonomy_aligned_revenue_numerator
+                if data.taxonomy_aligned_numerator
+                else None
             ),
         }
 
         self.taxonomy_eligble_but_not_aligned = {
             "taxonomy_not_aligned_capex": TaxonomyEligibleButNotAlignedDatapoint(
                 data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex
+                if data.taxonomy_eligible_but_not_aligned
+                else None
             ),
             "taxonomy_not_aligned_revenue": TaxonomyEligibleButNotAlignedDatapoint(
                 data.taxonomy_eligible_but_not_aligned.nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue
+                if data.taxonomy_eligible_but_not_aligned
+                else None
             ),
         }
 
         self.taxonomy_non_eligible = {
             "taxonomy_non_eligible_capex": TaxonomyNonEligibleDatapoint(
                 data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_capex
+                if data.taxonomy_non_eligible
+                else None
             ),
             "taxonomy_non_eligible_revenue": TaxonomyNonEligibleDatapoint(
                 data.taxonomy_non_eligible.nuclear_and_gas_taxonomy_non_eligible_revenue
+                if data.taxonomy_non_eligible
+                else None
             ),
         }

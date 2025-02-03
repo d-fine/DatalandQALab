@@ -1,4 +1,4 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
+import re
 
 from dataland_qa_lab.prompting_services import prompting_service
 from dataland_qa_lab.review import generate_gpt_request
@@ -7,58 +7,76 @@ from dataland_qa_lab.review import generate_gpt_request
 class NumericValueGenerator:
     """Extracts and stores all values of template 2 to 5 and compares them to the values in dataland."""
 
-    @staticmethod
-    def get_taxonomy_alligned_denominator(readable_text: AnalyzeResult, kpi: str) -> list:
-        """Extracts information from template 2 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list including the etracted values of template 2
-        """
-        dominator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-            prompting_service.PromptingService.create_main_prompt(2, readable_text, kpi),
-            prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-        )
-        float_results = [float(value) for value in dominator_values]
-        return float_results
+    TEMPLATE_ID_5 = 5
 
     @staticmethod
-    def get_taxonomy_alligned_numerator(readable_text: AnalyzeResult, kpi: str) -> list:
-        """Extracts information from template 3 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list including the etracted values of template 3.
-        """
-        numerator_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-            prompting_service.PromptingService.create_main_prompt(3, readable_text, kpi),
-            prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-        )
-        float_results = [float(value) for value in numerator_values]
-        return float_results
+    def get_taxonomy_aligned_denominator(readable_text: str, kpi: str) -> list:
+        """Extracts information from template 2 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(2, readable_text, kpi)
 
     @staticmethod
-    def get_taxonomy_eligible_not_alligned(readable_text: AnalyzeResult, kpi: str) -> list:
-        """Extracts information from template 4 using Azure OpenAI and returns a list of results.
-
-        Returns:
-            list: A list including the etracted values of template 4.
-        """
-        eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-            prompting_service.PromptingService.create_main_prompt(4, readable_text, kpi),
-            prompting_service.PromptingService.create_sub_prompt_template2to4(kpi),
-        )
-        float_results = [float(value) for value in eligible_values]
-        return float_results
+    def get_taxonomy_aligned_numerator(readable_text: str, kpi: str) -> list:
+        """Extracts information from template 3 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(3, readable_text, kpi)
 
     @staticmethod
-    def get_taxonomy_non_eligible(readable_text: AnalyzeResult, kpi: str) -> list:
-        """Extracts information from template 5 using Azure OpenAI and returns a list of results.
+    def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str) -> list:
+        """Extracts information from template 4 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(4, readable_text, kpi)
 
-        Returns:
-            list: A list including the extracted values of template 5.
-        """
-        non_eligible_values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-            prompting_service.PromptingService.create_main_prompt(5, readable_text, kpi),
-            prompting_service.PromptingService.create_sub_prompt_template5(kpi),
-        )
-        float_results = [float(value) for value in non_eligible_values]
-        return float_results
+    @staticmethod
+    def get_taxonomy_non_eligible(readable_text: str, kpi: str) -> list:
+        """Extracts information from template 5 using Azure OpenAI and returns a list of results."""
+        return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi)
+
+    @staticmethod
+    def extract_values_from_template(template_id: int, readable_text: str, kpi: str) -> list:
+        """Generic method to extract values from a given template using Azure OpenAI."""
+        try:
+            prompt_method = (
+                prompting_service.PromptingService.create_sub_prompt_template5
+                if template_id == NumericValueGenerator.TEMPLATE_ID_5
+                else prompting_service.PromptingService.create_sub_prompt_template2to4
+            )
+
+            values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+                prompting_service.PromptingService.create_main_prompt(template_id, readable_text, kpi),
+                prompt_method(kpi),
+            )
+
+            if not values:
+                msg = f"No results returned from GPT for template {template_id} values."
+                NumericValueGenerator.throw_error(msg)
+
+            return NumericValueGenerator.convert_to_float(values, template_id)
+        except ValueError as e:
+            msg = f"Error extracting values from template {template_id}: {e}"
+            raise ValueError(msg) from e
+
+    @staticmethod
+    def throw_error(msg: str) -> ValueError:
+        """Raises a ValueError with the given message."""
+        raise ValueError(msg)
+
+    @staticmethod
+    def convert_to_float(values: list, template_id: int) -> list:
+        """Converts extracted values to floats."""
+        try:
+            return [NumericValueGenerator.extract_number(value) for value in values]
+        except Exception as e:
+            msg = f"Unexpected error during float conversion for template {template_id}: {e}"
+            raise ValueError(msg) from e
+
+    @staticmethod
+    def extract_number(value: str) -> float:
+        """Extracts the first numeric part from a string and converts it to a float."""
+        if isinstance(value, float | int):  # Directly return if it's already numeric
+            return float(value)
+
+        # Safe regex: Match optional negative sign, then digits, optional dot, and more digits
+        match = re.search(r"-?\d+(?:\.\d+)?", value)
+        if match:
+            return float(match.group(0))  # Convert directly to float
+
+        msg = f"Could not extract a valid number from '{value}'"
+        raise ValueError(msg)

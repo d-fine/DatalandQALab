@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, Mock, patch
 
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 
 import dataland_qa_lab.review.report_generator.denominator_report_generator as report_generator
@@ -8,20 +7,11 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 from tests.utils.provide_test_dataset import provide_test_dataset
 
 
-def provide_test_data_collection() -> tuple[NuclearAndGasDataCollection, AnalyzeResult]:
+def provide_test_data_collection() -> tuple[NuclearAndGasDataCollection, str]:
     dataset = provide_test_dataset()
     data_collection = NuclearAndGasDataCollection(dataset)
-    relevant_pages = MagicMock(spec=AnalyzeResult)
-
-    """pages= pages_provider.get_relevant_pages_of_pdf(data_collection)
-    relevant_pages = text_to_doc_intelligence.extract_text_of_pdf(pages)"""
-
+    relevant_pages = MagicMock(spec=str)
     return data_collection, relevant_pages
-
-
-"""data_collection = provide_test_data()
-dataland = data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data(data_collection)
-print(dataland)"""
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
@@ -157,3 +147,42 @@ def test_generate_taxonomy_aligned_denominator_report_edge_cases(mock_generate_g
     assert report is not None
     assert report.verdict == QaReportDataPointVerdict.QAREJECTED
     assert report.corrected_data.quality == "NoDataFound"
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+@patch("dataland_qa_lab.dataland.data_provider.get_taxonomy_aligned_revenue_denominator_values_by_data")
+def test_generate_revenue_denominator_report_frame_not_attempted(
+    mock_get_dataland_values: Mock, mock_generate_gpt_request: Mock
+) -> None:
+    dataset, relevant_pages = provide_test_data_collection()
+
+    # Simulate an exception in dataland value retrieval
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
+    report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving prompted values for template 2" in report.comment
+
+    # Simulate an exception in dataland retrieval
+    mock_generate_gpt_request.side_effect = None
+    mock_get_dataland_values.side_effect = RuntimeError("Mock dataland error")
+    report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving dataland values for template 2" in report.comment
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_generate_taxonomy_aligned_denominator_report_edge_cases_not_attempted(mock_generate_gpt_request: Mock) -> None:
+    dataset, relevant_pages = provide_test_data_collection()
+
+    # Simulate an exception in the GPT request generation
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
+
+    report = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving prompted values for template 2" in report.comment

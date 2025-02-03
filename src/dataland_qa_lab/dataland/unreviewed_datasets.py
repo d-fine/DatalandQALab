@@ -15,7 +15,10 @@ class UnreviewedDatasets:
         """Initialize the unreviewed datasets with the data from the API."""
         client = config.get_config().dataland_client
         logger.info(msg="Initializing the unreviewed Datasets with the data from Dataland.")
-
+        if client is None:
+            logger.exception("Client Setup failed in the configuration.")
+            msg = "Client Setup failed in the configuration."
+            raise ValueError(msg)
         try:
             number_of_datasets = client.qa_api.get_number_of_pending_datasets()
             if number_of_datasets is None or number_of_datasets < 0:
@@ -29,6 +32,9 @@ class UnreviewedDatasets:
 
             self.list_of_data_ids = [dataset.data_id for dataset in self.datasets]
 
+        except RuntimeError:
+            logger.exception("Timeout occurred while initializing the unreviewed datasets.")
+            raise
         except Exception:
             logger.exception(msg="An error occurred", exc_info=Exception)
             raise

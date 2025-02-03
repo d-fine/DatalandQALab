@@ -1,4 +1,3 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_eligible_but_not_aligned import (
     ExtendedDataPointNuclearAndGasEligibleButNotAligned,
 )
@@ -19,7 +18,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_eligible_but_not_aligned_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: str
 ) -> NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
     """Create Report Frame for the Nuclear and Gas General Taxonomy eligible but not alinged data."""
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
@@ -33,12 +32,19 @@ def build_taxonomy_eligible_but_not_aligned_report(
 
 
 def build_eligible_but_not_aligned_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned:
     """Build a report frame for a specific KPI (Revenue or CapEx)."""
-    prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi)
-    dataland_values = get_dataland_values(dataset, kpi)
-
+    if relevant_pages is None:
+        return create_not_attempted_report("No relevant pages found")
+    try:
+        prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi)
+    except ValueError:
+        return create_not_attempted_report("Error retrieving prompted values for template 4")
+    try:
+        dataland_values = get_dataland_values(dataset, kpi)
+    except RuntimeError:
+        return create_not_attempted_report("Error retrieving dataland values for template 4")
     corrected_values, verdict, comment, quality = comparator.compare_values_template_2to4(
         prompted_values, dataland_values, NuclearAndGasEligibleButNotAligned
     )
@@ -57,13 +63,27 @@ def build_eligible_but_not_aligned_frame(
     )
 
 
+def create_not_attempted_report(
+    error_message: str,
+) -> QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned:
+    """Create a not attempted report for the Nuclear and Gas General Taxonomy eligible but not aligned Denominator."""
+    return QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned(
+        comment=error_message,
+        verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+        correctedData=ExtendedDataPointNuclearAndGasEligibleButNotAligned(),
+    )
+
+
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     """Retrieve dataland Eligible but not aligned values based on KPI."""
-    if kpi == "Revenue":
-        data = data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
-    else:
-        data = data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data(dataset)
-
+    try:
+        if kpi == "Revenue":
+            data = data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data(dataset)
+        else:
+            data = data_provider.get_taxonomy_eligible_but_not_aligned_capex_values_by_data(dataset)
+    except Exception as e:
+        msg = f"Error retrieving dataland values for {kpi}: {e}"
+        raise RuntimeError(msg) from e
     return data
 
 

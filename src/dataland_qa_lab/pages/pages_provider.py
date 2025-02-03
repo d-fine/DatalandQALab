@@ -16,14 +16,16 @@ def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]
     return sorted(set(yes_no_pages + numeric_pages))
 
 
-def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader:
+def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
 
     page_numbers = get_relevant_page_numbers(dataset=dataset)
-    file_reference = dataset.yes_no_data_points.get(
-        "nuclear_energy_related_activities_section426"
-    ).datapoint.data_source.file_reference
+    try:
+        datapoint = dataset.yes_no_data_points.get("nuclear_energy_related_activities_section426").datapoint
+        file_reference = datapoint.data_source.file_reference
+    except AttributeError:
+        return None
 
     full_pdf = dataland_client.documents_api.get_document(file_reference)
     full_pdf_stream = io.BytesIO(full_pdf)
