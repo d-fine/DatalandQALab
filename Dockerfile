@@ -20,5 +20,7 @@ FROM python:$PYTHON_BASE
 COPY --from=builder /project/.venv/ /project/.venv
 ENV PATH="/project/.venv/bin:$PATH"
 
+EXPOSE 8000
+
 COPY src /project/src
-CMD ["python", "-m", "dataland_qa_lab.bin.server"]
+CMD ["uvicorn", "server:dataland_qa_lab", "--host", "0.0.0.0", "--port", "8000"]

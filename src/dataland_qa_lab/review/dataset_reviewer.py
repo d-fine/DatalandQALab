@@ -1,8 +1,6 @@
 import logging
 
-from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
-
-from dataland_qa_lab.database.database_engine import add_entity, get_entity, update_entity
+from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
@@ -14,16 +12,20 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> QaReportMetaInformation | None:
+def review_dataset(data_id: str, force_review: bool = False) -> str | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
     dataset = dataset_provider.get_dataset_by_id(data_id)
 
-    existing_entity = None if force_review else get_entity(data_id, ReviewedDataset)
+    existing_report = get_entity(data_id, ReviewedDataset)
+
+    if force_review and existing_report is not None:
+        delete_entity(data_id)
+        existing_report = None
 
     logger.info("Checking if the dataset is already existing in the database")
-    if existing_entity is None:
+    if existing_report is None:
         datetime_now = get_german_time_as_string()
 
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
@@ -74,6 +76,7 @@ def review_dataset(data_id: str, force_review: bool = False) -> QaReportMetaInfo
         update_entity(review_dataset)
 
         logger.info("Report posted successfully for dataset with ID: %s", data_id)
-        return data
-    logger.info("Dataset with the Data-ID already exist in the database.")
-    return None
+        return data.qa_report_id
+
+    logger.info("Report for data_id already exists.")
+    return existing_report.report_id

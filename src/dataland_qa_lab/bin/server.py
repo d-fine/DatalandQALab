@@ -1,5 +1,6 @@
 import logging
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
@@ -8,9 +9,17 @@ from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import console_logger
 
-dataland_qa_lab = FastAPI()
-
 logger = logging.getLogger("dataland_qa_lab.bin.server")
+
+
+@asynccontextmanager
+async def lifespan() -> any:  # noqa: RUF029
+    """Ensures the scheduled processing starts."""
+    main()
+    yield
+
+
+dataland_qa_lab = FastAPI(lifespan=lifespan)
 
 
 def main(single_pass_e2e: bool = False) -> None:
@@ -29,11 +38,7 @@ def main(single_pass_e2e: bool = False) -> None:
 
 
 @dataland_qa_lab.get("/review/{data_id}")
-def review_dataset_endpoint(data_id: str) -> str:
+def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
     """Review a single dataset via API call."""
-    report_data = review_dataset(data_id=data_id)
+    report_data = review_dataset(data_id=data_id, force_review=force_review)
     return report_data.report_id
-
-
-if __name__ == "__main__":
-    main()

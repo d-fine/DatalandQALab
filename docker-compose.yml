@@ -4,6 +4,8 @@ services:
     profiles:
       - dev
     build: .
+    ports:
+      - "8000:8000"
     environment:
       DATALAND_URL: ${DATALAND_URL}
       DATALAND_API_KEY: ${DATALAND_API_KEY}
