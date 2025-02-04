@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta, timezone
 
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
-from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity, update_entity
+from dataland_qa_lab.database.database_engine import add_entity, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
@@ -22,7 +22,6 @@ def review_dataset(data_id: str, single_pass_e2e: bool = False) -> QaReportMetaI
     logger.debug("Dataset retrieved form the given Data-ID.")
 
     logger.info("Creating database.")
-    create_tables()
 
     existing_entity = None if single_pass_e2e else get_entity(data_id, ReviewedDataset)
 

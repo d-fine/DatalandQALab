@@ -5,7 +5,7 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
 
-from dataland_qa_lab.database.database_engine import add_entity, create_tables, get_entity
+from dataland_qa_lab.database.database_engine import add_entity, get_entity
 from dataland_qa_lab.database.database_tables import ReviewedDatasetMarkdowns
 from dataland_qa_lab.utils import config
 
@@ -35,7 +35,6 @@ def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.Pdf
     ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
     formatted_german_time = (now_utc + ger_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
-    create_tables()
     exist_markdown = get_entity(entity_id=data_id, entity_class=ReviewedDatasetMarkdowns)
 
     if exist_markdown:

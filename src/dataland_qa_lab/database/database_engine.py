@@ -18,7 +18,13 @@ logger = logging.getLogger(__name__)
 
 def create_tables() -> None:
     """Create all tables."""
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Creating tables in database")
+    except Exception as e:
+        logger.exception(msg="Error while creating tables in database", exc_info=e)
+        return False
+    return True
 
 
 def add_entity(entity: any) -> bool:
