@@ -91,8 +91,8 @@ def test_report_generator_end_to_end() -> None:
 @patch("dataland_qa_lab.database.database_engine.get_entity")
 def mocked_review_dataset(
     data_id: str,
-    mock_extract_text_of_pdf: MagicMock,
     mock_get_entity: MagicMock,
+    mock_extract_text_of_pdf: MagicMock,
 ) -> QaReportMetaInformation:
     """Review the dataset with mocked Azure calls."""
     mock_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
