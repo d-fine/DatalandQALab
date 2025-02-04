@@ -1,4 +1,3 @@
-from azure.ai.documentintelligence.models import AnalyzeResult
 from dataland_qa.models.extended_data_point_nuclear_and_gas_aligned_numerator import (
     ExtendedDataPointNuclearAndGasAlignedNumerator,
 )
@@ -19,7 +18,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_numerator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult
+    dataset: NuclearAndGasDataCollection, relevant_pages: str
 ) -> NuclearAndGasGeneralTaxonomyAlignedNumerator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
@@ -29,12 +28,19 @@ def build_taxonomy_aligned_numerator_report(
 
 
 def build_numerator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: AnalyzeResult, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
     """Build a report frame for a specific KPI numerator (Revenue or CapEx)."""
-    prompted_values = NumericValueGenerator.get_taxonomy_alligned_numerator(relevant_pages, kpi)
-    dataland_values = get_dataland_values(dataset, kpi)
-
+    if relevant_pages is None:
+        return create_not_attempted_report("No relevant pages found")
+    try:
+        prompted_values = NumericValueGenerator.get_taxonomy_aligned_numerator(relevant_pages, kpi)
+    except ValueError:
+        return create_not_attempted_report("Error retrieving prompted values for template 3")
+    try:
+        dataland_values = get_dataland_values(dataset, kpi)
+    except RuntimeError:
+        return create_not_attempted_report("Error retrieving dataland values for template 3")
     corrected_values, verdict, comment, quality = comparator.compare_values_template_2to4(
         prompted_values, dataland_values, NuclearAndGasAlignedNumerator
     )
@@ -53,12 +59,25 @@ def build_numerator_report_frame(
     )
 
 
+def create_not_attempted_report(error_message: str) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
+    """Create a not attempted report frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
+    return QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator(
+        comment=error_message,
+        verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+        correctedData=ExtendedDataPointNuclearAndGasAlignedNumerator(),
+    )
+
+
 def get_dataland_values(dataset: NuclearAndGasDataCollection, kpi: str) -> dict:
     """Retrieve dataland numerator values based on KPI."""
-    if kpi == "Revenue":
-        data = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
-    else:
-        data = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
+    try:
+        if kpi == "Revenue":
+            data = data_provider.get_taxonomy_aligned_revenue_numerator_values_by_data(dataset)
+        else:
+            data = data_provider.get_taxonomy_aligned_capex_numerator_values_by_data(dataset)
+    except Exception as e:
+        msg = f"Error retrieving dataland values for {kpi}: {e}"
+        raise RuntimeError(msg) from e
 
     return data
 
