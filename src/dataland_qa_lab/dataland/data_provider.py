@@ -183,12 +183,13 @@ def get_datasources_of_nuclear_and_gas_numeric_values(
     section_list = {
         key: data_source for section in sections.values() for key, data_source in extract_data_source(section).items()
     }
-
+    print(section_list)
     return section_list
 
 
 def extract_data_source(section: dict[str, any]) -> dict[str, ExtendedDocumentReference]:
     """Extract datasource for each data point."""
+    print(section.items())
     return (
         {
             key: (
