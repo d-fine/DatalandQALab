@@ -78,7 +78,7 @@ def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> No
     mock_get_yes_no_values.side_effect = ValueError("Error in get_yes_no_values_from_report")
 
     test_data_collection = provide_test_data_collection()
-    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
+    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages="123")
 
     # Assertions for error handling
     assert report.nuclear_energy_related_activities_section426.comment == "Error in get_yes_no_values_from_report"
@@ -96,7 +96,7 @@ def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data:
         "Error during GPT request creation: Connection error.",
     ]
     test_data_collection = provide_test_data_collection()
-    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
+    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages="123")
 
     # Assertions for error handling
     assert report.nuclear_energy_related_activities_section426.comment in expected_comments
