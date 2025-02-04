@@ -45,7 +45,7 @@ def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.Pdf
 
         new_document = ReviewedDatasetMarkdowns(
             data_id=data_id,
-            markdown_text=readable_text,
+            markdown_text=readable_text if not None else "",
             page_numbers=page_numbers,
             last_saved=formatted_german_time,
             last_updated=formatted_german_time,

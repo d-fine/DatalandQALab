@@ -3,9 +3,9 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import mock_constants
+from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
-from clients.qa.dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa_lab.database.database_engine import delete_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
