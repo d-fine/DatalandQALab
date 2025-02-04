@@ -28,6 +28,8 @@ def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]
 
     except (ValueError, TypeError) as e:
         msg = f"Error extracting values from template 1: {e}"
+        throw_error(msg)
+
     if len(extracted_list) != NUM_EXPECTED_VALUES:
         msg = "Yes_No values are too short or too long from GPT."
         throw_error(msg)
