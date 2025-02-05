@@ -153,3 +153,42 @@ def test_generate_eligible_but_not_aligned_report_edge_cases(mock_generate_gpt_r
     assert report is not None
     assert report.verdict == QaReportDataPointVerdict.QAREJECTED
     assert report.corrected_data.quality == "NoDataFound"
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+@patch("dataland_qa_lab.dataland.data_provider.get_taxonomy_eligible_but_not_aligned_revenue_values_by_data")
+def test_generate_revenue_denominator_report_frame_not_attempted(
+    mock_get_dataland_values: Mock, mock_generate_gpt_request: Mock
+) -> None:
+    dataset, relevant_pages = provide_test_data_collection()
+
+    # Simulate an exception in dataland value retrieval
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
+    report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving prompted values for template 4" in report.comment
+
+    # Simulate an exception in dataland retrieval
+    mock_generate_gpt_request.side_effect = None
+    mock_get_dataland_values.side_effect = RuntimeError("Mock dataland error")
+    report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving dataland values for template 4" in report.comment
+
+
+@patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
+def test_generate_taxonomy_aligned_denominator_report_edge_cases_not_attempted(mock_generate_gpt_request: Mock) -> None:
+    dataset, relevant_pages = provide_test_data_collection()
+
+    # Simulate an exception in the GPT request generation
+    mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
+
+    report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")
+
+    assert report is not None
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving prompted values for template 4" in report.comment
