@@ -77,6 +77,9 @@ jobs:
       - name: Push files for deployment
         run: scp docker-compose.yml ubuntu@"$SERVER_URL":~/qalab/docker-compose.yml
 
+      - name: Push servers.json for pgadmin
+        run: scp pgadmin_servers.json.template ubuntu@"$SERVER_URL":~/qalab/servers.json
+
       - name: Create .env file for deployment
         run: envsubst < .env.template | ssh ubuntu@"$SERVER_URL" "cat > ~/qalab/.env"
       
