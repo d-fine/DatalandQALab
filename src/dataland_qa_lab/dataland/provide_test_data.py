@@ -49,6 +49,7 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
 
         with json_file_path.open(encoding="utf-8") as f:
             json_data = json.load(f)
+        json_company_id_free = json.dumps(json_data, indent=4)
         json_data["companyId"] = company_id
         json_str = json.dumps(json_data, indent=4)
         json_file_path.write_text(json_str, encoding="utf-8")
@@ -59,6 +60,8 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
                 company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period=None
             )
         )
+
+        json_file_path.write_text(json_company_id_free, encoding="utf-8")
 
     return new_data_ids
 
