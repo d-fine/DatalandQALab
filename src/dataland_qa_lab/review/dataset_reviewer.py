@@ -14,7 +14,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str) -> QaReportMetaInformation | None:
+def review_dataset(data_id: str, single_pass_e2e: bool = False) -> QaReportMetaInformation | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -24,7 +24,7 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
     logger.info("Creating database.")
     create_tables()
 
-    existing_entity = get_entity(data_id, ReviewedDataset)
+    existing_entity = None if single_pass_e2e else get_entity(data_id, ReviewedDataset)
 
     now_utc = datetime.now(UTC)
     ger_timezone = timedelta(hours=2) if now_utc.astimezone(timezone(timedelta(hours=1))).dst() else timedelta(hours=1)
@@ -45,15 +45,22 @@ def review_dataset(data_id: str) -> QaReportMetaInformation | None:
         logger.debug("Relevant page numbers extracted.")
 
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
-        logger.debug("Relevant pages extracted.")
+        if relevant_pages_pdf_reader is None:
+            logger.debug("No Data source found for the relevant pages.")
+            report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
+            logger.info("QA not attempted report generated successfully.")
 
-        readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-            data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
-        )
-        logger.debug("Text extracted from the relevant pages.")
+        else:
+            logger.debug("Relevant pages extracted.")
+            readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
+            )
+            logger.debug("Text extracted from the relevant pages.")
 
-        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
-        logger.info("Report generated succesfully.")
+            report = NuclearAndGasReportGenerator().generate_report(
+                relevant_pages=readable_text, dataset=data_collection
+            )
+            logger.info("Report generated succesfully.")
 
         data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
