@@ -1,5 +1,8 @@
+import json
 import logging
 import time
+
+import requests
 
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
@@ -7,6 +10,8 @@ from dataland_qa_lab.utils import console_logger
 
 logger = logging.getLogger(__name__)
 console_logger.configure_console_logger()
+
+url = "https://hooks.slack.com/services/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"
 
 
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
@@ -19,10 +24,17 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
 
             for data_id in reversed(list_of_data_ids[:]):
                 try:
+                    message = f"Starting review of the Dataset with the Data-ID: {data_id}"
+                    send_alert_message(message=message)
                     review_dataset(data_id)
                     list_of_data_ids.remove(data_id)
+                    message = f"Review is successful for the dataset with the Data-ID: {data_id}"
+
                 except Exception:
+                    message = f"An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
+
+                send_alert_message(message=message)
 
             if single_pass_e2e:
                 break
@@ -30,3 +42,17 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
         except Exception as e:
             logger.critical("Critical error: %s", e)
             raise
+
+
+def send_alert_message(message: str) -> None:
+    """Sends an Alert Message to the Slackbot."""
+    payload = {"text": message}
+
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(url=url, data=json.dumps(payload), headers=headers)
+
+    status = 200
+
+    assert response.status_code == status
+    assert response.text == "ok"
