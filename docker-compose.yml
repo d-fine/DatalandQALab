@@ -44,15 +44,12 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
   pgadmin:
+    image: ghcr.io/d-fine/datalandqalab/qalab-pgadmin:${QALAB_SERVER_VERSION}
     restart: always
-    depends_on:
-      - database
-    image: dpage/pgadmin4:8.14
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    volumes:
-      - ./servers.json:/pgadmin4/servers.json
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "127.0.0.1:5050:80" 
 
