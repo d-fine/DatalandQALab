@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import time
 
 import requests
@@ -11,7 +12,7 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger(__name__)
 console_logger.configure_console_logger()
 
-url = "https://hooks.slack.com/services/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"
+url = os.getenv("SLACK_WEBHOOK_URL")
 
 
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
@@ -24,14 +25,14 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
 
             for data_id in reversed(list_of_data_ids[:]):
                 try:
-                    message = f"Starting review of the Dataset with the Data-ID: {data_id}"
+                    message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
                     send_alert_message(message=message)
                     review_dataset(data_id)
                     list_of_data_ids.remove(data_id)
-                    message = f"Review is successful for the dataset with the Data-ID: {data_id}"
+                    message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}"
 
                 except Exception:
-                    message = f"An error occured while reviewing the dataset with the Data-ID: {data_id}"
+                    message = f"❗An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
 
                 send_alert_message(message=message)
