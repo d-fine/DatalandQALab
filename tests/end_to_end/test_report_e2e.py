@@ -24,9 +24,9 @@ def test_report_generator_end_to_end() -> None:
     # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
     delete_entity(data_id, ReviewedDataset)
-    report_metadata = mocked_review_dataset(data_id)
+    report_id = mocked_review_dataset(data_id)
     report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
-        data_id=data_id, qa_report_id=report_metadata.qa_report_id
+        data_id=data_id, qa_report_id=report_id
     )
     report_data_dict = report_data.to_dict()
 
