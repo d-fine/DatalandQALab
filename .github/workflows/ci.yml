@@ -36,11 +36,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    steps:    
-      - name: Setup Cache
-        uses: actions/cache@v4
-        
-      - uses: actions/checkout@v4
+    steps:
+     - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
@@ -75,7 +72,7 @@ jobs:
         run: pdm run combine-coverage && pdm run export-coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v2
         if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
