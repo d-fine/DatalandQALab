@@ -1,12 +1,14 @@
 import json
+import logging
 from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import mock_constants
+import pytest
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
-from dataland_qa_lab.database.database_engine import delete_entity
+from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
@@ -164,3 +166,30 @@ def upload_test_dataset() -> str:
     json_file_path.write_text(json_company_id_free, encoding="utf-8")
 
     return data_id
+
+
+def test_report_with_existing_dataset() -> None:
+    """Test the case that the dataset has been reviewed but is supposed to be reviewed again."""
+
+    data_id = upload_test_dataset()
+    if get_entity(data_id, ReviewedDataset) is None:
+        add_entity(ReviewedDataset(data_id))
+
+    report_id = mocked_review_dataset(data_id)
+    report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+        data_id=data_id, qa_report_id=report_id
+    )
+
+    assert report_data is not None
+
+
+@patch("dataland_qa_lab.pages.pages_provider.get_relevant_pages_of_pdf")
+def test_report_with_no_data_source(mock_relevant_pages: MagicMock, caplog: pytest.LogCaptureFixture) -> None:
+    """Test the case that the dataset has been reviewed but is supposed to be reviewed again."""
+    mock_relevant_pages.return_value = None
+
+    data_id = upload_test_dataset()
+    with caplog.at_level(logging.DEBUG):
+        mocked_review_dataset(data_id)
+
+        assert "No Data source found for the relevant pages." in caplog.text
