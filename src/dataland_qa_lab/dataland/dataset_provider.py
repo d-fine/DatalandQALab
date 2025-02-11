@@ -11,6 +11,8 @@ def get_dataset_by_id(data_id: str) -> CompanyAssociatedDataNuclearAndGasData:
     """Return the nuclear and gas dataset based on the data id."""
     client = config.get_config().dataland_client
 
+    dataset = None
+
     try:
         dataset = client.eu_taxonomy_nuclear_and_gas_api.get_company_associated_nuclear_and_gas_data(data_id=data_id)
         msg = f"Dataset retrieved for the given data id {data_id}"
@@ -18,5 +20,4 @@ def get_dataset_by_id(data_id: str) -> CompanyAssociatedDataNuclearAndGasData:
     except Exception as e:
         msg = f"Error retrieving dataset for the given data id {data_id} from dataland"
         logger.exception(msg=msg, exc_info=e)
-
     return dataset
