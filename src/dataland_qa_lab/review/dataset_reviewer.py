@@ -6,7 +6,7 @@ from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from dataland_qa_lab.utils import config
-from dataland_qa_lab.utils.datetime import get_german_time_as_string
+from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
 logger = logging.getLogger(__name__)
