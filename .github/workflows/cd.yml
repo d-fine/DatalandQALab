@@ -59,6 +59,7 @@ jobs:
       SERVER_URL: ${{ vars.SERVER_URL }}
       SSH_HOST_KEY: ${{ vars.SSH_HOST_KEY }}
       PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
