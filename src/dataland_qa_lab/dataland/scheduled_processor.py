@@ -8,6 +8,9 @@ import requests
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import console_logger
+from dataland_qa_lab.database.database_engine import get_entity
+from dataland_qa_lab.database.database_tables import ReviewedDataset
+
 
 logger = logging.getLogger(__name__)
 console_logger.configure_console_logger()
@@ -25,17 +28,18 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
 
             for data_id in reversed(list_of_data_ids[:]):
                 try:
-                    message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
-                    send_alert_message(message=message)
-                    review_dataset(data_id)
-                    list_of_data_ids.remove(data_id)
-                    message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}"
+                    if get_entity(data_id, ReviewedDataset) is None:
+                        message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
+                        send_alert_message(message=message)
+                        review_dataset(data_id)
+                        list_of_data_ids.remove(data_id)
+                        message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}"
+                        send_alert_message(message=message)
 
                 except Exception:
                     message = f"❗An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
-
-                send_alert_message(message=message)
+                    send_alert_message(message=message)
 
             if single_pass_e2e:
                 break
