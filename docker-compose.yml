@@ -22,6 +22,8 @@ services:
     profiles:
       - prod
     image: ghcr.io/d-fine/datalandqalab/qalab-server:${QALAB_SERVER_VERSION}
+    ports:
+      - "8000:8000"
     environment:
       DATALAND_URL: ${DATALAND_URL}
       DATALAND_API_KEY: ${DATALAND_API_KEY}
