@@ -1,0 +1,14 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "dataland_qa_lab",
+            "Group": "Servers",
+            "Host": "data_reviewer-db",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "data_reviewer",
+            "SSLMode" : "prefer",
+            "PassFile": "../../pgpass"
+        }
+    }
+}
