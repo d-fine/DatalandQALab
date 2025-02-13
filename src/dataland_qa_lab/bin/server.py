@@ -13,7 +13,7 @@ logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 
 @asynccontextmanager
-async def lifespan() -> any:  # noqa: RUF029
+async def lifespan(app: FastAPI) -> any:  # noqa: ARG001, RUF029
     """Ensures the scheduled processing starts."""
     main()
     yield
