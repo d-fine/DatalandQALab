@@ -11,12 +11,10 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 
-dataland_qa_lab = FastAPI()
-
-
 def main(single_pass_e2e: bool = False) -> None:
     """Launch the QA Lab server."""
     logger.info("Launching the Dataland QA Lab server")
+    FastAPI()
     console_logger.configure_console_logger()
     create_tables()
 
@@ -29,11 +27,7 @@ def main(single_pass_e2e: bool = False) -> None:
         time.sleep(30)
 
 
-@dataland_qa_lab.on_event("startup")
-async def startup_event() -> None:  # noqa: RUF029
-    """Ensure `main()` runs when FastAPI starts."""
-    main()
-
+dataland_qa_lab = main()
 
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
