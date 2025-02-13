@@ -23,9 +23,6 @@ async def main(single_pass_e2e: bool = False) -> None:
     await scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
 
 
-dataland_qa_lab = FastAPI(title="FastAPI")
-
-
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
     """FastAPI starts first, then runs main()."""
@@ -33,6 +30,10 @@ async def lifespan(dataland_qa_lab: FastAPI):
     print("DEBUG: Lifespan function STARTING") 
     asyncio.create_task(main(single_pass_e2e=False))
     yield  # 🚀 FastAPI fully starts here
+
+
+dataland_qa_lab = FastAPI(lifespan=lifespan)
+
 
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
