@@ -19,6 +19,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
   qa-lab-server-prod:
     profiles:
       - prod
@@ -38,6 +39,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
   data_reviewer-db:
     image: postgres:17.2
     restart: always

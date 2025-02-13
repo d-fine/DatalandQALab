@@ -3,6 +3,7 @@ import logging
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
+from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from dataland_qa_lab.utils import config
@@ -28,6 +29,8 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
     if existing_report is None:
         datetime_now = get_german_time_as_string()
 
+        message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
+        send_alert_message(message=message)
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
         review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
@@ -67,6 +70,8 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
         logger.debug("Adding review end time in the database.")
         review_dataset.review_end_time = datetime_now
 
+        message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}"
+        send_alert_message(message=message)
         logger.debug("Adding review completed to the database.")
         review_dataset.review_completed = True
 
