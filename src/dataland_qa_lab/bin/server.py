@@ -13,26 +13,37 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 
-async def main(single_pass_e2e: bool = False) -> None:
-    """Launch the QA Lab server."""
-    print("DEBUG: Lifespan function STARTING") 
-    console_logger.configure_console_logger()
-    logger.info("Launching the Dataland QA Lab server")
-    create_tables()
+# async def main(single_pass_e2e: bool = False) -> None:
+#     """Launch the QA Lab server."""
+#     print("DEBUG: Lifespan function STARTING") 
+#     console_logger.configure_console_logger()
+#     logger.info("Launching the Dataland QA Lab server")
+#     create_tables()
 
-    await scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
-
-
-@asynccontextmanager
-async def lifespan(dataland_qa_lab: FastAPI):
-    """FastAPI starts first, then runs main()."""
-    logger.info("123")
-    print("DEBUG: Lifespan function STARTING") 
-    asyncio.create_task(main(single_pass_e2e=False))
-    yield  # 🚀 FastAPI fully starts here
+#     await scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
 
 
-dataland_qa_lab = FastAPI(lifespan=lifespan)
+# @asynccontextmanager
+# async def lifespan(dataland_qa_lab: FastAPI):
+#     """FastAPI starts first, then runs main()."""
+#     logger.info("123")
+#     print("DEBUG: Lifespan function STARTING") 
+#     asyncio.create_task(main(single_pass_e2e=False))
+#     yield  # 🚀 FastAPI fully starts here
+
+async def main():
+    print("DEBUG: main() function started")  # 👈 Debugging
+    while True:
+        print("DEBUG: main() is still running...")
+        await asyncio.sleep(5)  # ✅ Non-blocking
+        
+dataland_qa_lab = FastAPI() # add lifespan maybe
+
+@dataland_qa_lab.on_event("startup")
+async def startup_event():
+    print("DEBUG: Startup event triggered")  
+    asyncio.create_task(main())  # ✅ Runs in the background, FastAPI starts immediately
+
 
 
 @dataland_qa_lab.get("/review/{data_id}")
