@@ -89,18 +89,18 @@ def test_report_generator_end_to_end() -> None:
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
 @patch("dataland_qa_lab.database.database_engine.get_entity")
+@patch("dataland_qa_lab.dataland.alerting.send_alert_message")
 def mocked_review_dataset(
     data_id: str,
+    mock_alert_system: MagicMock,
     mock_get_entity: MagicMock,
     mock_extract_text_of_pdf: MagicMock,
 ) -> QaReportMetaInformation:
     """Review the dataset with mocked Azure calls."""
     mock_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
     mock_get_entity.return_value = None
-    with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai),\
-        patch("requests.post") as mocked_post:
-        mocked_post.return_value.status_code = 200
-        mocked_post.return_value.text = "ok"
+    mock_alert_system.return_value = None
+    with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai):
         report_data = review_dataset(data_id=data_id, single_pass_e2e=True)
         return report_data
 
