@@ -19,7 +19,7 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
 
 
 def test_send_alert_message() -> None:
-    with patch("dataland_qa_lab.dataland.alerting.requests.post") as mockedpost:
+    with patch("requests.post") as mockedpost:
 
         mock_response = MagicMock()
         mock_response.status_code = 200
