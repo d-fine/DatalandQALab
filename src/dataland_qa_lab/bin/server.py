@@ -14,7 +14,7 @@ logger = logging.getLogger("dataland_qa_lab.bin.server")
 def main(single_pass_e2e: bool = False) -> None:
     """Launch the QA Lab server."""
     logger.info("Launching the Dataland QA Lab server")
-    FastAPI()
+    dataland_qa_lab = FastAPI(title="FastAPI")
     console_logger.configure_console_logger()
     create_tables()
 
