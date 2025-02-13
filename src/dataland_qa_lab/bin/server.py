@@ -12,14 +12,7 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> any:  # noqa: ARG001, RUF029
-    """Ensures the scheduled processing starts."""
-    main()
-    yield
-
-
-dataland_qa_lab = FastAPI(lifespan=lifespan)
+dataland_qa_lab = FastAPI()
 
 
 def main(single_pass_e2e: bool = False) -> None:
