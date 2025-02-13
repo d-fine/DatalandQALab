@@ -23,4 +23,4 @@ ENV PATH="/project/.venv/bin:$PATH"
 EXPOSE 81
 
 COPY src /project/src
-CMD ["uvicorn", "server:dataland_qa_lab", "--host", "0.0.0.0", "--port", "81"]
+CMD ["uvicorn", "dataland_qa_lab.bin.server:dataland_qa_lab", "--host", "0.0.0.0", "--port", "81"]
