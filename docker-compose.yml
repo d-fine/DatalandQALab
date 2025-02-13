@@ -4,7 +4,6 @@ services:
     profiles:
       - dev
     build: .
-    image: ghcr.io/d-fine/datalandqalab/qalab-server:${QALAB_SERVER_VERSION}
     ports:
       - "127.0.0.1:5051:81"
     environment:
@@ -23,7 +22,6 @@ services:
   qa-lab-server-prod:
     profiles:
       - prod
-    build: .
     image: ghcr.io/d-fine/datalandqalab/qalab-server:${QALAB_SERVER_VERSION}
     ports:
       - "127.0.0.1:5051:81"
