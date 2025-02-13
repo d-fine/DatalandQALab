@@ -7,7 +7,7 @@ from dataland_qa_lab.dataland.scheduled_processor import run_scheduled_processin
 
 
 @patch("dataland_qa_lab.dataland.scheduled_processor.UnreviewedDatasets")
-@patch("dataland_qa_lab.dataland.alerting.send_alert_message")
+@patch("dataland_qa_lab.dataland.scheduled_processor.send_alert_message")
 def test_run_scheduled_processing_unreviewed_datasets_error(
     mock_send_alert_message: MagicMock, mock_unreviewed_datasets: MagicMock
 ) -> None:
