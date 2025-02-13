@@ -28,10 +28,8 @@ dataland_qa_lab = FastAPI(title="FastAPI")
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
     """FastAPI starts first, then runs main()."""
+    asyncio.create_task(main(single_pass_e2e=False))
     yield  # 🚀 FastAPI fully starts here
-
-    logger.info("FastAPI has started, now running main()...")
-    asyncio.create_task(main())
 
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
