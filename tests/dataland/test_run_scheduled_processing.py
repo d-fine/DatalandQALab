@@ -19,15 +19,10 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
 
 
 def test_send_alert_message() -> None:
-    with patch("requests.post") as mockedpost:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.text = "ok"
-        mockedpost.return_value = mock_response
-
-        mockedpost.return_value.status_code = 200
-        mockedpost.return_value.text = "ok"
-        test = send_alert_message(message="")
+    with patch("requests.post") as mocked_post:
+        mocked_post.return_value.status_code = 200
+        mocked_post.return_value.text = "ok"
+        test = send_alert_message(message="test")
 
     assert test.status_code == 200
     assert test.text == "ok"
