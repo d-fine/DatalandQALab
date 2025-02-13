@@ -19,11 +19,10 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
 
 
 def test_send_alert_message() -> None:
-    message = ""
-    with patch("requests.post") as mockedpost:
+    with patch("dataland_qa_lab.dataland.alerting.requests.post") as mockedpost:
         mockedpost.return_value.status_code = 200
         mockedpost.return_value.text = "ok"
-        test = send_alert_message(message=message)
+        test = send_alert_message(message="")
 
     assert test.status_code == 200
     assert test.text == "ok"
