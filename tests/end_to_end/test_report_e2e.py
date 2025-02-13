@@ -25,10 +25,7 @@ def test_report_generator_end_to_end(mock_alert_system: MagicMock) -> None:
     # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
     delete_entity(data_id, ReviewedDataset)
-    with patch("requests.post") as mocked_post:
-        mocked_post.return_value.status_code = 200
-        mocked_post.return_value.text = "ok"
-        report_metadata = mocked_review_dataset(data_id)
+    report_metadata = mocked_review_dataset(data_id)
 
     report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
         data_id=data_id, qa_report_id=report_metadata.qa_report_id
@@ -103,7 +100,11 @@ def mocked_review_dataset(
     mock_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
     mock_get_entity.return_value = None
     with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai):
-        report_data = review_dataset(data_id=data_id, single_pass_e2e=True)
+        with patch("requests.post") as mocked_post:
+            mocked_post.return_value.status_code = 200
+            mocked_post.return_value.text = "ok"
+
+            report_data = review_dataset(data_id=data_id, single_pass_e2e=True)
         return report_data
 
 
