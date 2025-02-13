@@ -1,10 +1,9 @@
 import asyncio
-from contextlib import asynccontextmanager
 import logging
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from starlette.background import BackgroundTasks
 
 from dataland_qa_lab.database.database_engine import create_tables
 from dataland_qa_lab.dataland import scheduled_processor
@@ -14,13 +13,13 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 
-def main(single_pass_e2e: bool = False) -> None:
+async def main(single_pass_e2e: bool = False) -> None:
     """Launch the QA Lab server."""
-    logger.info("Launching the Dataland QA Lab server")
     console_logger.configure_console_logger()
+    logger.info("Launching the Dataland QA Lab server")
     create_tables()
 
-    scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
+    await scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
 
 
 dataland_qa_lab = FastAPI(title="FastAPI")
@@ -28,9 +27,11 @@ dataland_qa_lab = FastAPI(title="FastAPI")
 
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
-    """..."""
-    main()
-    yield
+    """FastAPI starts first, then runs main()."""
+    yield  # 🚀 FastAPI fully starts here
+
+    logger.info("FastAPI has started, now running main()...")
+    asyncio.create_task(main())
 
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
