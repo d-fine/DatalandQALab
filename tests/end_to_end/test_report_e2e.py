@@ -14,7 +14,7 @@ from dataland_qa_lab.utils import config
 
 
 @patch("dataland_qa_lab.dataland.alerting.send_alert_message")
-def test_report_generator_end_to_end(mock_alert_system: MagicMock,) -> None:
+def test_report_generator_end_to_end(mock_alert_system: MagicMock) -> None:
     """
     This test is supposed to test the entire process of generating a Quality-Assurance-Report for a
     EU Taxonomy Nuclear and Gas dataset from dataland.com.
