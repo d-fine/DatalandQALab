@@ -76,6 +76,7 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
         update_entity(review_dataset)
 
         logger.info("Report posted successfully for dataset with ID: %s", data_id)
+        logger.info("Report ID: %s", data.qa_report_id)
         return data.qa_report_id
 
     logger.info("Report for data_id already exists.")
