@@ -100,7 +100,7 @@ def mocked_review_dataset(
     mock_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
     mock_get_entity.return_value = None
     mock_send_alert_message.return_value = None
-    with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai):
+    with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai), patch("requests.post"):
         report_data = review_dataset(data_id=data_id, single_pass_e2e=True)
         return report_data
 
