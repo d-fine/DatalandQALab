@@ -26,7 +26,7 @@ async def main(single_pass_e2e: bool = False) -> None:
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
     """FastAPI starts first, then runs main()."""
-    asyncio.create_task(main)
+    asyncio.create_task(main())
     yield  # 🚀 FastAPI fully starts here
 
 
