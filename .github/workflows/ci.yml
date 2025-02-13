@@ -21,6 +21,7 @@ jobs:
       PGADMIN_DEFAULT_EMAIL: "null"
       PGADMIN_DEFAULT_PASSWORD: "null"
       DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     services:
       postgres:
         image: postgres:14

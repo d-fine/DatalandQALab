@@ -1,14 +1,20 @@
 import logging
 import time
 
+from dataland_qa_lab.database.database_engine import create_tables
+from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
+from dataland_qa_lab.utils import console_logger
 
 logger = logging.getLogger(__name__)
+console_logger.configure_console_logger()
 
 
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
+    logger.info("Creating database.")
+    create_tables()
     while True:
         try:
             unreviewed_datasets = UnreviewedDatasets()
@@ -20,7 +26,9 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
                     review_dataset(data_id)
                     list_of_data_ids.remove(data_id)
                 except Exception:
+                    message = f"❗An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
+                    send_alert_message(message=message)
 
             if single_pass_e2e:
                 break
