@@ -1,3 +1,5 @@
+import asyncio
+from contextlib import asynccontextmanager
 import logging
 import time
 
@@ -20,22 +22,15 @@ def main(single_pass_e2e: bool = False) -> None:
 
     scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
 
-    while True:
-        logger.info("Still running")
-        if single_pass_e2e:
-            break
-        time.sleep(30)
-
 
 dataland_qa_lab = FastAPI(title="FastAPI")
 
 
-@dataland_qa_lab.on_event("startup")
-async def startup_event() -> None:
-    """Ensure start of main after startup."""
-    background_tasks = BackgroundTasks()
-    background_tasks.add_task(main)
-    await background_tasks()
+@asynccontextmanager
+async def lifespan(dataland_qa_lab: FastAPI):
+    """..."""
+    main()
+    yield
 
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
