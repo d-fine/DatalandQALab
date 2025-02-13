@@ -24,7 +24,9 @@ def build_yes_no_report(
             yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
             data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
-            yes_no_data_points = comparator.compare_yes_no_values(yes_no_values, yes_no_values_from_dataland, data_sources)
+            yes_no_data_points = comparator.compare_yes_no_values(
+                yes_no_values, yes_no_values_from_dataland, data_sources
+            )
 
             for key, value in yes_no_data_points.items():
                 setattr(report, key, value)
