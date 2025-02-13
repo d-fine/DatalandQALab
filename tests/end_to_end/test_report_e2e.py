@@ -13,7 +13,6 @@ from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import config
 
 
-@patch("dataland_qa_lab.dataland.alerting.send_alert_message")
 def test_report_generator_end_to_end(mock_alert_system: MagicMock) -> None:
     """
     This test is supposed to test the entire process of generating a Quality-Assurance-Report for a
@@ -26,7 +25,11 @@ def test_report_generator_end_to_end(mock_alert_system: MagicMock) -> None:
     # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
     delete_entity(data_id, ReviewedDataset)
-    report_metadata = mocked_review_dataset(data_id)
+    with patch("requests.post") as mocked_post:
+        mocked_post.return_value.status_code = 200
+        mocked_post.return_value.text = "ok"
+        report_metadata = mocked_review_dataset(data_id)
+
     report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
         data_id=data_id, qa_report_id=report_metadata.qa_report_id
     )
