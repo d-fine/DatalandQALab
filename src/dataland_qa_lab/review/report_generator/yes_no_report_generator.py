@@ -18,20 +18,20 @@ def build_yes_no_report(
     report = NuclearAndGasGeneralGeneral()
     if relevant_pages is None:
         create_not_attempted_report(report, "No relevant pages found")
+    else:
+        try:
+            yes_no_values = yes_no_value_generator.get_yes_no_values_from_report(relevant_pages)
+            yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
+            data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
-    try:
-        yes_no_values = yes_no_value_generator.get_yes_no_values_from_report(relevant_pages)
-        yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
-        data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
+            yes_no_data_points = comparator.compare_yes_no_values(yes_no_values, yes_no_values_from_dataland, data_sources)
 
-        yes_no_data_points = comparator.compare_yes_no_values(yes_no_values, yes_no_values_from_dataland, data_sources)
+            for key, value in yes_no_data_points.items():
+                setattr(report, key, value)
 
-        for key, value in yes_no_data_points.items():
-            setattr(report, key, value)
-
-    except Exception as e:  # noqa: BLE001
-        error_message = str(e)
-        create_not_attempted_report(report, error_message)
+        except Exception as e:  # noqa: BLE001
+            error_message = str(e)
+            create_not_attempted_report(report, error_message)
 
     return report
 
