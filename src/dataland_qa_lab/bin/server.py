@@ -15,20 +15,18 @@ logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 async def main(single_pass_e2e: bool = False) -> None:
     """Launch the QA Lab server."""
-    print("DEBUG: Lifespan function STARTING") 
     console_logger.configure_console_logger()
     logger.info("Launching the Dataland QA Lab server")
     create_tables()
-    return None
-    #await scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
+    asyncio.create_task(  # noqa: RUF006
+        scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
+    )
 
 
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
     """FastAPI starts first, then runs main()."""
-    logger.info("123")
-    print("DEBUG: Lifespan function STARTING") 
-    await main()
+    asyncio.create_task(main)
     yield  # 🚀 FastAPI fully starts here
 
 
