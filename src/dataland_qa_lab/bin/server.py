@@ -29,6 +29,12 @@ def main(single_pass_e2e: bool = False) -> None:
         time.sleep(30)
 
 
+@dataland_qa_lab.on_event("startup")
+async def startup_event() -> None:  # noqa: RUF029
+    """Ensure `main()` runs when FastAPI starts."""
+    main()
+
+
 @dataland_qa_lab.get("/review/{data_id}")
 def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
     """Review a single dataset via API call."""
