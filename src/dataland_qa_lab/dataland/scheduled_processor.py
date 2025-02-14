@@ -30,7 +30,7 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
 
             if single_pass_e2e:
                 break
-            time.sleep(600)
+            time.sleep(120)
         except Exception as e:
             logger.critical("Critical error: %s", e)
             raise
