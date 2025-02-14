@@ -5,10 +5,8 @@ from dataland_qa_lab.database.database_engine import create_tables
 from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
-from dataland_qa_lab.utils import console_logger
 
 logger = logging.getLogger(__name__)
-console_logger.configure_console_logger()
 
 
 def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
