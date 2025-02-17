@@ -13,7 +13,7 @@ from dataland_qa_lab.utils import console_logger
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 scheduler = BackgroundScheduler()
-trigger = CronTrigger(minute="10", start_date="in 5 Minutes")
+trigger = CronTrigger(minute="*/10", start_date="in 5 Minutes")
 scheduler.add_job(scheduled_processor.run_scheduled_processing(), trigger)
 scheduler.start()
 
