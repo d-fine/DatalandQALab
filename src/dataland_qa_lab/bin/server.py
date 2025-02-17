@@ -1,8 +1,8 @@
-import asyncio
 import logging
-import time
 from contextlib import asynccontextmanager
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 
 from dataland_qa_lab.database.database_engine import create_tables
@@ -12,25 +12,23 @@ from dataland_qa_lab.utils import console_logger
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
-
-async def main(single_pass_e2e: bool = False) -> None:
-    """Launch the QA Lab server."""
-    console_logger.configure_console_logger()
-    logger.info("Launching the Dataland QA Lab server")
-    create_tables()
-    asyncio.create_task(  # noqa: RUF006
-        scheduled_processor.run_scheduled_processing(single_pass_e2e=single_pass_e2e)
-    )
+scheduler = BackgroundScheduler()
+trigger = CronTrigger(minute="*/10")
+scheduler.add_job(scheduled_processor.run_scheduled_processing(), trigger)
+scheduler.start()
 
 
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):
     """FastAPI starts first, then runs main()."""
-    asyncio.create_task(main())
-    yield  # 🚀 FastAPI fully starts here
+    console_logger.configure_console_logger()
+    logger.info("Launching the Dataland QA Lab server")
+    create_tables()
+    yield
+    scheduler.shutdown()
 
 
-dataland_qa_lab = FastAPI(lifespan=lifespan) # add lifespan maybe
+dataland_qa_lab = FastAPI(lifespan=lifespan)
 
 
 @dataland_qa_lab.get("/review/{data_id}")
