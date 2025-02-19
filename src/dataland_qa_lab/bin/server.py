@@ -20,7 +20,7 @@ create_tables()
 scheduler = BackgroundScheduler()
 start_time = datetime.now() + timedelta(minutes=1)
 trigger = CronTrigger(minute="*/10", start_date=start_time)
-scheduler.add_job(scheduled_processor.run_scheduled_processing(), trigger)
+scheduler.add_job(scheduled_processor.run_scheduled_processing, trigger)
 scheduler.start()
 
 @asynccontextmanager
