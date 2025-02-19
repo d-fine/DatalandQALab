@@ -1,5 +1,4 @@
 import logging
-import time
 
 from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
