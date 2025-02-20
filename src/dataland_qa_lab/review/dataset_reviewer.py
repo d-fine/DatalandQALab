@@ -19,29 +19,30 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
 
     dataset = dataset_provider.get_dataset_by_id(data_id)
 
+    logger.info("Checking if the dataset is already existing in the database")
     existing_report = get_entity(data_id, ReviewedDataset)
 
     if force_review and existing_report is not None:
+        logger.info("Deleting old review from the database")
         delete_entity(data_id, ReviewedDataset)
         existing_report = None
 
-    logger.info("Checking if the dataset is already existing in the database")
     if existing_report is None:
+        logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
         datetime_now = get_german_time_as_string()
 
         message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
         send_alert_message(message=message)
-        logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
+
         review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
-        logger.info("Adding the dataset in the database with the Data-ID and review start time.")
+        logger.info("Adding the dataset to the database.")
         add_entity(review_dataset)
 
         data_collection = NuclearAndGasDataCollection(dataset.data)
         logger.info("Data collection created.")
 
         page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-        logger.info("Relevant page numbers extracted.")
 
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
         if relevant_pages_pdf_reader is None:

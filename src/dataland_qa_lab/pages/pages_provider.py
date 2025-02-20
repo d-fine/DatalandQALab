@@ -1,4 +1,5 @@
 import io
+import logging
 
 import pypdf
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
@@ -7,11 +8,15 @@ from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
+logger = logging.getLogger(__name__)
+
 
 def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]:
     """Get page numbers of relevant data."""
+    logger.info("Starting to extract page numbers.")
     yes_no_pages = get_relevant_pages_of_nuclear_and_gas_yes_no_questions(dataset=dataset)
     numeric_pages = get_relevant_pages_of_numeric(dataset=dataset)
+    logger.info("Relevant page numbers extracted.")
 
     return sorted(set(yes_no_pages + numeric_pages))
 
@@ -19,12 +24,14 @@ def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]
 def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
+    logger.info("Starting to retrieve pages from company report.")
 
     page_numbers = get_relevant_page_numbers(dataset=dataset)
     try:
         datapoint = dataset.yes_no_data_points.get("nuclear_energy_related_activities_section426").datapoint
         file_reference = datapoint.data_source.file_reference
     except AttributeError:
+        logger.exception("No file reference found.")
         return None
 
     full_pdf = dataland_client.documents_api.get_document(file_reference)
@@ -40,6 +47,8 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
     extracted_pdf_stream = io.BytesIO()
     output_pdf.write(extracted_pdf_stream)
     extracted_pdf_stream.seek(0)
+
+    logger.info("Pages successfully retrieved from the company report.")
 
     return extracted_pdf_stream
 
