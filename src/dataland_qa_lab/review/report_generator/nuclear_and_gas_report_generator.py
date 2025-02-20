@@ -1,3 +1,5 @@
+import logging
+
 from dataland_qa.models import NuclearAndGasGeneral, NuclearAndGasGeneralGeneral
 from dataland_qa.models.nuclear_and_gas_data import NuclearAndGasData
 
@@ -11,6 +13,8 @@ from dataland_qa_lab.review.report_generator import (
 from dataland_qa_lab.review.report_generator.abstract_report_generator import ReportGenerator
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
+logger = logging.getLogger(__name__)
+
 
 class NuclearAndGasReportGenerator(ReportGenerator):
     """Generate a quality assurance report."""
@@ -20,8 +24,6 @@ class NuclearAndGasReportGenerator(ReportGenerator):
 
     def generate_report(self, relevant_pages: str | None, dataset: NuclearAndGasDataCollection) -> NuclearAndGasData:
         """Assemble the QA Report based on the corrected values from Azure."""
-        # Initialize report and relevant pages
-
         self.relevant_pages = relevant_pages
         self.report = NuclearAndGasData(general=NuclearAndGasGeneral(general=NuclearAndGasGeneralGeneral()))
 
@@ -50,4 +52,7 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report(
             dataset=dataset, relevant_pages=relevant_pages
         )
+
+        logger.info("Report generated succesfully.")
+
         return self.report
