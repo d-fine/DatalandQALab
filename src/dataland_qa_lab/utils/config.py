@@ -43,6 +43,7 @@ class DatalandQaLabSettings(BaseSettings):
     database_connection_string: str
 
     slack_webhook_url: str
+    environment: str
 
     @property
     def dataland_client(self) -> DatalandClient:
