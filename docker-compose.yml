@@ -4,6 +4,8 @@ services:
     profiles:
       - dev
     build: .
+    ports:
+      - "127.0.0.1:5051:81"
     environment:
       DATALAND_URL: ${DATALAND_URL}
       DATALAND_API_KEY: ${DATALAND_API_KEY}
@@ -21,6 +23,8 @@ services:
     profiles:
       - prod
     image: ghcr.io/d-fine/datalandqalab/qalab-server:${QALAB_SERVER_VERSION}
+    ports:
+      - "127.0.0.1:5051:81"
     environment:
       DATALAND_URL: ${DATALAND_URL}
       DATALAND_API_KEY: ${DATALAND_API_KEY}
