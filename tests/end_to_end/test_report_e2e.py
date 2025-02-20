@@ -177,7 +177,7 @@ def test_report_with_existing_dataset() -> None:
 
     data_id = upload_test_dataset()
     if get_entity(data_id, ReviewedDataset) is None:
-        add_entity(ReviewedDataset(data_id))
+        add_entity(ReviewedDataset(data_id=data_id, review_start_time="2025"))
 
     report_id = mocked_review_dataset(data_id)
     report_data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
