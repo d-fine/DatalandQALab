@@ -8,7 +8,7 @@ import pytest
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
-from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity
+from dataland_qa_lab.database.database_engine import add_entity, create_tables, delete_entity, get_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
@@ -173,6 +173,7 @@ def upload_test_dataset() -> str:
 
 def test_report_with_existing_dataset() -> None:
     """Test the case that the dataset has been reviewed but is supposed to be reviewed again."""
+    create_tables()
 
     data_id = upload_test_dataset()
     if get_entity(data_id, ReviewedDataset) is None:
