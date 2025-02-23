@@ -8,7 +8,6 @@ COPY ./servers.json /pgadmin4/servers.json
 
 RUN touch /var/lib/pgadmin/pgpass && chown 5050:5050 /var/lib/pgadmin/pgpass && chmod 0600 /var/lib/pgadmin/pgpass && chmod a+rx /custom_entrypoint.sh
 
-# Installiere gettext für envsubst
 RUN apk add --no-cache gettext
 
 USER pgadmin

@@ -160,7 +160,6 @@ class PromptingService:
                     Make sure to use the {kpi} value""",
                 }
 
-                # Hinzufügen zu required
                 schema["required"].extend([value_key])
 
         return schema
@@ -175,7 +174,6 @@ class PromptingService:
         rows = [1, 2, 3, 4, 5, 6, 7, 8]
         schema = {"type": "object", "properties": {}, "required": []}
 
-        # Für jede Zeile Felder hinzufügen
         for row in rows:
             value_key = f"answer_value_%_row{row}"
 

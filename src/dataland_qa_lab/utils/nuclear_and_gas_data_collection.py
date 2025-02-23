@@ -28,7 +28,6 @@ class NuclearAndGasDataCollection:
         self.taxonomy_eligble_but_not_aligned = {}
         self.taxonomy_non_eligible = {}
 
-        # Safely map datasets
         if self.dataset and self.dataset.general:
             self.map_dataset_to_yes_no_dict()
             self.map_dataset_to_numeric_dict()
@@ -64,7 +63,7 @@ class NuclearAndGasDataCollection:
         """Mapper function."""
         data = self.dataset.general
         if data is None:
-            return  # Skip if numeric data is missing
+            return
 
         self.taxonomy_aligned_denominator = {
             "taxonomy_aligned_capex_denominator": TaxononmyAlignedDenominatorDatapoint(

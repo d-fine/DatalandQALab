@@ -20,9 +20,8 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
     :type json_path: Path
     :return: Returns a list containing the data ids of the test datasets.
     """
-    # list of companies to test
     companies = ["concordia", "covestro", "deka", "enbw", "enel", "eon", "iberdrola", "munichre", "rwe", "total"]
-    # list of ids of corresponding pdfs
+
     pdfs = [
         "0a8eebb9e32d3c0a32a1083699352018afcbbe39458ab8441cd0c8985a466a59",
         "ebff9ec3cf12e715cb6ee1c55a1295656a87e1716a9b536b4fbf2a1b9312260c",
@@ -39,12 +38,9 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
     new_data_ids = []
 
     for company, pdf_id in zip(companies, pdfs, strict=False):
-        # if needed upload pdf file to dataland
         upload_pdf(pdf_path=pdf_path, pdf_id=pdf_id, company=company, dataland_client=dataland_client)
-        # get companyIDs of company to test
         company_id = get_company_id(company=company, dataland_client=dataland_client)
 
-        # change companyID in json file
         json_file_path = json_path / f"{company}.json"
 
         with json_file_path.open(encoding="utf-8") as f:
@@ -54,7 +50,6 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
         json_str = json.dumps(json_data, indent=4)
         json_file_path.write_text(json_str, encoding="utf-8")
 
-        # if needed upload dataset
         new_data_ids.append(
             upload_dataset(
                 company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period=None
@@ -66,7 +61,6 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
     return new_data_ids
 
 
-# Doesn't work because of rights, needs to be fixed in future sprints
 def upload_pdf(pdf_path: Path, pdf_id: str, company: str, dataland_client: DatalandClient) -> None:
     """Uploads pdf file to dataland if needed.
 
@@ -135,6 +129,6 @@ def check_if_document_exists_in_dataland(pdf_id: str, dataland_client: DatalandC
     """Helper method to catch 404 Error if file does not exist in Dataland."""
     try:
         dataland_client.documents_api.check_document(document_id=pdf_id)
-        return True  # noqa: TRY300
     except NotFoundException:
         return False
+    return True

@@ -74,7 +74,6 @@ def test_function_exceptions(
 ) -> None:
     """Retrieve taxonomy-aligned capex denominator values from the dataset."""
 
-    # Create a dataset with missing values to trigger exceptions
     empty_data_collection = NuclearAndGasDataCollection(NuclearAndGasData())
 
     with pytest.raises(AttributeError, match=exception_message):
