@@ -1,10 +1,8 @@
 import json
-import logging
 from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import mock_constants
-import pytest
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
