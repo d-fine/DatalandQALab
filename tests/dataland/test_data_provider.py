@@ -5,7 +5,6 @@ from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 
 from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
-from tests.utils import provide_test_dataset
 from tests.utils.provide_test_data_collection import provide_test_data_collection
 
 

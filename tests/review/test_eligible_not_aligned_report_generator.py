@@ -128,7 +128,7 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
     )
     assert revenue_report.corrected_data.value.taxonomy_eligible_but_not_aligned_share_n_and_g426.mitigation is None
     assert revenue_report.corrected_data.value.taxonomy_eligible_but_not_aligned_share_n_and_g426.adaptation is None
-    # assert 0.0 values
+
     assert (
         revenue_report.corrected_data.value.taxonomy_eligible_but_not_aligned_share_n_and_g430.mitigation_and_adaptation
         == 0.0
@@ -162,7 +162,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
 ) -> None:
     dataset, relevant_pages = provide_test_data_collection()
 
-    # Simulate an exception in dataland value retrieval
     mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
     report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")
 
@@ -170,7 +169,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
     assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert "Error retrieving prompted values for template 4" in report.comment
 
-    # Simulate an exception in dataland retrieval
     mock_generate_gpt_request.side_effect = None
     mock_get_dataland_values.side_effect = RuntimeError("Mock dataland error")
     report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")
@@ -184,7 +182,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
 def test_generate_taxonomy_aligned_denominator_report_edge_cases_not_attempted(mock_generate_gpt_request: Mock) -> None:
     dataset, relevant_pages = provide_test_data_collection()
 
-    # Simulate an exception in the GPT request generation
     mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
 
     report = report_generator.build_eligible_but_not_aligned_frame(dataset, relevant_pages, "Revenue")

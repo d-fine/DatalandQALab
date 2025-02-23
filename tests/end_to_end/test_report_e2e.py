@@ -22,8 +22,6 @@ def test_report_generator_end_to_end() -> None:
     Only the communication to Azure is mocked, all other components and their interactions
     should be tested during this test.
     """
-
-    # Upload test_dataset with partly wrong data
     data_id = upload_test_dataset()
     delete_entity(data_id, ReviewedDataset)
     report_id = mocked_review_dataset(data_id)
@@ -32,14 +30,12 @@ def test_report_generator_end_to_end() -> None:
     )
     report_data_dict = report_data.to_dict()
 
-    # test section 426 in template 1
     data_yes_no_426 = report_data_dict["report"]["general"]["general"]["nuclearEnergyRelatedActivitiesSection426"]
 
     assert data_yes_no_426["comment"] == "Geprüft durch AzureOpenAI"
     assert QaReportDataPointVerdict.QAACCEPTED in data_yes_no_426["verdict"]
     assert data_yes_no_426["correctedData"] == {}
 
-    # test section 429 in template 1 with deliberate error
     data_yes_no_429 = report_data_dict["report"]["general"]["general"]["fossilGasRelatedActivitiesSection429"]
 
     assert (
@@ -54,7 +50,6 @@ def test_report_generator_end_to_end() -> None:
         "dataSource": ANY,
     }
 
-    # test taxonomy aligned revenue denominator with one deliberate error value
     data_taxonomy_aligned_revenue_denominator = report_data_dict["report"]["general"]["taxonomyAlignedDenominator"][
         "nuclearAndGasTaxonomyAlignedRevenueDenominator"
     ]
@@ -79,7 +74,6 @@ def test_report_generator_end_to_end() -> None:
         "comment": "",
     }
 
-    # test taxonomy aligned revenue denominator with one deliberate error value
     data_taxonomy_eligible_but_not_aligned = report_data_dict["report"]["general"]["taxonomyEligibleButNotAligned"][
         "nuclearAndGasTaxonomyEligibleButNotAlignedCapex"
     ]
@@ -107,7 +101,7 @@ def mocked_review_dataset(
         return report_data
 
 
-def mock_open_ai(**kwargs) -> any:  # noqa: ANN003, PLR0911
+def mock_open_ai(**kwargs: any) -> any:  # noqa: PLR0911
     """Return the result of the Azure OpenAI call based on keywords in the prompt."""
     prompt = kwargs["messages"][-1]["content"].lower()
 
@@ -148,10 +142,8 @@ def upload_test_dataset() -> str:
         dataland_client=dataland_client,
     )
 
-    # get companyIDs of company to test
     company_id = get_company_id(company="enbw", dataland_client=dataland_client)
 
-    # change companyID in json file
     json_file_path = json_path / "enbw.json"
 
     with json_file_path.open(encoding="utf-8") as f:
@@ -161,7 +153,6 @@ def upload_test_dataset() -> str:
     json_str = json.dumps(json_data, indent=4)
     json_file_path.write_text(json_str, encoding="utf-8")
 
-    # if needed upload dataset
     data_id = upload_dataset(
         company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period="2020"
     )
@@ -194,5 +185,4 @@ def test_report_with_no_data_source(mock_relevant_pages: MagicMock, caplog: pyte
     data_id = upload_test_dataset()
     with caplog.at_level(logging.DEBUG):
         mocked_review_dataset(data_id)
-
         assert "No Data source found for the relevant pages." in caplog.text
