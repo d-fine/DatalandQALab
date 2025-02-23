@@ -19,7 +19,6 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
 
     dataset = dataset_provider.get_dataset_by_id(data_id)
 
-    logger.info("Checking if the dataset is already existing in the database")
     existing_report = get_entity(data_id, ReviewedDataset)
 
     if force_review and existing_report is not None:
