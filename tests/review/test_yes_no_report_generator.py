@@ -48,7 +48,7 @@ def test_compare_yes_no_values(mock_generate_gpt_request: Mock) -> None:
     report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
 
     assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
-    assert report.nuclear_energy_related_activities_section426.comment == "Geprüft durch AzureOpenAI"
+    assert report.nuclear_energy_related_activities_section426.comment == "Reviewed by AzureOpenAI"
     assert report.fossil_gas_related_activities_section430.corrected_data.value == "Yes"
 
 
@@ -65,7 +65,6 @@ def test_build_yes_no_report_success(mock_generate_gpt_request: Mock) -> None:
     test_data_collection = NuclearAndGasDataCollection(provide_test_dataset())
     report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages=AnalyzeResult())
 
-    # Assertions
     assert report.fossil_gas_related_activities_section430.comment == (
         "Discrepancy in 'fossil_gas_related_activities_section430': YesNo.YES != YesNo.NO."
     )

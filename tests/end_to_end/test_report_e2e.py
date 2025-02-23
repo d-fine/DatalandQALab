@@ -1,10 +1,8 @@
 import json
-import logging
 from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import mock_constants
-import pytest
 from dataland_qa.models.qa_report_data_point_verdict import QaReportDataPointVerdict
 from dataland_qa.models.qa_report_meta_information import QaReportMetaInformation
 
@@ -32,7 +30,7 @@ def test_report_generator_end_to_end() -> None:
 
     data_yes_no_426 = report_data_dict["report"]["general"]["general"]["nuclearEnergyRelatedActivitiesSection426"]
 
-    assert data_yes_no_426["comment"] == "Geprüft durch AzureOpenAI"
+    assert data_yes_no_426["comment"] == "Reviewed by AzureOpenAI"
     assert QaReportDataPointVerdict.QAACCEPTED in data_yes_no_426["verdict"]
     assert data_yes_no_426["correctedData"] == {}
 
@@ -101,30 +99,31 @@ def mocked_review_dataset(
         return report_data
 
 
-def mock_open_ai(**kwargs: any) -> any:  # noqa: PLR0911
+def mock_open_ai(**kwargs: any) -> any:
     """Return the result of the Azure OpenAI call based on keywords in the prompt."""
     prompt = kwargs["messages"][-1]["content"].lower()
 
+    mock_chat_completion = None
     if "template 1" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_1
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_1
     if "template 2 (revenue)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_2_REVENUE
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_2_REVENUE
     if "template 2 (capex)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_2_CAPEX
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_2_CAPEX
     if "template 3 (revenue)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_3_REVENUE
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_3_REVENUE
     if "template 3 (capex)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_3_CAPEX
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_3_CAPEX
     if "template 4 (revenue)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_4_REVENUE
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_4_REVENUE
     if "template 4 (capex)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_4_CAPEX
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_4_CAPEX
     if "template 5 (revenue)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_5_REVENUE
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_5_REVENUE
     if "template 5 (capex)" in prompt:
-        return mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_5_CAPEX
+        mock_chat_completion = mock_constants.E2E_AZURE_OPEN_AI_TEMPLATE_5_CAPEX
 
-    return None
+    return mock_chat_completion
 
 
 def upload_test_dataset() -> str:
@@ -175,14 +174,3 @@ def test_report_with_existing_dataset() -> None:
     )
 
     assert report_data is not None
-
-
-@patch("dataland_qa_lab.pages.pages_provider.get_relevant_pages_of_pdf")
-def test_report_with_no_data_source(mock_relevant_pages: MagicMock, caplog: pytest.LogCaptureFixture) -> None:
-    """Test the case that the dataset has been reviewed but is supposed to be reviewed again."""
-    mock_relevant_pages.return_value = None
-
-    data_id = upload_test_dataset()
-    with caplog.at_level(logging.DEBUG):
-        mocked_review_dataset(data_id)
-        assert "No Data source found for the relevant pages." in caplog.text

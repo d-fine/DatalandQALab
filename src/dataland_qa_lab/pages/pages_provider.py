@@ -48,7 +48,7 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
     output_pdf.write(extracted_pdf_stream)
     extracted_pdf_stream.seek(0)
 
-    if (extracted_pdf_stream is not None):
+    if extracted_pdf_stream is not None:
         logger.info("Pages successfully retrieved from the company report.")
     else:
         logger.error("Error retrieving pages from company report.")

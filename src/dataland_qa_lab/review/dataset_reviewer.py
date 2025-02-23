@@ -79,9 +79,7 @@ def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
     datetime_now = get_german_time_as_string()
 
     review_dataset = ReviewedDataset(
-        data_id=data_id,
-        review_end_time=datetime_now,
-        report_id=report_id,
-        review_completed=True)
+        data_id=data_id, review_end_time=datetime_now, report_id=report_id, review_completed=True
+    )
 
     update_entity(review_dataset)

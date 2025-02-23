@@ -14,7 +14,7 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
     mock_unreviewed_datasets.side_effect = Exception("Error while creating UnreviewedDatasets")
     mock_send_alert_message.return_value = None
     with pytest.raises(Exception) as context:  # noqa: PT011
-        run_scheduled_processing(single_pass_e2e=True)
+        run_scheduled_processing()
     assert str(context.value) == "Error while creating UnreviewedDatasets"
 
 

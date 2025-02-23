@@ -7,7 +7,7 @@ from dataland_qa_lab.review.dataset_reviewer import review_dataset
 logger = logging.getLogger(__name__)
 
 
-def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
+def run_scheduled_processing() -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     try:
         unreviewed_datasets = UnreviewedDatasets()
@@ -22,8 +22,6 @@ def run_scheduled_processing(single_pass_e2e: bool = False) -> None:
                     message = f"❗An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
                     send_alert_message(message=message)
-            if single_pass_e2e:
-                return
         else:
             logger.info("No datasets to review.")
             return
