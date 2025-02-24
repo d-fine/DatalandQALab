@@ -22,63 +22,48 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
     existing_report = get_entity(data_id, ReviewedDataset)
 
     if force_review and existing_report is not None:
+        logger.info("Deleting old review from the database")
         delete_entity(data_id, ReviewedDataset)
         existing_report = None
 
-    logger.info("Checking if the dataset is already existing in the database")
     if existing_report is None:
+        logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
         datetime_now = get_german_time_as_string()
 
         message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
         send_alert_message(message=message)
-        logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
+
         review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
-        logger.info("Adding the dataset in the database with the Data-ID and review start time.")
+        logger.info("Adding the dataset to the database.")
         add_entity(review_dataset)
 
         data_collection = NuclearAndGasDataCollection(dataset.data)
         logger.info("Data collection created.")
 
         page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-        logger.info("Relevant page numbers extracted.")
 
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
         if relevant_pages_pdf_reader is None:
-            logger.debug("No Data source found for the relevant pages.")
             report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
-            logger.info("QA not attempted report generated successfully.")
 
         else:
-            logger.debug("Relevant pages extracted.")
             readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
                 data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
             )
-            logger.debug("Text extracted from the relevant pages.")
 
             report = NuclearAndGasReportGenerator().generate_report(
                 relevant_pages=readable_text, dataset=data_collection
             )
-            logger.info("Report generated succesfully.")
 
         data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
 
-        datetime_now = get_german_time_as_string()
+        update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
 
-        logger.debug("Adding review end time in the database.")
-        review_dataset.review_end_time = datetime_now
-
-        message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}"
+        message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: {data.qa_report_id}"
         send_alert_message(message=message)
-        logger.debug("Adding review completed to the database.")
-        review_dataset.review_completed = True
-
-        logger.debug("Adding the Report-ID to the database.")
-        review_dataset.report_id = data.qa_report_id
-
-        update_entity(review_dataset)
 
         logger.info("Report posted successfully for dataset with ID: %s", data_id)
         logger.info("Report ID: %s", data.qa_report_id)
@@ -86,3 +71,14 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
 
     logger.info("Report for data_id already exists.")
     return existing_report.report_id
+
+
+def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
+    """After review set the database entry to finished and add review end time."""
+    datetime_now = get_german_time_as_string()
+
+    review_dataset = ReviewedDataset(
+        data_id=data_id, review_end_time=datetime_now, report_id=report_id, review_completed=True
+    )
+
+    update_entity(review_dataset)

@@ -286,18 +286,15 @@ def test_generate_gpt_request_config_error() -> None:
 @patch("openai.AzureOpenAI")
 def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_get_config: Mock) -> None:
     """Test error handling during tool call argument parsing."""
-    # Mock configuration
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
     )
 
-    # Mock GPT response with invalid arguments
     mock_client().chat.completions.create.return_value = Mock(
         choices=[Mock(message=Mock(tool_calls=[Mock(function=Mock(arguments="Invalid Argument String"))]))]
     )
 
-    # Call the function and expect a ValueError
     with pytest.raises(
         ValueError, match=r"An unexpected error occurred: Error during GPT request creation: Connection error."
     ):
@@ -308,13 +305,11 @@ def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_ge
 @patch("openai.AzureOpenAI")
 def test_generate_gpt_request_no_tool_calls(mock_client: Mock, mock_get_config: Mock) -> None:
     """Test handling when no tool calls are present in the GPT response."""
-    # Mock configuration
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
     )
 
-    # Mock GPT response with no tool calls
     mock_client().chat.completions.create.return_value = Mock(choices=[Mock(message=Mock(tool_calls=None))])
 
     with pytest.raises(

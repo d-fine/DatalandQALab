@@ -128,7 +128,7 @@ def test_compare_taxonomy_numerator_values(mock_generate_gpt_request: Mock) -> N
     )
     assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g426.mitigation is None
     assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g426.adaptation is None
-    # assert 0.0 values
+
     assert (
         revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g430.mitigation_and_adaptation == 0.0
     )
@@ -181,7 +181,6 @@ def test_generate_revenue_denominator_report_frame_not_attempted(
 def test_generate_taxonomy_aligned_denominator_report_edge_cases_not_attempted(mock_generate_gpt_request: Mock) -> None:
     dataset, relevant_pages = provide_test_data_collection()
 
-    # Simulate an exception in the GPT request generation
     mock_generate_gpt_request.side_effect = ValueError("Mock GPT error")
 
     report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")

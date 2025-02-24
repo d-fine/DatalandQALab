@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATALAND_URL: ${{ vars.DATALAND_URL }}
-      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
+      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY_CI }}
       AZURE_OPENAI_API_KEY: "null"
       AZURE_OPENAI_ENDPOINT: "null"
       AZURE_DOCINTEL_API_KEY: "null"
@@ -22,6 +22,7 @@ jobs:
       PGADMIN_DEFAULT_PASSWORD: "null"
       DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:postgres@localhost:5432/dataland_qa_lab"
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      ENVIRONMENT: ${{vars.ENVIRONMENT}}
     services:
       postgres:
         image: postgres:14

@@ -16,7 +16,6 @@ def mock_session() -> MagicMock:
 
 @pytest.fixture
 def patch_session(mock_session: MagicMock) -> MagicMock:
-    # Patch the sessionmaker to return the mock session
     with patch("dataland_qa_lab.database.database_engine.SessionLocal", return_value=mock_session):
         return
 

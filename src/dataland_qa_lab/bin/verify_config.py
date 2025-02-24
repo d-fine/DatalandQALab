@@ -15,7 +15,7 @@ def main() -> None:
     try:
         config.get_config()
     except ValidationError as e:
-        logger.error(  # noqa: TRY400
+        logger.exception(
             "Configuration is syntactically invalid. Please ensure your .env file is up-to-date \n %s",
             pprint.pformat(e.errors()),
         )

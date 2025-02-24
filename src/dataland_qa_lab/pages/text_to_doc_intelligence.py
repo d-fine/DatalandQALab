@@ -1,3 +1,5 @@
+import logging
+
 import pypdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentContentFormat
@@ -7,6 +9,8 @@ from dataland_qa_lab.database.database_engine import add_entity, get_entity
 from dataland_qa_lab.database.database_tables import ReviewedDatasetMarkdowns
 from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
+
+logger = logging.getLogger(__name__)
 
 
 def extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
@@ -51,5 +55,7 @@ def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.Pdf
         )
 
         add_entity(new_document)
+
+    logger.debug("Markdown extracted from the relevant pages.")
 
     return readable_text

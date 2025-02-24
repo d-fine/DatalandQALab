@@ -7,7 +7,6 @@ from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest  # no
 from dataland_qa_lab.review.numeric_value_generator import NumericValueGenerator
 
 
-# Mock AnalyzeResult
 @pytest.fixture
 def mock_analyze_result() -> Mock:
     mock_result = Mock()
@@ -15,7 +14,6 @@ def mock_analyze_result() -> Mock:
     return mock_result
 
 
-# Mock Config and Logger
 @pytest.fixture
 def mock_logger() -> Mock:
     logger = Mock()

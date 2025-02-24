@@ -49,7 +49,7 @@ def build_denominator_report_frame(
     )
 
     if verdict == QaReportDataPointVerdict.QAACCEPTED:
-        corrected_data = ExtendedDataPointNuclearAndGasAlignedDenominator()  # left empty if no corrections are made
+        corrected_data = ExtendedDataPointNuclearAndGasAlignedDenominator()
     else:
         corrected_data = ExtendedDataPointNuclearAndGasAlignedDenominator(
             value=corrected_values,

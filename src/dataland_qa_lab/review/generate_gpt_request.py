@@ -32,7 +32,6 @@ class GenerateGptRequest:
                 msg = f"Error loading configuration in Gpt_request generator: {e}"
                 raise ValueError(msg) from e
 
-            # Initialize Azure OpenAI client
             try:
                 client = AzureOpenAI(
                     api_key=conf.azure_openai_api_key,
@@ -43,7 +42,6 @@ class GenerateGptRequest:
                 msg = f"Error initializing AzureOpenAI client: {e}"
                 raise ValueError(msg) from e
 
-            # Create GPT request
             try:
                 updated_openai_response = client.chat.completions.create(
                     model="gpt-4o",
@@ -80,6 +78,5 @@ class GenerateGptRequest:
             return list(data_dict.values())
 
         except (ValueError, KeyError, TypeError) as general_error:
-            # General error handling
             msg = f"An unexpected error occurred: {general_error}"
             raise ValueError(msg) from general_error

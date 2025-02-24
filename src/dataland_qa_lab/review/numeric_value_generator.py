@@ -70,13 +70,13 @@ class NumericValueGenerator:
     @staticmethod
     def extract_number(value: str) -> float:
         """Extracts the first numeric part from a string and converts it to a float."""
-        if isinstance(value, float | int):  # Directly return if it's already numeric
+        if isinstance(value, float | int):
             return float(value)
 
         # Safe regex: Match optional negative sign, then digits, optional dot, and more digits
         match = re.search(r"-?\d+(?:\.\d+)?", value)
         if match:
-            return float(match.group(0))  # Convert directly to float
+            return float(match.group(0))
 
         msg = f"Could not extract a valid number from '{value}'"
         raise ValueError(msg)

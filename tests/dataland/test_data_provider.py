@@ -5,9 +5,8 @@ from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 
 from dataland_qa_lab.dataland import data_provider
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
-from tests.utils import provide_test_dataset
 from tests.utils.provide_test_data_collection import provide_test_data_collection
-from tests.utils.provide_test_dataset import provide_test_dataset  # noqa: F811
+from tests.utils.provide_test_dataset import provide_test_dataset
 
 
 def test_get_yes_no_values_by_data() -> None:
@@ -67,14 +66,9 @@ def test_get_datasources_of_dataset() -> None:
         (data_provider.get_taxonomy_non_eligible_capex_values_by_data, "Error retrieving taxonomy non-eligible capex"),
     ],
 )
-def test_function_exceptions(
-    function_name: Callable,
-    exception_message: str,
-    test_data_collection: NuclearAndGasDataCollection,  # noqa: ARG001
-) -> None:
+def test_function_exceptions(function_name: Callable, exception_message: str) -> None:
     """Retrieve taxonomy-aligned capex denominator values from the dataset."""
 
-    # Create a dataset with missing values to trigger exceptions
     empty_data_collection = NuclearAndGasDataCollection(NuclearAndGasData())
 
     with pytest.raises(AttributeError, match=exception_message):

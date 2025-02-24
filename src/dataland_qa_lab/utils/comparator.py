@@ -34,7 +34,7 @@ def compare_yes_no_values(
             )
         else:
             qa_data_points[field_name] = QaReportDataPointExtendedDataPointYesNo(
-                comment="Geprüft durch AzureOpenAI",
+                comment="Reviewed by AzureOpenAI",
                 verdict=QaReportDataPointVerdict.QAACCEPTED,
                 correctedData=ExtendedDataPointYesNo(),
             )
