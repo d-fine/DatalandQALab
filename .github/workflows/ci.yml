@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATALAND_URL: ${{ vars.DATALAND_URL }}
-      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY_CI }}
+      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
       AZURE_OPENAI_API_KEY: "null"
       AZURE_OPENAI_ENDPOINT: "null"
       AZURE_DOCINTEL_API_KEY: "null"
