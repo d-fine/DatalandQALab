@@ -1,10 +1,11 @@
 import json
-import os
 
 import requests
 
-url = os.getenv("SLACK_WEBHOOK_URL")
-environment = os.getenv("ENVIRONMENT")
+from dataland_qa_lab.utils import config
+
+url: str | None = config.get_config().slack_webhook_url
+environment: str | None = config.get_config().environment
 
 
 def send_alert_message(message: str) -> requests.Response:

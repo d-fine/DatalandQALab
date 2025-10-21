@@ -16,7 +16,7 @@ dependencies = [
     "sqlalchemy>=2.0.37",
     "pg8000>=1.31.2",
     "ruff>=0.8.6",
-    "fastapi>=0.115.8",
+    "fastapi[standard]>=0.119.1",
     "uvicorn>=0.34.0",
     "apscheduler>=3.11.0",
 ]
@@ -40,6 +40,7 @@ doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
 doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"
 combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
+start = "fastapi run src/dataland_qa_lab/bin/server.py"
 
 [tool.pdm.dev-dependencies]
 notebooks = [

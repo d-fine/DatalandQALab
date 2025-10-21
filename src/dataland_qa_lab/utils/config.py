@@ -22,7 +22,7 @@ class DatalandQaLabSettings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).parent.parent.parent.parent / ".env", env_file_encoding="utf-8"
+        env_file=Path(__file__).parent.parent.parent.parent / ".env", env_file_encoding="utf-8", extra="ignore"
     )
 
     dataland_url: str
@@ -34,16 +34,10 @@ class DatalandQaLabSettings(BaseSettings):
     azure_docintel_api_key: str
     azure_docintel_endpoint: str
 
-    postgres_password: str
-    postgres_user: str
-
-    pgadmin_default_email: str
-    pgadmin_default_password: str
-
     database_connection_string: str
 
-    slack_webhook_url: str
-    environment: str
+    slack_webhook_url: str | None = None
+    environment: str | None = None
 
     @property
     def dataland_client(self) -> DatalandClient:
