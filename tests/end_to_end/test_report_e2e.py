@@ -147,15 +147,11 @@ def upload_test_dataset() -> str:
 
     with json_file_path.open(encoding="utf-8") as f:
         json_data = json.load(f)
-    json_company_id_free = json.dumps(json_data, indent=4)
     json_data["companyId"] = company_id
     json_str = json.dumps(json_data, indent=4)
-    json_file_path.write_text(json_str, encoding="utf-8")
 
     data_id = upload_dataset(
         company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period="2020"
     )
-
-    json_file_path.write_text(json_company_id_free, encoding="utf-8")
 
     return data_id
