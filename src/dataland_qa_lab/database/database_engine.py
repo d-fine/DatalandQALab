@@ -1,13 +1,13 @@
 import logging
-import os
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from dataland_qa_lab.database.database_tables import Base
+from dataland_qa_lab.utils import config
 
-DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
+DATABASE_URL = config.get_config().database_connection_string
 
 engine = create_engine(DATABASE_URL)
 

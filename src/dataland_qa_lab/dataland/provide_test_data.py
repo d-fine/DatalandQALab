@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from dataland_backend.models.basic_data_dimensions import BasicDataDimensions
 from dataland_backend.models.company_associated_data_nuclear_and_gas_data import (
     CompanyAssociatedDataNuclearAndGasData,
 )
@@ -45,18 +46,17 @@ def provide_test_data(pdf_path: Path, json_path: Path, dataland_client: Dataland
 
         with json_file_path.open(encoding="utf-8") as f:
             json_data = json.load(f)
-        json_company_id_free = json.dumps(json_data, indent=4)
         json_data["companyId"] = company_id
         json_str = json.dumps(json_data, indent=4)
-        json_file_path.write_text(json_str, encoding="utf-8")
 
         new_data_ids.append(
             upload_dataset(
-                company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period=None
+                company_id=company_id,
+                json_str=json_str,
+                dataland_client=dataland_client,
+                reporting_period=json_data["reportingPeriod"],
             )
         )
-
-        json_file_path.write_text(json_company_id_free, encoding="utf-8")
 
     return new_data_ids
 
@@ -112,17 +112,24 @@ def upload_dataset(
     :type json_str: Any
     :return: Returns data_id
     """
-    old_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.get_all_company_nuclear_and_gas_data(
-        company_id=company_id, reporting_period=reporting_period
+    old_dataset = dataland_client.meta_api.retrieve_meta_data_of_active_datasets(
+        basic_data_dimensions=[
+            BasicDataDimensions(
+                company_id=company_id,
+                reporting_period=reporting_period,
+                data_type="nuclear-and-gas",
+            )
+        ]
     )
-    if not old_dataset:
+
+    if len(old_dataset) == 0:
         nuclear_and_gas_data = CompanyAssociatedDataNuclearAndGasData.from_json(json_str)
 
         new_dataset = dataland_client.eu_taxonomy_nuclear_and_gas_api.post_company_associated_nuclear_and_gas_data(
             company_associated_data_nuclear_and_gas_data=nuclear_and_gas_data, bypass_qa=True
         )
         return new_dataset.data_id
-    return old_dataset[0].meta_info.data_id
+    return old_dataset[0].data_id
 
 
 def check_if_document_exists_in_dataland(pdf_id: str, dataland_client: DatalandClient) -> bool:

@@ -16,7 +16,7 @@ class TestUnreviewedDatasets(TestCase):
             mock_client.qa_api.get_number_of_pending_datasets.side_effect = exception
         else:
             mock_client.qa_api.get_number_of_pending_datasets.return_value = dataset_count
-            mock_client.qa_api.get_info_on_pending_datasets.return_value = datasets or []
+            mock_client.qa_api.get_info_on_datasets.return_value = datasets or []
 
         mock_conf = MagicMock()
         mock_conf.dataland_client = mock_client

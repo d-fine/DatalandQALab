@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -18,7 +19,7 @@ create_tables()
 
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-scheduler.add_job(scheduled_processor.run_scheduled_processing, trigger)
+job = scheduler.add_job(scheduled_processor.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
 scheduler.start()
 
 

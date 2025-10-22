@@ -1,5 +1,7 @@
 import logging
 
+from dataland_backend.models.qa_status import QaStatus
+
 from dataland_qa_lab.utils import config
 
 logger = logging.getLogger(__name__)
@@ -26,8 +28,8 @@ class UnreviewedDatasets:
                 logger.error(msg=msg_p, exc_info=ValueError)
                 raise ValueError(msg_p)  # noqa: TRY301
 
-            self.datasets = client.qa_api.get_info_on_pending_datasets(
-                data_types=["nuclear-and-gas"], chunk_size=number_of_datasets
+            self.datasets = client.qa_api.get_info_on_datasets(
+                data_types=["nuclear-and-gas"], chunk_size=number_of_datasets, qa_status=QaStatus.PENDING
             )
 
             self.list_of_data_ids = [dataset.data_id for dataset in self.datasets]
