@@ -19,10 +19,17 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
 
 
 def test_send_alert_message() -> None:
-    with patch("requests.post") as mocked_post:
+    with patch("requests.post") as mocked_post, patch(
+        "dataland_qa_lab.dataland.alerting.config.get_config"
+    ) as mocked_get_config:
+        # Provide a fake config object with slack_webhook_url and environment
+        fake_config = type("C", (), {"slack_webhook_url": "https://example.test", "environment": "testenv"})()
+        mocked_get_config.return_value = fake_config
+
         mocked_post.return_value.status_code = 200
         mocked_post.return_value.text = "ok"
         test = send_alert_message(message="test")
 
+    assert test is not None
     assert test.status_code == 200
     assert test.text == "ok"
