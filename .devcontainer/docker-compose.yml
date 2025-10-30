@@ -1,0 +1,24 @@
+---
+services:
+  dev_container:
+    profiles:
+      - dev
+    build:
+      context: ../
+      dockerfile: ./.devcontainer/dev_container.dockerfile
+
+
+  data_reviewer-db:
+    image: postgres:17.2
+    profiles:
+      - dev
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+volumes:
+  pgdata:
