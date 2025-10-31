@@ -1,17 +1,12 @@
 ---
 services:
   dev_container:
-    profiles:
-      - dev
     build:
       context: ../
-      dockerfile: ./.devcontainer/dev_container.dockerfile
-
+      dockerfile: ./.devcontainer/Dockerfile
 
   data_reviewer-db:
     image: postgres:17.2
-    profiles:
-      - dev
     restart: always
     env_file:
       - ../.env
