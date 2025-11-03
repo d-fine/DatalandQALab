@@ -11,6 +11,7 @@ RUN apt-get update && \
         libffi-dev \
         libzmq3-dev \
         git \
+        curl \
         && apt-get clean 
 
 RUN pip3 install -U pip pdm
