@@ -1,0 +1,12 @@
+{
+    "qa_lab_url": "http://127.0.0.1:8000",
+    "available_models": [
+        "gpt-4",
+        "gpt-3.5-turbo",
+        "gpt-3"
+    ],
+    "ai_model": "gpt-4",
+    "documents": [
+        "78084cdd-a31a-4067-85f7-d99859eccec6"
+    ]
+}
