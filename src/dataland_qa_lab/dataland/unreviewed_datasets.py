@@ -11,7 +11,7 @@ class UnreviewedDatasets:
     """Class representing the unreviewed datasets from the API."""
 
     datasets: list[any]
-    list_of_data_ids: list[str]
+    processing_queue: list[dict]
 
     def __init__(self) -> None:
         """Initialize the unreviewed datasets with the data from the API."""
@@ -29,10 +29,9 @@ class UnreviewedDatasets:
                 raise ValueError(msg_p)  # noqa: TRY301
 
             self.datasets = client.qa_api.get_info_on_datasets(
-                data_types=["nuclear-and-gas"], chunk_size=number_of_datasets, qa_status=QaStatus.PENDING
+            data_types=["nuclear-and-gas", "sfdr"], chunk_size=number_of_datasets, qa_status=QaStatus.PENDING
             )
-
-            self.list_of_data_ids = [dataset.data_id for dataset in self.datasets]
+            self.processing_queue = [{"id": dataset.data_id, "type": dataset.framework} for dataset in self.datasets]
 
         except RuntimeError:
             logger.exception("Timeout occurred while initializing the unreviewed datasets.")
