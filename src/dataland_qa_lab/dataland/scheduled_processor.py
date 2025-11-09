@@ -11,13 +11,15 @@ def run_scheduled_processing() -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     try:
         unreviewed_datasets = UnreviewedDatasets()
-        list_of_data_ids = unreviewed_datasets.list_of_data_ids
-        if len(list_of_data_ids) > 0:
-            logger.info("Processing unreviewed datasets with the list of Data-IDs: %s", list_of_data_ids)
-            for data_id in reversed(list_of_data_ids[:]):
+        processing_queue = unreviewed_datasets.processing_queue
+        if len(processing_queue) > 0:
+            logger.info("Processing unreviewed datasets with the list of Data-IDs: %s", processing_queue)
+            for item in reversed(processing_queue[:]):
+                data_id = item["id"]
+                framework = item["type"]
                 try:
-                    review_dataset(data_id)
-                    list_of_data_ids.remove(data_id)
+                    review_dataset(data_id=data_id, framework=framework)
+                    processing_queue.remove(item)
                 except Exception:
                     message = f"❗An error occured while reviewing the dataset with the Data-ID: {data_id}"
                     logger.exception("Error processing dataset with the Data-ID: %s", data_id)
