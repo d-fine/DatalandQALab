@@ -13,11 +13,9 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> str | None:
-    """Review a dataset."""
-    logger.info("Starting the review of the Dataset: %s", data_id)
-
-    dataset = dataset_provider.get_dataset_by_id(data_id)
+def review_dataset(data_id: str, framework: str, force_review: bool = False) -> str | None:
+    """Review dataset based on its framework."""
+    logger.info("Starting the review of the Dataset: %s (Framework: %s)", data_id, framework)
 
     existing_report = get_entity(data_id, ReviewedDataset)
 
@@ -28,49 +26,58 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
 
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
-        datetime_now = get_german_time_as_string()
-
-        message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
-        send_alert_message(message=message)
-
-        review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
-
-        logger.info("Adding the dataset to the database.")
-        add_entity(review_dataset)
-
-        data_collection = NuclearAndGasDataCollection(dataset.data)
-        logger.info("Data collection created.")
-
-        page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-
-        relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
-        if relevant_pages_pdf_reader is None:
-            report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
-
-        else:
-            readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
-            )
-
-            report = NuclearAndGasReportGenerator().generate_report(
-                relevant_pages=readable_text, dataset=data_collection
-            )
-
-        data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-            data_id=data_id, nuclear_and_gas_data=report
-        )
-
-        update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
-
-        message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: {data.qa_report_id}"
-        send_alert_message(message=message)
-
-        logger.info("Report posted successfully for dataset with ID: %s", data_id)
-        logger.info("Report ID: %s", data.qa_report_id)
-        return data.qa_report_id
+        if framework == "nuclear-and-gas":
+            return review_nuclear_and_gas_dataset(data_id)
+        if framework == "sfdr":
+            logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
+            # Placeholder for SFDR dataset review implementation
+            return None
+        logger.error("Unknown framework: %s for Data-ID: %s", framework, data_id)
+        return None
 
     logger.info("Report for data_id already exists.")
     return existing_report.report_id
+
+
+def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
+    """Execute the complete review process for a Nuclear and Gas dataset."""
+    dataset = dataset_provider.get_dataset_by_id(data_id)
+    datetime_now = get_german_time_as_string()
+
+    message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
+    send_alert_message(message=message)
+
+    review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
+
+    logger.info("Adding the dataset to the database.")
+    add_entity(review_dataset)
+
+    data_collection = NuclearAndGasDataCollection(dataset.data)
+    logger.info("Data collection created.")
+
+    page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+    relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+
+    if relevant_pages_pdf_reader is None:
+        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
+    else:
+        readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+            data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
+        )
+
+        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+    data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+        data_id=data_id, nuclear_and_gas_data=report
+    )
+
+    update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
+
+    message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: {data.qa_report_id}"
+    send_alert_message(message=message)
+
+    logger.info("Report posted successfully for dataset with ID: %s", data_id)
+    logger.info("Report ID: %s", data.qa_report_id)
+    return data.qa_report_id
 
 
 def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
