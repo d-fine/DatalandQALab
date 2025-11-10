@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import pathlib
-import sys
 from dataclasses import dataclass, field
 
 base_dir = pathlib.Path(__file__).parent
