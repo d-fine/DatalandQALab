@@ -12,7 +12,7 @@ def check_qalab_api_health() -> None:
     """Check if the QALab API is healthy."""
     url = urljoin(config.qa_lab_url, "/health")
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
     except requests.RequestException:
         sys.exit(1)
