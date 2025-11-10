@@ -1,30 +1,36 @@
 name: Monitor
 
+
 on:
-  push:
-    branches:
-      - DF-12-Build-a-script-to-run-benchmarks-on-AI-models
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Select Environment'
+      logLevel:
+        description: 'Log level'
         required: true
-        type: environment
-      cleanup_database:
-        description: 'Delete the database'
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
         required: false
         type: boolean
-        default: false
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
 
 jobs:
-  monitor:
+  log-the-inputs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Print Inputs
-        run: |
-          echo "Document: ${{ github.event.inputs.document }}"
-          echo "AI Model: ${{ github.event.inputs.ai_model }}"
-
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
