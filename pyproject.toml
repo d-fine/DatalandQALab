@@ -71,3 +71,11 @@ ignore = ["ISC001", "COM812", "DTZ001", "RET504", "D100"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[dependency-groups]
+dev = [
+    "black>=25.9.0",
+    "isort>=7.0.0",
+    "ruff>=0.14.4",
+    "mypy>=1.18.2",
+]
