@@ -17,5 +17,10 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
 
+  pgadmin:
+    image: ghcr.io/d-fine/datalandqalab/qalab-pgadmin:${QALAB_SERVER_VERSION}
+    ports:
+      - "127.0.0.1:5050:80"
+
 volumes:
   pgdata:

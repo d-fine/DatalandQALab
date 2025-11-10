@@ -2,20 +2,21 @@ import os
 
 from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 from monitor.qalab_api import run_report_on_qalab
-from monitor.utils import load_config
+from monitor.utils import load_config, store_output
 
 
 def monitor_documents(documents: list[str], ai_model: str) -> None:
     """Monitor documents by comparing source of truth with QALab responses."""
     for document in documents:
         print("\nProcessing document:", document)
-        try:
-            res = get_dataset_by_id(document)
-            source_of_truth = res.model_dump_json()
+        # try:
+        res = get_dataset_by_id(document)
+        source_of_truth = res.model_dump_json()
 
-            qalab_response = run_report_on_qalab(data_id=document, ai_model=ai_model, use_ocr=False)
-        except Exception as e:
-            print(f"Couldn't retrieve dataset for data_id {document}")
+        qalab_response = run_report_on_qalab(data_id=document, ai_model=ai_model, use_ocr=False)
+        store_output(source_of_truth, "test")
+        # except Exception as e:
+        #   print(f"Couldn't retrieve dataset for data_id {document}")
 
 
 def main():

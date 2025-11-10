@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 
 
 def load_config(config_path: str) -> dict:
@@ -12,3 +13,9 @@ def load_config(config_path: str) -> dict:
     except json.JSONDecodeError:
         print("Error decoding JSON from config file. Please check the file format.")
         exit(1)
+
+
+def store_output(data: str, file_name: str):
+    os.makedirs("./output", exist_ok=True)
+    with open(f"./output/{file_name}-{datetime.datetime.now()}", "w+") as f:
+        f.write(data)
