@@ -14,6 +14,7 @@ on:
         type: string
     branches:
       - '*'
+      
 jobs:
   monitor:
     runs-on: ubuntu-latest
