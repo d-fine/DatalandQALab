@@ -27,7 +27,7 @@ jobs:
       PGADMIN_DEFAULT_PASSWORD: password
       POSTGRES_PASSWORD: password
       POSTGRES_USER: postgres
-      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:password@data_reviewer-db:5432/dataland_qa_lab"
+      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:password@postgres:5432/dataland_qa_lab"
       QALAB_SERVER_VERSION: ${{ github.sha }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       ENVIRONMENT: ${{vars.ENVIRONMENT}}
