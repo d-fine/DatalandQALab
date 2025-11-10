@@ -1,36 +1,73 @@
+---
 name: Monitor
-
 
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
+      document:
+        description: 'Document IDs to monitor (comma-separated)'
         required: true
-        default: 'warning'
-        type: choice
-        options:
-        - info
-        - warning
-        - debug
-      tags:
-        description: 'Test scenario tags'
-        required: false
-        type: boolean
-      environment:
-        description: 'Environment to run tests against'
-        type: environment
+        type: string
+      ai_model:
+        description: 'AI Model to use for monitoring'
         required: true
-
+        type: string
+    branches:
+      - '*'
+      
 jobs:
-  log-the-inputs:
+  monitor:
     runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Log level: $LEVEL"
-          echo "Tags: $TAGS"
-          echo "Environment: $ENVIRONMENT"
+    env:
+      DATALAND_URL: https://test.dataland.com
+      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_DOCINTEL_API_KEY: ${{ secrets.AZURE_DOCINTEL_API_KEY }}
+      AZURE_DOCINTEL_ENDPOINT: ${{ secrets.AZURE_DOCINTEL_ENDPOINT }}
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      DATABASE_CONNECTION_STRING: "postgresql+pg8000://postgres:password@data_reviewer-db:5432/dataland_qa_lab"
+      QALAB_SERVER_VERSION: ${{ github.sha }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      ENVIRONMENT: ${{vars.ENVIRONMENT}}
+    services:
+      postgres:
+        image: postgres:17.2
         env:
-          LEVEL: ${{ inputs.logLevel }}
-          TAGS: ${{ inputs.tags }}
-          ENVIRONMENT: ${{ inputs.environment }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: dataland_qa_lab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+
+      - name: Generate API clients
+        run: ./bin/generate_dataland_api_clients.sh
+
+      - name: Install Dependencies
+        run: pdm install
+
+      - name: Run QaLab
+        run: pdm run start
+
+      - name: Run Monitoring Script
+        run: pdm run monitor 
+
+      - name: Upload Monitoring Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: monitoring-output
+          path: monitor/output
