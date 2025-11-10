@@ -12,8 +12,6 @@ on:
         description: 'AI Model to use for monitoring'
         required: true
         type: string
-    branches:
-      - '*'
       
 jobs:
   monitor:
