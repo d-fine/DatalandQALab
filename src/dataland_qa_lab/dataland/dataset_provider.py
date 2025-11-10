@@ -7,7 +7,7 @@ from dataland_qa_lab.utils import config
 logger = logging.getLogger(__name__)
 
 
-def get_dataset_by_id(data_id: str) -> CompanyAssociatedDataNuclearAndGasData:
+def get_dataset_by_id(data_id: str) -> CompanyAssociatedDataNuclearAndGasData | None:
     """Return the nuclear and gas dataset based on the data id."""
     client = config.get_config().dataland_client
 
