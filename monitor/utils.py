@@ -1,26 +1,61 @@
-import os
-import json
 import datetime
+import json
+import logging
+import os
+import pathlib
+import sys
+from dataclasses import dataclass, field
 
-output_dir = os.path.join(os.path.dirname(__file__), "output")
+base_dir = pathlib.Path(__file__).parent
+output_dir = base_dir / "output"
+config_path = base_dir / "config.json"
+
 cet_timezone = datetime.timezone(datetime.timedelta(hours=1))
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
-def load_config(config_path: str) -> dict:
+
+@dataclass
+class MonitorConfig:
+    """Configuration class for the monitor."""
+
+    documents: list[str] = field(default_factory=list)
+    qa_lab_url: str = "http://localhost:8000"
+    ai_model: str = "gpt-4"
+
+
+def load_config() -> MonitorConfig:
+    """Load configuration from a JSON file or environment variables (if no json is found)."""
     try:
-        with open(config_path, "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        print("Config file not found. Please ensure monitor/config.json exists.")
-        exit(1)
-    except json.JSONDecodeError:
-        print("Error decoding JSON from config file. Please check the file format.")
-        exit(1)
+        with pathlib.Path(config_path).open(encoding="utf-8") as f:
+            config = json.load(f)
+            return MonitorConfig(
+                qa_lab_url=config.get("qa_lab_url", "http://localhost:8000"),
+                documents=config.get("documents", []),
+                ai_model=config.get("ai_model", "gpt-4"),
+            )
+    except (json.JSONDecodeError, OSError):
+        logger.warning("Config file not found or invalid, falling back to environment variables.")
+
+    qa_lab_url = os.getenv("QA_LAB_URL", "http://localhost:8000")
+    documents_env = os.getenv("DOCUMENTS", "")
+    documents = documents_env.split(",") if documents_env else []
+    ai_model = os.getenv("AI_MODEL", "gpt-4")
+
+    return MonitorConfig(
+        qa_lab_url=qa_lab_url,
+        documents=documents,
+        ai_model=ai_model,
+    )
 
 
 def store_output(data: str, file_name: str, format_as_json: bool = False) -> None:
-    os.makedirs(output_dir, exist_ok=True)
-    with open(f"{output_dir}/{file_name}-{datetime.datetime.now(tz=cet_timezone)}", "w", encoding="utf-8") as f:
+    """Store output data to a file in the output directory (which gets stored as an artifact later on)."""
+    pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
+    with pathlib.Path(f"{output_dir}/{file_name}-{datetime.datetime.now(tz=cet_timezone)}").open(
+        "w", encoding="utf-8"
+    ) as f:
         if format_as_json:
             json.dump(data, f, indent=4, ensure_ascii=False)
         else:
