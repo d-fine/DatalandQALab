@@ -8,10 +8,10 @@ on:
         description: 'Document IDs to monitor (comma-separated)'
         required: true
         type: string
-    ai_model:
-      description: 'AI Model to use for monitoring'
-      required: true
-      type: string
+      ai_model:
+        description: 'AI Model to use for monitoring'
+        required: true
+        type: string
       
 jobs:
   monitor:
