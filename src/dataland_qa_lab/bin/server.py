@@ -38,3 +38,9 @@ def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
     """Review a single dataset via API call."""
     report_data = review_dataset(data_id=data_id, force_review=force_review)
     return report_data
+
+
+@dataland_qa_lab.get("/health")
+def health_check() -> dict:
+    """Health check endpoint."""
+    return {"status": "healthy"}

@@ -2,6 +2,8 @@ import os
 import json
 import datetime
 
+output_dir = os.path.join(os.path.dirname(__file__), "output")
+
 
 def load_config(config_path: str) -> dict:
     try:
@@ -16,6 +18,6 @@ def load_config(config_path: str) -> dict:
 
 
 def store_output(data: str, file_name: str):
-    os.makedirs("./output", exist_ok=True)
-    with open(f"./output/{file_name}-{datetime.datetime.now()}", "w+") as f:
+    os.makedirs(output_dir, exist_ok=True)
+    with open(f"{output_dir}/{file_name}-{datetime.datetime.now()}", "w+") as f:
         f.write(data)
