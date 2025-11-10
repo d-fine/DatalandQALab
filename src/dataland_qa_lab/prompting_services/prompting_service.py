@@ -1,4 +1,4 @@
-class NuclearAndGasPromptingService:
+class PromptingService:
     """Service for handling prompt requests."""
 
     @staticmethod

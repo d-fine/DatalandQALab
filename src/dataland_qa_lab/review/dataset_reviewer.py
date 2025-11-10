@@ -55,7 +55,7 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
     data_collection = NuclearAndGasDataCollection(dataset.data)
     logger.info("Data collection created.")
 
-    page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+    page_numbers = pages_provider.get_nuclear_and_gas_page_numbers(data_collection)
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
 
     if relevant_pages_pdf_reader is None:

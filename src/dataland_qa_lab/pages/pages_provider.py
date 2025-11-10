@@ -36,7 +36,7 @@ def get_relevant_pages_of_pdf(
             return None
 
     else:
-        logger.error(f"Unknown dataset type: {type(dataset)}")
+        logger.error("Unknown dataset type: %s", type(dataset))
         return None
     # pdf laden und schneiden
 
