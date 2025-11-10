@@ -1,0 +1,73 @@
+---
+name: Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      document:
+        description: 'Document IDs to monitor (comma-separated)'
+        required: true
+        type: string
+      ai_model:
+        description: 'AI Model to use for monitoring'
+        required: true
+        type: string
+      
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    env:
+      DATALAND_URL: ${{ vars.DATALAND_URL }}
+      DATALAND_API_KEY: ${{ secrets.DATALAND_API_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_DOCINTEL_API_KEY: ${{ secrets.AZURE_DOCINTEL_API_KEY }}
+      AZURE_DOCINTEL_ENDPOINT: ${{ secrets.AZURE_DOCINTEL_ENDPOINT }}
+      PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+      PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      QALAB_SERVER_VERSION: ${{ github.sha }}
+      SERVER_URL: ${{ vars.SERVER_URL }}
+      SSH_HOST_KEY: ${{ vars.SSH_HOST_KEY }}
+      PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      ENVIRONMENT: ${{vars.ENVIRONMENT}}
+    services:
+      postgres:
+        image: postgres:17.2
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: dataland_qa_lab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
+
+      - name: Generate API clients
+        run: ./bin/generate_dataland_api_clients.sh
+
+      - name: Install Dependencies
+        run: pdm install
+
+      - name: Run QaLab
+        run: pdm run start
+
+      - name: Run Monitoring Script
+        run: pdm run monitor 
+
+      - name: Upload Monitoring Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: monitoring-output
+          path: monitor/output
