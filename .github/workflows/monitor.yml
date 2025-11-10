@@ -6,14 +6,15 @@ on:
       - DF-12-Build-a-script-to-run-benchmarks-on-AI-models
   workflow_dispatch:
     inputs:
-      document:
-        description: 'Document IDs to monitor (comma-separated)'
+      environment:
+        description: 'Select Environment'
         required: true
-        type: string
-      ai_model:
-        description: 'AI Model to use for monitoring'
-        required: true
-        type: string
+        type: environment
+      cleanup_database:
+        description: 'Delete the database'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   monitor:
