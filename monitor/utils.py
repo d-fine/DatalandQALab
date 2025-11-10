@@ -52,7 +52,8 @@ def load_config() -> MonitorConfig:
 def store_output(data: str, file_name: str, format_as_json: bool = False) -> None:
     """Store output data to a file in the output directory (which gets stored as an artifact later on)."""
     pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
-    with pathlib.Path(f"{output_dir}/{file_name}-{datetime.datetime.now(tz=cet_timezone)}").open(
+    timestamp = datetime.datetime.now(tz=cet_timezone).strftime('%Y%m%d_%H%M%S')
+    with pathlib.Path(f"{output_dir}/{file_name}-{timestamp}").open(
         "w", encoding="utf-8"
     ) as f:
         if format_as_json:
