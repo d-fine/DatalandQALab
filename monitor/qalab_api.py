@@ -1,3 +1,4 @@
+import logging
 import sys
 from urllib.parse import urljoin
 
@@ -7,6 +8,9 @@ from monitor.utils import load_config
 
 config = load_config()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
 
 def check_qalab_api_health() -> None:
     """Check if the QALab API is healthy."""
@@ -15,6 +19,7 @@ def check_qalab_api_health() -> None:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
     except requests.RequestException:
+        logger.exception("QALab API health check failed. Please ensure the API is running and accessible.")
         sys.exit(1)
 
 
