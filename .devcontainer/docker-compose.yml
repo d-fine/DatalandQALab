@@ -19,6 +19,8 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    env_file:
+      - ../.env
     ports:
       - "127.0.0.1:5050:80"
 
