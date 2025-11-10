@@ -1,6 +1,9 @@
 name: Monitor
 
 on:
+  push:
+    branches:
+      - DF-12-Build-a-script-to-run-benchmarks-on-AI-models
   workflow_dispatch:
     inputs:
       document:
