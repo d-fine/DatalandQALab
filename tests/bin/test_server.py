@@ -1,6 +1,7 @@
+from unittest.mock import patch
+
 from fastapi.testclient import TestClient
 
-from unittest.mock import patch
 from dataland_qa_lab.bin.server import dataland_qa_lab
 
 client = TestClient(dataland_qa_lab)

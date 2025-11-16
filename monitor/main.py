@@ -27,9 +27,15 @@ def monitor_documents(documents: list[str], ai_model: str) -> None:
             logger.warning("Failed to parse dataset for document ID: %s: %s", document_id, e)
             continue
 
-        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr)  # noqa: F841
-
-        store_output(source_of_truth, "test", format_as_json=True)
+        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr)
+        store_output(
+            {
+                "source_of_truth": source_of_truth,
+                "qalab_response": qalab_response,
+            },
+            document_id,
+            format_as_json=True,
+        )
 
 
 def main() -> None:

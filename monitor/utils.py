@@ -1,15 +1,14 @@
-import datetime
 import json
 import logging
 import os
 import pathlib
+import time
 from dataclasses import dataclass, field
 
 base_dir = pathlib.Path(__file__).parent
 output_dir = base_dir / "output"
 config_path = base_dir / "config.json"
 
-cet_timezone = datetime.timezone(datetime.timedelta(hours=1))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -51,8 +50,8 @@ def load_config() -> MonitorConfig:
 def store_output(data: str | list | dict, file_name: str, format_as_json: bool = False) -> None:
     """Store output data to a file in the output directory (which gets stored as an artifact later on)."""
     pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
-    timestamp = datetime.datetime.now(tz=cet_timezone).strftime("%Y%m%d_%H%M%S")
-    with pathlib.Path(f"{output_dir}/{file_name}-{timestamp}").open("w", encoding="utf-8") as f:
+    timestamp = int(time.time())
+    with pathlib.Path(f"{output_dir}/{file_name}-{timestamp}.json").open("w", encoding="utf-8") as f:
         if format_as_json:
             json.dump(data, f, indent=4, ensure_ascii=False)
         else:

@@ -1,3 +1,4 @@
+import json
 import logging
 
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
@@ -13,7 +14,13 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> str | None:
+def review_dataset_via_api(data_id: str, force_override: bool = False) -> dict | str:  # noqa: ARG001 force_override is later going to allow overriding the dataland qa report
+    """Review a dataset via API call."""
+    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
+    return review_dataset(data_id=data_id, force_review=True)
+
+
+def review_dataset(data_id: str, force_review: bool = False) -> str | dict:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -67,10 +74,10 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
 
         logger.info("Report posted successfully for dataset with ID: %s", data_id)
         logger.info("Report ID: %s", data.qa_report_id)
-        return data.qa_report_id
+        return json.loads(report.to_json())
 
     logger.info("Report for data_id already exists.")
-    return existing_report.report_id
+    return existing_report
 
 
 def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
