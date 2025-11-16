@@ -21,24 +21,21 @@ def monitor_documents(documents: list[str], ai_model: str) -> None:
             logger.warning("Failed to retrieve dataset for document ID: %s", document_id)
             continue
 
-        # Convert dataset to Python dict
         try:
             source_of_truth = json.loads(dataland_response.model_dump_json())
         except json.JSONDecodeError as e:
             logger.warning("Failed to parse dataset for document ID: %s: %s", document_id, e)
             continue
 
-        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=False)  # noqa: F841
+        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr)  # noqa: F841
+
         store_output(source_of_truth, "test", format_as_json=True)
 
 
 def main() -> None:
     """Main monitoring function."""
-    # todo: change this!!!
     logger.info("======= Starting Monitoring =======")
     logger.info("======= Please note this script currently only works for nuclear and gas datasets =======")
-
-    # setting defaults, not sure if this is ideal or exiting would be better
 
     if not config.documents:
         logger.warning("No documents specified in config. Please add document IDs to monitor.")

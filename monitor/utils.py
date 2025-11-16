@@ -22,6 +22,7 @@ class MonitorConfig:
     documents: list[str] = field(default_factory=list)
     qa_lab_url: str = "http://localhost:8000"
     ai_model: str = "gpt-4"
+    use_ocr: bool = False
 
 
 def load_config() -> MonitorConfig:
@@ -33,6 +34,7 @@ def load_config() -> MonitorConfig:
                 qa_lab_url=config.get("qa_lab_url", "http://localhost:8000"),
                 documents=config.get("documents", []),
                 ai_model=config.get("ai_model", "gpt-4"),
+                use_ocr=config.get("use_ocr", False),
             )
     except (json.JSONDecodeError, OSError):
         logger.warning("Config file not found or invalid, falling back to environment variables.")
@@ -41,15 +43,12 @@ def load_config() -> MonitorConfig:
     documents_env = os.getenv("DOCUMENTS", "")
     documents = documents_env.split(",") if documents_env else []
     ai_model = os.getenv("AI_MODEL", "gpt-4")
+    use_ocr = os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"}
 
-    return MonitorConfig(
-        qa_lab_url=qa_lab_url,
-        documents=documents,
-        ai_model=ai_model,
-    )
+    return MonitorConfig(qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr)
 
 
-def store_output(data: str, file_name: str, format_as_json: bool = False) -> None:
+def store_output(data: str | list | dict, file_name: str, format_as_json: bool = False) -> None:
     """Store output data to a file in the output directory (which gets stored as an artifact later on)."""
     pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
     timestamp = datetime.datetime.now(tz=cet_timezone).strftime("%Y%m%d_%H%M%S")
@@ -57,4 +56,4 @@ def store_output(data: str, file_name: str, format_as_json: bool = False) -> Non
         if format_as_json:
             json.dump(data, f, indent=4, ensure_ascii=False)
         else:
-            f.write(data)
+            f.write(str(data))
