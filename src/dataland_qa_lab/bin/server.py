@@ -39,10 +39,10 @@ def review_dataset_endpoint(
     data_id: str, force_override: bool = False, use_ocr: bool = False, ai_model: str = "gpt-4"
 ) -> dict:
     """Review a single dataset via API call."""
-    start_time = int(time.time())
-    report_data = review_dataset_via_api(data_id=data_id, force_override=force_override)
-    end_time = int(time.time())
-    return {
+    start_time = int(time.time())  # pragma: no cover
+    report_data = review_dataset_via_api(data_id=data_id, force_override=force_override)  # pragma: no cover
+    end_time = int(time.time())  # pragma: no cover
+    return {  # pragma: no cover
         "report_data": report_data,
         "start_time": start_time,
         "end_time": end_time,

@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab, scheduler
