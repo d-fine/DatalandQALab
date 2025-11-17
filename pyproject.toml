@@ -12,7 +12,7 @@ dependencies = [
     "pypdf>=5.0.1",
     "cryptography>=43.0.1",
     "azure-ai-documentintelligence>=1.0.0b4",
-    "openai>=2.7.1",
+    "openai>=1.51.2",
     "sqlalchemy>=2.0.37",
     "pg8000>=1.31.2",
     "ruff>=0.8.6",
@@ -41,6 +41,7 @@ doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-mo
 combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
 start = "fastapi run src/dataland_qa_lab/bin/server.py"
+dev = "fastapi dev src/dataland_qa_lab/bin/server.py"
 
 [tool.pdm.dev-dependencies]
 notebooks = [

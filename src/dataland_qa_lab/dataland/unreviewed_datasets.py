@@ -19,7 +19,7 @@ class UnreviewedDatasets:
         logger.info(msg="Initializing the unreviewed Datasets with the data from Dataland.")
         if client is None:
             msg = "Client Setup failed in the configuration."
-            logger.exception(msg)
+            logger.error(msg)
             raise ValueError(msg)
         try:
             number_of_datasets = client.qa_api.get_number_of_pending_datasets()
