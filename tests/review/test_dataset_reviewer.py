@@ -4,9 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.dataland_qa_lab.review.dataset_reviewer import (
-    review_dataset,
-)
+from src.dataland_qa_lab.review.dataset_reviewer import review_dataset, review_dataset_via_api
 
 
 @pytest.fixture
@@ -93,3 +91,31 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
 
     assert result == existing_report
     mock_dependencies["add_entity"].assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("report_id", "expected"),
+    [
+        ("some_report_id", {"mock": "data"}),  # simulate a successful report
+        (None, {"error": "Failed to retrieve data"}),  # simulate failure
+    ],
+)
+def test_review_dataset_via_api(report_id: str, expected: str) -> None:
+    data_id = "test-data-id"
+
+    # Mock review_dataset
+    with patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset", return_value=report_id):
+        # Mock config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(...).to_json()
+        mock_report = MagicMock()
+        mock_report.to_json.return_value = json.dumps({"mock": "data"})
+
+        mock_client = MagicMock()
+        mock_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report.return_value = mock_report
+
+        mock_config = MagicMock()
+        mock_config.dataland_client = mock_client
+
+        with patch("src.dataland_qa_lab.review.dataset_reviewer.config.get_config", return_value=mock_config):
+            result = review_dataset_via_api(data_id)
+
+            assert result == expected

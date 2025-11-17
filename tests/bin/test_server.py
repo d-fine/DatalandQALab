@@ -15,9 +15,14 @@ def test_health_check() -> None:
 
 
 @patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset_via_api")
-def test_review_dataset_endpoint(mock_review: MagicMock) -> None:
+@patch("src.dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
+def test_review_dataset_endpoint(mock_doc_client: MagicMock, mock_review: MagicMock) -> None:
     # Mock the dataset review response
     mock_review.return_value = {"report_data": "fake report"}
+
+    mock_poller = MagicMock()
+    mock_poller.result.return_value = "mocked text"
+    mock_doc_client.begin_analyze_document.return_value = mock_poller
 
     data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
     response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
