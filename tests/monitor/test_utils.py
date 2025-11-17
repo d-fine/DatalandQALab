@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from monitor.utils import load_config, store_output
+from monitor.utils import load_config, match_sot_and_qareport, snake_case_to_camel_case, store_output
 
 
 @pytest.fixture
@@ -98,3 +98,147 @@ def test_store_output(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     with files[0].open("r", encoding="utf-8") as f:
         content = json.load(f)
         assert content == data, "Contents do not match expected data"
+
+
+@pytest.mark.parametrize(
+    ("snake", "camel"),
+    [
+        ("simple", "simple"),
+        ("two_words", "twoWords"),
+        ("three_word_string", "threeWordString"),
+        ("alreadyCamel", "alreadyCamel"),
+        ("with_numbers_123", "withNumbers123"),
+    ],
+)
+def test_snake_case_to_camel_case(snake: str, camel: str) -> None:
+    """Test conversion from snake_case to camelCase."""
+    assert snake_case_to_camel_case(snake) == camel
+
+
+def test_match_sot_basic() -> None:
+    """Test basic matching functionality."""
+    source_of_truth = {
+        "data": {
+            "general": {
+                "general": {
+                    "field_one": "value",
+                    "field_two": "value",
+                    "referenced_reports": ["id1"],
+                }
+            }
+        }
+    }
+
+    qalab_report = {
+        "report_data": {
+            "general": {
+                "general": {
+                    "fieldOne": {"verdict": "QaAccepted"},
+                    "fieldTwo": {"verdict": "QaRejected"},
+                }
+            }
+        }
+    }
+
+    res = match_sot_and_qareport(source_of_truth, qalab_report)
+
+    assert res["total_fields"] == 2
+    assert res["qa_accepted"] == 1
+    assert res["qa_rejected"] == 1
+    assert res["qa_inconclusive"] == 0
+    assert res["qa_not_attempted"] == 0
+
+
+def test_missing_field_in_qalab() -> None:
+    """If a field exists in SoT but not in QALab, it should count as None verdict."""
+    source_of_truth = {
+        "data": {
+            "general": {
+                "general": {
+                    "foo_bar": "x",
+                    "referenced_reports": [],
+                }
+            }
+        }
+    }
+
+    qalab_report = {"report_data": {"general": {"general": {}}}}
+
+    res = match_sot_and_qareport(source_of_truth, qalab_report)
+
+    assert res["total_fields"] == 1
+    assert res["qa_accepted"] == 0
+    assert res["qa_rejected"] == 0
+    assert res["qa_inconclusive"] == 0
+    assert res["qa_not_attempted"] == 0
+
+
+def test_all_verdict_types() -> None:
+    """Test counting of all verdict types."""
+    source_of_truth = {
+        "data": {
+            "general": {
+                "general": {
+                    "a": "",
+                    "b": "",
+                    "c": "",
+                    "d": "",
+                    "referenced_reports": [],
+                }
+            }
+        }
+    }
+
+    qalab_report = {
+        "report_data": {
+            "general": {
+                "general": {
+                    "a": {"verdict": "QaAccepted"},
+                    "b": {"verdict": "QaRejected"},
+                    "c": {"verdict": "QaInconclusive"},
+                    "d": {"verdict": "QaNotAttempted"},
+                }
+            }
+        }
+    }
+
+    res = match_sot_and_qareport(source_of_truth, qalab_report)
+
+    assert res == {
+        "total_fields": 4,
+        "qa_accepted": 1,
+        "qa_rejected": 1,
+        "qa_inconclusive": 1,
+        "qa_not_attempted": 1,
+    }
+
+
+def test_unrecognized_verdict() -> None:
+    """Unknown verdicts should not break counting."""
+    source_of_truth = {
+        "data": {
+            "general": {
+                "general": {
+                    "weird_field": "",
+                }
+            }
+        }
+    }
+
+    qalab_report = {
+        "report_data": {
+            "general": {
+                "general": {
+                    "weirdField": {"verdict": "QaWeirdCase"},
+                }
+            }
+        }
+    }
+
+    res = match_sot_and_qareport(source_of_truth, qalab_report)
+
+    assert res["total_fields"] == 1
+    assert res["qa_accepted"] == 0
+    assert res["qa_rejected"] == 0
+    assert res["qa_inconclusive"] == 0
+    assert res["qa_not_attempted"] == 0
