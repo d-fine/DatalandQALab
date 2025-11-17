@@ -96,16 +96,14 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
 @pytest.mark.parametrize(
     ("report_id", "expected"),
     [
-        ("some_report_id", {"mock": "data"}),  # simulate a successful report
-        (None, {"error": "Failed to retrieve data"}),  # simulate failure
+        ("some_report_id", {"mock": "data"}),
+        (None, {"error": "Failed to retrieve data"}),
     ],
 )
 def test_review_dataset_via_api(report_id: str, expected: str) -> None:
     data_id = "test-data-id"
 
-    # Mock review_dataset
     with patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset", return_value=report_id):
-        # Mock config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(...).to_json()
         mock_report = MagicMock()
         mock_report.to_json.return_value = json.dumps({"mock": "data"})
 
