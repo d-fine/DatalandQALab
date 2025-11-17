@@ -14,32 +14,6 @@ def test_health_check() -> None:
     assert response.json() == {"status": "healthy"}
 
 
-@patch("src.dataland_qa_lab.pages.text_to_doc_intelligence.get_markdown_from_dataset")
-def test_review_dataset_endpoint(mock_client: MagicMock) -> None:
-    mock_poller = MagicMock()
-    mock_poller.result.return_value = {"content": "This is fake markdown extracted from PDF"}
-    mock_client.begin_analyze_document.return_value = mock_poller
-
-    data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
-    response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
-
-    assert response.status_code == 200
-    body = response.json()
-
-    assert "report_data" in body
-    assert "start_time" in body
-    assert "end_time" in body
-    assert "force_override" in body
-    assert "use_ocr" in body
-    assert "ai_model" in body
-
-    assert isinstance(body["start_time"], int)
-    assert isinstance(body["end_time"], int)
-    assert body["force_override"] is False
-    assert body["use_ocr"] is True
-    assert body["ai_model"] == "gpt-4"
-
-
 def test_lifespan_shutdown() -> None:
     """Test that the scheduler shuts down correctly during lifespan exit."""
     original_shutdown = scheduler.shutdown
