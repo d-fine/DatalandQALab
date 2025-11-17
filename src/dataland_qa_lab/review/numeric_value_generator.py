@@ -81,9 +81,9 @@ class NumericValueGenerator:
             return num
         # Normalize Unicode minus variants to ASCII "-"
         normalized_value = (
-            value.replace("\u2212", "-")   # mathematical minus (U+2212)
-                 .replace("\u2013", "-")   # en dash / Gedankenstrich (U+2013)
-                 .strip()             # remove surrounding spaces
+            value.replace("\u2212", "-")  # mathematical minus (U+2212)
+            .replace("\u2013", "-")  # en dash / Gedankenstrich (U+2013)
+            .strip()  # remove surrounding spaces
         )
         # Safe regex: Match optional negative sign, then digits, optional dot, and more digits
         match = re.search(r"-?\d+(?:\.\d+)?", normalized_value)
