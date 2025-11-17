@@ -4,7 +4,7 @@ name: Monitor
 on:
   workflow_dispatch:
     inputs:
-      document:
+      documents:
         description: 'Document IDs to monitor (comma-separated)'
         required: true
         type: string
