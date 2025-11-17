@@ -131,12 +131,15 @@ def test_match_sot_basic() -> None:
 
     qalab_report = {
         "report_data": {
-            "general": {
+            "metaInfo": {},
+            "report": {
                 "general": {
-                    "fieldOne": {"verdict": "QaAccepted"},
-                    "fieldTwo": {"verdict": "QaRejected"},
+                    "general": {
+                        "fieldOne": {"verdict": "QaAccepted"},
+                        "fieldTwo": {"verdict": "QaRejected"},
+                    }
                 }
-            }
+            },
         }
     }
 
@@ -162,7 +165,7 @@ def test_missing_field_in_qalab() -> None:
         }
     }
 
-    qalab_report = {"report_data": {"general": {"general": {}}}}
+    qalab_report = {"report_data": {"report": {"general": {"general": {}}}}}
 
     res = match_sot_and_qareport(source_of_truth, qalab_report)
 
@@ -191,12 +194,14 @@ def test_all_verdict_types() -> None:
 
     qalab_report = {
         "report_data": {
-            "general": {
+            "report": {
                 "general": {
-                    "a": {"verdict": "QaAccepted"},
-                    "b": {"verdict": "QaRejected"},
-                    "c": {"verdict": "QaInconclusive"},
-                    "d": {"verdict": "QaNotAttempted"},
+                    "general": {
+                        "a": {"verdict": "QaAccepted"},
+                        "b": {"verdict": "QaRejected"},
+                        "c": {"verdict": "QaInconclusive"},
+                        "d": {"verdict": "QaNotAttempted"},
+                    }
                 }
             }
         }
@@ -227,9 +232,11 @@ def test_unrecognized_verdict() -> None:
 
     qalab_report = {
         "report_data": {
-            "general": {
+            "report": {
                 "general": {
-                    "weirdField": {"verdict": "QaWeirdCase"},
+                    "general": {
+                        "weirdField": {"verdict": "QaWeirdCase"},
+                    }
                 }
             }
         }
