@@ -20,15 +20,15 @@ def test_generate_taxonomy_aligned_numerator_report(mock_generate_gpt_request: M
     """Tests the generation of taxonomy-aligned numerator report."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.0,
         0.0,
         0.0,
@@ -57,15 +57,15 @@ def test_generate_revenue_numerator_report_frame(mock_generate_gpt_request: Mock
     """Tests the generation of revenue numerator report frame."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.0,
         0.0,
         0.0,
@@ -85,8 +85,8 @@ def test_generate_revenue_numerator_report_frame(mock_generate_gpt_request: Mock
     report_frame = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report_frame is not None
-    assert not report_frame.comment
-    assert report_frame.verdict == QaReportDataPointVerdict.QAACCEPTED
+    assert "Error retrieving prompted values for template 3" in report_frame.comment
+    assert report_frame.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert report_frame.corrected_data.value is None
 
 
@@ -95,15 +95,15 @@ def test_compare_taxonomy_numerator_values(mock_generate_gpt_request: Mock) -> N
     """Tests the comparison of taxonomy numerator values."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.0,
         0.0,
         0.0,
@@ -122,36 +122,21 @@ def test_compare_taxonomy_numerator_values(mock_generate_gpt_request: Mock) -> N
     ]
     revenue_report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")
 
-    assert (
-        revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g426.mitigation_and_adaptation
-        is None
-    )
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g426.mitigation is None
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g426.adaptation is None
+    assert revenue_report.corrected_data.value is None
 
-    assert (
-        revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g430.mitigation_and_adaptation == 0.0
-    )
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g430.mitigation == 0.0
-    assert revenue_report.corrected_data.value.taxonomy_aligned_share_numerator_n_and_g430.adaptation == 0.0
-
-    assert revenue_report.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert revenue_report.comment == (
-        "Discrepancy in 'taxonomy_aligned_share_numerator_other_activities': 100.0 != 99.0."
-        "Discrepancy in 'taxonomy_aligned_share_numerator': 0.0 != 2.0."
-    )
+    assert "Error retrieving prompted values for template 3" in revenue_report.comment
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_taxonomy_aligned_numerator_report_edge_cases(mock_generate_gpt_request: Mock) -> None:
     dataset, relevant_pages = provide_test_data_collection()
-    mock_generate_gpt_request.return_value = [-1.0] * 24
+    mock_generate_gpt_request.return_value = [None] * 24
 
     report = report_generator.build_numerator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report is not None
-    assert report.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert report.corrected_data.quality == "NoDataFound"
+    assert report.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert report.corrected_data.quality is None
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")

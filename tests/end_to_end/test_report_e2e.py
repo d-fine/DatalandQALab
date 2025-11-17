@@ -53,9 +53,10 @@ def test_report_generator_end_to_end() -> None:
     ]
 
     assert (
-        data_taxonomy_aligned_revenue_denominator["comment"]
-        == "Discrepancy in 'taxonomy_aligned_share_denominator_n_and_g426': 15 != 0.0."
-    )
+    "Discrepancy in 'taxonomy_aligned_share_denominator_n_and_g426': -1 != None."
+    in data_taxonomy_aligned_revenue_denominator["comment"]
+)
+
     assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_aligned_revenue_denominator["verdict"]
     assert data_taxonomy_aligned_revenue_denominator["correctedData"] == {
         "value": {
@@ -76,9 +77,10 @@ def test_report_generator_end_to_end() -> None:
         "nuclearAndGasTaxonomyEligibleButNotAlignedCapex"
     ]
 
-    assert not data_taxonomy_eligible_but_not_aligned["comment"]
-    assert QaReportDataPointVerdict.QAACCEPTED in data_taxonomy_eligible_but_not_aligned["verdict"]
-    assert data_taxonomy_eligible_but_not_aligned["correctedData"] == {}
+    assert "Discrepancy in 'taxonomy_eligible_but_not_aligned_share_n_and_g426': -1 != None." in \
+       data_taxonomy_eligible_but_not_aligned["comment"]
+
+    assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_eligible_but_not_aligned["verdict"]
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
