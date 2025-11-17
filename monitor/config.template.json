@@ -7,5 +7,6 @@
         "gpt-3"
     ],
     "ai_model": "",
+    "use_ocr": false,
     "documents": []
 }
