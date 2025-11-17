@@ -1,9 +1,7 @@
-from unittest.mock import patch
-
 import pytest
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa_lab.bin.server import dataland_qa_lab, scheduler
 
 client = TestClient(dataland_qa_lab)
 
@@ -14,9 +12,8 @@ def test_health_check() -> None:
     assert response.json() == {"status": "healthy"}
 
 
-@pytest.mark.slow  # this test case would take around 1:30min since it runs all the codes logic
-@patch("src.dataland_qa_lab.bin.server.review_dataset_endpoint")
-def test_review_dataset_endpoint() -> None:  # noqa: ANN001
+# this test case would take around 1:30min since it runs all the codes logic
+def test_review_dataset_endpoint() -> None:
     data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
 
     response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
@@ -31,6 +28,29 @@ def test_review_dataset_endpoint() -> None:  # noqa: ANN001
     assert "use_ocr" in body
     assert "ai_model" in body
 
+    assert isinstance(body["start_time"], int)
+    assert isinstance(body["end_time"], int)
     assert body["force_override"] is False
     assert body["use_ocr"] is True
     assert body["ai_model"] == "gpt-4"
+
+
+@pytest.mark.integration
+def test_lifespan_shutdown() -> None:
+    # Spy on scheduler.shutdown to verify it runs
+    original_shutdown = scheduler.shutdown
+    called = {}
+
+    def fake_shutdown() -> None:
+        called["shutdown"] = True
+
+    scheduler.shutdown = fake_shutdown
+
+    # Use TestClient in context manager to trigger lifespan
+    with TestClient(dataland_qa_lab):
+        pass  # entering and exiting context triggers lifespan
+
+    assert called.get("shutdown") is True
+
+    # Restore original
+    scheduler.shutdown = original_shutdown
