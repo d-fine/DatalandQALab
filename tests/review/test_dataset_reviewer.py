@@ -70,7 +70,7 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
 
     result = review_dataset(data_id)
 
-    assert result == {"report": "data"}
+    assert result == "report_123"
     mock_dependencies["add_entity"].assert_called_once()
     mock_dependencies["update_reviewed_dataset_in_database"].assert_called_once_with(
         data_id=data_id, report_id="report_123"
