@@ -100,7 +100,7 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
         (None, {"error": "Failed to retrieve data"}),
     ],
 )
-def test_review_dataset_via_api(report_id: str, expected: str) -> None:
+def test_review_dataset_via_api(report_id: str, expected: dict) -> None:
     data_id = "test-data-id"
 
     with patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset", return_value=report_id):
