@@ -53,9 +53,9 @@ def test_report_generator_end_to_end() -> None:
     ]
 
     assert (
-    "Discrepancy in 'taxonomy_aligned_share_denominator_n_and_g426': -1 != None."
-    in data_taxonomy_aligned_revenue_denominator["comment"]
-)
+        "Discrepancy in 'taxonomy_aligned_share_denominator_n_and_g426': -1 != None."
+        in data_taxonomy_aligned_revenue_denominator["comment"]
+    )
 
     assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_aligned_revenue_denominator["verdict"]
     assert data_taxonomy_aligned_revenue_denominator["correctedData"] == {
@@ -77,8 +77,10 @@ def test_report_generator_end_to_end() -> None:
         "nuclearAndGasTaxonomyEligibleButNotAlignedCapex"
     ]
 
-    assert "Discrepancy in 'taxonomy_eligible_but_not_aligned_share_n_and_g426': -1 != None." in \
-       data_taxonomy_eligible_but_not_aligned["comment"]
+    assert (
+        "Discrepancy in 'taxonomy_eligible_but_not_aligned_share_n_and_g426': -1 != None."
+        in data_taxonomy_eligible_but_not_aligned["comment"]
+    )
 
     assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_eligible_but_not_aligned["verdict"]
 
