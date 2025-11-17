@@ -17,10 +17,20 @@ logger = logging.getLogger(__name__)
 def review_dataset_via_api(data_id: str, force_override: bool = False) -> dict | str:  # noqa: ARG001 force_override is later going to allow overriding the dataland qa report
     """Review a dataset via API call."""
     # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
-    return review_dataset(data_id=data_id, force_review=True)
+    report_id = review_dataset(data_id=data_id, force_review=True)
+
+    if report_id is None:
+        return {"error": "Failed to retrieve data"}
+    return json.loads(
+        config.get_config()
+        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+            data_id=data_id, qa_report_id=report_id
+        )
+        .to_json()
+    )
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> str | dict:
+def review_dataset(data_id: str, force_review: bool = False) -> str | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -74,7 +84,7 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | dict:
 
         logger.info("Report posted successfully for dataset with ID: %s", data_id)
         logger.info("Report ID: %s", data.qa_report_id)
-        return json.loads(report.to_json())
+        return data.qa_report_id
 
     logger.info("Report for data_id already exists.")
     return existing_report

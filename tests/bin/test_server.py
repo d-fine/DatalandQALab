@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab, scheduler
@@ -12,11 +14,13 @@ def test_health_check() -> None:
     assert response.json() == {"status": "healthy"}
 
 
-# this test case would take around 1:30min since it runs all the codes logic
-def test_review_dataset_endpoint() -> None:
-    """Test the /review/{data_id} endpoint."""
-    data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
+@patch("src.dataland_qa_lab.pages.text_to_doc_intelligence.get_markdown_from_dataset")
+def test_review_dataset_endpoint(mock_client: MagicMock) -> None:
+    mock_poller = MagicMock()
+    mock_poller.result.return_value = {"content": "This is fake markdown extracted from PDF"}
+    mock_client.begin_analyze_document.return_value = mock_poller
 
+    data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
     response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
 
     assert response.status_code == 200

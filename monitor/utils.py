@@ -66,7 +66,7 @@ def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
         for key in source_of_truth.get("data", {}).get("general", {}).get("general", {})
         if key != "referenced_reports"
     }
-    qa_general = qalab_report.get("report_data", {}).get("general", {}).get("general", {})
+    qa_general = qalab_report.get("report_data", {}).get("report", {}).get("general", {}).get("general", {})
 
     counter = Counter()
 
