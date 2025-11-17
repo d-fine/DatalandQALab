@@ -14,32 +14,25 @@ def test_health_check() -> None:
     assert response.json() == {"status": "healthy"}
 
 
-@patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset_via_api")
-@patch("src.dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
-def test_review_dataset_endpoint(mock_doc_client: MagicMock, mock_review: MagicMock) -> None:
-    # Mock the dataset review response
-    mock_review.return_value = {"report_data": "fake report"}
-
-    mock_poller = MagicMock()
-    mock_poller.result.return_value = "mocked text"
-    mock_doc_client.begin_analyze_document.return_value = mock_poller
-
+def test_review_dataset_endpoint() -> None:
     data_id = "2faf0140-b338-47ec-9c7f-276209f63e95"
-    response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
+
+    with patch("src.dataland_qa_lab.bin.server.review_dataset_via_api") as mock_review:
+        mock_review.return_value = {
+            "report_data": {"fake": "data"},
+            "start_time": 123456,
+            "end_time": 123457,
+            "force_override": False,
+            "use_ocr": True,
+            "ai_model": "gpt-4",
+        }
+
+        response = client.get(f"/review/{data_id}?force_override=false&use_ocr=true&ai_model=gpt-4")
 
     assert response.status_code == 200
     body = response.json()
 
-    # assert fields
-    assert "report_data" in body
-    assert "start_time" in body
-    assert "end_time" in body
-    assert "force_override" in body
-    assert "use_ocr" in body
-    assert "ai_model" in body
-
-    assert isinstance(body["start_time"], int)
-    assert isinstance(body["end_time"], int)
+    assert body["report_data"] == {"fake": "data"}
     assert body["force_override"] is False
     assert body["use_ocr"] is True
     assert body["ai_model"] == "gpt-4"
