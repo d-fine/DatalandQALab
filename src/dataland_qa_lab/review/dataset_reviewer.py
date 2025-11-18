@@ -87,7 +87,7 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
         return data.qa_report_id
 
     logger.info("Report for data_id already exists.")
-    return existing_report.report_id
+    return existing_report
 
 
 def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
