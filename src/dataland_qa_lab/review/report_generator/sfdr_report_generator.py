@@ -8,7 +8,7 @@ from dataland_qa_lab.prompting_services.sfdr_prompting_service import SFDRPrompt
 from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
 from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 
-from dataland_qa.models import SfdrGeneral, SfdrGeneralGeneral
+from dataland_qa.models import SfdrGeneral, SfdrGeneralGeneral, SfdrEnvironmental, SfdrSocial
 
 from dataland_qa_lab.review.report_generator import (
     denominator_report_generator,
@@ -46,28 +46,60 @@ class SfdrReportGenerator:
         """Orchestrates the review process for an SFDR dataset."""
 
         self.relevant_pages = relevant_pages
-        self.report = SfdrData(general=SfdrGeneral(general=SfdrGeneralGeneral()))
-
-        self.report.general.taxonomy_aligned_denominator = (
-            denominator_report_generator.build_taxonomy_aligned_denominator_report(
-                dataset=dataset, relevant_pages=relevant_pages
-            )
+        self.report = SfdrData(
+            general=SfdrGeneral(general=SfdrGeneralGeneral()), environmental=SfdrEnvironmental(), social=SfdrSocial()
         )
 
-        self.report.general.taxonomy_aligned_numerator = (
+        self.report.general.general = denominator_report_generator.build_taxonomy_aligned_denominator_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+
+        # environmental category
+
+        self.report.environmental.greenhouse_gas_emissions = (
             numerator_report_generator.build_taxonomy_aligned_numerator_report(
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
 
-        self.report.general.taxonomy_eligible_but_not_aligned = (
+        self.report.environmental.energy_performance = (
             eligible_not_aligned_report_generator.build_taxonomy_eligible_but_not_aligned_report(
                 dataset=dataset, relevant_pages=relevant_pages
             )
         )
 
-        self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+        self.report.environmental.biodiversity = non_eligible_report_generator.build_taxonomy_non_eligible_report(
             dataset=dataset, relevant_pages=relevant_pages
+        )
+
+        self.report.environmental.water = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+
+        self.report.environmental.waste = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+
+        self.report.environmental.emissions = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+
+        # social category
+        self.report.social.social_and_employee_matters = (
+            non_eligible_report_generator.build_taxonomy_non_eligible_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
+        self.report.social.green_security = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+        self.report.social.human_rights = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
+        self.report.social.anti_corruption_and_anti_bribery = (
+            non_eligible_report_generator.build_taxonomy_non_eligible_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
         )
 
         logger.info("Report generated succesfully.")

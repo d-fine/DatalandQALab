@@ -1,6 +1,6 @@
 from dataland_backend.models.nuclear_and_gas_data import NuclearAndGasData
 
-from dataland_qa_lab.models.datapoint_classes import (
+from dataland_qa_lab.models.nuclear_and_gas_datapoint_classes import (
     TaxonomyAlignedNumeratorDatapoint,
     TaxonomyEligibleButNotAlignedDatapoint,
     TaxonomyNonEligibleDatapoint,
