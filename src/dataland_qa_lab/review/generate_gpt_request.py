@@ -44,7 +44,7 @@ class GenerateGptRequest:
 
             try:
                 updated_openai_response = client.chat.completions.create(
-                    model="gpt-4o",
+                    model="ai_model",
                     temperature=0,
                     messages=[
                         {"role": "system", "content": mainprompt},

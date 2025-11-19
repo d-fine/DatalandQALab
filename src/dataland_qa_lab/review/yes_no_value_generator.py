@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 NUM_EXPECTED_VALUES = 6
 
 
-def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]:
+def get_yes_no_values_from_report(readable_text: str, ai_model: str = "gpt-4o") -> dict[str, YesNo | None]:
     """Extracts information from template 1 using Azure OpenAI and returns a list of results.
 
     Returns:
@@ -21,6 +21,7 @@ def get_yes_no_values_from_report(readable_text: str) -> dict[str, YesNo | None]
         extracted_list = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
             prompting_service.PromptingService.create_main_prompt(1, readable_text, ""),
             prompting_service.PromptingService.create_sub_prompt_template1(),
+            ai_model=ai_model,
         )
         if not extracted_list:
             msg = "No results returned from GPT for Yes_No values."
