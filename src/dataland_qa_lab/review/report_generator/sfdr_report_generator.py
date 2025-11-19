@@ -47,7 +47,7 @@ class SfdrReportGenerator:
 
         self.relevant_pages = relevant_pages
         self.report = SfdrData(
-            general=SfdrGeneral(general=SfdrGeneralGeneral()), environmental=SfdrEnvironmental(), social=SfdrSocial()
+            #            general=SfdrGeneral(general=SfdrGeneralGeneral()), environmental=SfdrEnvironmental(), #social=SfdrSocial()
         )
 
         self.report.general.general = denominator_report_generator.build_taxonomy_aligned_denominator_report(
@@ -62,6 +62,7 @@ class SfdrReportGenerator:
             )
         )
 
+        """
         self.report.environmental.energy_performance = (
             eligible_not_aligned_report_generator.build_taxonomy_eligible_but_not_aligned_report(
                 dataset=dataset, relevant_pages=relevant_pages
@@ -102,6 +103,7 @@ class SfdrReportGenerator:
             )
         )
 
+        """
         logger.info("Report generated succesfully.")
 
         return self.report
