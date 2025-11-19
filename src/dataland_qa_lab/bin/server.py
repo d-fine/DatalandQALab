@@ -10,10 +10,12 @@ from dataland_qa_lab.database.database_engine import create_tables
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review.dataset_reviewer import review_dataset
 from dataland_qa_lab.utils import console_logger
+from dataland_qa_lab.utils.notifications import install_global_exception_hook
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 console_logger.configure_console_logger()
+install_global_exception_hook()
 logger.info("Launching the Dataland QA Lab server")
 create_tables()
 
