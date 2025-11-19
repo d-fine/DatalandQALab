@@ -13,7 +13,7 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True,
+def review_dataset(data_id: str, force_review: bool = False, ai_model: str | None = None, use_ocr: bool = True,
                    ) -> str | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
