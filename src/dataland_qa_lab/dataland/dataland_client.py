@@ -50,6 +50,11 @@ class DatalandClient:
         return dataland_backend.NuclearAndGasDataControllerApi(self.backend_client)
 
     @property
+    def sfdr_api(self) -> dataland_backend.SfdrDataControllerApi:
+        """Function to run the eu-taxonomy-nuclear-and-gas-data-controller API."""
+        return dataland_backend.SfdrDataControllerApi(self.backend_client)
+
+    @property
     def documents_client(self) -> dataland_documents.ApiClient:
         """Retrieves the client for accessing the documents API."""
         config = dataland_documents.Configuration(
