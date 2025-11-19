@@ -15,7 +15,7 @@ from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, framework: str = "nuclear-and-gas", force_review: bool = False) -> str | None:
+def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = False) -> str | None:
     """Review dataset based on its framework."""
     logger.info("Starting the review of the Dataset: %s (Framework: %s)", data_id, framework)
 
@@ -33,6 +33,7 @@ def review_dataset(data_id: str, framework: str = "nuclear-and-gas", force_revie
         if framework == "sfdr":
             logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
             # Placeholder for SFDR dataset review implementation
+            return review_sfdr_dataset(data_id)
             return None
         logger.error("Unknown framework: %s for Data-ID: %s", framework, data_id)
         return None
@@ -109,9 +110,7 @@ def review_sfdr_dataset(data_id: str) -> str | None:
         )
 
         report = SfdrReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
-    data = config.get_config().dataland_client.sfdr_qa_api.post_sfdr_data_qa_report(
-        data_id=data_id, sfdr_data=report
-    )
+    data = config.get_config().dataland_client.sfdr_qa_api.post_sfdr_data_qa_report(data_id=data_id, sfdr_data=report)
 
     update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
 

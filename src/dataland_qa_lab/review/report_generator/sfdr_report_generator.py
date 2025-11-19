@@ -8,6 +8,16 @@ from dataland_qa_lab.prompting_services.sfdr_prompting_service import SFDRPrompt
 from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
 from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 
+from dataland_qa.models import SfdrGeneral, SfdrGeneralGeneral
+
+from dataland_qa_lab.review.report_generator import (
+    denominator_report_generator,
+    eligible_not_aligned_report_generator,
+    non_eligible_report_generator,
+    numerator_report_generator,
+    yes_no_report_generator,
+)
+
 logger = logging.getLogger(__name__)
 
 # --- KONFIGURATION ---
@@ -26,115 +36,40 @@ FIELDS_TO_CHECK = {
 }
 
 
-class SFDRReportGenerator:
+class SfdrReportGenerator:
     """Generates QA reports for SFDR datasets in a scalable way."""
 
-    def generate_report(self, data_id: str, dataset: SfdrData) -> dict:
+    relevant_pages: str
+    report: SfdrData
+
+    def generate_report(self, relevant_pages: str, dataset: SFDRDataCollection) -> SfdrData:
         """Orchestrates the review process for an SFDR dataset."""
-        logger.info("Generating SFDR report for Data-ID: %s", data_id)
 
-        # 1. Daten vorbereiten
-        sfdr_collection = SFDRDataCollection(dataset)
-        final_report = {}
+        self.relevant_pages = relevant_pages
+        self.report = SfdrData(general=SfdrGeneral(general=SfdrGeneralGeneral()))
 
-        # 2. PDF-Seiten holen (nur einmal für alle Felder!)
-        relevant_pdf = pages_provider.get_relevant_pages_of_pdf(sfdr_collection)
-        if not relevant_pdf:
-            logger.warning("No PDF pages found. Returning empty report.")
-            return {}
-
-        # 3. Text extrahieren (nur einmal!)
-        # Wir holen alle Seitenzahlen, die für irgendeines der Felder relevant sind
-        all_page_numbers = pages_provider.get_sfdr_page_numbers(sfdr_collection)
-
-        markdown_text = text_to_doc_intelligence.get_markdown_from_dataset(
-            data_id=data_id,
-            relevant_pages_pdf_reader=relevant_pdf,
-            page_numbers=all_page_numbers,
+        self.report.general.taxonomy_aligned_denominator = (
+            denominator_report_generator.build_taxonomy_aligned_denominator_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
         )
 
-        if not markdown_text:
-            logger.warning("Could not extract markdown text.")
-            return {}
+        self.report.general.taxonomy_aligned_numerator = (
+            numerator_report_generator.build_taxonomy_aligned_numerator_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
 
-        # 4. Generische Schleife über alle konfigurierten Felder
-        for field_id, config in FIELDS_TO_CHECK.items():
-            logger.info("--- Processing field: %s ---", field_id)
+        self.report.general.taxonomy_eligible_but_not_aligned = (
+            eligible_not_aligned_report_generator.build_taxonomy_eligible_but_not_aligned_report(
+                dataset=dataset, relevant_pages=relevant_pages
+            )
+        )
 
-            # KI fragen
-            ai_value = self._extract_ai_value(markdown_text, config)
+        self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report(
+            dataset=dataset, relevant_pages=relevant_pages
+        )
 
-            # Dataland-Wert holen
-            dataland_value = sfdr_collection.get_value(field_id)
+        logger.info("Report generated succesfully.")
 
-            # Report für dieses Feld bauen
-            field_report = self._build_field_report(dataland_value, ai_value)
-
-            final_report[field_id] = field_report
-
-        return final_report
-
-    @staticmethod
-    def _extract_ai_value(markdown_text: str, config: dict) -> float | None:
-        """Fragt die KI generisch nach einem Wert."""
-        prompt = SFDRPromptingService.create_scope1_prompt(
-            markdown_text
-        )  # , config["field_name_for_ai"], config["unit"])
-        schema = SFDRPromptingService.create_scope1_schema()
-
-        try:
-            ai_response = GenerateGptRequest.generate_gpt_request(prompt, json.dumps(schema, indent=4))
-
-            # Antwort parsen (Dict oder Liste von Dicts)
-            if isinstance(ai_response, list) and ai_response:
-                ai_response = ai_response[0]
-
-            if isinstance(ai_response, dict):
-                val = ai_response.get("value")
-                logger.info("AI found value: %s", val)
-                return val
-
-            logger.warning("Unexpected AI response format: %s", ai_response)
-
-        except Exception:
-            logger.exception("AI Request failed.")
-
-        return None
-
-    @staticmethod
-    def _build_field_report(dataland_value: float | str | None, ai_value: float | None) -> dict:
-        """Compares values and builds the JSON report structure."""
-        # Dataland-Wert sicher in Float wandeln
-        try:
-            data_float = float(dataland_value) if dataland_value is not None else None
-        except (ValueError, TypeError):
-            data_float = None
-
-        # AI-Wert sicher in Float wandeln (falls er als String kam)
-        try:
-            ai_float = float(ai_value) if ai_value is not None else None
-        except (ValueError, TypeError):
-            ai_float = None
-
-        # Logik für den Verdict
-        if ai_float is None:
-            verdict = "QaNotAttempted"
-            comment = "AI could not extract a value from the document."
-
-        elif data_float is None:
-            verdict = "QaInconclusive"
-            comment = f"AI extracted {ai_float}, but Dataland has no value."
-
-        elif ai_float == data_float:
-            verdict = "QaAccepted"
-            comment = "Value matches."
-
-        else:
-            verdict = "QaRejected"
-            comment = f"Mismatch: AI extracted {ai_float}, Dataland has {data_float}."
-
-        return {
-            "verdict": verdict,
-            "comment": comment,
-            "corrected_value": ai_value if verdict == "QaRejected" else None,
-        }
+        return self.report
