@@ -10,27 +10,28 @@ class NumericValueGenerator:
     TEMPLATE_ID_5 = 5
 
     @staticmethod
-    def get_taxonomy_aligned_denominator(readable_text: str, kpi: str, ai_model: str = "gpt-4o") -> list:
+    def get_taxonomy_aligned_denominator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
         """Extracts information from template 2 using Azure OpenAI and returns a list of results."""
         return NumericValueGenerator.extract_values_from_template(2, readable_text, kpi, ai_model)
 
     @staticmethod
-    def get_taxonomy_aligned_numerator(readable_text: str, kpi: str, ai_model: str = "gpt-4o") -> list:
+    def get_taxonomy_aligned_numerator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
         """Extracts information from template 3 using Azure OpenAI and returns a list of results."""
         return NumericValueGenerator.extract_values_from_template(3, readable_text, kpi, ai_model)
 
     @staticmethod
-    def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str, ai_model: str = "gpt-4o") -> list:
+    def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
         """Extracts information from template 4 using Azure OpenAI and returns a list of results."""
         return NumericValueGenerator.extract_values_from_template(4, readable_text, kpi, ai_model)
 
     @staticmethod
-    def get_taxonomy_non_eligible(readable_text: str, kpi: str, ai_model: str = "gpt-4o") -> list:
+    def get_taxonomy_non_eligible(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
         """Extracts information from template 5 using Azure OpenAI and returns a list of results."""
         return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi, ai_model)
 
     @staticmethod
-    def extract_values_from_template(template_id: int, readable_text: str, kpi: str, ai_model: str = "gpt-4o") -> list:
+    def extract_values_from_template(template_id: int, readable_text: str, kpi: str, ai_model: str | None = None,
+    ) -> list:
         """Generic method to extract values from a given template using Azure OpenAI."""
         try:
             prompt_method = (
@@ -39,11 +40,21 @@ class NumericValueGenerator:
                 else prompting_service.PromptingService.create_sub_prompt_template2to4
             )
 
-            values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                prompting_service.PromptingService.create_main_prompt(template_id, readable_text, kpi),
-                prompt_method(kpi),
-                ai_model=ai_model,
-            )
+            main_prompt = prompting_service.PromptingService.create_main_prompt(template_id, readable_text, kpi)
+            sub_prompt = prompt_method(kpi)
+
+            if ai_model is None:
+                values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+                    main_prompt,
+                    sub_prompt,
+                )
+
+            else:
+                values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+                    main_prompt,
+                    sub_prompt,
+                    ai_model,
+                )
 
             if not values:
                 msg = f"No results returned from GPT for template {template_id} values."

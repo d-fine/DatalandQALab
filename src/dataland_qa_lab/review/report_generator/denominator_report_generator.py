@@ -18,25 +18,25 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_denominator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create a report frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
         nuclearAndGasTaxonomyAlignedRevenueDenominator=build_denominator_report_frame(
-            dataset, relevant_pages, "Revenue"
+            dataset, relevant_pages, "Revenue", ai_model=ai_model,
         ),
         nuclearAndGasTaxonomyAlignedCapexDenominator=build_denominator_report_frame(dataset, relevant_pages, "CapEx"),
     )
 
 
 def build_denominator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, kpi: str, ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build a report frame for a specific KPI denominator (Revenue or CapEx)."""
     if relevant_pages is None:
         return create_not_attempted_report("No relevant pages found")
     try:
-        prompted_values = NumericValueGenerator.get_taxonomy_aligned_denominator(relevant_pages, kpi)
+        prompted_values = NumericValueGenerator.get_taxonomy_aligned_denominator(relevant_pages, kpi, ai_model=ai_model)
     except ValueError:
         return create_not_attempted_report("Error retrieving prompted values for template 2")
     try:

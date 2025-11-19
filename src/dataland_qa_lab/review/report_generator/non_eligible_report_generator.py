@@ -15,23 +15,25 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_non_eligible_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyNonEligible:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Non Eligible."""
     return NuclearAndGasGeneralTaxonomyNonEligible(
-        nuclearAndGasTaxonomyNonEligibleRevenue=build_non_eligible_report_frame(dataset, relevant_pages, "Revenue"),
-        nuclearAndGasTaxonomyNonEligibleCapex=build_non_eligible_report_frame(dataset, relevant_pages, "CapEx"),
+        nuclearAndGasTaxonomyNonEligibleRevenue=build_non_eligible_report_frame(dataset, relevant_pages, "Revenue",
+             ai_model=ai_model),
+        nuclearAndGasTaxonomyNonEligibleCapex=build_non_eligible_report_frame(dataset, relevant_pages, "CapEx",
+            ai_model=ai_model),
     )
 
 
 def build_non_eligible_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
+    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, kpi: str, ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasNonEligible:
     """Build report frame for the revenue non_eligible."""
     if relevant_pages is None:
         return create_not_attempted_report("No relevant pages found")
     try:
-        prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi)
+        prompted_values = NumericValueGenerator.get_taxonomy_non_eligible(relevant_pages, kpi, ai_model=ai_model)
     except ValueError:
         return create_not_attempted_report("Error retrieving prompted values for template 5")
     try:
