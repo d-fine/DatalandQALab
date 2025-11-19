@@ -22,7 +22,7 @@ class NuclearAndGasReportGenerator(ReportGenerator):
     relevant_pages: str
     report: NuclearAndGasData
 
-    def __init__(self, ai_model: str = "gpt-4o") -> None:
+    def __init__(self, ai_model: str | None = None) -> None:
         """Initialize the report generator with a configurable AI model."""
         self.ai_model = ai_model
 
