@@ -1,0 +1,457 @@
+{
+    "company_id": "55dac65b-62e7-4839-915f-4d097785cfd5",
+    "reporting_period": "2024",
+    "data": {
+        "general": {
+            "general": {
+                "referenced_reports": {
+                    "Nichtfinanzieller_Bericht_2024": {
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_energy_related_activities_section426": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_energy_related_activities_section427": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_energy_related_activities_section428": {
+                    "value": "Yes",
+                    "quality": null,
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "fossil_gas_related_activities_section429": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "fossil_gas_related_activities_section430": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "fossil_gas_related_activities_section431": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "121",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                }
+            },
+            "taxonomy_aligned_denominator": {
+                "nuclear_and_gas_taxonomy_aligned_revenue_denominator": {
+                    "value": {
+                        "taxonomy_aligned_share_denominator_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g427": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g428": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g430": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_other_activities": {
+                            "mitigation_and_adaptation": 0.38,
+                            "mitigation": 0.38,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator": {
+                            "mitigation_and_adaptation": 0.39,
+                            "mitigation": 0.39,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "122",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_and_gas_taxonomy_aligned_capex_denominator": {
+                    "value": {
+                        "taxonomy_aligned_share_denominator_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g427": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g428": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g430": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator_other_activities": {
+                            "mitigation_and_adaptation": 0.45,
+                            "mitigation": 0.45,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_denominator": {
+                            "mitigation_and_adaptation": 0.46,
+                            "mitigation": 0.46,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "123",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                }
+            },
+            "taxonomy_aligned_numerator": {
+                "nuclear_and_gas_taxonomy_aligned_revenue_numerator": {
+                    "value": {
+                        "taxonomy_aligned_share_numerator_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g427": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g428": {
+                            "mitigation_and_adaptation": 1.66,
+                            "mitigation": 1.66,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g430": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_other_activities": {
+                            "mitigation_and_adaptation": 98.33,
+                            "mitigation": 98.33,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator": {
+                            "mitigation_and_adaptation": 100,
+                            "mitigation": 100,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "124",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_and_gas_taxonomy_aligned_capex_numerator": {
+                    "value": {
+                        "taxonomy_aligned_share_numerator_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g427": {
+                            "mitigation_and_adaptation": 0.21,
+                            "mitigation": 0.21,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g428": {
+                            "mitigation_and_adaptation": 1.3,
+                            "mitigation": 1.3,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g430": {
+                            "mitigation_and_adaptation": 0.01,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_aligned_share_numerator_other_activities": {
+                            "mitigation_and_adaptation": 98.46,
+                            "mitigation": 98.44,
+                            "adaptation": 0.03
+                        },
+                        "taxonomy_aligned_share_numerator": {
+                            "mitigation_and_adaptation": 100,
+                            "mitigation": 99.96,
+                            "adaptation": 0.03
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "125",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                }
+            },
+            "taxonomy_eligible_but_not_aligned": {
+                "nuclear_and_gas_taxonomy_eligible_but_not_aligned_revenue": {
+                    "value": {
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g427": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g428": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g430": {
+                            "mitigation_and_adaptation": 0.01,
+                            "mitigation": 0.01,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_other_activities": {
+                            "mitigation_and_adaptation": 39.02,
+                            "mitigation": 39,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share": {
+                            "mitigation_and_adaptation": 39.05,
+                            "mitigation": 39.03,
+                            "adaptation": 0
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "126",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_and_gas_taxonomy_eligible_but_not_aligned_capex": {
+                    "value": {
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g426": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g427": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g428": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g429": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g430": {
+                            "mitigation_and_adaptation": 0.01,
+                            "mitigation": 0.01,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_n_and_g431": {
+                            "mitigation_and_adaptation": 0,
+                            "mitigation": 0,
+                            "adaptation": 0
+                        },
+                        "taxonomy_eligible_but_not_aligned_share_other_activities": {
+                            "mitigation_and_adaptation": 39,
+                            "mitigation": 38.98,
+                            "adaptation": 0.02
+                        },
+                        "taxonomy_eligible_but_not_aligned_share": {
+                            "mitigation_and_adaptation": 39.02,
+                            "mitigation": 39,
+                            "adaptation": 0.02
+                        }
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "127",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                }
+            },
+            "taxonomy_non_eligible": {
+                "nuclear_and_gas_taxonomy_non_eligible_revenue": {
+                    "value": {
+                        "taxonomy_non_eligible_share_n_and_g426": 0,
+                        "taxonomy_non_eligible_share_n_and_g427": 0,
+                        "taxonomy_non_eligible_share_n_and_g428": 0,
+                        "taxonomy_non_eligible_share_n_and_g429": 0,
+                        "taxonomy_non_eligible_share_n_and_g430": 0,
+                        "taxonomy_non_eligible_share_n_and_g431": 0,
+                        "taxonomy_non_eligible_share_other_activities": 60.55,
+                        "taxonomy_non_eligible_share": 60.55
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "128",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                },
+                "nuclear_and_gas_taxonomy_non_eligible_capex": {
+                    "value": {
+                        "taxonomy_non_eligible_share_n_and_g426": 0,
+                        "taxonomy_non_eligible_share_n_and_g427": 0,
+                        "taxonomy_non_eligible_share_n_and_g428": 0,
+                        "taxonomy_non_eligible_share_n_and_g429": 0,
+                        "taxonomy_non_eligible_share_n_and_g430": 0,
+                        "taxonomy_non_eligible_share_n_and_g431": 0,
+                        "taxonomy_non_eligible_share_other_activities": 60.49,
+                        "taxonomy_non_eligible_share": 60.5
+                    },
+                    "quality": "Reported",
+                    "comment": "",
+                    "data_source": {
+                        "page": "129",
+                        "tag_name": null,
+                        "file_name": "Nichtfinanzieller_Bericht_2024",
+                        "file_reference": "894170b18271d1c6fb541989efb8a08ce9a9eaefdd034dd645693dc8f8659510",
+                        "publication_date": "2025-06-04"
+                    }
+                }
+            }
+        }
+    }
+}

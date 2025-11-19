@@ -16,7 +16,6 @@ def get_sfdr_dataset_by_id(data_id: str) -> CompanyAssociatedDataSfdrData | None
 
     try:
         dataset = client.sfdr_api.get_company_associated_sfdr_data(data_id=data_id)
-        # dataset = client.sfdr_qa_api. (data_id=data_id)
         logger.info("Dataset retrieved for the given data id %s", data_id)
     except Exception as e:
         logger.exception(

@@ -1,16 +1,17 @@
-import json
 import logging
-from dataclasses import asdict
 
+from dataland_backend.models.company_associated_data_nuclear_and_gas_data import (
+    CompanyAssociatedDataNuclearAndGasData,
+)
+from dataland_backend.models.company_associated_data_sfdr_data import (
+    CompanyAssociatedDataSfdrData,
+)
 
-from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
-from dataland_qa_lab.database.database_tables import ReviewedDataset
-# from dataland_qa_lab.dataland import dataset_provider
-
-# imports for different categories
+# import data providers
 from dataland_qa_lab.categories.nuclear_and_gas_data.dataset_provider import get_nuclear_and_gas_dataset_by_id
 from dataland_qa_lab.categories.sfdr.dataset_provider import get_sfdr_dataset_by_id
-
+from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
+from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
@@ -21,7 +22,9 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def retrieve_dataset_from_dataland(data_id: str, framework: str = "nuclear-and-gas") -> str | None:
+def retrieve_dataset_from_dataland(
+    data_id: str, framework: str = "nuclear-and-gas"
+) -> CompanyAssociatedDataNuclearAndGasData | CompanyAssociatedDataSfdrData | None:
     """Review dataset based on its framework."""
     logger.info("Starting review of the Dataset with the Data-ID: %s", data_id)
 
@@ -38,59 +41,7 @@ def retrieve_dataset_from_dataland(data_id: str, framework: str = "nuclear-and-g
             dataset = get_nuclear_and_gas_dataset_by_id(data_id)
         case "sfdr":
             dataset = get_sfdr_dataset_by_id(data_id)
-
-    if dataset is None:
-        return None
-
-    """_summary_
-
-    Returns:
-        _type_: _description_
-    if framework == "nuclear-and-gas":
-        return review_nuclear_and_gas_dataset(data_id)
-    if framework == "sfdr":
-        logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
-        # Placeholder for SFDR dataset review implementation
-
-    logger.info("Report for data_id already exists.")
-    return existing_report.report_id
-    """
-
-
-def review_dataset(data_id: str, framework: str = "nuclear-and-gas") -> str | None:
-    """Review dataset based on its framework."""
-    logger.info("Starting review of the Dataset with the Data-ID: %s", data_id)
-
-    existing_report = get_entity(data_id, ReviewedDataset)
-
-    if existing_report:
-        logger.info("Deleting old review from the database")
-        delete_entity(data_id, ReviewedDataset)
-
-    dataset = None
-    # this is the router for different frameworks
-    match framework:
-        case "nuclear-and-gas":
-            dataset = get_nuclear_and_gas_dataset_by_id(data_id)
-        case "sfdr":
-            dataset = get_sfdr_dataset_by_id(data_id)
-
-    if dataset is None:
-        return None
-
-    """_summary_
-
-    Returns:
-        _type_: _description_
-    if framework == "nuclear-and-gas":
-        return review_nuclear_and_gas_dataset(data_id)
-    if framework == "sfdr":
-        logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
-        # Placeholder for SFDR dataset review implementation
-
-    logger.info("Report for data_id already exists.")
-    return existing_report.report_id
-    """
+    return dataset
 
 
 def review_nuclear_and_gas_dataset(data_id: str) -> str | None:

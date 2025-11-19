@@ -7,6 +7,12 @@ class NuclearAndGasPrompting:
     def __init__(self) -> None:
         pass
 
+    def run_prompt(self, field_name: str, pdf: str):
+        print(field_name)
+        match field_name:
+            case "case_1":
+                return ""
+
     def generate_prompt_case_1(pdf: str) -> str:
         json_subprompt = {
             "type": "object",
