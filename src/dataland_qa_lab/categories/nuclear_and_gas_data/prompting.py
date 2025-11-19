@@ -6,7 +6,6 @@ class NuclearAndGasPrompting:
 
     def __init__(self) -> None:
         pass
-<<<<<<< HEAD
 
     def run_prompt(self, field_name: str, pdf: str):
         print(field_name)
@@ -14,9 +13,6 @@ class NuclearAndGasPrompting:
             case "case_1":
                 return ""
 
-=======
-    @staticmethod
->>>>>>> 1f447ffc57cc92d668ebc5467922b811bf38d2dc
     def generate_prompt_case_1(pdf: str) -> str:
         json_subprompt = {
             "type": "object",
@@ -99,11 +95,10 @@ class NuclearAndGasPrompting:
 
         {json.dumps(json_subprompt, indent=4)}
         """
-        
+
     @staticmethod
-    def generate_prompt_case_2(pdf: str, kpi:str)  -> str:
-        """Prompt for template 2.
-        """
+    def generate_prompt_case_2(pdf: str, kpi: str) -> str:
+        """Prompt for template 2."""
         schema = NuclearAndGasPrompting._get_schema_template_2to4(kpi)
 
         return f"""
@@ -116,9 +111,10 @@ class NuclearAndGasPrompting:
                 # Relevant Documents
                 {pdf}
                 
-                {json.dumps(schema, indent=4)}"""  
-    @staticmethod            
-    def generate_prompt_case_3(pdf: str, kpi:str)  -> str:
+                {json.dumps(schema, indent=4)}"""
+
+    @staticmethod
+    def generate_prompt_case_3(pdf: str, kpi: str) -> str:
         """Prompt for template 3."""
         schema = NuclearAndGasPrompting._get_schema_template_2to4(kpi)
 
@@ -132,10 +128,10 @@ class NuclearAndGasPrompting:
                 {pdf}
                 
                 {json.dumps(schema, indent=4)}
-                """   
-                
+                """
+
     @staticmethod
-    def generate_prompt_case_4(pdf: str, kpi:str)  -> str:
+    def generate_prompt_case_4(pdf: str, kpi: str) -> str:
         """Prompt for template 4."""
         schema = NuclearAndGasPrompting._get_schema_template_2to4(kpi)
 
@@ -150,9 +146,9 @@ class NuclearAndGasPrompting:
                 
                 {json.dumps(schema, indent=4)}
                 """
-   
+
     @staticmethod
-    def generate_prompt_case_5(pdf: str, kpi:str)  -> str:
+    def generate_prompt_case_5(pdf: str, kpi: str) -> str:
         """Prompt for template 5."""
         rows = [1, 2, 3, 4, 5, 6, 7, 8]
         schema = {"type": "object", "properties": {}, "required": []}
@@ -180,8 +176,7 @@ class NuclearAndGasPrompting:
                 
                 {json.dumps(schema, indent=4)}
                 """
-        
-        
+
     @staticmethod
     def _get_schema_template_2to4(kpi: str) -> dict:
         """Helper to generate the schema for templates 2, 3, and 4."""
