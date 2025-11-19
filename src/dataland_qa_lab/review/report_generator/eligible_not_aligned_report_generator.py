@@ -18,28 +18,40 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_eligible_but_not_aligned_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str | None,
+    ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyEligibleButNotAligned:
     """Create Report Frame for the Nuclear and Gas General Taxonomy eligible but not alinged data."""
     return NuclearAndGasGeneralTaxonomyEligibleButNotAligned(
         nuclearAndGasTaxonomyEligibleButNotAlignedRevenue=build_eligible_but_not_aligned_frame(
-            dataset, relevant_pages, "Revenue", ai_model=ai_model,
+            dataset,
+            relevant_pages,
+            "Revenue",
+            ai_model=ai_model,
         ),
         nuclearAndGasTaxonomyEligibleButNotAlignedCapex=build_eligible_but_not_aligned_frame(
-            dataset, relevant_pages, "CapEx", ai_model=ai_model,
+            dataset,
+            relevant_pages,
+            "CapEx",
+            ai_model=ai_model,
         ),
     )
 
 
 def build_eligible_but_not_aligned_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str,
+    kpi: str,
+    ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasEligibleButNotAligned:
     """Build a report frame for a specific KPI (Revenue or CapEx)."""
     if relevant_pages is None:
         return create_not_attempted_report("No relevant pages found")
     try:
-        prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(relevant_pages, kpi,
-            ai_model=ai_model)
+        prompted_values = NumericValueGenerator.get_taxonomy_eligible_not_alligned(
+            relevant_pages, kpi, ai_model=ai_model
+        )
     except ValueError:
         return create_not_attempted_report("Error retrieving prompted values for template 4")
     try:

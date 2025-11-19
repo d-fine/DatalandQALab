@@ -30,7 +30,11 @@ class NumericValueGenerator:
         return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi, ai_model)
 
     @staticmethod
-    def extract_values_from_template(template_id: int, readable_text: str, kpi: str, ai_model: str | None = None,
+    def extract_values_from_template(
+        template_id: int,
+        readable_text: str,
+        kpi: str,
+        ai_model: str | None = None,
     ) -> list:
         """Generic method to extract values from a given template using Azure OpenAI."""
         try:

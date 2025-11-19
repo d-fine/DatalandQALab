@@ -32,29 +32,39 @@ class NuclearAndGasReportGenerator(ReportGenerator):
         self.report = NuclearAndGasData(general=NuclearAndGasGeneral(general=NuclearAndGasGeneralGeneral()))
 
         self.report.general.general = yes_no_report_generator.build_yes_no_report(
-            dataset=dataset, relevant_pages=relevant_pages, ai_model=self.ai_model,
+            dataset=dataset,
+            relevant_pages=relevant_pages,
+            ai_model=self.ai_model,
         )
 
         self.report.general.taxonomy_aligned_denominator = (
             denominator_report_generator.build_taxonomy_aligned_denominator_report(
-                dataset=dataset, relevant_pages=relevant_pages, ai_model=self.ai_model,
+                dataset=dataset,
+                relevant_pages=relevant_pages,
+                ai_model=self.ai_model,
             )
         )
 
         self.report.general.taxonomy_aligned_numerator = (
             numerator_report_generator.build_taxonomy_aligned_numerator_report(
-                dataset=dataset, relevant_pages=relevant_pages, ai_model=self.ai_model,
+                dataset=dataset,
+                relevant_pages=relevant_pages,
+                ai_model=self.ai_model,
             )
         )
 
         self.report.general.taxonomy_eligible_but_not_aligned = (
             eligible_not_aligned_report_generator.build_taxonomy_eligible_but_not_aligned_report(
-                dataset=dataset, relevant_pages=relevant_pages, ai_model=self.ai_model,
+                dataset=dataset,
+                relevant_pages=relevant_pages,
+                ai_model=self.ai_model,
             )
         )
 
         self.report.general.taxonomy_non_eligible = non_eligible_report_generator.build_taxonomy_non_eligible_report(
-            dataset=dataset, relevant_pages=relevant_pages, ai_model=self.ai_model,
+            dataset=dataset,
+            relevant_pages=relevant_pages,
+            ai_model=self.ai_model,
         )
 
         logger.info("Report generated succesfully.")

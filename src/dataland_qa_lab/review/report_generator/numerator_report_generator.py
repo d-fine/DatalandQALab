@@ -18,19 +18,26 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_numerator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str | None,
+    ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyAlignedNumerator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
-        nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(dataset, relevant_pages, "Revenue",
-            ai_model=ai_model),
-        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(dataset, relevant_pages, "CapEx",
-            ai_model=ai_model),
+        nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(
+            dataset, relevant_pages, "Revenue", ai_model=ai_model
+        ),
+        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(
+            dataset, relevant_pages, "CapEx", ai_model=ai_model
+        ),
     )
 
 
 def build_numerator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str,
+    kpi: str,
+    ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
     """Build a report frame for a specific KPI numerator (Revenue or CapEx)."""
     if relevant_pages is None:

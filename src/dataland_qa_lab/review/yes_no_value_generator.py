@@ -18,7 +18,6 @@ def get_yes_no_values_from_report(readable_text: str, ai_model: str | None = Non
         list: A list including the etracted values of template 1
     """
     try:
-
         main_prompt = prompting_service.PromptingService.create_main_prompt(1, readable_text, "")
         sub_prompt = prompting_service.PromptingService.create_sub_prompt_template1()
 

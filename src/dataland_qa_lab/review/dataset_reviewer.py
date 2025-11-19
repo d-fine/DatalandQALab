@@ -13,8 +13,12 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False, ai_model: str | None = None, use_ocr: bool = True,
-                   ) -> str | None:
+def review_dataset(
+    data_id: str,
+    force_review: bool = False,
+    ai_model: str | None = None,
+    use_ocr: bool = True,
+) -> str | None:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -51,12 +55,15 @@ def review_dataset(data_id: str, force_review: bool = False, ai_model: str | Non
         else:
             if use_ocr:
                 readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader,
+                    data_id=data_id,
+                    page_numbers=page_numbers,
+                    relevant_pages_pdf_reader=relevant_pages_pdf_reader,
                 )
             else:
                 readable_text = None
             report = generator.generate_report(
-                relevant_pages=readable_text, dataset=data_collection,
+                relevant_pages=readable_text,
+                dataset=data_collection,
             )
         data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report

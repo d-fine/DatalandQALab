@@ -18,19 +18,27 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_denominator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str | None,
+    ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyAlignedDenominator:
     """Create a report frame for the Nuclear and Gas General Taxonomy Aligned Denominator."""
     return NuclearAndGasGeneralTaxonomyAlignedDenominator(
         nuclearAndGasTaxonomyAlignedRevenueDenominator=build_denominator_report_frame(
-            dataset, relevant_pages, "Revenue", ai_model=ai_model,
+            dataset,
+            relevant_pages,
+            "Revenue",
+            ai_model=ai_model,
         ),
         nuclearAndGasTaxonomyAlignedCapexDenominator=build_denominator_report_frame(dataset, relevant_pages, "CapEx"),
     )
 
 
 def build_denominator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, kpi: str, ai_model: str | None = None,
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str | None,
+    kpi: str,
+    ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedDenominator:
     """Build a report frame for a specific KPI denominator (Revenue or CapEx)."""
     if relevant_pages is None:

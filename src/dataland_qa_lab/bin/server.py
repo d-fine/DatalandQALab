@@ -16,6 +16,7 @@ from dataland_qa_lab.utils import console_logger
 
 class ReviewRequest(BaseModel):
     """Request body for the /review/{data_id} POST endpoint."""
+
     ai_model: str = "gpt-4o"
     force_review: bool = False
     use_ocr: bool = True
@@ -23,6 +24,7 @@ class ReviewRequest(BaseModel):
 
 class ReviewMeta(BaseModel):
     """Metadata about the review request and processing."""
+
     timestamp: datetime
     data_id: str
     ai_model: str
@@ -32,6 +34,7 @@ class ReviewMeta(BaseModel):
 
 class ReviewResponse(BaseModel):
     """Response wrapper containing data and metadata."""
+
     data: dict[str, Any]
     meta: ReviewMeta
 
