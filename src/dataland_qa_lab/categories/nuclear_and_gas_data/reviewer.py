@@ -41,7 +41,8 @@ def review_nuclear_and_gas_dataset(
     promper = NuclearAndGasPrompting()
 
     for k, v in dataset_json.get("data").get("general").get("general").items():
-        print(k, v)
+        relevant_page = v.get("data_source").get("page")
+        relevant_report = v.get("data_source").get("file_name")
 
         promper.run_prompt(k, "unknown")
 
