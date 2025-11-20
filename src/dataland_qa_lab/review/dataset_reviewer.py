@@ -1,3 +1,4 @@
+import json
 import logging
 
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
@@ -13,12 +14,30 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
+def review_dataset_via_api(
+    data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
+) -> dict:
+    """Review a dataset via API call."""
+    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
+    report_id = review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
+
+    if report_id is None:
+        return {"error": "Failed to retrieve data"}
+    return json.loads(
+        config.get_config()
+        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+            data_id=data_id, qa_report_id=report_id
+        )
+        .to_json()
+    )
+
+
 def review_dataset(
     data_id: str,
     force_review: bool = False,
-    ai_model: str | None = None,
+    ai_model: str = "gpt-4o",
     use_ocr: bool = True,
-) -> str | None:
+) -> str:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 

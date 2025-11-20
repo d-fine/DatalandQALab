@@ -1,6 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -10,8 +10,9 @@ from pydantic import BaseModel
 
 from dataland_qa_lab.database.database_engine import create_tables
 from dataland_qa_lab.dataland import scheduled_processor
-from dataland_qa_lab.review.dataset_reviewer import review_dataset
+from dataland_qa_lab.review.dataset_reviewer import review_dataset, review_dataset_via_api
 from dataland_qa_lab.utils import console_logger
+from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
 
 class ReviewRequest(BaseModel):
@@ -25,8 +26,7 @@ class ReviewRequest(BaseModel):
 class ReviewMeta(BaseModel):
     """Metadata about the review request and processing."""
 
-    timestamp: datetime
-    data_id: str
+    timestamp: str
     ai_model: str
     force_review: bool
     use_ocr: bool
@@ -69,23 +69,23 @@ def review_dataset_endpoint(data_id: str, force_review: bool = False) -> str:
 
 
 @dataland_qa_lab.post("/review/{data_id}", response_model=ReviewResponse)
-def review_dataset_post_endpoint(data_id: str, body: ReviewRequest) -> ReviewResponse:
+def review_dataset_post_endpoint(
+    data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
+) -> ReviewResponse:
     """Review a single dataset via API call (configurable)."""
-    report_id = review_dataset(
+    # todo: use_ocr needs to be implemented still
+    report = review_dataset_via_api(
         data_id=data_id,
-        force_review=body.force_review,
-        ai_model=body.ai_model,
-        use_ocr=body.use_ocr,
+        force_review=force_review,
+        ai_model=ai_model,
+        use_ocr=use_ocr,
     )
-
-    data: dict[str, Any] = {"report_id": report_id}
 
     meta = ReviewMeta(
-        timestamp=datetime.now(timezone.UTC),
-        data_id=data_id,
-        ai_model=body.ai_model,
-        force_review=body.force_review,
-        use_ocr=body.use_ocr,
+        timestamp=get_german_time_as_string(),
+        ai_model=ai_model,
+        force_review=force_review,
+        use_ocr=use_ocr,
     )
 
-    return ReviewResponse(data=data, meta=meta)
+    return ReviewResponse(data=report, meta=meta)

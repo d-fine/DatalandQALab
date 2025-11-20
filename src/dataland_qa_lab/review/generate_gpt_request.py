@@ -12,19 +12,8 @@ class GenerateGptRequest:
     """Generates the actual GPT request."""
 
     @staticmethod
-    def generate_gpt_request(mainprompt: str, subprompt: str) -> list:
-        """Generates the actual GPT request.
-
-        Args:
-            mainprompt (str): The main system prompt for the template.
-            subprompt (str): Additional context or parameters for the tool function.
-
-        Returns:
-            List[str]: A list of extracted values from the GPT response.
-
-        Raises:
-            ValueError: For any issues encountered during the process.
-        """
+    def generate_gpt_request(mainprompt: str, subprompt: str, ai_model: str = "gpt-4o") -> list:
+        """Generates the actual GPT request."""
         try:
             try:
                 conf = config.get_config()
@@ -44,8 +33,8 @@ class GenerateGptRequest:
 
             try:
                 updated_openai_response = client.chat.completions.create(
-                    model="ai_model",
-                    temperature=0,
+                    model=ai_model,
+                    temperature=0,  # todo: fix temperature issue
                     messages=[
                         {"role": "system", "content": mainprompt},
                     ],
