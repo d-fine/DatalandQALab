@@ -66,7 +66,6 @@ db_connection = os.getenv('DATABASE_CONNECTION_STRING')
 
 # ❌ WRONG - Never do this
 # Don't paste: API_KEY = 'a308bd28adc946938b358796f11c44c6'
-# Don't paste: postgresql+pg8000://postgres:password@localhost:5432/...
 # Don't share: SLACK_WEBHOOK_URL values
 ```
 

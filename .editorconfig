@@ -1,0 +1,19 @@
+# .editorconfig - Consistent coding styles
+root = true
+
+# All files: Unix-style line endings, UTF-8
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+# Python: 4 spaces indentation (Standard PEP 8)
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Web & Configs (JSON, YAML, Markdown, JS): 2 spaces indentation
+[*.{json,yaml,yml,md,js}]
+indent_style = space
+indent_size = 2
