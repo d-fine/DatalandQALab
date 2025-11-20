@@ -21,6 +21,11 @@ def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = F
 
     existing_report = get_entity(data_id, ReviewedDataset)
 
+    if existing_report is not None and existing_report.report_id is None:
+        logger.warning("Found incomplete/stale review for %s. Cleaning up to restart.", data_id)
+        delete_entity(data_id, ReviewedDataset)
+        existing_report = None
+
     if force_review and existing_report is not None:
         logger.info("Deleting old review from the database")
         delete_entity(data_id, ReviewedDataset)
@@ -28,13 +33,13 @@ def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = F
 
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
+
         if framework == "nuclear-and-gas":
             return review_nuclear_and_gas_dataset(data_id)
+
         if framework == "sfdr":
-            logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
-            # Placeholder for SFDR dataset review implementation
             return review_sfdr_dataset(data_id)
-            return None
+
         logger.error("Unknown framework: %s for Data-ID: %s", framework, data_id)
         return None
 
@@ -50,15 +55,15 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
     message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     send_alert_message(message=message)
 
-    review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
+    review_dataset_entry = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
     logger.info("Adding the dataset to the database.")
-    add_entity(review_dataset)
+    add_entity(review_dataset_entry)
 
     data_collection = NuclearAndGasDataCollection(dataset.data)
     logger.info("Data collection created.")
 
-    page_numbers = pages_provider.get_nuclear_and_gas_page_numbers(data_collection)
+    page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
 
     if relevant_pages_pdf_reader is None:
@@ -69,6 +74,7 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
         )
 
         report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+
     data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
         data_id=data_id, nuclear_and_gas_data=report
     )
@@ -84,22 +90,26 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
 
 
 def review_sfdr_dataset(data_id: str) -> str | None:
-    """Execute the complete review process for a Nuclear and Gas dataset."""
+    """Execute the complete review process for a SFDR dataset."""
     dataset = dataset_provider.get_sfdr_dataset_by_id(data_id)
     datetime_now = get_german_time_as_string()
 
     message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     send_alert_message(message=message)
 
-    review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
+    review_dataset_entry = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
     logger.info("Adding the dataset to the database.")
-    add_entity(review_dataset)
+    add_entity(review_dataset_entry)
 
     data_collection = SFDRDataCollection(dataset.data)
     logger.info("Data collection created.")
 
-    page_numbers = pages_provider.get_sfdr_page_numbers(data_collection)
+    try:
+        page_numbers = pages_provider.get_sfdr_page_numbers(data_collection)
+    except AttributeError:
+        page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
 
     if relevant_pages_pdf_reader is None:
@@ -110,6 +120,7 @@ def review_sfdr_dataset(data_id: str) -> str | None:
         )
 
         report = SfdrReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+
     data = config.get_config().dataland_client.sfdr_qa_api.post_sfdr_data_qa_report(data_id=data_id, sfdr_data=report)
 
     update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
@@ -126,8 +137,8 @@ def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
     """After review set the database entry to finished and add review end time."""
     datetime_now = get_german_time_as_string()
 
-    review_dataset = ReviewedDataset(
+    review_dataset_entry = ReviewedDataset(
         data_id=data_id, review_end_time=datetime_now, report_id=report_id, review_completed=True
     )
 
-    update_entity(review_dataset)
+    update_entity(review_dataset_entry)

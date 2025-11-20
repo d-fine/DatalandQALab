@@ -17,7 +17,7 @@ function openapi_generator() {
 # Dataland Backend
 rm -rf ./clients/backend
 openapi_generator generate \
-    -i https://dataland.com/api/v3/api-docs/public \
+    -i https://test.dataland.com/api/v3/api-docs/public \
     -g python \
     --additional-properties=packageName=dataland_backend \
     -o './clients/backend'
@@ -25,7 +25,7 @@ openapi_generator generate \
 # Dataland Document Manager
 rm -rf ./clients/documents
 openapi_generator generate \
-    -i https://dataland.com/documents/v3/api-docs/public \
+    -i https://test.dataland.com/documents/v3/api-docs/public \
     -g python \
     --additional-properties=packageName=dataland_documents \
     -o './clients/documents'
@@ -33,7 +33,7 @@ openapi_generator generate \
 # Dataland Community Manager
 rm -rf ./clients/community
 openapi_generator generate \
-    -i https://dataland.com/community/v3/api-docs/public \
+    -i https://test.dataland.com/community/v3/api-docs/public \
     -g python \
     --additional-properties=packageName=dataland_community \
     -o './clients/community'
@@ -41,7 +41,7 @@ openapi_generator generate \
 # Dataland QA Service
 rm -rf ./clients/qa
 openapi_generator generate \
-    -i https://dataland.com/qa/v3/api-docs/public \
+    -i https://test.dataland.com/qa/v3/api-docs/public \
     -g python \
     --additional-properties=packageName=dataland_qa \
     -o './clients/qa'
