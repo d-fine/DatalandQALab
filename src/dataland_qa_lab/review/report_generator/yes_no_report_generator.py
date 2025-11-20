@@ -12,15 +12,16 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_yes_no_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str | None
+    dataset: NuclearAndGasDataCollection, relevant_pages: str | None, ai_model: str | None = None
 ) -> NuclearAndGasGeneralGeneral:
     """Create yes no report."""
     report = NuclearAndGasGeneralGeneral()
     if relevant_pages is None:
         create_not_attempted_report(report, "No relevant pages found")
+        return report
 
     try:
-        yes_no_values = yes_no_value_generator.get_yes_no_values_from_report(relevant_pages)
+        yes_no_values = yes_no_value_generator.get_yes_no_values_from_report(relevant_pages, ai_model=ai_model)
         yes_no_values_from_dataland = data_provider.get_yes_no_values_by_data(data=dataset)
         data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
 
