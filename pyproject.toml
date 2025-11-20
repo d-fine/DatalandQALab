@@ -10,7 +10,7 @@ dependencies = [
     "dataland-community @ file:///${PROJECT_ROOT}/clients/community",
     "pydantic-settings>=2.12.0",
     "pypdf>=6.3.0",
-    "cryptography>=47.0.0",
+    "cryptography>=46.0.3",
     "azure-ai-documentintelligence>=1.0.0b4",
     "openai>=1.57.1",
     "sqlalchemy>=2.0.44",
