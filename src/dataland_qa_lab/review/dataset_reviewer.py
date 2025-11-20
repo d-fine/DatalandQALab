@@ -1,3 +1,4 @@
+import json
 import logging
 
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
@@ -13,7 +14,30 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> str | None:
+def review_dataset_via_api(
+    data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
+) -> dict:
+    """Review a dataset via API call."""
+    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
+    report_id = review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
+
+    if report_id is None:
+        return {"error": "Failed to retrieve data"}
+    return json.loads(
+        config.get_config()
+        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+            data_id=data_id, qa_report_id=report_id
+        )
+        .to_json()
+    )
+
+
+def review_dataset(
+    data_id: str,
+    force_review: bool = False,
+    ai_model: str = "gpt-4o",
+    use_ocr: bool = True,
+) -> str:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
@@ -42,20 +66,24 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
         logger.info("Data collection created.")
 
         page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+        generator = NuclearAndGasReportGenerator(ai_model=ai_model)
+
         if relevant_pages_pdf_reader is None:
-            report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
-
+            report = generator.generate_report(relevant_pages=None, dataset=data_collection)
         else:
-            readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
+            if use_ocr:
+                readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+                    data_id=data_id,
+                    page_numbers=page_numbers,
+                    relevant_pages_pdf_reader=relevant_pages_pdf_reader,
+                )
+            else:
+                readable_text = None
+            report = generator.generate_report(
+                relevant_pages=readable_text,
+                dataset=data_collection,
             )
-
-            report = NuclearAndGasReportGenerator().generate_report(
-                relevant_pages=readable_text, dataset=data_collection
-            )
-
         data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
