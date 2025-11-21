@@ -1,5 +1,6 @@
 import json
 from collections.abc import Generator
+from dataclasses import dataclass
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -81,15 +82,23 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
     )
 
 
+@dataclass
+class ExistingReport:
+    report: str
+    report_id: str
+
+
 def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, MagicMock]) -> None:
     """Test returning existing report without creating a new one."""
     data_id = "existing123"
-    existing_report = {"report": "already exists"}
+
+    existing_report = ExistingReport(report="already exists", report_id="report_existing")
+
     mock_dependencies["get_entity"].return_value = existing_report
 
     result = review_dataset(data_id)
 
-    assert result == existing_report
+    assert result == existing_report.report_id
     mock_dependencies["add_entity"].assert_not_called()
 
 
