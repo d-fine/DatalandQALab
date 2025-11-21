@@ -1,30 +1,54 @@
+from unittest.mock import MagicMock, patch
+
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab, scheduler
+from dataland_qa_lab.bin.server import dataland_qa_lab
 
 client = TestClient(dataland_qa_lab)
 
+# test_health.py
+
 
 def test_health_check() -> None:
-    """Test /health endpoint."""
+    """Test the /health endpoint of the server."""
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+
+    data = response.json()
+    assert "status" in data
+    assert data["status"] == "ok"
+
+    assert "timestamp" in data
+    assert isinstance(data["timestamp"], str)
 
 
-def test_lifespan_shutdown() -> None:
-    """Test that the scheduler shuts down correctly during lifespan exit."""
-    original_shutdown = scheduler.shutdown
-    called = {}
+@patch("dataland_qa_lab.bin.server.review_dataset_via_api")
+@patch("dataland_qa_lab.bin.server.get_german_time_as_string")
+def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: MagicMock) -> None:
+    """Test the /review/{data_id} POST endpoint of the server."""
+    mock_time.return_value = "2025-01-01T12:00:00"
+    mock_review_api.return_value = {"foo": "bar"}
 
-    def fake_shutdown() -> None:
-        called["shutdown"] = True
+    data_id = "12345"
 
-    scheduler.shutdown = fake_shutdown
+    body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
 
-    with TestClient(dataland_qa_lab):
-        pass
+    response = client.post(f"/review/{data_id}", json=body)
 
-    assert called.get("shutdown") is True
+    assert response.status_code == 200
 
-    scheduler.shutdown = original_shutdown
+    json_resp = response.json()
+
+    assert json_resp["data"] == {"foo": "bar"}
+
+    assert json_resp["meta"]["timestamp"] == "2025-01-01T12:00:00"
+    assert json_resp["meta"]["ai_model"] == "gpt-4o"
+    assert json_resp["meta"]["force_review"] is False
+    assert json_resp["meta"]["use_ocr"] is True
+
+    mock_review_api.assert_called_once_with(
+        data_id="12345",
+        force_review=False,
+        ai_model="gpt-4o",
+        use_ocr=True,
+    )
