@@ -1,3 +1,4 @@
+import json
 import logging
 
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity

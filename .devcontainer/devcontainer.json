@@ -5,7 +5,7 @@
 
     "dockerComposeFile": "./docker-compose.yml",
     "service": "dev_container",
-    "runServices": ["dev_container", "data_reviewer-db"],
+    "runServices": ["dev_container", "data_reviewer-db", "pgadmin"],
     "shutdownAction": "stopCompose",
 
     "customizations": {
