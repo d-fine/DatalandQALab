@@ -6,6 +6,21 @@ from dataland_qa_lab.bin.server import dataland_qa_lab
 
 client = TestClient(dataland_qa_lab)
 
+# test_health.py
+
+
+def test_health_check() -> None:
+    """Test the /health endpoint of the server."""
+    response = client.get("/health")
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "status" in data
+    assert data["status"] == "ok"
+
+    assert "timestamp" in data
+    assert isinstance(data["timestamp"], str)
+
 
 @patch("dataland_qa_lab.bin.server.review_dataset_via_api")
 @patch("dataland_qa_lab.bin.server.get_german_time_as_string")
@@ -16,7 +31,9 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     data_id = "12345"
 
-    response = client.post(f"/review/{data_id}")
+    body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
+
+    response = client.post(f"/review/{data_id}", json=body)
 
     assert response.status_code == 200
 
