@@ -34,7 +34,7 @@ def test_run_report_on_qalab_success() -> None:
     mock_response.raise_for_status.return_value = None
     mock_response.json.return_value = mock_json
 
-    with patch("requests.get", return_value=mock_response) as mock_get:
+    with patch("requests.post", return_value=mock_response) as mock_get:
         result = run_report_on_qalab("123", "gpt-4", True)
 
     # Assertions
@@ -44,5 +44,5 @@ def test_run_report_on_qalab_success() -> None:
 
 def test_run_report_on_qalab_failure() -> None:
     """Test that the function raises an error when API call fails."""
-    with patch("requests.get", side_effect=requests.HTTPError("Bad Request")), pytest.raises(requests.HTTPError):
+    with patch("requests.post", side_effect=requests.HTTPError("Bad Request")), pytest.raises(requests.HTTPError):
         run_report_on_qalab("123", "gpt-4", False)
