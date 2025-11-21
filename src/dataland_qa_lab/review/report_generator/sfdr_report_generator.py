@@ -1,43 +1,31 @@
-import json
 import logging
 
-from dataland_backend.models.sfdr_data import SfdrData
+try:
+    from dataland_qa.models.sfdr_data import SfdrData
+except ImportError:
+    from dataland_qa.models import SfdrData
 
-from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
-from dataland_qa_lab.prompting_services.sfdr_prompting_service import SFDRPromptingService
-from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
-from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 
-from dataland_qa.models import SfdrGeneral, SfdrGeneralGeneral, SfdrEnvironmental, SfdrSocial
-
-from dataland_qa_lab.review.report_generator import (
-    denominator_report_generator,
-    eligible_not_aligned_report_generator,
-    non_eligible_report_generator,
-    numerator_report_generator,
-    yes_no_report_generator,
+from dataland_qa.models import (
+    ExtendedDataPointBigDecimal,
+    QaReportDataPointExtendedDataPointBigDecimal,
+    QaReportDataPointVerdict,
+    SfdrEnvironmental,
+    SfdrEnvironmentalGreenhouseGasEmissions,
+    SfdrEnvironmentalWaste,
+    SfdrEnvironmentalWater,
+    SfdrSocial,
+    SfdrSocialSocialAndEmployeeMatters,
 )
+
+from dataland_qa_lab.review.report_generator.sfdr_numeric_value_generator import SFDRNumericValueGenerator
+from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 
 logger = logging.getLogger(__name__)
 
-# --- KONFIGURATION ---
-# Hier können einfach weitere Felder hinzugefügt werden (Scope 2, 3, etc.)
-# Der Key muss exakt der API-Feld-ID entsprechen!
-FIELDS_TO_CHECK = {
-    "scope1_ghg_emissions_in_tonnes": {
-        "field_name_for_ai": "Scope 1 GHG emissions",
-        "unit": "tonnes",
-    },
-    # BEISPIEL FÜR ZUKUNFT:
-    # "scope2_ghg_emissions_location_in_t": {
-    #     "field_name_for_ai": "Scope 2 GHG emissions (location-based)",
-    #     "unit": "tonnes",
-    # },
-}
-
 
 class SfdrReportGenerator:
-    """Generates QA reports for SFDR datasets in a scalable way."""
+    """Generates QA reports for SFDR datasets covering Environmental and Social topics."""
 
     relevant_pages: str
     report: SfdrData
@@ -49,10 +37,10 @@ class SfdrReportGenerator:
 
     def generate_report(self, relevant_pages: str, dataset: SFDRDataCollection) -> SfdrData:
         """Orchestrates the review process for an SFDR dataset."""
-
         self.relevant_pages = relevant_pages
+
         self.report = SfdrData(
-            general=SfdrGeneral(general=SfdrGeneralGeneral())  # environmental=SfdrEnvironmental(), #social=SfdrSocial()
+            #            general=SfdrGeneral(general=SfdrGeneralGeneral()), environmental=SfdrEnvironmental(), #social=SfdrSocial()
         )
 
         self.report.general.general = denominator_report_generator.build_taxonomy_aligned_denominator_report(

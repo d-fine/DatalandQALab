@@ -1,24 +1,29 @@
 from dataland_qa_lab.prompting_services.sfdr_prompting_service import SFDRPromptingService
 
-
-def test_create_scope1_prompt() -> None:
-    """Test that the prompt contains key instructions and the input text."""
+def test_create_generic_numeric_prompt() -> None:
+    """Test that the generic prompt is correctly structured."""
     fake_markdown = "This is a test markdown content."
+    kpi_name = "Scope 1 GHG emissions"
+    unit = "tonnes"
 
-    prompt = SFDRPromptingService.create_scope1_prompt(fake_markdown)
+    
+    prompt = SFDRPromptingService.create_generic_numeric_prompt(kpi_name, unit, fake_markdown)
 
-    assert "Scope 1 GHG emissions" in prompt
-    assert "tonnes" in prompt
-    assert "Ignore Scope 2" in prompt
+
+    assert kpi_name in prompt
+    assert unit in prompt
+    assert "Return ONLY the number" in prompt
     assert fake_markdown in prompt
 
+def test_create_generic_numeric_schema() -> None:
+    """Test that the JSON schema for numeric values is correct."""
+    field_id = "extracted_value"
+    
 
-def test_create_scope1_schema() -> None:
-    """Test that the JSON schema is correctly structured."""
-
-    schema = SFDRPromptingService.create_scope1_schema()
+    schema = SFDRPromptingService.create_generic_numeric_schema(field_id)
 
     assert schema
-    assert "scope1_value" in schema["properties"]
-    assert schema["required"] == ["scope1_value"]
-    assert schema["properties"]["scope1_value"]["type"] == "number"
+    assert field_id in schema["properties"]
+    assert schema["required"] == [field_id]
+
+    assert schema["properties"][field_id]["type"] == "number"

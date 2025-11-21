@@ -48,6 +48,11 @@ def review_dataset(
 
     existing_report = get_entity(data_id, ReviewedDataset)
 
+    if existing_report is not None and existing_report.report_id is None:
+        logger.warning("Found incomplete/stale review for %s. Cleaning up to restart.", data_id)
+        delete_entity(data_id, ReviewedDataset)
+        existing_report = None
+
     if force_review and existing_report is not None:
         logger.info("Deleting old review from the database")
         delete_entity(data_id, ReviewedDataset)
@@ -55,6 +60,7 @@ def review_dataset(
 
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
+
         if framework == "nuclear-and-gas":
             return review_nuclear_and_gas_dataset(data_id, ai_model=ai_model)
         if framework == "sfdr":
@@ -76,15 +82,15 @@ def review_nuclear_and_gas_dataset(data_id: str, ai_model: str = "gpt-4o") -> st
     message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     send_alert_message(message=message)
 
-    review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
+    review_dataset_entry = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
     logger.info("Adding the dataset to the database.")
-    add_entity(review_dataset)
+    add_entity(review_dataset_entry)
 
     data_collection = NuclearAndGasDataCollection(dataset.data)
     logger.info("Data collection created.")
 
-    page_numbers = pages_provider.get_nuclear_and_gas_page_numbers(data_collection)
+    page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
     generator = NuclearAndGasReportGenerator(ai_model=ai_model)
 
@@ -118,15 +124,19 @@ def review_sfdr_dataset(data_id: str, ai_model: str = "gpt-4o") -> str | None:
     message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     send_alert_message(message=message)
 
-    review_dataset = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
+    review_dataset_entry = ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
     logger.info("Adding the dataset to the database.")
-    add_entity(review_dataset)
+    add_entity(review_dataset_entry)
 
     data_collection = SFDRDataCollection(dataset.data)
     logger.info("Data collection created.")
 
-    page_numbers = pages_provider.get_sfdr_page_numbers(data_collection)
+    try:
+        page_numbers = pages_provider.get_sfdr_page_numbers(data_collection)
+    except AttributeError:
+        page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
+
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
     generator = SfdrReportGenerator(ai_model=ai_model)
 
@@ -154,8 +164,8 @@ def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
     """After review set the database entry to finished and add review end time."""
     datetime_now = get_german_time_as_string()
 
-    review_dataset = ReviewedDataset(
+    review_dataset_entry = ReviewedDataset(
         data_id=data_id, review_end_time=datetime_now, report_id=report_id, review_completed=True
     )
 
-    update_entity(review_dataset)
+    update_entity(review_dataset_entry)
