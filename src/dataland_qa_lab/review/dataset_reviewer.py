@@ -27,13 +27,23 @@ def review_dataset_via_api(
 
     if report_id is None:
         return {"error": "Failed to retrieve data"}
-    return json.loads(
-        config.get_config()
-        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
-            data_id=data_id, qa_report_id=report_id
-        )
-        .to_json()
-    )
+
+    match framework:
+        case "nuclear-and-gas":
+            json.loads(
+                config.get_config()
+                .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+                    data_id=data_id, qa_report_id=report_id
+                )
+                .to_json()
+            )
+        case "sfdr":
+            return json.loads(
+                config.get_config()
+                .dataland_client.sfdr_qa_api.get_sfdr_data_qa_report(data_id=data_id, qa_report_id=report_id)
+                .to_json()
+            )
+    return {"error": "Unknown framework"}
 
 
 def review_dataset(

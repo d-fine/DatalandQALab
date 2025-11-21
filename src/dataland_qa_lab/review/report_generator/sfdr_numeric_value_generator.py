@@ -18,7 +18,9 @@ class SFDRNumericValueGenerator:
         )
 
     @staticmethod
-    def get_generic_numeric_value(readable_text: str, kpi_name: str, unit: str) -> float | None:
+    def get_generic_numeric_value(
+        readable_text: str, kpi_name: str, unit: str, ai_model: str = "gpt-4o"
+    ) -> float | None:
         """Extracts ANY numeric value based on name and unit.
 
         Returns:
@@ -29,7 +31,7 @@ class SFDRNumericValueGenerator:
             prompt = SFDRPromptingService.create_generic_numeric_prompt(kpi_name, unit, readable_text)
             schema = SFDRPromptingService.create_generic_numeric_schema("extracted_value")
 
-            values = GenerateGptRequest.generate_gpt_request(prompt, schema)
+            values = GenerateGptRequest.generate_gpt_request(prompt, schema, ai_model=ai_model)
 
             if not values:
                 logger.warning("GPT returned no values for %s", kpi_name)
