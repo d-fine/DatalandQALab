@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from dataland_qa_lab.bin.models import ReviewMeta, ReviewResponse, ReviewRequest
+from dataland_qa_lab.bin.models import ReviewMeta, ReviewRequest, ReviewResponse
 
 
 def test_review_request_defaults() -> None:
