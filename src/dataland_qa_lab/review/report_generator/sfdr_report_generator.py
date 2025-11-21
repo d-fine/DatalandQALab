@@ -41,13 +41,18 @@ class SfdrReportGenerator:
 
     relevant_pages: str
     report: SfdrData
+    ai_model: str | None
+
+    def __init__(self, ai_model: str | None = None) -> None:
+        """Initialize the report generator with a configurable AI model."""
+        self.ai_model = ai_model
 
     def generate_report(self, relevant_pages: str, dataset: SFDRDataCollection) -> SfdrData:
         """Orchestrates the review process for an SFDR dataset."""
 
         self.relevant_pages = relevant_pages
         self.report = SfdrData(
-            #            general=SfdrGeneral(general=SfdrGeneralGeneral()), environmental=SfdrEnvironmental(), #social=SfdrSocial()
+            general=SfdrGeneral(general=SfdrGeneralGeneral())  # environmental=SfdrEnvironmental(), #social=SfdrSocial()
         )
 
         self.report.general.general = denominator_report_generator.build_taxonomy_aligned_denominator_report(

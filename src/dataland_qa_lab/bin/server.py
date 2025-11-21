@@ -49,6 +49,7 @@ def review_dataset_post_endpoint(data_id: str, data: ReviewRequest) -> ReviewRes
     # todo: use_ocr needs to be implemented still
     report = review_dataset_via_api(
         data_id=data_id,
+        framework=data.framework,
         force_review=data.force_review,
         ai_model=data.ai_model,
         use_ocr=data.use_ocr,

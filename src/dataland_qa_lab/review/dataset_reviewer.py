@@ -16,7 +16,33 @@ from dataland_qa_lab.utils.sfdr_data_collection import SFDRDataCollection
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = False) -> str | None:
+def review_dataset_via_api(
+    data_id: str, framework: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
+) -> dict:
+    """Review a dataset via API call."""
+    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
+    report_id = review_dataset(
+        data_id=data_id, framework=framework, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr
+    )
+
+    if report_id is None:
+        return {"error": "Failed to retrieve data"}
+    return json.loads(
+        config.get_config()
+        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+            data_id=data_id, qa_report_id=report_id
+        )
+        .to_json()
+    )
+
+
+def review_dataset(
+    data_id: str,
+    framework: str = "sfdr",
+    force_review: bool = False,
+    ai_model: str = "gpt-4o",
+    use_ocr: bool = True,
+) -> str | None:
     """Review dataset based on its framework."""
     logger.info("Starting the review of the Dataset: %s (Framework: %s)", data_id, framework)
 
@@ -30,12 +56,11 @@ def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = F
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
         if framework == "nuclear-and-gas":
-            return review_nuclear_and_gas_dataset(data_id)
+            return review_nuclear_and_gas_dataset(data_id, ai_model=ai_model)
         if framework == "sfdr":
             logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
             # Placeholder for SFDR dataset review implementation
-            return review_sfdr_dataset(data_id)
-            return None
+            return review_sfdr_dataset(data_id, ai_model=ai_model)
         logger.error("Unknown framework: %s for Data-ID: %s", framework, data_id)
         return None
 
@@ -43,7 +68,7 @@ def review_dataset(data_id: str, framework: str = "sfdr", force_review: bool = F
     return existing_report.report_id
 
 
-def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
+def review_nuclear_and_gas_dataset(data_id: str, ai_model: str = "gpt-4o") -> str | None:
     """Execute the complete review process for a Nuclear and Gas dataset."""
     dataset = dataset_provider.get_dataset_by_id(data_id)
     datetime_now = get_german_time_as_string()
@@ -61,15 +86,16 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
 
     page_numbers = pages_provider.get_nuclear_and_gas_page_numbers(data_collection)
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+    generator = NuclearAndGasReportGenerator(ai_model=ai_model)
 
     if relevant_pages_pdf_reader is None:
-        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
+        report = generator.generate_report(relevant_pages=None, dataset=data_collection)
     else:
         readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
             data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
         )
 
-        report = NuclearAndGasReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+        report = generator.generate_report(relevant_pages=readable_text, dataset=data_collection)
     data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
         data_id=data_id, nuclear_and_gas_data=report
     )
@@ -84,7 +110,7 @@ def review_nuclear_and_gas_dataset(data_id: str) -> str | None:
     return data.qa_report_id
 
 
-def review_sfdr_dataset(data_id: str) -> str | None:
+def review_sfdr_dataset(data_id: str, ai_model: str = "gpt-4o") -> str | None:
     """Execute the complete review process for a Nuclear and Gas dataset."""
     dataset = dataset_provider.get_sfdr_dataset_by_id(data_id)
     datetime_now = get_german_time_as_string()
@@ -102,15 +128,16 @@ def review_sfdr_dataset(data_id: str) -> str | None:
 
     page_numbers = pages_provider.get_sfdr_page_numbers(data_collection)
     relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
+    generator = SfdrReportGenerator(ai_model=ai_model)
 
     if relevant_pages_pdf_reader is None:
-        report = SfdrReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
+        report = generator.generate_report(relevant_pages=None, dataset=data_collection)
     else:
         readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
             data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
         )
 
-        report = SfdrReportGenerator().generate_report(relevant_pages=readable_text, dataset=data_collection)
+        report = generator.generate_report(relevant_pages=readable_text, dataset=data_collection)
     data = config.get_config().dataland_client.sfdr_qa_api.post_sfdr_data_qa_report(data_id=data_id, sfdr_data=report)
 
     update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)

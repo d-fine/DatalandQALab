@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class ReviewRequest(BaseModel):
     """Request model for initiating a review."""
 
+    framework: str
     force_review: bool = False
     ai_model: str = "gpt-4o"
     use_ocr: bool = True
