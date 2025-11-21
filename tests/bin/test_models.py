@@ -1,31 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from dataland_qa_lab.bin.models import ReviewMeta, ReviewRequest, ReviewResponse
-
-
-def test_review_request_defaults() -> None:
-    """Test that default values are set correctly in ReviewRequest."""
-    req = ReviewRequest()
-
-    assert req.ai_model == "gpt-4o"
-    assert req.force_review is False
-    assert req.use_ocr is True
-
-
-def test_review_request_override_fields() -> None:
-    """Test that fields can be overridden in ReviewRequest."""
-    req = ReviewRequest(ai_model="custom-model", force_review=True, use_ocr=False)
-
-    assert req.ai_model == "custom-model"
-    assert req.force_review is True
-    assert req.use_ocr is False
-
-
-def test_review_request_invalid_field_type() -> None:
-    """Test that invalid field types raise ValidationError in ReviewRequest."""
-    with pytest.raises(ValidationError):
-        ReviewRequest(force_review="not-a-bool")  # type: ignore
+from dataland_qa_lab.bin.models import ReviewMeta, ReviewResponse
 
 
 def test_review_meta_valid() -> None:
@@ -48,7 +24,7 @@ def test_review_meta_invalid_type() -> None:
     """Test that invalid field types raise ValidationError in ReviewMeta."""
     with pytest.raises(ValidationError):
         ReviewMeta(
-            timestamp=123,
+            timestamp=123,  # type: ignore
             ai_model="gpt-4o",
             force_review=False,
             use_ocr=True,
