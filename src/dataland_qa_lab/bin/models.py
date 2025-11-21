@@ -3,6 +3,14 @@ from typing import Any
 from pydantic import BaseModel
 
 
+class ReviewRequest(BaseModel):
+    """Request model for initiating a review."""
+
+    force_review: bool = False
+    ai_model: str = "gpt-4o"
+    use_ocr: bool = True
+
+
 class ReviewMeta(BaseModel):
     """Metadata about the review request and processing."""
 

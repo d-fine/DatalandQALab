@@ -23,6 +23,7 @@ class MonitorConfig:
     qa_lab_url: str = "http://localhost:8000"
     ai_model: str = "gpt-4"
     use_ocr: bool = False
+    force_review: bool = False
 
 
 def load_config() -> MonitorConfig:
@@ -35,6 +36,7 @@ def load_config() -> MonitorConfig:
                 documents=config.get("documents", []),
                 ai_model=config.get("ai_model", "gpt-4"),
                 use_ocr=config.get("use_ocr", False),
+                force_review=config.get("force_review", False),
             )
     except (json.JSONDecodeError, OSError):
         logger.warning("Config file not found or invalid, falling back to environment variables.")
@@ -44,8 +46,11 @@ def load_config() -> MonitorConfig:
     documents = documents_env.split(",") if documents_env else []
     ai_model = os.getenv("AI_MODEL", "gpt-4")
     use_ocr = os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"}
+    force_review = os.getenv("FORCE_REVIEW", "0").strip().lower() in {"1", "true", "yes"}
 
-    return MonitorConfig(qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr)
+    return MonitorConfig(
+        qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr, force_review=force_review
+    )
 
 
 def store_output(data: str | list | dict, file_name: str, timestamp: bool = True, format_as_json: bool = False) -> None:
@@ -66,7 +71,7 @@ def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
         for key in source_of_truth.get("data", {}).get("general", {}).get("general", {})
         if key != "referenced_reports"
     }
-    qa_general = qalab_report.get("report_data", {}).get("report", {}).get("general", {}).get("general", {})
+    qa_general = qalab_report.get("data", {}).get("report", {}).get("general", {}).get("general", {})
 
     counter = Counter()
 

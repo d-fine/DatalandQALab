@@ -1,7 +1,25 @@
 import pytest
 from pydantic import ValidationError
 
-from dataland_qa_lab.bin.models import ReviewMeta, ReviewResponse
+from dataland_qa_lab.bin.models import ReviewMeta, ReviewResponse, ReviewRequest
+
+
+def test_review_request_defaults() -> None:
+    """Test that default values are applied correctly."""
+    req = ReviewRequest()
+
+    assert req.force_review is False
+    assert req.ai_model == "gpt-4o"
+    assert req.use_ocr is True
+
+
+def test_review_request_custom_values() -> None:
+    """Test that custom values override defaults."""
+    req = ReviewRequest(force_review=True, ai_model="gpt-5", use_ocr=False)
+
+    assert req.force_review is True
+    assert req.ai_model == "gpt-5"
+    assert req.use_ocr is False
 
 
 def test_review_meta_valid() -> None:

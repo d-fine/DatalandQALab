@@ -50,6 +50,8 @@ def review_dataset(
         delete_entity(data_id, ReviewedDataset)
         existing_report = None
 
+    print(force_review)
+
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
         datetime_now = get_german_time_as_string()
@@ -98,7 +100,7 @@ def review_dataset(
         return data.qa_report_id
 
     logger.info("Report for data_id already exists.")
-    return existing_report
+    return existing_report.report_id
 
 
 def update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
