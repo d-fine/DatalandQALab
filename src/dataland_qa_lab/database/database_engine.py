@@ -11,6 +11,21 @@ DATABASE_URL = config.get_config().database_connection_string
 
 engine = create_engine(DATABASE_URL)
 
+# User Story dfine- 40: Fix the server starting without a database
+engine = create_engine(DATABASE_URL)
+
+logger = logging.getLogger(__name__)
+
+# Prüfe die Datenbankverbindung beim Start
+try:
+    with engine.connect() as connection:
+        connection.execute("SELECT 1")
+except SQLAlchemyError as e:
+    logger.critical("Database connection failed. Exiting application.", exc_info=e)
+    import sys
+    sys.exit(1)
+# End User Story dfine- 40
+
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)
