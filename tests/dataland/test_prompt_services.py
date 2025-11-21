@@ -286,7 +286,7 @@ def test_generate_gpt_request_config_error() -> None:
 @patch("openai.AzureOpenAI")
 def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_get_config: Mock) -> None:
     """Test error handling during tool call argument parsing."""
-    mock_get_config.return_value = Mock(
+    mock_get_config.return_value = Mock(ai_model_name="gpt-4o", 
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
     )
@@ -305,7 +305,7 @@ def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_ge
 @patch("openai.AzureOpenAI")
 def test_generate_gpt_request_no_tool_calls(mock_client: Mock, mock_get_config: Mock) -> None:
     """Test handling when no tool calls are present in the GPT response."""
-    mock_get_config.return_value = Mock(
+    mock_get_config.return_value = Mock(ai_model_name="gpt-4o", 
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
     )

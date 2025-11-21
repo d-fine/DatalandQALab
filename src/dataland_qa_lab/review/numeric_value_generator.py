@@ -47,18 +47,10 @@ class NumericValueGenerator:
             main_prompt = prompting_service.PromptingService.create_main_prompt(template_id, readable_text, kpi)
             sub_prompt = prompt_method(kpi)
 
-            if ai_model is None:
-                values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                    main_prompt,
-                    sub_prompt,
-                )
-
-            else:
-                values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                    main_prompt,
-                    sub_prompt,
-                    ai_model,
-                )
+            values = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+                main_prompt,
+                sub_prompt,
+            )
 
             if not values:
                 msg = f"No results returned from GPT for template {template_id} values."
