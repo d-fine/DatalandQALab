@@ -136,13 +136,12 @@ class SfdrReportGenerator:
         if dataland_val is None:
             if ai_val is not None:
                 return self._create_entry(
-                    self, QaReportDataPointVerdict.QAREJECTED, f"Dataland empty, AI found {ai_val}", ai_val
+                    QaReportDataPointVerdict.QAREJECTED, f"Dataland empty, AI found {ai_val}", ai_val
                 )
-            return self._create_entry(self, QaReportDataPointVerdict.QAACCEPTED, "Both empty")
+            return self._create_entry(QaReportDataPointVerdict.QAACCEPTED, "Both empty")
 
         if ai_val is None:
             return self._create_entry(
-                self,
                 QaReportDataPointVerdict.QAREJECTED,
                 f"Value in Dataland ({dataland_val}) but AI found nothing.",
                 quality="NoDataFound",
@@ -164,11 +163,11 @@ class SfdrReportGenerator:
 
     @staticmethod
     def _create_entry(
-        self, verdict: QaReportDataPointVerdict, comment: str, corrected_val: float = None, quality: str = "Reported"
+        verdict: QaReportDataPointVerdict, comment: str, corrected_val: float = None, quality: str = "Reported"
     ) -> QaReportDataPointExtendedDataPointBigDecimal:
         """Creates the return object."""
         data = ExtendedDataPointBigDecimal()
-        if verdict == QaReportDataPointVerdict.QAREJECTED and corrected_val is not None:
+        if verdict == QaReportDataPointVerdict.QAREJECTED:
             data.value = corrected_val
             data.quality = quality
 

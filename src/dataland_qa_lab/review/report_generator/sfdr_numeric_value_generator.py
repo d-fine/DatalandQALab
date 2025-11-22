@@ -27,6 +27,7 @@ class SFDRNumericValueGenerator:
             float: The extracted value if found.
             None: If not found or strictly stated as not present (-1 from AI).
         """
+        
         try:
             prompt = SFDRPromptingService.create_generic_numeric_prompt(kpi_name, unit, readable_text)
             schema = SFDRPromptingService.create_generic_numeric_schema("extracted_value")

@@ -31,7 +31,7 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     data_id = "12345"
 
-    body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
+    body = {"framework": "sfdr", "force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
 
     response = client.post(f"/review/{data_id}", json=body)
 
@@ -48,6 +48,7 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     mock_review_api.assert_called_once_with(
         data_id="12345",
+        framework="sfdr",
         force_review=False,
         ai_model="gpt-4o",
         use_ocr=True,

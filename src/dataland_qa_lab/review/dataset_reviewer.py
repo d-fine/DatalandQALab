@@ -30,7 +30,7 @@ def review_dataset_via_api(
 
     match framework:
         case "nuclear-and-gas":
-            json.loads(
+            return json.loads(
                 config.get_config()
                 .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
                     data_id=data_id, qa_report_id=report_id

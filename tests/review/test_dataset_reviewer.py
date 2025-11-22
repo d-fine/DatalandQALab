@@ -67,7 +67,7 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
 
     mock_config_client.post_nuclear_and_gas_data_qa_report.return_value = mock_response
 
-    result = review_dataset(data_id)
+    result = review_dataset(data_id, framework="nuclear-and-gas", ai_model="gpt-4o")
 
     assert result == "report_123"
     mock_dependencies["add_entity"].assert_called_once()
@@ -96,7 +96,7 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
 
     mock_dependencies["get_entity"].return_value = existing_report
 
-    result = review_dataset(data_id)
+    result = review_dataset(data_id, framework="nuclear-and-gas", ai_model="gpt-4o")
 
     assert result == existing_report.report_id
     mock_dependencies["add_entity"].assert_not_called()
@@ -110,6 +110,7 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
     ],
 )
 def test_review_dataset_via_api(report_id: str, expected: dict) -> None:
+    """Review a dataset via API call."""
     data_id = "test-data-id"
 
     with patch("src.dataland_qa_lab.review.dataset_reviewer.review_dataset", return_value=report_id):
@@ -123,6 +124,6 @@ def test_review_dataset_via_api(report_id: str, expected: dict) -> None:
         mock_config.dataland_client = mock_client
 
         with patch("src.dataland_qa_lab.review.dataset_reviewer.config.get_config", return_value=mock_config):
-            result = review_dataset_via_api(data_id)
+            result = review_dataset_via_api(data_id, framework="nuclear-and-gas", ai_model="gpt-4o")
 
             assert result == expected
