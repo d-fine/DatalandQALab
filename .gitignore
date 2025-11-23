@@ -164,3 +164,7 @@ cython_debug/
 
 # Automatically generated API clients
 clients/
+
+# Custom excluded files
+monitor/config.json
+monitor/output/
