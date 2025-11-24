@@ -1,72 +1,46 @@
-# GitHub Copilot Quick Start
+# 🤖 GitHub Copilot Developer Guide
 
-## Access
-Get access via GitHub Education: https://github.com/settings/education/benefits
+This guide provides a quick start, best practices, and security rules for using GitHub Copilot in our project.
 
-## Install
+## 1. Access & Setup
 
-### PyCharm
-1. Preferences → Plugins
-2. Install "GitHub Copilot"
-3. Restart and sign in via Tools → GitHub Copilot
+### Prerequisites
+Ensure you have an active GitHub Copilot subscription.
+- **Students/Education:** [Get access via GitHub Education](https://github.com/settings/education/benefits)
 
-### VS Code (optional)
-1. Extensions sidebar
-2. Install "GitHub Copilot"
-3. Run "GitHub Copilot: Sign in"
+### IDE Configuration
 
-## Usage
+| IDE | Installation Steps |
+| :--- | :--- |
+| **PyCharm** | 1. Go to `Settings` → `Plugins`<br>2. Install **"GitHub Copilot"**<br>3. Restart IDE<br>4. Click the Copilot icon (bottom right or sidebar) to sign in. |
+| **VS Code** | 1. Open Extensions (`Cmd+Shift+X`)<br>2. Install **"GitHub Copilot"**<br>3. Follow the prompt to sign in via GitHub. |
 
-- Write code → Press **Tab** for inline suggestions
-- Press **Cmd+Shift+A** to open Chat
+---
 
-## Best Practices
+## 2. How to Use
 
-✅ **Do's**
-- Always review code before committing
-- Generate and run tests locally
-- Ask specific questions: "Write unit tests for function X"
+### 👻 Ghost Text (Inline Suggestions)
+As you type in the editor, Copilot suggests code in gray text.
+- **Accept:** Press `Tab`
+- **Partial Accept:** Press `Cmd + →` (Mac) or `Ctrl + →` (Win) to accept word-by-word.
+- **Reject:** Press `Esc` or keep typing.
 
-❌ **Don'ts**
-- **NEVER paste `.env` contents, API keys, tokens, or passwords**
-- **NEVER share connection strings or credentials**
-- Don't blindly accept suggestions
-- Don't share any sensitive data
+### 💬 Copilot Chat (The Assistant)
+Use the chat for explanations, refactoring, or generating logic.
+- **VS Code:** Press `Cmd + I` (Mac) / `Ctrl + I` (Win) for Inline Chat, or open the Sidebar.
+- **PyCharm:** Open the "GitHub Copilot" tool window.
 
-## Common Prompts
+---
 
-**Generate Unit Tests**
-```
-"Generate unit tests for the calculate_discount function"
-```
+## 3. 🛡️ Security & Privacy (CRITICAL)
 
-**Refactor Code**
-```
-"Refactor this code to follow PEP 8 and add type hints"
-```
+> ⚠️ **WARNING:** Copilot snippets are processed in the cloud. Never expose sensitive data in your code or chat prompts.
 
-**Add Documentation**
-```
-"Generate a Google-style docstring for this function"
-```
+### ❌ ABSOLUTE DON'TS
+- **NEVER** paste real **API Keys, Passwords, or Tokens** into the chat.
+- **NEVER** paste real **Database Connection Strings** (even if local).
+- **NEVER** paste customer PII (Personally Identifiable Information).
 
-## Loading Secrets Correctly
+### ✅ CORRECT WAY: Secrets Handling
+Always reference environment variables. Copilot understands this pattern.
 
-```python
-# ✅ CORRECT
-import os
-api_key = os.getenv('AZURE_OPENAI_API_KEY')
-endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
-db_connection = os.getenv('DATABASE_CONNECTION_STRING')
-
-# ❌ WRONG - Never do this
-# Don't paste: API_KEY = 'a308bd28adc946938b358796f11c44c6'
-# Don't paste: postgresql+pg8000://postgres:password@localhost:5432/...
-# Don't share: SLACK_WEBHOOK_URL values
-```
-
-## Tips for Better Results
-
-- Ask specific questions instead of generic ones
-- Let Copilot follow your existing code style
-- Use smaller prompts instead of large ones
