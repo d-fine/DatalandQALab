@@ -1,24 +1,19 @@
 # GitHub Copilot Quick Start
 
-## Getting Access
+## Access
+Get access via GitHub Education: https://github.com/settings/education/benefits
 
-GitHub Copilot is available for free via GitHub Education benefits. Check your eligibility at:
-**https://github.com/settings/education/benefits**
-
-## Installation
+## Install
 
 ### PyCharm
-1. Open Preferences (Cmd+,)
-2. Go to Plugins
-3. Search "GitHub Copilot" and click Install
-4. Restart PyCharm
-5. Tools → GitHub Copilot → Sign in (GitHub browser login)
+1. Preferences → Plugins
+2. Install "GitHub Copilot"
+3. Restart and sign in via Tools → GitHub Copilot
 
-### VS Code
-1. Open Extensions marketplace
-2. Search "GitHub Copilot" and click Install
-3. Command Palette (Cmd+Shift+P) → "GitHub Copilot: Sign in"
-4. Complete GitHub browser login
+### VS Code (optional)
+1. Extensions sidebar
+2. Install "GitHub Copilot"
+3. Run "GitHub Copilot: Sign in"
 
 ## Usage
 
@@ -66,6 +61,7 @@ db_connection = os.getenv('DATABASE_CONNECTION_STRING')
 
 # ❌ WRONG - Never do this
 # Don't paste: API_KEY = 'a308bd28adc946938b358796f11c44c6'
+# Don't paste: postgresql+pg8000://postgres:password@localhost:5432/...
 # Don't share: SLACK_WEBHOOK_URL values
 ```
 
@@ -74,4 +70,3 @@ db_connection = os.getenv('DATABASE_CONNECTION_STRING')
 - Ask specific questions instead of generic ones
 - Let Copilot follow your existing code style
 - Use smaller prompts instead of large ones
-
