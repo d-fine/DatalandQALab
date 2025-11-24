@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import List, Any
 
 from dataland_qa_lab.prompting_services.sfdr_prompting_service import SFDRPromptingService
 from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
@@ -21,15 +22,10 @@ class SFDRNumericValueGenerator:
     def get_generic_numeric_value(
         readable_text: str, kpi_name: str, unit: str, ai_model: str = "gpt-4o"
     ) -> float | None:
-        """Extracts ANY numeric value based on name and unit.
-
-        Returns:
-            float: The extracted value if found.
-            None: If not found or strictly stated as not present (-1 from AI).
-        """
-        
+        """Extracts ANY numeric value based on name and unit."""
         try:
             prompt = SFDRPromptingService.create_generic_numeric_prompt(kpi_name, unit, readable_text)
+            print(prompt)
             schema = SFDRPromptingService.create_generic_numeric_schema("extracted_value")
 
             values = GenerateGptRequest.generate_gpt_request(prompt, schema, ai_model=ai_model)
@@ -38,17 +34,34 @@ class SFDRNumericValueGenerator:
                 logger.warning("GPT returned no values for %s", kpi_name)
                 return None
 
-            raw_value = values[0]
+            numeric_value = SFDRNumericValueGenerator._find_numeric_value_in_list(values)
 
-            if str(raw_value) == "-1":
+            if numeric_value is None:
+                logger.warning("No numeric value found in GPT response for %s", kpi_name)
                 return None
 
-            return SFDRNumericValueGenerator.extract_number(str(raw_value))
+            return SFDRNumericValueGenerator.extract_number(str(numeric_value))
 
         except Exception as e:
-            logger.error("Error extracting %s: %s", kpi_name, e)
+            logger.exception("Error extracting %s: %s", kpi_name, e)
 
             return None
+
+    @staticmethod
+    def _find_numeric_value_in_list(values: List[Any]) -> Any | None:
+        """Helper to find the first int/float in the list, skipping explanation strings."""
+        for val in values:
+            # GPT gibt Zahlen oft direkt als float/int zurück
+            if isinstance(val, (int, float)) and not isinstance(val, bool):
+                return val
+            # Manchmal als String wie "15000.0"
+            if isinstance(val, str):
+                # Wir überspringen Texte wie "Die Einheit ist Tonnen"
+                # Wir suchen nach reinen Zahlen (optional mit Minus und Dezimalpunkt)
+                clean_val = val.replace(",", "").strip()
+                if re.match(r"^-?\d+(\.\d+)?$", clean_val):
+                     return val
+        return None
 
     @staticmethod
     def extract_number(value: str) -> float:
@@ -61,4 +74,5 @@ class SFDRNumericValueGenerator:
         if match:
             return float(match.group(0))
 
-        raise ValueError(f"Could not extract number from '{value}'")
+        msg = f"Could not extract number from '{value}'"
+        raise ValueError(msg)

@@ -27,6 +27,5 @@ def send_alert_message(message: str) -> requests.Response | None:
         response = requests.post(url=url, data=json.dumps(payload), headers=headers)
         return response
     except Exception as e:
-        # Alerting sollte niemals die Hauptanwendung crashen lassen
         logger.warning("Failed to send alert message: %s", e)
         return None

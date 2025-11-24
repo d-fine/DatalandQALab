@@ -74,8 +74,7 @@ def review_dataset(
         if framework == "nuclear-and-gas":
             return review_nuclear_and_gas_dataset(data_id, ai_model=ai_model)
         if framework == "sfdr":
-            logger.warning("SFDR dataset review is not implemented yet for Data-ID: %s", data_id)
-            # Placeholder for SFDR dataset review implementation
+            logger.info("Starting SFDR dataset review for Data-ID: %s", data_id)
             return review_sfdr_dataset(data_id, ai_model=ai_model)
         logger.error("Unknown framework: %s for Data-ID: %s", framework, data_id)
         return None
@@ -156,6 +155,7 @@ def review_sfdr_dataset(data_id: str, ai_model: str = "gpt-4o") -> str | None:
         readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
             data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
         )
+        logger.debug("MARKDOWN DEBUG OUTPUT:\n%s", readable_text)
 
         report = generator.generate_report(relevant_pages=readable_text, dataset=data_collection)
     data = config.get_config().dataland_client.sfdr_qa_api.post_sfdr_data_qa_report(data_id=data_id, sfdr_data=report)

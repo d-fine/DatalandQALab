@@ -1,8 +1,10 @@
-import pytest
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, patch
 
+import pytest
 from dataland_qa.models import QaReportDataPointVerdict
+
 from dataland_qa_lab.review.report_generator.sfdr_report_generator import SfdrReportGenerator
+
 
 class TestSfdrReportGenerator:
     """
@@ -17,9 +19,7 @@ class TestSfdrReportGenerator:
         return MagicMock()
 
     @patch("dataland_qa_lab.review.report_generator.sfdr_report_generator.SFDRNumericValueGenerator")
-    def test_generate_report_mixed_scenarios(
-        self, mock_numeric_generator: MagicMock, mock_dataset: MagicMock
-    ) -> None:
+    def test_generate_report_mixed_scenarios(self, mock_numeric_generator: MagicMock, mock_dataset: MagicMock) -> None:
         """
         Test a full run where different KPIs have different outcomes:
         1. Scope 1: Match -> ACCEPTED
@@ -27,7 +27,7 @@ class TestSfdrReportGenerator:
         3. Waste: Dataland Empty -> REJECTED (Filled by AI)
         4. Social: AI Empty -> REJECTED (NoDataFound)
         """
-        
+
         # 1. Setup Generator
         generator = SfdrReportGenerator(ai_model="gpt-4o")
         relevant_pages = "Dummy content page 1-5"
@@ -53,11 +53,11 @@ class TestSfdrReportGenerator:
             if field_name == "scope1_ghg_emissions_in_tonnes":
                 return 100.0  # Matches AI
             if field_name == "emissions_to_water_in_tonnes":
-                return 80.0   # Mismatch (AI is 50.0)
+                return 80.0  # Mismatch (AI is 50.0)
             if field_name == "hazardous_and_radioactive_waste_in_tonnes":
-                return None   # Empty in Dataland
+                return None  # Empty in Dataland
             if field_name == "board_gender_diversity_supervisory_board_in_percent":
-                return 30.0   # Exists in Dataland, but AI is None
+                return 30.0  # Exists in Dataland, but AI is None
             return None
 
         mock_dataset.get_value_generic.side_effect = dataland_side_effect
@@ -78,7 +78,7 @@ class TestSfdrReportGenerator:
         assert water.verdict == QaReportDataPointVerdict.QAREJECTED
         assert "Discrepancy" in water.comment
         # Should take the AI value as correction
-        assert water.corrected_data.value == 50.0 
+        assert water.corrected_data.value == 50.0
 
         # --- CASE 3: DATALAND EMPTY (Waste) ---
         waste = report.environmental.waste.hazardous_and_radioactive_waste_in_tonnes
@@ -96,13 +96,13 @@ class TestSfdrReportGenerator:
     def test_generate_report_no_pages(self, mock_dataset: MagicMock) -> None:
         """Test that missing pages result in QANOTATTEMPTED."""
         generator = SfdrReportGenerator()
-        
+
         # Pass None or empty string as relevant_pages
         report = generator.generate_report(None, mock_dataset)  # type: ignore
 
         # Check one field (they should all be the same)
         scope1 = report.environmental.greenhouse_gas_emissions.scope1_ghg_emissions_in_tonnes
-        
+
         assert scope1.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
         assert "No relevant pages" in scope1.comment
 
@@ -110,7 +110,7 @@ class TestSfdrReportGenerator:
     def test_compare_logic_both_empty(self, mock_numeric_gen: MagicMock, mock_dataset: MagicMock) -> None:
         """Test specific edge case: Both Dataland and AI are None."""
         generator = SfdrReportGenerator()
-        
+
         mock_numeric_gen.get_generic_numeric_value.return_value = None
         mock_dataset.get_value_generic.return_value = None
 

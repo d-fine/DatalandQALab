@@ -1,29 +1,30 @@
 class SFDRPromptingService:
-    """Service for handling SFDR prompt requests with enhanced precision regarding units."""
+    """Service for handling SFDR prompt requests with clear, rule-based instructions."""
 
     @staticmethod
     def create_scope1_prompt(markdown_text: str) -> str:
-        """Creates a highly specialized prompt for Scope 1 GHG extraction with strict unit handling."""
+        """Creates a precise prompt for Scope 1 GHG extraction."""
         return f"""
-        You are a specialist ESG Data Auditor. Your task is to extract the exact numeric value for "Scope 1 GHG Emissions" (Direct Emissions).
+        You are an expert ESG Data Auditor.
+        Task: Extract the exact numeric value for "Scope 1 GHG Emissions" (Direct Emissions).
 
-        Target Unit: tonnes of CO2 equivalent (tCO2e).
+        TARGET UNIT: tonnes of CO2 equivalent (tCO2e).
 
-        ### UNIT NORMALIZATION RULES (CRITICAL):
-        1. **Check the unit carefully:** Look for headers saying "in thousands", "in millions", "kt", "Mt", etc.
-        2. **Convert to Target Unit (tonnes):**
-           - If the text says "13.51 kt" (kilotonnes) -> Calculate 13.51 * 1,000 -> Return 13510.0
-           - If the text says "13.51 thousand tonnes" -> Calculate 13.51 * 1,000 -> Return 13510.0
-           - If the text says "1.5 Mt" (million tonnes) -> Calculate 1.5 * 1,000,000 -> Return 1500000.0
-           - If the text says "13,510 tonnes" -> Return 13510.0
-        
-        ### EXTRACTION RULES:
-        - **Actuals ONLY:** Extract historical data (e.g., "2023"). IGNORE targets or goals.
-        - **Gross vs. Net:** Extract **GROSS** emissions (market-based preferred if available, otherwise location-based).
-        - **Consolidation:** Extract the global group-wide total.
-        - **Format:** Return ONLY the raw float number (e.g. 13510.0). Do not use comma separators for thousands.
+        INSTRUCTIONS:
+        1. **Locate the Value:** Find the Scope 1 emission value for the reporting year.
+        2. **Check the Unit:** Identify the unit explicitly stated in the text or table header.
+        3. **Normalize to Tonnes:**
+           - If unit is 'kilotonnes' (kt) or 'thousands': Multiply value by 1,000.
+           - If unit is 'million tonnes' (Mt) or 'millions': Multiply value by 1,000,000.
+           - If unit is 'tonnes': Use value as is.
 
-        ### DOCUMENT CONTEXT:
+        DATA RULES:
+        - **Actuals ONLY:** Extract reported data (e.g., "2023"). IGNORE targets, goals, or baseline years.
+        - **Scope:** Look for "Scope 1" or "Direct emissions".
+        - **Gross vs Net:** Extract GROSS emissions. Ignore "net" or "offset" values unless only those are available.
+        - **Format:** Return the final calculated number as a float (e.g. 15000.0). No commas.
+
+        RELEVANT DOCUMENT CONTEXT:
         {markdown_text}
         """
 
@@ -33,44 +34,50 @@ class SFDRPromptingService:
 
     @staticmethod
     def create_generic_numeric_prompt(kpi_name: str, unit: str, markdown_text: str) -> str:
-        """Creates a robust generic prompt that handles unit conversion."""
+        """Creates a strict rule-based prompt for generic numeric extraction."""
         return f"""
-        You are a meticulous ESG Data Auditor. Extract the precise numeric value for: "{kpi_name}".
+        You are an expert ESG Data Auditor.
+        Task: Extract the numeric value for "{kpi_name}".
 
-        Target Unit: {unit}
+        TARGET UNIT: {unit}
 
-        ### STRICT RULES:
-        1. **Unit Conversion is MANDATORY:**
-           - Verify if the value in the text is scaled (e.g., "in thousands", "in millions", "kt", "MWh", "GWh").
-           - **You MUST calculate** the final value in the Target Unit ({unit}).
-           - Example: If Target is 'tonnes' and text is '10 kt', return 10000.0.
-        2. **Identify Actuals:** Extract only realized historical performance (e.g., reporting year). Ignore targets/goals.
-        3. **Precision:** If the text matches the target unit exactly, return the number as is.
-        4. **Output Format:** Return ONLY the final calculated float (e.g. 12345.0). No commas.
-        5. **Not Found:** If specific data is missing or ambiguous, return None. Do not guess.
+        INSTRUCTIONS:
+        1. Find the value for "{kpi_name}" in the text.
+        2. Verify the unit in the text (look for headers like 'in thousands', 'MWh', '%', etc.).
+        3. If the text unit differs from the Target Unit ({unit}), APPLY CONVERSION:
+           - 'k' / 'kilo' / 'thousand' -> Multiply by 1,000.
+           - 'M' / 'Mega' / 'million' -> Multiply by 1,000,000.
+           - 'G' / 'Giga' -> Multiply by 1,000 (if target is Mega).
+           - '%' -> Return as number 0-100.
 
-        ### DOCUMENT CONTEXT:
+        RULES:
+        - Ignore future targets ("Target 2030"). Extract only the reporting year value.
+        - Return strictly the numeric value (float).
+        - Do not make any assumptions or estimations.
+        - If the value is not found, return None.
+
+        RELEVANT DOCUMENT CONTEXT:
         {markdown_text}
         """
 
     @staticmethod
     def create_generic_numeric_schema(field_id: str) -> dict:
-        """Creates a schema that includes reasoning to force the AI to think about units."""
+        """Creates a schema that asks for reasoning (Chain-of-Thought) to improve accuracy."""
         return {
             "type": "object",
             "properties": {
                 "unit_found_in_text": {
                     "type": "string",
-                    "description": "The exact unit string found in the document (e.g., 'thousand tonnes', 'kt', 'tCO2e')."
+                    "description": "The unit string exactly as found in the text (e.g., 'kt', 'tCO2e', 'thousand').",
                 },
                 "conversion_logic": {
                     "type": "string",
-                    "description": "Explanation of any conversion performed (e.g., 'Value was in kt, so I multiplied by 1000')."
+                    "description": "Explain your calculation. E.g., 'Found 50 kt. Target is tonnes. 50 * 1000 = 50000'.",
                 },
                 field_id: {
                     "type": "number",
-                    "description": f"The final extracted value converted to the target unit. If not found, return None.",
-                }
+                    "description": "The final value converted to the target unit. Return None if not found.",
+                },
             },
             "required": ["unit_found_in_text", "conversion_logic", field_id],
         }
