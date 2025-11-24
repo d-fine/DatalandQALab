@@ -38,7 +38,9 @@ class DatalandQaLabSettings(BaseSettings):
     azure_docintel_endpoint: str
 
     # My modification: Dynamic AI Model Selection
-    ai_model_name: str = "gpt-4o"  # Default model name can be changed to another gpt variant
+    ai_model_name: str = (
+        "gpt-4o"  # Default model name can be changed to another gpt variant
+    )
 
     postgres_password: str
     postgres_user: str

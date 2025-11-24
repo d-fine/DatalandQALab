@@ -69,7 +69,11 @@ class GenerateGptRequest:
 
             try:
                 if updated_openai_response.choices[0].message.tool_calls:
-                    tool_call = updated_openai_response.choices[0].message.tool_calls[0].function
+                    tool_call = (
+                        updated_openai_response.choices[0]
+                        .message.tool_calls[0]
+                        .function
+                    )
             except Exception as e:
                 msg = f"Error extracting tool calls: {e}"
                 raise ValueError(e) from e
