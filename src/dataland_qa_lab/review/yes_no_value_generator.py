@@ -21,18 +21,10 @@ def get_yes_no_values_from_report(readable_text: str, ai_model: str | None = Non
         main_prompt = prompting_service.PromptingService.create_main_prompt(1, readable_text, "")
         sub_prompt = prompting_service.PromptingService.create_sub_prompt_template1()
 
-        if ai_model is None:
-            extracted_list = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                main_prompt,
-                sub_prompt,
-            )
-
-        else:
-            extracted_list = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
-                main_prompt,
-                sub_prompt,
-                ai_model,
-            )
+        extracted_list = generate_gpt_request.GenerateGptRequest.generate_gpt_request(
+            main_prompt,
+            sub_prompt,
+        )
 
         if not extracted_list:
             msg = "No results returned from GPT for Yes_No values."

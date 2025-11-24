@@ -285,7 +285,9 @@ def test_generate_gpt_request_config_error() -> None:
 
 @patch("dataland_qa_lab.utils.config.get_config")
 @patch("openai.AzureOpenAI")
-def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_get_config: Mock) -> None:
+def test_generate_gpt_request_tool_call_parsing_error(
+    mock_client: Mock, mock_get_config: Mock
+) -> None:
     """Test error handling during tool call argument parsing."""
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
@@ -294,18 +296,24 @@ def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_ge
     )
 
     mock_client().chat.completions.create.return_value = Mock(
-        choices=[Mock(message=Mock(tool_calls=[Mock(function=Mock(arguments="Invalid Argument String"))]))]
+        choices=[
+            Mock(
+                message=Mock(
+                    tool_calls=[Mock(function=Mock(arguments="Invalid Argument String"))]
+                )
+            )
+        ]
     )
 
-    with pytest.raises(
-        ValueError, match=r"An unexpected error occurred:.*"
-    ):
+    with pytest.raises(ValueError, match=r"An unexpected error occurred:.*"):
         GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
 
 
 @patch("dataland_qa_lab.utils.config.get_config")
 @patch("openai.AzureOpenAI")
-def test_generate_gpt_request_no_tool_calls(mock_client: Mock, mock_get_config: Mock) -> None:
+def test_generate_gpt_request_no_tool_calls(
+    mock_client: Mock, mock_get_config: Mock
+) -> None:
     """Test handling when no tool calls are present in the GPT response."""
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
@@ -313,9 +321,9 @@ def test_generate_gpt_request_no_tool_calls(mock_client: Mock, mock_get_config: 
         ai_model_name="gpt-4o",
     )
 
-    mock_client().chat.completions.create.return_value = Mock(choices=[Mock(message=Mock(tool_calls=None))])
+    mock_client().chat.completions.create.return_value = Mock(
+        choices=[Mock(message=Mock(tool_calls=None))]
+    )
 
-    with pytest.raises(
-        ValueError, match=r"An unexpected error occurred:.*"
-    ):
+    with pytest.raises(ValueError, match=r"An unexpected error occurred:.*"):
         GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
