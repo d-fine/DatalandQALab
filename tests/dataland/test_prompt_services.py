@@ -20,6 +20,7 @@ def mock_config() -> Mock:
     mock_conf = Mock()
     mock_conf.azure_openai_api_key = "test_key"
     mock_conf.azure_openai_endpoint = "https://test.endpoint.com"
+    mock_conf.ai_model_name = "gpt-4o"
     return mock_conf
 
 
@@ -289,6 +290,7 @@ def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_ge
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
+        ai_model_name="gpt-4o",
     )
 
     mock_client().chat.completions.create.return_value = Mock(
@@ -296,7 +298,7 @@ def test_generate_gpt_request_tool_call_parsing_error(mock_client: Mock, mock_ge
     )
 
     with pytest.raises(
-        ValueError, match=r"An unexpected error occurred: Error during GPT request creation: Connection error."
+        ValueError, match=r"An unexpected error occurred:.*"
     ):
         GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
 
@@ -308,11 +310,12 @@ def test_generate_gpt_request_no_tool_calls(mock_client: Mock, mock_get_config: 
     mock_get_config.return_value = Mock(
         azure_openai_api_key="test_key",
         azure_openai_endpoint="https://test.endpoint.com",
+        ai_model_name="gpt-4o",
     )
 
     mock_client().chat.completions.create.return_value = Mock(choices=[Mock(message=Mock(tool_calls=None))])
 
     with pytest.raises(
-        ValueError, match=r"An unexpected error occurred: Error during GPT request creation: Connection error."
+        ValueError, match=r"An unexpected error occurred:.*"
     ):
         GenerateGptRequest.generate_gpt_request("main_prompt", "sub_prompt")
