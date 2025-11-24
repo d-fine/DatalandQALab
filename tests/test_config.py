@@ -1,6 +1,9 @@
 import os
+from unittest.mock import Mock, patch  
 
 import pytest
+
+from dataland_qa_lab.review.generate_gpt_request import GenerateGptRequest
 
 from dataland_qa_lab.utils.config import DatalandQaLabSettings, get_config
 
