@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 NUM_EXPECTED_VALUES = 6
 
 
-def get_yes_no_values_from_report(readable_text: str, ai_model: str | None = None) -> dict[str, YesNo | None]:
+def get_yes_no_values_from_report(readable_text: str, ai_model: str | None = None) -> dict[str, YesNo | None]:  # noqa: ARG001
     """Extracts information from template 1 using Azure OpenAI and returns a list of results.
 
     Returns:

@@ -10,31 +10,30 @@ class NumericValueGenerator:
     TEMPLATE_ID_5 = 5
 
     @staticmethod
-    def get_taxonomy_aligned_denominator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
+    def get_taxonomy_aligned_denominator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:  # noqa: ARG004
         """Extracts information from template 2 using Azure OpenAI and returns a list of results."""
-        return NumericValueGenerator.extract_values_from_template(2, readable_text, kpi, ai_model)
+        return NumericValueGenerator.extract_values_from_template(2, readable_text, kpi)
 
     @staticmethod
-    def get_taxonomy_aligned_numerator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
+    def get_taxonomy_aligned_numerator(readable_text: str, kpi: str, ai_model: str | None = None) -> list:  # noqa: ARG004
         """Extracts information from template 3 using Azure OpenAI and returns a list of results."""
-        return NumericValueGenerator.extract_values_from_template(3, readable_text, kpi, ai_model)
+        return NumericValueGenerator.extract_values_from_template(3, readable_text, kpi)
 
     @staticmethod
-    def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
+    def get_taxonomy_eligible_not_alligned(readable_text: str, kpi: str, ai_model: str | None = None) -> list:  # noqa: ARG004
         """Extracts information from template 4 using Azure OpenAI and returns a list of results."""
-        return NumericValueGenerator.extract_values_from_template(4, readable_text, kpi, ai_model)
+        return NumericValueGenerator.extract_values_from_template(4, readable_text, kpi)
 
     @staticmethod
-    def get_taxonomy_non_eligible(readable_text: str, kpi: str, ai_model: str | None = None) -> list:
+    def get_taxonomy_non_eligible(readable_text: str, kpi: str, ai_model: str | None = None) -> list:  # noqa: ARG004
         """Extracts information from template 5 using Azure OpenAI and returns a list of results."""
-        return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi, ai_model)
+        return NumericValueGenerator.extract_values_from_template(5, readable_text, kpi)
 
     @staticmethod
     def extract_values_from_template(
         template_id: int,
         readable_text: str,
         kpi: str,
-        ai_model: str | None = None,
     ) -> list:
         """Generic method to extract values from a given template using Azure OpenAI."""
         try:
