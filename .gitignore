@@ -164,5 +164,4 @@ cython_debug/
 
 # Automatically generated API clients
 clients/
-# Ignoriere doppelten Projektordner
-DatalandQaLab/
+
