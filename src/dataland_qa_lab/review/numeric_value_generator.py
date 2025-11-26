@@ -76,14 +76,30 @@ class NumericValueGenerator:
 
     @staticmethod
     def extract_number(value: str) -> float:
-        """Extracts the first numeric part from a string and converts it to a float."""
-        if isinstance(value, float | int):
-            return float(value)
+        """Extracts the first numeric part from a string and converts it to a float.
 
+        Rejects -1 and handles Unicode minus signs (U+2212, U+2013).
+        """
+        if isinstance(value, float | int):
+            num = float(value)
+            # Reject value -1
+            if num == -1.0:
+                return None
+            return num
+        # Normalize Unicode minus variants to ASCII "-"
+        normalized_value = (
+            value.replace("\u2212", "-")  # mathematical minus (U+2212)
+            .replace("\u2013", "-")  # en dash / Gedankenstrich (U+2013)
+            .strip()  # remove surrounding spaces
+        )
         # Safe regex: Match optional negative sign, then digits, optional dot, and more digits
-        match = re.search(r"-?\d+(?:\.\d+)?", value)
+        match = re.search(r"-?\d+(?:\.\d+)?", normalized_value)
         if match:
-            return float(match.group(0))
+            num = float(match.group(0))
+            # Reject value -1
+            if num == -1.0:
+                return None
+            return num
 
         msg = f"Could not extract a valid number from '{value}'"
         raise ValueError(msg)
