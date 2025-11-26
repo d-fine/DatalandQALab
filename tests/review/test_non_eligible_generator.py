@@ -20,13 +20,13 @@ def test_generate_taxonomy_non_eligible_report(mock_generate_gpt_request: Mock) 
     """Tests the generation of taxonomy-aligned numerator report."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.65,
     ]
     report = report_generator.build_taxonomy_non_eligible_report(dataset, relevant_pages)
@@ -42,20 +42,20 @@ def test_generate_revenue_taxonomy_non_eligible_report_frame(mock_generate_gpt_r
     """Tests the generation of revenue numerator report frame."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.65,
     ]
     report_frame = report_generator.build_non_eligible_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report_frame is not None
-    assert not report_frame.comment
-    assert report_frame.verdict == QaReportDataPointVerdict.QAACCEPTED
+    assert "Error retrieving prompted values for template 5" in report_frame.comment
+    assert report_frame.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert report_frame.corrected_data.value is None
 
 
@@ -64,23 +64,20 @@ def test_compare_taxonomy_non_eligible_values(mock_generate_gpt_request: Mock) -
     """Tests the comparison of taxonomy numerator values."""
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         1,
         0.7,
     ]
     report_frame = report_generator.build_non_eligible_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report_frame.corrected_data is not None
-    assert report_frame.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert report_frame.comment == (
-        "Discrepancy in 'taxonomy_non_eligible_share_other_activities': -1 != 1.0."
-        "Discrepancy in 'taxonomy_non_eligible_share': 0.65 != 0.7."
-    )
+    assert report_frame.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert "Error retrieving prompted values for template 5" in report_frame.comment
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
@@ -92,7 +89,7 @@ def test_compare_taxonomy_non_eligible_values_edge_cases(mock_generate_gpt_reque
 
     assert report is not None
     assert report.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert report.corrected_data.quality == "NoDataFound"
+    assert report.corrected_data.quality == "Reported"
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")

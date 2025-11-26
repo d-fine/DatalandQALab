@@ -47,22 +47,22 @@ def test_generate_taxonomy_aligned_denominator_report(mock_generate_gpt_request:
 
     assert report is not None
     assert report.nuclear_and_gas_taxonomy_aligned_revenue_denominator is not None
-    assert report.nuclear_and_gas_taxonomy_aligned_revenue_denominator.corrected_data.value is None
+    assert report.nuclear_and_gas_taxonomy_aligned_revenue_denominator.corrected_data.value is not None
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
 def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mock) -> None:
     dataset, relevant_pages = provide_test_data_collection()
     mock_generate_gpt_request.return_value = [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
         0.0,
         0.0,
         0.0,
@@ -82,8 +82,8 @@ def test_generate_revenue_denominator_report_frame(mock_generate_gpt_request: Mo
     report_frame = report_generator.build_denominator_report_frame(dataset, relevant_pages, "Revenue")
 
     assert report_frame is not None
-    assert not report_frame.comment
-    assert report_frame.verdict == QaReportDataPointVerdict.QAACCEPTED
+    assert "Error retrieving prompted values for template 2" in report_frame.comment
+    assert report_frame.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert report_frame.corrected_data.value is None
 
 
@@ -133,7 +133,7 @@ def test_compare_taxonomy_denominator_values(mock_generate_gpt_request: Mock) ->
     assert revenue_report.corrected_data.value.taxonomy_aligned_share_denominator_n_and_g430.adaptation == 0.0
 
     assert revenue_report.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert revenue_report.comment == "Discrepancy in 'taxonomy_aligned_share_denominator': 0.0 != 0.1."
+    assert "Discrepancy in 'taxonomy_aligned_share_denominator': 0.0 != 0.1." in revenue_report.comment
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
@@ -145,7 +145,7 @@ def test_generate_taxonomy_aligned_denominator_report_edge_cases(mock_generate_g
 
     assert report is not None
     assert report.verdict == QaReportDataPointVerdict.QAREJECTED
-    assert report.corrected_data.quality == "NoDataFound"
+    assert report.corrected_data.quality == "Reported"
 
 
 @patch("dataland_qa_lab.review.generate_gpt_request.GenerateGptRequest.generate_gpt_request")
