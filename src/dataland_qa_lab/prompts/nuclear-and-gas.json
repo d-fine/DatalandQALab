@@ -17,5 +17,29 @@
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection431": {
         "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 431.:\n\n{context}"
+    },
+    "extendedNuclearAndGasAlignedDenominatorComponentNuclearAndGasTaxonomyAlignedRevenueDenominator": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasAlignedDenominatorComponentNuclearAndGasTaxonomyAlignedCapexDenominator": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasAlignedNumeratorComponentNuclearAndGasTaxonomyAlignedRevenueNumerator": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasAlignedNumeratorComponentNuclearAndGasTaxonomyAlignedCapexNumerator": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasEligibleButNotAlignedComponentNuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasEligibleButNotAlignedComponentNuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasNonEligibleComponentNuclearAndGasTaxonomyNonEligibleRevenue": {
+        "prompt": ""
+    },
+    "extendedNuclearAndGasNonEligibleComponentNuclearAndGasTaxonomyNonEligibleCapex": {
+        "prompt": ""
     }
 }
