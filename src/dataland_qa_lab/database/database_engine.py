@@ -90,7 +90,7 @@ def update_entity(entity: Any) -> bool:  # noqa: ANN401
     return True
 
 
-def delete_entity(entity_id: str, entity_class: type[Any]) -> bool:  # noqa: ANN401
+def delete_entity(entity_id: str, entity_class: type[Any]) -> bool:
     """Generic method to delete an entity from the database by its ID."""
     session = SessionLocal()
 
