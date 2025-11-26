@@ -196,4 +196,3 @@ def test_delete_entity_database_error(mock_inspect: MagicMock, mock_session_loca
     assert result is False
     mock_session.rollback.assert_called_once()
     mock_session.close.assert_called_once()
-
