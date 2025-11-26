@@ -108,3 +108,92 @@ def test_sqlalchemy_errors(mock_session_local: MagicMock) -> None:
     mock_session.rollback.assert_called_once()
     mock_session.close.assert_called_once()
     assert result is False
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_add_entity_database_error(mock_session_local: MagicMock) -> None:
+    """Test entity addition with database error."""
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+    mock_entity = MagicMock()
+    mock_session.add.side_effect = SQLAlchemyError("DB Error")
+
+    result = database_engine.add_entity(mock_entity)
+
+    assert result is False
+    mock_session.rollback.assert_called_once()
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+@patch("dataland_qa_lab.database.database_engine.inspect")
+def test_get_entity_database_error(mock_inspect: MagicMock, mock_session_local: MagicMock) -> None:
+    """Test entity retrieval with database error."""
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+    mock_entity_class = MagicMock()
+
+    mock_primary_key = MagicMock()
+    mock_inspect.return_value.primary_key = [mock_primary_key]
+
+    mock_session.query.side_effect = SQLAlchemyError("DB Error")
+
+    result = database_engine.get_entity("123", mock_entity_class)
+
+    assert result is None
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_update_entity_database_error(mock_session_local: MagicMock) -> None:
+    """Test entity update with database error."""
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+    mock_entity = MagicMock()
+    mock_session.merge.side_effect = SQLAlchemyError("DB Error")
+
+    result = database_engine.update_entity(mock_entity)
+
+    assert result is False
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+@patch("dataland_qa_lab.database.database_engine.inspect")
+def test_delete_entity_not_found(mock_inspect: MagicMock, mock_session_local: MagicMock) -> None:
+    """Test entity deletion when entity not found."""
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+    mock_entity_class = MagicMock()
+
+    mock_primary_key = MagicMock()
+    mock_inspect.return_value.primary_key = [mock_primary_key]
+
+    mock_query = mock_session.query.return_value
+    mock_query.filter.return_value.first.return_value = None
+
+    result = database_engine.delete_entity("999", mock_entity_class)
+
+    assert result is False
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+@patch("dataland_qa_lab.database.database_engine.inspect")
+def test_delete_entity_database_error(mock_inspect: MagicMock, mock_session_local: MagicMock) -> None:
+    """Test entity deletion with database error."""
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+    mock_entity_class = MagicMock()
+
+    mock_primary_key = MagicMock()
+    mock_inspect.return_value.primary_key = [mock_primary_key]
+
+    mock_session.query.side_effect = SQLAlchemyError("DB Error")
+
+    result = database_engine.delete_entity("123", mock_entity_class)
+
+    assert result is False
+    mock_session.rollback.assert_called_once()
+    mock_session.close.assert_called_once()
+
