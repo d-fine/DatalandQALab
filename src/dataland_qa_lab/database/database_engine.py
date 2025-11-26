@@ -3,6 +3,7 @@ import logging
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
 
 from dataland_qa_lab.database.database_tables import Base
 from dataland_qa_lab.utils import config
@@ -16,10 +17,10 @@ engine = create_engine(DATABASE_URL)
 
 logger = logging.getLogger(__name__)
 
-# Prüfe die Datenbankverbindung beim Start
+# Verify database connection at startup
 try:
     with engine.connect() as connection:
-        connection.execute("SELECT 1")
+        connection.execute(text("SELECT 1"))
 except SQLAlchemyError as e:
     logger.critical("Database connection failed. Exiting application.", exc_info=e)
     import sys
