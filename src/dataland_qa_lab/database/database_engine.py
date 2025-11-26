@@ -1,6 +1,6 @@
 import logging
 import sys
-from typing import Any, Optional, Type
+from typing import Any
 
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.exc import SQLAlchemyError
@@ -20,9 +20,7 @@ SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 
 def verify_database_connection() -> None:
-    """
-    Verify the database connection. If the connection fails, log a critical error and exit the application.
-    """
+    """Verify the database connection. If failed, log critical error and exit."""
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
@@ -43,7 +41,7 @@ def create_tables() -> bool:
     return True
 
 
-def add_entity(entity: Any) -> bool:
+def add_entity(entity: Any) -> bool:  # noqa: ANN401
     """Generic method to add an entity to the database."""
     session = SessionLocal()
 
@@ -60,7 +58,7 @@ def add_entity(entity: Any) -> bool:
     return True
 
 
-def get_entity(entity_id: str, entity_class: Type[Any]) -> Optional[Any]:
+def get_entity(entity_id: str, entity_class: type[Any]) -> Any | None:  # noqa: ANN401
     """Generic method to get an entity from the database by its ID."""
     session = SessionLocal()
     entity = None
@@ -76,7 +74,7 @@ def get_entity(entity_id: str, entity_class: Type[Any]) -> Optional[Any]:
     return entity
 
 
-def update_entity(entity: Any) -> bool:
+def update_entity(entity: Any) -> bool:  # noqa: ANN401
     """Generic method to update an entity in the database."""
     session = SessionLocal()
 
@@ -92,7 +90,7 @@ def update_entity(entity: Any) -> bool:
     return True
 
 
-def delete_entity(entity_id: str, entity_class: Type[Any]) -> bool:
+def delete_entity(entity_id: str, entity_class: type[Any]) -> bool:  # noqa: ANN401
     """Generic method to delete an entity from the database by its ID."""
     session = SessionLocal()
 
