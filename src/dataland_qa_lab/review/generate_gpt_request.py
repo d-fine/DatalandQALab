@@ -13,18 +13,7 @@ class GenerateGptRequest:
 
     @staticmethod
     def generate_gpt_request(mainprompt: str, subprompt: str) -> list:
-        """Generates the actual GPT request.
-
-        Args:
-            mainprompt (str): The main system prompt for the template.
-            subprompt (str): Additional context or parameters for the tool function.
-
-        Returns:
-            List[str]: A list of extracted values from the GPT response.
-
-        Raises:
-            ValueError: For any issues encountered during the process.
-        """
+        """Generates the GPT request and returns the extracted information."""
         try:
             try:
                 conf = config.get_config()
@@ -46,7 +35,7 @@ class GenerateGptRequest:
                 updated_openai_response = client.chat.completions.create(
                     # Use dynamic model selection from config
                     model=conf.ai_model_name,
-                    temperature=0,
+                    temperature=1 if conf.ai_model_name == "gpt-5" else 0,
                     messages=[
                         {"role": "system", "content": mainprompt},
                     ],
