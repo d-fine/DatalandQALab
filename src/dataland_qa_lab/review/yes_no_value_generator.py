@@ -31,7 +31,7 @@ def get_yes_no_values_from_report(readable_text: str, ai_model: str | None = Non
             throw_error(msg)
 
     except (ValueError, TypeError) as e:
-        msg = f"Error extracting values from template 1: {e}"
+        msg = f"Error extracting values from template 1.{e}"
         throw_error(msg)
 
     if len(extracted_list) != NUM_EXPECTED_VALUES:

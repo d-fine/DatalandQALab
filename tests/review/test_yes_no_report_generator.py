@@ -90,6 +90,6 @@ def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data:
     report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages="123")
 
     # Check that the comment contains error information
-    assert "Error extracting values from template 1" in report.nuclear_energy_related_activities_section426.comment
+    assert "Error in get_yes_no_values_by_data" in report.nuclear_energy_related_activities_section426.comment
     assert report.nuclear_energy_related_activities_section426.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert report.nuclear_energy_related_activities_section426.corrected_data.comment is None
