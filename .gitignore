@@ -166,5 +166,5 @@ cython_debug/
 clients/
 
 # Custom excluded files
-monitor/config.json
-monitor/output/
+qa_lab_monitor/config.json
+qa_lab_monitor/output/

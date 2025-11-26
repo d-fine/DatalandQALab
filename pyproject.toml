@@ -40,9 +40,9 @@ doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
 doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"
 combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
-start = "fastapi run src/dataland_qa_lab/bin/server.py"
-dev = "fastapi dev src/dataland_qa_lab/bin/server.py"
-monitor = "python -m monitor.main"
+start = "fastapi run qa_lab/bin/server.py"
+dev = "fastapi dev qa_lab/bin/server.py"
+monitor = "python -m qa_lab_monitor.main"
 
 
 
