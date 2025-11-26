@@ -86,9 +86,8 @@ def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> No
 @patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
 @patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
 def test_build_yes_no_report_data_provider_error(
-    mock_get_yes_no_values_by_data: Mock,
-    mock_get_yes_no_values_from_report: Mock
-    ) -> None:
+    mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock
+) -> None:
     mock_get_yes_no_values_from_report.return_value = {}
     mock_get_yes_no_values_by_data.side_effect = ValueError("Error in get_yes_no_values_by_data")
     test_data_collection = provide_test_data_collection()
