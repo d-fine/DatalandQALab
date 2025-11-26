@@ -63,7 +63,7 @@ class DatalandQaLabSettings(BaseSettings):
             "gpt-5",
             "gpt-4o-mini",
             "gpt-3.5-turbo",
-            "mistral-large"
+            "mistral-large",
         ]
 
         if v not in allowed_models:
