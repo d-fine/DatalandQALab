@@ -60,7 +60,7 @@ def test_get_entity(mock_inspect: MagicMock, mock_session_local: MagicMock) -> N
 
     mock_session.query.assert_called_once_with(mock_entity_class)
     mock_query.filter.assert_called_once_with(mock_primary_key == "1")
-    mock_session.commit.assert_called_once()
+    mock_session.close.assert_called_once()
     assert result == mock_entity_instance
 
 
