@@ -1,0 +1,6 @@
+{
+    "extendedDecimalEstimatedScope1GhgEmissionsInTonnes": {
+        "prompt": "Extract the estimated scope 1 GHG emissions in tonnes as a decimal number from the following text:\n\n{context}",
+        "type": "decimal"
+    }
+}
