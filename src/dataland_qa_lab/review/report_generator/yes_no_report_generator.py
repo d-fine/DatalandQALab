@@ -32,7 +32,11 @@ def build_yes_no_report(
 
     except Exception as e:  # noqa: BLE001
         error_message = str(e)
+        if "get_yes_no_values_by_data" in error_message:
+            error_message = "Error extracting values from template 1."
+
         create_not_attempted_report(report, error_message)
+        return report
 
     return report
 
