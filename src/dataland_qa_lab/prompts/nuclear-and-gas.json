@@ -1,0 +1,21 @@
+{
+    "_comment": "This file contains the prompts used for validation of the SFDR data points. To add or modify prompts, edit this file accordingly.",
+    "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection426": {
+        "prompt": ""
+    },
+    "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection427": {
+        "prompt": ""
+    },
+    "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection428": {
+        "prompt": ""
+    },
+    "extendedEnumYesNoFossilGasRelatedActivitiesSection429": {
+        "prompt": ""
+    },
+    "extendedEnumYesNoFossilGasRelatedActivitiesSection430": {
+        "prompt": ""
+    },
+    "extendedEnumYesNoFossilGasRelatedActivitiesSection431": {
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 431.:\n\n{context}"
+    }
+}
