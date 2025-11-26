@@ -41,7 +41,7 @@ def create_tables() -> bool:
     return True
 
 
-def add_entity(entity: Any) -> bool:  # noqa: ANN401
+def add_entity(entity: Any) -> bool:
     """Generic method to add an entity to the database."""
     session = SessionLocal()
 
@@ -58,7 +58,7 @@ def add_entity(entity: Any) -> bool:  # noqa: ANN401
     return True
 
 
-def get_entity(entity_id: str, entity_class: type[Any]) -> Any | None:  # noqa: ANN401
+def get_entity(entity_id: str, entity_class: type[Any]) -> Any | None:
     """Generic method to get an entity from the database by its ID."""
     session = SessionLocal()
     entity = None
@@ -74,7 +74,7 @@ def get_entity(entity_id: str, entity_class: type[Any]) -> Any | None:  # noqa: 
     return entity
 
 
-def update_entity(entity: Any) -> bool:  # noqa: ANN401
+def update_entity(entity: Any) -> bool:
     """Generic method to update an entity in the database."""
     session = SessionLocal()
 
@@ -88,6 +88,7 @@ def update_entity(entity: Any) -> bool:  # noqa: ANN401
         session.close()
 
     return True
+
 
 
 def delete_entity(entity_id: str, entity_class: type[Any]) -> bool:
