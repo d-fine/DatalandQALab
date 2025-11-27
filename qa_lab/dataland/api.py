@@ -24,6 +24,38 @@ class QaStatus:
     Pending: str = "Pending"
 
 
+def get_pending_datasets() -> list[dict]:
+    """Get unreviewed data points from Dataland."""
+    url = f"{conf.dataland_url}/qa/datasets?qaStatus=Pending&chunkSize=2&dataTypes=nuclear-and-gas"
+    res = requests.request("GET", url, headers=headers)
+
+    if res.status_code == requests.codes.ok:
+        return res.json()
+    return []
+
+
+def get_dataset_data_points(dataset_id: str) -> dict:
+    """Get data points for a specific dataset from Dataland."""
+    url = f"{conf.dataland_url}/api/metadata/{dataset_id}/data-points"
+    res = requests.request("GET", url, headers=headers)
+
+    if res.status_code == requests.codes.ok:
+        return res.json()
+    return {}
+
+
+def set_dataset_status(dataset_id: str, qa_status: str) -> None:
+    """Set the QA status for a specific dataset in Dataland."""
+    url = f"{conf.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
+
+    res = requests.request(
+        "POST",
+        url,
+        headers=headers,
+    )
+    print(res.text)
+
+
 def get_data_point(data_point_id: str) -> dict:
     """Get document details from Dataland."""
     url = f"{conf.dataland_url}/api/data-points/{data_point_id}"

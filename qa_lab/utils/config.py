@@ -39,6 +39,9 @@ class DatalandQaLabSettings(BaseSettings):
     slack_webhook_url: str | None = None
     environment: str | None = None
 
+    ai_model: str = "gpt-4o"
+    use_ocr: bool = True
+
     @property
     def dataland_client(self) -> DatalandClient:
         """Get the Dataland client."""

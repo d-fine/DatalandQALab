@@ -1,5 +1,4 @@
 import json
-import sys
 from logging import getLogger
 from pathlib import Path
 
@@ -14,8 +13,8 @@ def get_prompts() -> dict:
     prompts_dir = Path(__file__).parent.parent / "prompts"
 
     if not prompts_dir.exists():
-        logger.error("Prompts directory not found: %s", prompts_dir)
-        sys.exit(1)
+        msg = f"Prompts directory not found: {prompts_dir}"
+        raise FileNotFoundError(msg)
 
     combined = {}
 

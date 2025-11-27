@@ -1,5 +1,4 @@
 import logging
-import sys
 import time
 
 from qa_lab.database.database_engine import add_entity, get_entity
@@ -18,7 +17,6 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, 
     # todo: use the openapi thing instead
     data_point = get_data_point(data_point_id)
 
-    # try getting the variables
     data_point_type = data_point.get("dataPointType", "")
     page = int(data_point.get("dataPoint", {}).get("dataSource", {}).get("page", 0))
     file_reference = data_point.get("dataPoint", {}).get("dataSource", {}).get("fileReference", "")
@@ -26,8 +24,8 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, 
 
     prompt = prompts.get(data_point_type, {}).get("prompt", None)
     if prompt is None:
-        logger.error("No prompt found for data point type: %s", data_point_type)
-        sys.exit(1)
+        msg = f"No prompt found for data point type: {data_point_type}"
+        raise ValueError(msg)
 
     markdown = get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
 

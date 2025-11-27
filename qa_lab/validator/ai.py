@@ -1,6 +1,5 @@
 import json
 import logging
-import sys
 
 from openai import AzureOpenAI
 
@@ -50,7 +49,7 @@ Rules you must follow:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
             return execute_prompt(prompt, ai_model, retries - 1)
-        sys.exit(1)
+        return {"answer": None, "confidence": 0.0, "reasoning": "No content returned from AI model."}
 
     try:
         return json.loads(response.choices[0].message.content)

@@ -1,18 +1,37 @@
 import logging
 import time
+from datetime import datetime
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
 
 from qa_lab.database.database_engine import create_tables
+from qa_lab.validator.scheduler import run_scheduled_processing
 from qa_lab.validator.validator import validate_datapoint
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 logger.info("Launching the Dataland QA Lab server")
 create_tables()
 
 
-qa_lab = FastAPI()
+scheduler = BackgroundScheduler()
+trigger = CronTrigger(minute="*/10")
+job = scheduler.add_job(run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+scheduler.start()
+
+
+@asynccontextmanager
+async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
+    """Ensures that the scheduler shuts down correctly."""
+    yield
+    scheduler.shutdown()
+
+
+qa_lab = FastAPI(lifespan=lifespan)
 
 
 @qa_lab.get("/health")
