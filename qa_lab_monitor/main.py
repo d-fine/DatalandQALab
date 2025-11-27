@@ -1,3 +1,4 @@
+# main.py
 import json
 import logging
 import sys
@@ -9,12 +10,12 @@ from qa_lab_monitor.utils import load_config, store_output
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
-config = load_config()
+
 
 analytics = Counter()
 
 
-def monitor_data_points(data_points: list[str], ai_model: str) -> None:
+def monitor_data_points(data_points: list[str], ai_model: str, config) -> None:
     """Monitor data_points by comparing source of truth with QALab responses."""
     for data_point_id in data_points:
         logger.info("Processing document: %s", data_point_id)
@@ -41,6 +42,8 @@ def monitor_data_points(data_points: list[str], ai_model: str) -> None:
 
 def main() -> None:
     """Main monitoring function."""
+    config = load_config()
+
     logger.info("======= Starting Monitoring =======")
     logger.info("======= Please note this script currently only works for nuclear and gas datasets =======")
 
@@ -56,7 +59,7 @@ def main() -> None:
     check_qalab_api_health()
 
     logger.info("Monitoring the following data points: %s", ", ".join(config.data_points))
-    monitor_data_points(data_points=config.data_points, ai_model=config.ai_model)
+    monitor_data_points(data_points=config.data_points, ai_model=config.ai_model, config=config)
 
     end_time = int(time.time())
     store_output(

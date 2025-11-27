@@ -62,34 +62,3 @@ def store_output(file_name: str, data: str | list | dict, timestamp: bool = True
             json.dump(data, f, indent=4, ensure_ascii=False)
         else:
             f.write(str(data))
-
-
-def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
-    """Compare source of truth with QALab report to check for consistency."""
-    fields = {
-        key
-        for key in source_of_truth.get("data", {}).get("general", {}).get("general", {})
-        if key != "referenced_reports"
-    }
-    qa_general = qalab_report.get("data", {}).get("report", {}).get("general", {}).get("general", {})
-
-    counter = Counter()
-
-    for report_field in fields:
-        qa_field = snake_case_to_camel_case(report_field)
-        verdict = qa_general.get(qa_field, {}).get("verdict")
-        counter[verdict] += 1
-
-    return {
-        "total_fields": len(fields),
-        "qa_accepted": counter["QaAccepted"],
-        "qa_rejected": counter["QaRejected"],
-        "qa_inconclusive": counter["QaInconclusive"],
-        "qa_not_attempted": counter["QaNotAttempted"],
-    }
-
-
-def snake_case_to_camel_case(snake_str: str) -> str:
-    """Convert snake_case string to camelCase."""
-    first, *rest = snake_str.split("_")
-    return first + "".join(word.title() for word in rest)
