@@ -16,18 +16,27 @@ client = AzureOpenAI(
 )
 
 
-def execute_prompt(prompt: str, ai_model: str = "gpt-4o") -> dict:
+def execute_prompt(prompt: str, ai_model: str = "gpt-4o", retries: int = 3) -> dict:
     """Sends a prompt to the AI model and returns the response."""
-    prompt += (
-        "\n\nYou must answer **strictly** in valid JSON format as a single dictionary, with no "
-        "extra symbols, text, or formatting. The dictionary must follow exactly this structure: "
-        '{"answer": <your answer using only the data type specified in the prompt>, '
-        '"confidence": <a float between 0 and 1>, '
-        '"reasoning": <your reasoning as a string>}. '
-        "Do not include anything else. Your output will be parsed by json.loads, so it must be "
-        "syntactically correct JSON with double quotes for all strings and keys. "
-        "Any deviation will be considered invalid."
-    )
+    prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
+
+{
+    "answer": <your answer using only the data type specified in the user's prompt>,
+    "confidence": <a float between 0 and 1>,
+    "reasoning": <your reasoning as a string>
+}
+
+Rules you must follow:
+
+1. Your **entire output** must be exactly one JSON dictionary as shown above.
+2. Do **not** include any text, explanation, code blocks, example JSON, or formatting outside of the dictionary.
+3. All strings and keys must use double quotes. The output must be valid JSON parsable by `json.loads`.
+4. Any deviation from this structure, including extra text or symbols, will be considered invalid and rejected.
+5. Only provide data that strictly fits the types specified by the user's query.
+
+6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
+
+"""
 
     response = client.chat.completions.create(
         model=ai_model,
@@ -36,8 +45,17 @@ def execute_prompt(prompt: str, ai_model: str = "gpt-4o") -> dict:
             {"role": "user", "content": prompt},
         ],
     )
+
     if not response.choices[0].message.content:
-        logger.error("No content returned from AI model.")
+        logger.error("No content returned from AI model. Retries left: %d", retries)
+        if retries > 0:
+            return execute_prompt(prompt, ai_model, retries - 1)
         sys.exit(1)
 
-    return json.loads(response.choices[0].message.content)
+    try:
+        return json.loads(response.choices[0].message.content)
+    except json.JSONDecodeError:
+        if retries > 0:
+            logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
+            return execute_prompt(prompt, ai_model, retries - 1)
+        return {"answer": None, "confidence": 0.0, "reasoning": "Couldn't parse response."}
