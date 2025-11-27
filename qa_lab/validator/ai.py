@@ -18,7 +18,17 @@ client = AzureOpenAI(
 
 def execute_prompt(prompt: str, ai_model: str = "gpt-4o") -> dict:
     """Sends a prompt to the AI model and returns the response."""
-    prompt += '\n\n It is absolutely crucial to use the following format when answering: {"answer": <your answer, only using the data type defined in the prompt>, "confidence": <a confidence score between 0 and 1 as a float>, "reasoning": <your reasoning for the answer>}'  # noqa: E501
+    prompt += (
+        "\n\nYou must answer **strictly** in valid JSON format as a single dictionary, with no "
+        "extra symbols, text, or formatting. The dictionary must follow exactly this structure: "
+        '{"answer": <your answer using only the data type specified in the prompt>, '
+        '"confidence": <a float between 0 and 1>, '
+        '"reasoning": <your reasoning as a string>}. '
+        "Do not include anything else. Your output will be parsed by json.loads, so it must be "
+        "syntactically correct JSON with double quotes for all strings and keys. "
+        "Any deviation will be considered invalid."
+    )
+
     response = client.chat.completions.create(
         model=ai_model,
         temperature=0,

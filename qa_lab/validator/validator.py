@@ -2,13 +2,12 @@ import logging
 import sys
 import time
 
-from qa_lab.database.database_engine import get_entity, add_entity
+from qa_lab.database.database_engine import add_entity, get_entity
 from qa_lab.database.database_tables import CachedDocument
 from qa_lab.dataland.api import QaStatus, get_data_point, get_document, update_data_point_qa_report
 from qa_lab.utils.prompts import get_prompts
 from qa_lab.validator.ai import execute_prompt
 from qa_lab.validator.ocr import extract_pdf
-
 
 logger = logging.getLogger(__name__)
 prompts = get_prompts()

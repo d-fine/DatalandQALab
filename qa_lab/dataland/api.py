@@ -1,9 +1,9 @@
 import io
 import json
+from dataclasses import dataclass
 
 import pypdf
 import requests
-from dataclasses import dataclass
 
 from qa_lab.utils.config import get_config
 
@@ -19,9 +19,9 @@ headers = {
 class QaStatus:
     """QA status options."""
 
-    Accepted = "Accepted"
-    Rejected = "Rejected"
-    Pending = "Pending"
+    Accepted: str = "Accepted"
+    Rejected: str = "Rejected"
+    Pending: str = "Pending"
 
 
 def get_data_point(data_point_id: str) -> dict:
