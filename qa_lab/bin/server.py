@@ -4,7 +4,7 @@ from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI
+from fastapi import FastAPI, Path
 from fastapi.concurrency import asynccontextmanager
 
 from qa_lab.database.database_engine import create_tables
@@ -42,7 +42,10 @@ def health_check() -> dict:
 
 @qa_lab.post("/review-data-point/{data_point_id}")
 def review_data_point_id(
-    data_point_id: str, ai_model: str = "gpt-4o", use_ocr: bool = True, override: bool = False
+    data_point_id: str = Path(..., pattern=r"^[a-zA-Z0-9_-]+$"),
+    ai_model: str = "gpt-4o",
+    use_ocr: bool = True,
+    override: bool = False,
 ) -> dict:
     """Review a single dataset via API call (configurable)."""
     # todo: use_ocr needs to be implemented still
