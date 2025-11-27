@@ -8,8 +8,11 @@ ENV PDM_CHECK_UPDATE=false
 
 RUN apt-get update && apt-get install -y default-jre
 
-COPY pyproject.toml pdm.lock README.md /project/
-COPY ./ /project/dataland_qa_lab
+COPY ../pyproject.toml /project/pyproject.toml
+COPY ../pdm.lock /project/pdm.lock
+COPY ../README.md /project/README.md
+
+COPY ./ /project/qa_lab
 COPY ../bin/ /project/bin
 
 WORKDIR /project
@@ -19,8 +22,10 @@ FROM python:$PYTHON_BASE
 
 COPY --from=builder /project/.venv/ /project/.venv
 ENV PATH="/project/.venv/bin:$PATH"
+ENV PYTHONPATH=/project
 
 EXPOSE 81
 
-COPY ./ /project/dataland_qa_lab
-CMD ["uvicorn", "dataland_qa_lab.bin.server:dataland_qa_lab", "--host", "0.0.0.0", "--port", "81"]
+COPY ./qa_lab /project/qa_lab
+WORKDIR /project
+CMD ["uvicorn", "qa_lab.bin.server:qa_lab", "--host", "0.0.0.0", "--port", "81"]

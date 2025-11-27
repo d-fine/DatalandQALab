@@ -1,9 +1,11 @@
 ---
 services:
   qa-lab-server-dev:
-    profiles:
-      - dev
-    build: .
+    #profiles:
+     # - dev
+    build:
+      context: ./
+      dockerfile: ./qa_lab/Dockerfile
     ports:
       - "127.0.0.1:5051:81"
     environment:
@@ -51,15 +53,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5432:5432"
-  pgadmin:
-    image: ghcr.io/d-fine/datalandqalab/qalab-pgadmin:${QALAB_SERVER_VERSION}
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "127.0.0.1:5050:80" 
-
+  
 volumes:
   pgdata:

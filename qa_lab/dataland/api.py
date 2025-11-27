@@ -3,7 +3,7 @@ import json
 
 import pypdf
 import requests
-from attr import dataclass
+from dataclasses import dataclass
 
 from qa_lab.utils.config import get_config
 

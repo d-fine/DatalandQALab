@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
 
-from qa_lab.bin.server import dataland_qa_lab
+from qa_lab.bin.server import qa_lab
 
-client = TestClient(dataland_qa_lab)
+client = TestClient(qa_lab)
 
 # test_health.py
 
