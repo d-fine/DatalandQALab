@@ -19,19 +19,12 @@ def get_prompts() -> dict:
     combined = {}
 
     for file in prompts_dir.glob("*.json"):
-        try:
-            data = json.loads(file.read_text(encoding="utf-8"))
+        data = json.loads(file.read_text(encoding="utf-8"))
 
-            if not isinstance(data, dict):
-                logger.error("JSON file does not contain a dictionary: %s", file)
-                continue
+        if not isinstance(data, dict):
+            logger.error("JSON file does not contain a dictionary: %s", file)
+            continue
 
-            # Merge dictionaries — later files override earlier ones
-            combined.update(data)
-
-        except json.JSONDecodeError:
-            logger.exception("JSON decoding failed for file: %s", file)
-        except Exception:
-            logger.exception("Unexpected error reading file: %s", file)
+        combined.update(data)
 
     return combined

@@ -35,7 +35,7 @@ Rules you must follow:
 
 6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
 
-"""
+"""  # noqa: E501
 
     response = client.chat.completions.create(
         model=ai_model,

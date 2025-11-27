@@ -48,7 +48,7 @@ def set_dataset_status(dataset_id: str, qa_status: str) -> None:
     """Set the QA status for a specific dataset in Dataland."""
     url = f"{conf.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
 
-    res = requests.request(
+    requests.request(
         "POST",
         url,
         headers=headers,

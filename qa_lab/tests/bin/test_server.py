@@ -1,11 +1,13 @@
+from collections.abc import Generator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
 from qa_lab.bin.server import qa_lab
 
 client = TestClient(qa_lab)
-
 # test_health.py
 
 
@@ -19,36 +21,34 @@ def test_health_check() -> None:
     assert data["status"] == "ok"
 
     assert "timestamp" in data
-    assert isinstance(data["timestamp"], str)
+    assert isinstance(data["timestamp"], int)
 
 
-@patch("dataland_qa_lab.bin.server.review_dataset_via_api")
-@patch("dataland_qa_lab.bin.server.get_german_time_as_string")
-def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: MagicMock) -> None:
-    """Test the /review/{data_id} POST endpoint of the server."""
-    mock_time.return_value = "2025-01-01T12:00:00"
-    mock_review_api.return_value = {"foo": "bar"}
+@pytest.fixture
+def mock_validate() -> Generator[None, Any, Any]:
+    """Mock the validate_datapoint function."""
+    with patch("qa_lab.bin.server.validate_datapoint") as mock_fn:
+        mock_fn.return_value = {"status": "ok", "id": "123"}
+        yield mock_fn
 
-    data_id = "12345"
 
-    body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
+def test_review_datapoint_success(mock_validate: MagicMock) -> None:
+    """Test the /review-datapoint/{data_point_id} endpoint of the server."""
+    data_point_id = "123"
+    ai_model = "gpt-test"
 
-    response = client.post(f"/review/{data_id}", json=body)
+    response = client.post(
+        f"/review-datapoint/{data_point_id}",
+        params={"ai_model": ai_model, "use_ocr": True, "override": False},
+    )
 
     assert response.status_code == 200
+    assert response.json() == {"status": "ok", "id": "123"}
 
-    json_resp = response.json()
-
-    assert json_resp["data"] == {"foo": "bar"}
-
-    assert json_resp["meta"]["timestamp"] == "2025-01-01T12:00:00"
-    assert json_resp["meta"]["ai_model"] == "gpt-4o"
-    assert json_resp["meta"]["force_review"] is False
-    assert json_resp["meta"]["use_ocr"] is True
-
-    mock_review_api.assert_called_once_with(
-        data_id="12345",
-        force_review=False,
-        ai_model="gpt-4o",
+    # validate that the function was called correctly
+    mock_validate.assert_called_once_with(
+        data_point_id=data_point_id,
+        ai_model=ai_model,
         use_ocr=True,
+        override=False,
     )

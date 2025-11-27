@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
@@ -16,7 +17,7 @@ SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 logger = logging.getLogger(__name__)
 
 
-def create_tables() -> None:
+def create_tables() -> bool | None:
     """Create all tables."""
     try:
         Base.metadata.create_all(bind=engine)
@@ -27,15 +28,15 @@ def create_tables() -> None:
     return True
 
 
-def add_entity(entity: any) -> bool:
+def add_entity(entity: Any) -> bool:  # noqa: ANN401
     """Generic method to add an entity to the database."""
     session = SessionLocal()
 
     try:
         session.add(entity)
         session.commit()
-    except SQLAlchemyError:
-        logger.exception(msg="Error while adding entity to database", exc_info=SQLAlchemyError)
+    except SQLAlchemyError as e:
+        logger.exception(msg="Error while adding entity to database", exc_info=e)
         session.rollback()
         return False
     finally:
@@ -44,7 +45,7 @@ def add_entity(entity: any) -> bool:
     return True
 
 
-def get_entity(entity_class: any, **filters) -> any:
+def get_entity(entity_class: Any, **filters) -> Any:  # noqa: ANN003, ANN401
     """Generic method to get an entity from the database by its ID."""
     session = SessionLocal()
 
@@ -62,15 +63,15 @@ def get_entity(entity_class: any, **filters) -> any:
         session.close()
 
 
-def update_entity(entity: any) -> bool:
+def update_entity(entity: Any) -> bool:  # noqa: ANN401
     """Generic method to update an entity in the database."""
     session = SessionLocal()
 
     try:
         session.merge(entity)
         session.commit()
-    except SQLAlchemyError:
-        logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
+    except SQLAlchemyError as e:
+        logger.exception(msg="Error updating entity", exc_info=e)
         session.close()
         return False
     finally:
@@ -79,7 +80,7 @@ def update_entity(entity: any) -> bool:
     return True
 
 
-def delete_entity(entity_id: str, entity_class: any) -> bool:
+def delete_entity(entity_id: str, entity_class: Any) -> bool:  # noqa: ANN401
     """Generic method to delete an entity from the database by its ID."""
     session = SessionLocal()
 
@@ -92,8 +93,8 @@ def delete_entity(entity_id: str, entity_class: any) -> bool:
             logger.error(msg="Entity not found")
             return False
         session.commit()
-    except SQLAlchemyError:
-        logger.exception(msg="Error updating entity", exc_info=SQLAlchemyError)
+    except SQLAlchemyError as e:
+        logger.exception(msg="Error updating entity", exc_info=e)
         session.rollback()
         return False
     finally:

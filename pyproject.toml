@@ -34,7 +34,6 @@ distribution = true
 [tool.pdm.scripts]
 lint = "ruff check --fix ."
 format = "ruff format ."
-test = "pytest tests/"
 test-cov = "coverage run --data-file=.coverage.pytest -m pytest tests/"
 doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
 doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"

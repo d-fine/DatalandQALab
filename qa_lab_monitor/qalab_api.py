@@ -30,3 +30,15 @@ def run_report_on_qalab(data_id: str, ai_model: str, use_ocr: bool) -> dict:
     response = requests.post(url, json=body, timeout=60 * 5)  # 5 minutes timeout since reviews can take time
     response.raise_for_status()
     return response.json()
+
+
+def get_dataset_by_id(data_id: str) -> dict:
+    """Retrieve dataset details from Dataland by ID."""
+    url = urljoin(config.dataland_url, f"/api/metadata/{data_id}")
+    headers = {
+        "Authorization": "Bearer " + config.dataland_api_key,
+        "accept": "application/json",
+    }
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
+    return response.json()

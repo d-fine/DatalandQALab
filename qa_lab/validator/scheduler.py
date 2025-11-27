@@ -26,8 +26,8 @@ def run_scheduled_processing() -> None:
             try:
                 res = validate_datapoint(v, ai_model=conf.ai_model, use_ocr=conf.use_ocr, override=True)
                 qa_status[res["qa_status"]] += 1
-            except Exception as e:
-                logger.exception("Error processing data point ID %s: %s", v, e)
+            except Exception:
+                logger.exception("Error processing data point ID %s", v)
                 qa_status[QaStatus.Pending] += 1
 
         if qa_status["Accepted"] == len(data_points):

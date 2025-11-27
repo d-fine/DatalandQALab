@@ -4,22 +4,11 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from qa_lab.dataland.dataland_client import DatalandClient
-
 logger = logging.getLogger(__name__)
 
 
 class DatalandQaLabSettings(BaseSettings):
-    """The Dataland QA Lab settings.
-
-    Attributes:
-        dataland_url (str): The URL of the Dataland instance.
-        dataland_api_key (str): The API Key to use for authenticating against Dataland.
-        azure_openai_api_key (str): The API Key for the Azure OpenAI service.
-        azure_openai_endpoint (str): The endpoint for the Azure OpenAI service.
-        azure_docintel_api_key (str): The API Key for the Azure Document Intelligence service.
-        azure_docintel_endpoint (str): The endpoint for the Azure Document Intelligence service.
-    """
+    """The Dataland QA Lab settings."""
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).parent.parent.parent / ".env", env_file_encoding="utf-8", extra="ignore"
@@ -41,11 +30,6 @@ class DatalandQaLabSettings(BaseSettings):
 
     ai_model: str = "gpt-4o"
     use_ocr: bool = True
-
-    @property
-    def dataland_client(self) -> DatalandClient:
-        """Get the Dataland client."""
-        return DatalandClient(self.dataland_url, self.dataland_api_key)
 
 
 @cache
