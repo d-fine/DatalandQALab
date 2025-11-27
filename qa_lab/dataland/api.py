@@ -36,7 +36,7 @@ def get_data_point(data_point_id: str) -> dict:
     return {}
 
 
-def get_document(file_reference: str, page_numbers: list[int]) -> pypdf.PdfReader:
+def get_document(file_reference: str, page_numbers: list[int]) -> io.BytesIO:
     """Get a document from dataland by its file reference and extract relevant pages."""
     full_pdf = conf.dataland_client.documents_api.get_document(file_reference)
     full_pdf_stream = io.BytesIO(full_pdf)
