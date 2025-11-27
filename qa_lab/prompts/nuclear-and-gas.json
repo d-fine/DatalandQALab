@@ -1,45 +1,21 @@
 {
-    "_comment": "This file contains the prompts used for validation of the SFDR data points. To add or modify prompts, edit this file accordingly.",
+    "_comment": "Improved prompts with clearer instructions and decision criteria.",
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection426": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 426.:\n\n{context} The answer must be either 'Yes' or 'No'."
+        "prompt": "Based on the text below, determine whether the entity carries out or reports ANY activities related to nuclear energy under SFDR Section 426. Look for explicit mentions of nuclear energy activities, nuclear power generation, nuclear fuel cycle, nuclear assets, nuclear CapEx, taxonomy eligibility or alignment for nuclear sectors, or references to EU Taxonomy nuclear delegated acts. If any such activity is present, answer 'Yes'. If the text indicates absence of such activities, or if there is no evidence, answer 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection427": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 427.:\n\n{context} The answer must be either 'Yes' or 'No'."
+        "prompt": "Determine whether the text indicates the existence of nuclear energy–related activities relevant for SFDR Section 427. Consider disclosures on nuclear power operations, investments, eligibility/alignment assessments, nuclear reactors, nuclear life-cycle activities, or DNSH compliance for nuclear technologies. If any reference exists, answer 'Yes'. If the text explicitly states non-involvement or contains no relevant indicators, answer 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection428": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 428.:\n\n{context} The answer must be either 'Yes' or 'No'."
+        "prompt": "Analyse the text and identify whether it contains evidence of activities associated with nuclear energy under SFDR Section 428. Look for mentions of nuclear facilities, nuclear CapEx/Opex, nuclear infrastructure, nuclear-related KPIs, or EU Taxonomy categories for nuclear activities. If any nuclear-related involvement is disclosed, respond 'Yes'. If none is present or explicitly excluded, respond 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection429": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 429.:\n\n{context} The answer must be either 'Yes' or 'No'."
+        "prompt": "Determine if the text indicates the presence of fossil gas–related activities under SFDR Section 429. Look for fossil gas power generation, gas-fired plants, gas infrastructure, gas supply, gas transmission/distribution, gas CapEx or Opex, or EU Taxonomy disclosures on fossil gas. If any fossil gas activity is mentioned, answer 'Yes'. If there is explicit denial or no evidence, answer 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection430": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 430.:\n\n{context} The answer must be either 'Yes' or 'No'."
+        "prompt": "Evaluate the text and check whether the entity engages in activities relating to fossil gas under SFDR Section 430. Look for: gas-based energy generation, gas-powered assets, gas-related investments, taxonomy-eligible or aligned gas activities, or references to gas-fired operations. If present, answer 'Yes'. If absent, answer 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection431": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 431.:\n\n{context} The answer must be either 'Yes' or 'No'."
-    },
-    "extendedNuclearAndGasAlignedDenominatorComponentNuclearAndGasTaxonomyAlignedRevenueDenominator": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasAlignedDenominatorComponentNuclearAndGasTaxonomyAlignedCapexDenominator": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasAlignedNumeratorComponentNuclearAndGasTaxonomyAlignedRevenueNumerator": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasAlignedNumeratorComponentNuclearAndGasTaxonomyAlignedCapexNumerator": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasEligibleButNotAlignedComponentNuclearAndGasTaxonomyEligibleButNotAlignedRevenue": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasEligibleButNotAlignedComponentNuclearAndGasTaxonomyEligibleButNotAlignedCapex": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasNonEligibleComponentNuclearAndGasTaxonomyNonEligibleRevenue": {
-        "prompt": ""
-    },
-    "extendedNuclearAndGasNonEligibleComponentNuclearAndGasTaxonomyNonEligibleCapex": {
-        "prompt": ""
+        "prompt": "From the text provided, decide whether fossil gas–related activities falling under SFDR Section 431 are reported. Consider gas-fired power generation, gas processing, storage, transport, pipeline investments, gas eligibility/alignment KPIs, or DNSH assessments for gas. If any such activities appear, respond 'Yes'. If there is no indication, respond 'No'.\n\nContext:\n{context}\n\nThe answer must be either 'Yes' or 'No'."
     }
 }
