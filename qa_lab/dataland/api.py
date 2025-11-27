@@ -53,7 +53,6 @@ def set_dataset_status(dataset_id: str, qa_status: str) -> None:
         url,
         headers=headers,
     )
-    print(res.text)
 
 
 def get_data_point(data_point_id: str) -> dict:
@@ -70,7 +69,7 @@ def get_data_point(data_point_id: str) -> dict:
 
 def get_document(file_reference: str, page_numbers: list[int]) -> io.BytesIO:
     """Get a document from dataland by its file reference and extract relevant pages."""
-    full_pdf = conf.dataland_client.documents_api.get_document(file_reference)
+    full_pdf = requests.request("GET", f"{conf.dataland_url}/documents/{file_reference}", headers=headers).content
     full_pdf_stream = io.BytesIO(full_pdf)
 
     original_pdf = pypdf.PdfReader(full_pdf_stream)
