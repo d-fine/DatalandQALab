@@ -23,22 +23,12 @@ def check_qalab_api_health() -> None:
         sys.exit(1)
 
 
-def run_report_on_qalab(data_id: str, ai_model: str, use_ocr: bool) -> dict:
+def review_data_point_on_qalab(data_point_id: str, ai_model: str, use_ocr: bool) -> dict:
     """Get data from Dataland QA Lab for monitoring purposes."""
-    url = urljoin(config.qa_lab_url, f"/review/{data_id}")
-    body = {"ai_model": ai_model, "use_ocr": use_ocr, "force_review": config.force_review}
-    response = requests.post(url, json=body, timeout=60 * 5)  # 5 minutes timeout since reviews can take time
-    response.raise_for_status()
-    return response.json()
-
-
-def get_dataset_by_id(data_id: str) -> dict:
-    """Retrieve dataset details from Dataland by ID."""
-    url = urljoin(config.dataland_url, f"/api/metadata/{data_id}")
-    headers = {
-        "Authorization": "Bearer " + config.dataland_api_key,
-        "accept": "application/json",
-    }
-    response = requests.get(url, headers=headers, timeout=30)
-    response.raise_for_status()
+    url = urljoin(config.qa_lab_url, f"/review-data-point/{data_point_id}")
+    body = {"ai_model": ai_model, "use_ocr": use_ocr, "override": False}
+    response = requests.post(url, params=body, timeout=60 * 2)  # 2 minutes timeout since reviews can take time
+    print(response.text)
+    print(response.url)
+    #    response.raise_for_status()
     return response.json()

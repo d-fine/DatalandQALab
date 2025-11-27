@@ -33,12 +33,12 @@ def mock_validate() -> Generator[None, Any, Any]:
 
 
 def test_review_datapoint_success(mock_validate: MagicMock) -> None:
-    """Test the /review-datapoint/{data_point_id} endpoint of the server."""
+    """Test the /review-data-point/{data_point_id} endpoint of the server."""
     data_point_id = "123"
     ai_model = "gpt-test"
 
     response = client.post(
-        f"/review-datapoint/{data_point_id}",
+        f"/review-data-point/{data_point_id}",
         params={"ai_model": ai_model, "use_ocr": True, "override": False},
     )
 

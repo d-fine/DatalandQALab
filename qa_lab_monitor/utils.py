@@ -19,7 +19,7 @@ logger = logging.getLogger()
 class MonitorConfig:
     """Configuration class for the monitor."""
 
-    documents: list[str] = field(default_factory=list)
+    data_points: list[str] = field(default_factory=list)
     qa_lab_url: str = "http://localhost:8000"
     ai_model: str = "gpt-4"
     use_ocr: bool = False
@@ -33,7 +33,7 @@ def load_config() -> MonitorConfig:
             config = json.load(f)
             return MonitorConfig(
                 qa_lab_url=config.get("qa_lab_url", "http://localhost:8000"),
-                documents=config.get("documents", []),
+                data_points=config.get("data_points", []),
                 ai_model=config.get("ai_model", "gpt-4"),
                 use_ocr=config.get("use_ocr", False),
                 force_review=config.get("force_review", False),
@@ -42,18 +42,18 @@ def load_config() -> MonitorConfig:
         logger.warning("Config file not found or invalid, falling back to environment variables.")
 
     qa_lab_url = os.getenv("QA_LAB_URL", "http://localhost:8000")
-    documents_env = os.getenv("DOCUMENTS", "")
-    documents = documents_env.split(",") if documents_env else []
+    data_points_env = os.getenv("DATA_POINTS", "")
+    data_points = data_points_env.split(",") if data_points_env else []
     ai_model = os.getenv("AI_MODEL", "gpt-4")
     use_ocr = os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"}
     force_review = os.getenv("FORCE_REVIEW", "0").strip().lower() in {"1", "true", "yes"}
 
     return MonitorConfig(
-        qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr, force_review=force_review
+        qa_lab_url=qa_lab_url, data_points=data_points, ai_model=ai_model, use_ocr=use_ocr, force_review=force_review
     )
 
 
-def store_output(data: str | list | dict, file_name: str, timestamp: bool = True, format_as_json: bool = False) -> None:
+def store_output(file_name: str, data: str | list | dict, timestamp: bool = True, format_as_json: bool = False) -> None:
     """Store output data to a file in the output directory (which gets stored as an artifact later on)."""
     pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
     timestamp_value = int(time.time()) if timestamp else ""

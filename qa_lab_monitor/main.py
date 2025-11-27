@@ -4,46 +4,39 @@ import sys
 import time
 from collections import Counter
 
-from qa_lab_monitor.qalab_api import check_qalab_api_health, run_report_on_qalab, get_dataset_by_id
-from qa_lab_monitor.utils import load_config, match_sot_and_qareport, store_output
+from qa_lab_monitor.qalab_api import check_qalab_api_health, review_data_point_on_qalab
+from qa_lab_monitor.utils import load_config, store_output
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 config = load_config()
 
-counter = Counter()
+analytics = Counter()
 
 
-def monitor_documents(documents: list[str], ai_model: str) -> None:
-    """Monitor documents by comparing source of truth with QALab responses."""
-    for document_id in documents:
-        logger.info("Processing document: %s", document_id)
-        dataland_response = get_dataset_by_id(document_id)
+def monitor_data_points(data_points: list[str], ai_model: str) -> None:
+    """Monitor data_points by comparing source of truth with QALab responses."""
+    for data_point_id in data_points:
+        logger.info("Processing document: %s", data_point_id)
 
-        if not dataland_response:
-            logger.warning("Failed to retrieve dataset for document ID: %s", document_id)
-            continue
-
-        try:
-            source_of_truth = json.loads(dataland_response.model_dump_json())
-        except json.JSONDecodeError as e:
-            logger.warning("Failed to parse dataset for document ID: %s: %s", document_id, e)
-            continue
-
-        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr)
+        qalab_response = review_data_point_on_qalab(
+            data_point_id=data_point_id, ai_model=ai_model, use_ocr=config.use_ocr
+        )
 
         store_output(
-            {
-                "source_of_truth": source_of_truth,
-                "qalab_response": qalab_response,
-            },
-            document_id,
+            file_name=data_point_id,
+            data=qalab_response,
             format_as_json=True,
         )
 
-        logger.info("Starting matching for document ID: %s", document_id)
-        res = match_sot_and_qareport(source_of_truth=source_of_truth, qalab_report=qalab_response)
-        counter.update(res)
+        analytics["total_fields"] += 1
+        if qalab_response.get("qa_status") == "Accepted":
+            analytics["qa_accepted"] += 1
+        elif qalab_response.get("qa_status") == "Rejected":
+            analytics["qa_rejected"] += 1
+        elif qalab_response.get("qa_status") == "Pending":
+            analytics["qa_pending"] += 1
+        analytics["average_confidence"] += qalab_response.get("confidence", 0)
 
 
 def main() -> None:
@@ -53,8 +46,8 @@ def main() -> None:
 
     start_time = int(time.time())
 
-    if not config.documents:
-        logger.warning("No documents specified in config. Please add document IDs to monitor.")
+    if not config.data_points:
+        logger.warning("No data points specified in config. Please add data point IDs to monitor.")
         sys.exit(1)
 
     logger.info("Using AI Model: %s", config.ai_model)
@@ -62,24 +55,27 @@ def main() -> None:
     logger.info("Checking QALab API health...")
     check_qalab_api_health()
 
-    logger.info("Monitoring the following documents: %s", ", ".join(config.documents))
-    monitor_documents(documents=config.documents, ai_model=config.ai_model)
+    logger.info("Monitoring the following data points: %s", ", ".join(config.data_points))
+    monitor_data_points(data_points=config.data_points, ai_model=config.ai_model)
 
     end_time = int(time.time())
     store_output(
-        {
-            "total_fields_checked": counter["total_fields"],
-            "total_documents_monitored": len(config.documents),
-            "total_qa_accepted": counter["qa_accepted"],
-            "total_qa_rejected": counter["qa_rejected"],
-            "total_qa_inconclusive": counter["qa_inconclusive"],
-            "total_qa_not_attempted": counter["qa_not_attempted"],
+        file_name="monitoring_summary",
+        data={
+            "total_fields": analytics["total_fields"],
+            "qa_accepted": analytics["qa_accepted"],
+            "qa_rejected": analytics["qa_rejected"],
+            "qa_pending": analytics["qa_pending"],
+            "average_confidence": analytics["average_confidence"] / analytics["total_fields"]
+            if analytics["total_fields"] > 0
+            else 0,
             "start_time": start_time,
             "end_time": end_time,
             "monitoring_duration_seconds": end_time - start_time,
-            "score_percent": counter["qa_accepted"] / counter["total_fields"] if counter["total_fields"] > 0 else 0,
+            "score_percent": analytics["qa_accepted"] / analytics["total_fields"]
+            if analytics["total_fields"] > 0
+            else 0,
         },
-        "monitoring_summary",
         timestamp=False,
         format_as_json=True,
     )

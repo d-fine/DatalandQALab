@@ -40,8 +40,10 @@ def health_check() -> dict:
     return {"status": "ok", "timestamp": int(time.time())}
 
 
-@qa_lab.post("/review-datapoint/{data_point_id}")
-def review_data_point_id(data_point_id: str, ai_model: str, use_ocr: bool = True, override: bool = False) -> dict:
+@qa_lab.post("/review-data-point/{data_point_id}")
+def review_data_point_id(
+    data_point_id: str, ai_model: str = "gpt-4o", use_ocr: bool = True, override: bool = False
+) -> dict:
     """Review a single dataset via API call (configurable)."""
     # todo: use_ocr needs to be implemented still
     res = validate_datapoint(data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override)
