@@ -34,9 +34,9 @@ distribution = true
 [tool.pdm.scripts]
 lint = "ruff check --fix ."
 format = "ruff format ."
-test-cov = "coverage run --data-file=.coverage.pytest -m pytest tests/"
-doctest = "pytest --doctest-modules --doctest-continue-on-failure src/"
-doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure src/"
+test-cov = "coverage run --data-file=.coverage.pytest -m pytest ./qa_lab/tests ./qa_lab_monitor/tests"
+doctest = "pytest --doctest-modules --doctest-continue-on-failure qa_lab/"
+doctest-cov = "coverage run --data-file=.coverage.doctest -m pytest --doctest-modules --doctest-continue-on-failure qa_lab/"
 combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
 start = "fastapi run qa_lab/bin/server.py"
