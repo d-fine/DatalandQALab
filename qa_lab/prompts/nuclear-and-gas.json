@@ -1,22 +1,22 @@
 {
     "_comment": "This file contains the prompts used for validation of the SFDR data points. To add or modify prompts, edit this file accordingly.",
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection426": {
-        "prompt": ""
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 426.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection427": {
-        "prompt": ""
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 427.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoNuclearEnergyRelatedActivitiesSection428": {
-        "prompt": ""
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for nuclear energy related activities under Section 428.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection429": {
-        "prompt": ""
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 429.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection430": {
-        "prompt": ""
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 430.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedEnumYesNoFossilGasRelatedActivitiesSection431": {
-        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 431.:\n\n{context}"
+        "prompt": "Determine if the following text indicates 'Yes' or 'No' for fossil gas related activities under Section 431.:\n\n{context} The answer must be either 'Yes' or 'No'."
     },
     "extendedNuclearAndGasAlignedDenominatorComponentNuclearAndGasTaxonomyAlignedRevenueDenominator": {
         "prompt": ""

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 prompts = get_prompts()
 
 
-def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True) -> dict:
+def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, override: bool = False) -> dict:
     """Validate a datapoint using predefined prompts."""
     # todo: use the openapi thing instead
     data_point = get_data_point(data_point_id)
@@ -39,11 +39,12 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True) 
     else:
         qa_status = QaStatus.Rejected
 
-    update_data_point_qa_report(
-        data_point_id,
-        qa_status=qa_status,
-        comment=res.get("reasoning", ""),
-    )
+    if override:
+        update_data_point_qa_report(
+            data_point_id,
+            qa_status=qa_status,
+            comment=res.get("reasoning", ""),
+        )
 
     return {
         "data_point_id": data_point_id,
