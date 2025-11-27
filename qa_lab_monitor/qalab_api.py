@@ -28,7 +28,5 @@ def review_data_point_on_qalab(data_point_id: str, ai_model: str, use_ocr: bool)
     url = urljoin(config.qa_lab_url, f"/review-data-point/{data_point_id}")
     body = {"ai_model": ai_model, "use_ocr": use_ocr, "override": False}
     response = requests.post(url, params=body, timeout=60 * 2)  # 2 minutes timeout since reviews can take time
-    print(response.text)
-    print(response.url)
-    #    response.raise_for_status()
+    response.raise_for_status()
     return response.json()

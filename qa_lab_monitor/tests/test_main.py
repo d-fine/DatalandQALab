@@ -1,4 +1,6 @@
 # tests/test_main.py
+from collections.abc import Generator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +15,7 @@ mock_responses = {
 
 
 @pytest.fixture(autouse=True)
-def reset_analytics():
+def reset_analytics() -> Generator[None, Any, Any]:
     """Reset analytics Counter before each test."""
     analytics.clear()
     analytics.update(

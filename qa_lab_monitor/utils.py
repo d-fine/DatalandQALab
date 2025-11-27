@@ -3,7 +3,6 @@ import logging
 import os
 import pathlib
 import time
-from collections import Counter
 from dataclasses import dataclass, field
 
 base_dir = pathlib.Path(__file__).parent

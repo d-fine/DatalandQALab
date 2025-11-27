@@ -1,7 +1,6 @@
 import json
 from unittest.mock import MagicMock, mock_open, patch
 
-
 from qa_lab_monitor import utils
 from qa_lab_monitor.utils import MonitorConfig
 

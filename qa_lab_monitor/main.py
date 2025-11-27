@@ -1,12 +1,10 @@
-# main.py
-import json
 import logging
 import sys
 import time
 from collections import Counter
 
 from qa_lab_monitor.qalab_api import check_qalab_api_health, review_data_point_on_qalab
-from qa_lab_monitor.utils import load_config, store_output
+from qa_lab_monitor.utils import MonitorConfig, load_config, store_output
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -15,7 +13,7 @@ logger = logging.getLogger()
 analytics = Counter()
 
 
-def monitor_data_points(data_points: list[str], ai_model: str, config) -> None:
+def monitor_data_points(data_points: list[str], ai_model: str, config: MonitorConfig) -> None:
     """Monitor data_points by comparing source of truth with QALab responses."""
     for data_point_id in data_points:
         logger.info("Processing document: %s", data_point_id)
