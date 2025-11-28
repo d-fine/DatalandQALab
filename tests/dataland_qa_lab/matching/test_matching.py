@@ -6,7 +6,7 @@ Checking if the epsilon tolerance and other fixes work.
 from dataland_qa_lab.matching.core import improved_match_sot_and_qareport
 
 
-def test_exact_match():
+def test_exact_match() -> None:
     """Basic test - everything matches."""
     source_of_truth = {
         "data": {
@@ -39,7 +39,7 @@ def test_exact_match():
     assert result["qa_rejected"] == 0
 
 
-def test_floating_point_tolerance():
+def test_floating_point_tolerance() -> None:
     """Test the epsilon fix - 0.05 vs 0.0500001 should match."""
     source_of_truth = {
         "data": {
@@ -70,7 +70,7 @@ def test_floating_point_tolerance():
     assert result["qa_rejected"] == 0
 
 
-def test_case_insensitive_strings():
+def test_case_insensitive_strings() -> None:
     """YES and yes should match."""
     source_of_truth = {
         "data": {
@@ -99,7 +99,7 @@ def test_case_insensitive_strings():
     assert result["qa_accepted"] == 1
 
 
-def test_null_handling():
+def test_null_handling() -> None:
     """Check that null values don't crash."""
     source_of_truth = {
         "data": {
@@ -132,7 +132,7 @@ def test_null_handling():
     assert result["qa_not_attempted"] == 1
 
 
-def test_mismatch_tracking():
+def test_mismatch_tracking() -> None:
     """Make sure mismatches get saved."""
     source_of_truth = {
         "data": {
