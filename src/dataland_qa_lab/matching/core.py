@@ -76,9 +76,9 @@ def extract_dataland_fields(data: dict) -> dict:
                 fields[key] = value["value"]
             else:
                 fields[key] = value
-    except Exception:
+    except (KeyError, AttributeError, TypeError):
         pass  # just return what we got so far
-    
+
     return fields
 
 
@@ -96,9 +96,9 @@ def extract_qalab_fields(data: dict) -> dict:
                 fields[snake_key] = value["verdict"]
             else:
                 fields[snake_key] = value
-    except Exception:
+    except (KeyError, AttributeError, TypeError):
         pass  # just return what we got
-    
+
     return fields
 
 
