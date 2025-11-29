@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from qa_lab.database.database_tables import Base
+from qa_lab.database import database_tables
 from qa_lab.utils import config
 
 DATABASE_URL = config.get_config().database_connection_string
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def create_tables() -> bool | None:
     """Create all tables."""
     try:
-        Base.metadata.create_all(bind=engine)
+        database_tables.Base.metadata.create_all(bind=engine)
         logger.info("Creating tables in database")
     except Exception as e:
         logger.exception(msg="Error while creating tables in database", exc_info=e)

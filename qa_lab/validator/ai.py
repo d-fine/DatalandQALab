@@ -3,10 +3,10 @@ import logging
 
 from openai import AzureOpenAI
 
-from qa_lab.utils.config import get_config
+from qa_lab.utils import config
 
 logger = logging.getLogger(__name__)
-config = get_config()
+config = config.get_config()
 
 client = AzureOpenAI(
     api_key=config.azure_openai_api_key,

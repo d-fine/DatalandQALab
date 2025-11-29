@@ -2,9 +2,9 @@ import json
 from logging import getLogger
 from pathlib import Path
 
-from qa_lab.utils.config import get_config
+from qa_lab.utils import config
 
-conf = get_config()
+config = config.get_config()
 logger = getLogger(__name__)
 
 

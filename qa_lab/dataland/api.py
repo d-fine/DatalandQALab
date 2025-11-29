@@ -5,12 +5,12 @@ from dataclasses import dataclass
 import pypdf
 import requests
 
-from qa_lab.utils.config import get_config
+from qa_lab.utils import config
 
-conf = get_config()
+config = config.get_config()
 
 headers = {
-    "Authorization": "Bearer " + conf.dataland_api_key,
+    "Authorization": "Bearer " + config.dataland_api_key,
     "accept": "application/json",
 }
 
@@ -26,7 +26,7 @@ class QaStatus:
 
 def get_pending_datasets() -> list[dict]:
     """Get unreviewed data points from Dataland."""
-    url = f"{conf.dataland_url}/qa/datasets?qaStatus=Pending&chunkSize=2&dataTypes=nuclear-and-gas"
+    url = f"{config.dataland_url}/qa/datasets?qaStatus=Pending&chunkSize=2&dataTypes=nuclear-and-gas"
     res = requests.request("GET", url, headers=headers)
 
     if res.status_code == requests.codes.ok:
@@ -36,7 +36,7 @@ def get_pending_datasets() -> list[dict]:
 
 def get_dataset_data_points(dataset_id: str) -> dict:
     """Get data points for a specific dataset from Dataland."""
-    url = f"{conf.dataland_url}/api/metadata/{dataset_id}/data-points"
+    url = f"{config.dataland_url}/api/metadata/{dataset_id}/data-points"
     res = requests.request("GET", url, headers=headers)
 
     if res.status_code == requests.codes.ok:
@@ -46,7 +46,7 @@ def get_dataset_data_points(dataset_id: str) -> dict:
 
 def set_dataset_status(dataset_id: str, qa_status: str) -> None:
     """Set the QA status for a specific dataset in Dataland."""
-    url = f"{conf.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
+    url = f"{config.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
 
     requests.request(
         "POST",
@@ -57,7 +57,7 @@ def set_dataset_status(dataset_id: str, qa_status: str) -> None:
 
 def get_data_point(data_point_id: str) -> dict:
     """Get document details from Dataland."""
-    url = f"{conf.dataland_url}/api/data-points/{data_point_id}"
+    url = f"{config.dataland_url}/api/data-points/{data_point_id}"
     res = requests.request("GET", url, headers=headers)
 
     if res.status_code == requests.codes.ok:
@@ -69,7 +69,7 @@ def get_data_point(data_point_id: str) -> dict:
 
 def get_document(file_reference: str, page_numbers: list[int]) -> io.BytesIO:
     """Get a document from dataland by its file reference and extract relevant pages."""
-    full_pdf = requests.request("GET", f"{conf.dataland_url}/documents/{file_reference}", headers=headers).content
+    full_pdf = requests.request("GET", f"{config.dataland_url}/documents/{file_reference}", headers=headers).content
     full_pdf_stream = io.BytesIO(full_pdf)
 
     original_pdf = pypdf.PdfReader(full_pdf_stream)
@@ -88,7 +88,7 @@ def get_document(file_reference: str, page_numbers: list[int]) -> io.BytesIO:
 
 def update_data_point_qa_report(data_point_id: str, qa_status: str, comment: str) -> None:
     """Post data point QA report to Dataland."""
-    url = f"{conf.dataland_url}/qa/data-points/{data_point_id}?qaStatus={qa_status!s}&comment={comment}"
+    url = f"{config.dataland_url}/qa/data-points/{data_point_id}?qaStatus={qa_status!s}&comment={comment}"
 
     requests.request(
         "POST",

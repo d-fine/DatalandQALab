@@ -7,28 +7,27 @@ from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, Path
 from fastapi.concurrency import asynccontextmanager
 
-from qa_lab.database.database_engine import create_tables
-from qa_lab.validator.scheduler import run_scheduled_processing
-from qa_lab.validator.validator import validate_datapoint
+from qa_lab.database import database_engine
+from qa_lab.validator import scheduler, validator
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 logger.info("Launching the Dataland QA Lab server")
-create_tables()
+database_engine.create_tables()
 
 
-scheduler = BackgroundScheduler()
+fastapi_scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-job = scheduler.add_job(run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
-scheduler.start()
+job = fastapi_scheduler.add_job(scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+fastapi_scheduler.start()
 
 
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     """Ensures that the scheduler shuts down correctly."""
     yield
-    scheduler.shutdown()
+    fastapi_scheduler.shutdown()
 
 
 qa_lab = FastAPI(lifespan=lifespan)
@@ -49,5 +48,10 @@ def review_data_point_id(
 ) -> dict:
     """Review a single dataset via API call (configurable)."""
     # todo: use_ocr needs to be implemented still
-    res = validate_datapoint(data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override)
-    return res
+    try:
+        res = validator.validate_datapoint(
+            data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override
+        )
+        return res
+    except Exception as e:
+        return {"error": str(e)}

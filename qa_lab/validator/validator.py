@@ -1,21 +1,19 @@
 import logging
 import time
 
-from qa_lab.database.database_engine import add_entity, get_entity
-from qa_lab.database.database_tables import CachedDocument
-from qa_lab.dataland.api import QaStatus, get_data_point, get_document, update_data_point_qa_report
-from qa_lab.utils.prompts import get_prompts
-from qa_lab.validator.ai import execute_prompt
-from qa_lab.validator.ocr import extract_pdf
+from qa_lab.database import database_engine, database_tables
+from qa_lab.dataland import api
+from qa_lab.utils import prompts
+from qa_lab.validator import ai, ocr
 
 logger = logging.getLogger(__name__)
-prompts = get_prompts()
+prompts = prompts.get_prompts()
 
 
 def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, override: bool = False) -> dict:
     """Validate a datapoint using predefined prompts."""
     # todo: use the openapi thing instead
-    data_point = get_data_point(data_point_id)
+    data_point = api.get_data_point(data_point_id)
 
     data_point_type = data_point.get("dataPointType", "")
     page = int(data_point.get("dataPoint", {}).get("dataSource", {}).get("page", 0))
@@ -29,16 +27,16 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, 
 
     markdown = get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
 
-    res = execute_prompt(prompt.format(context=markdown), ai_model=ai_model)
+    res = ai.execute_prompt(prompt.format(context=markdown), ai_model=ai_model)
 
-    qa_status = QaStatus.Pending
+    qa_status = api.QaStatus.Pending
     if data_point.get("dataPoint", {}).get("value", "") == res.get("answer", ""):
-        qa_status = QaStatus.Accepted
+        qa_status = api.QaStatus.Accepted
     else:
-        qa_status = QaStatus.Rejected
+        qa_status = api.QaStatus.Rejected
 
     if override:
-        update_data_point_qa_report(
+        api.update_data_point_qa_report(
             data_point_id,
             qa_status=qa_status,
             comment=res.get("reasoning", ""),
@@ -59,15 +57,17 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, 
 
 def get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
     """Retrieve file using OCR and check db for cache."""
-    cached_document = get_entity(CachedDocument, file_reference=file_reference, page=page)
+    cached_document = database_engine.get_entity(
+        database_tables.CachedDocument, file_reference=file_reference, page=page
+    )
 
     if cached_document:
         return cached_document.ocr_output
-    document = get_document(file_reference, [page])
+    document = api.get_document(file_reference, [page])
 
-    markdown = extract_pdf(document)
-    add_entity(
-        CachedDocument(
+    markdown = ocr.extract_pdf(document)
+    database_engine.add_entity(
+        database_tables.CachedDocument(
             file_name=file_name,
             file_reference=file_reference,
             ocr_output=markdown,

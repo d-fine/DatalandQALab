@@ -3,9 +3,9 @@ from logging import getLogger
 
 import requests
 
-from qa_lab.utils.config import get_config
+from qa_lab.utils import config
 
-conf = get_config()
+config = config.get_config()
 logger = getLogger(__name__)
 
 
@@ -16,7 +16,7 @@ def send_slack_message(message: str) -> None:
 
     res = requests.request(
         "POST",
-        url=conf.slack_webhook_url or "https://example.com",
+        url=config.slack_webhook_url or "https://example.com",
         data=json.dumps(payload),
         headers=headers,
     )

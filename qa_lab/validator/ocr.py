@@ -2,9 +2,9 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
 
-from qa_lab.utils.config import get_config
+from qa_lab.utils import config
 
-config = get_config()
+config = config.get_config()
 
 
 def extract_pdf(pdf) -> str:  # noqa: ANN001

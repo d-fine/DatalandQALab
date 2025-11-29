@@ -66,7 +66,7 @@ def test_set_dataset_status_calls_post(mock_request: MagicMock) -> None:
 
     # The URL that should have been called
     expected_url = (
-        f"{api.conf.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
+        f"{api.config.dataland_url}/qa/datasets/{dataset_id}?overwriteDataPointQaStatus=false&qaStatus={qa_status}"
     )
 
     # Assert the call
@@ -78,7 +78,7 @@ def test_set_dataset_status_calls_post(mock_request: MagicMock) -> None:
     assert url_called == expected_url
     # headers object reference may differ, just check keys and values
     called_headers = call_args[1]["headers"]
-    assert called_headers["Authorization"] == f"Bearer {api.conf.dataland_api_key}"
+    assert called_headers["Authorization"] == f"Bearer {api.config.dataland_api_key}"
     assert called_headers["accept"] == "application/json"
 
 
@@ -133,7 +133,7 @@ def test_update_data_point_qa_report_calls_post(mock_request: MagicMock) -> None
 
     api.update_data_point_qa_report(data_point_id, qa_status, comment)
 
-    expected_url = f"{api.conf.dataland_url}/qa/data-points/{data_point_id}?qaStatus={qa_status}&comment={comment}"
+    expected_url = f"{api.config.dataland_url}/qa/data-points/{data_point_id}?qaStatus={qa_status}&comment={comment}"
 
     # Check that requests.request was called
     mock_request.assert_called_once()
@@ -143,5 +143,5 @@ def test_update_data_point_qa_report_calls_post(mock_request: MagicMock) -> None
     assert method_called == "POST"
     assert url_called == expected_url
     # Check headers content
-    assert headers_called["Authorization"] == f"Bearer {api.conf.dataland_api_key}"
+    assert headers_called["Authorization"] == f"Bearer {api.config.dataland_api_key}"
     assert headers_called["accept"] == "application/json"
