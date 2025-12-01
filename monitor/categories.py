@@ -1,8 +1,10 @@
-from enum import Enum
 from dataclasses import dataclass
-from typing import Dict, List, Optional
+from enum import Enum
+from typing import Optional
+
 
 class ESGCategory(str, Enum):
+    """Enum representing ESG categories."""
     NUCLEAR = "nuclear"
     GAS = "gas"
     RENEWABLE_ENERGY = "renewable_energy"
@@ -13,20 +15,24 @@ class ESGCategory(str, Enum):
     SOCIAL_IMPACT = "social_impact"
     GOVERNANCE = "governance"
 
+
 @dataclass
 class CategoryConfig:
+    """Configuration for a single ESG category dataset."""
     id: str
     display_name: str
     dataset_type: str
-    key_fields: List[str]
-    required_fields: List[str]
-    validation_rules: Dict = None
+    key_fields: list[str]
+    required_fields: list[str]
+    validation_rules: dict = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.validation_rules is None:
             self.validation_rules = {}
 
-def detect_category_from_dataset(dataset: dict) -> Optional[ESGCategory]:
+
+def detect_category_from_dataset(dataset: dict) -> ESGCategory | None:
+    """Detect ESG category based on dataset content."""
     if not dataset:
         return None
     metadata_type = dataset.get("metadata", {}).get("type", "").lower()
@@ -36,7 +42,9 @@ def detect_category_from_dataset(dataset: dict) -> Optional[ESGCategory]:
             return category
     return ESGCategory.NUCLEAR
 
+
 def get_category_config(category: ESGCategory) -> CategoryConfig:
+    """Return the CategoryConfig for a given ESGCategory."""
     configs = {
         ESGCategory.NUCLEAR: CategoryConfig(
             id="nuclear",
@@ -63,11 +71,14 @@ def get_category_config(category: ESGCategory) -> CategoryConfig:
             validation_rules={"capacity": {"min": 0}}
         ),
     }
-    return configs.get(category, CategoryConfig(
-        id=category.value,
-        display_name=category.value.replace("_", " ").title(),
-        dataset_type=category.value,
-        key_fields=["id", "name"],
-        required_fields=[],
-        validation_rules={}
-    ))
+    return configs.get(
+        category,
+        CategoryConfig(
+            id=category.value,
+            display_name=category.value.replace("_", " ").title(),
+            dataset_type=category.value,
+            key_fields=["id", "name"],
+            required_fields=[],
+            validation_rules={}
+        )
+    )
