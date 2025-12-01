@@ -84,6 +84,7 @@ def review_data_point_id(  # noqa: ANN201
             return JSONResponse(
                 content={
                     "data_point_id": res.data_point_id,
+                    "data_point_type": res.data_point_type,
                     "previous_answer": res.previous_answer,
                     "predicted_answer": res.predicted_answer,
                     "confidence": res.confidence,

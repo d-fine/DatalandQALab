@@ -126,6 +126,7 @@ class ValidatedDatapoint:
     """Structure to hold validated datapoint information."""
 
     data_point_id: str
+    data_point_type: str
     previous_answer: str
     predicted_answer: str
     confidence: float
@@ -170,6 +171,7 @@ def validate_datapoint(
 
     return ValidatedDatapoint(
         data_point_id=data_point_id,
+        data_point_type=data_point_type,
         previous_answer=previous_answer,
         predicted_answer=predicted_answer,
         confidence=ai_response.get("confidence", 0.0),

@@ -15,36 +15,34 @@
     "extendedDecimalScope2GhgEmissionsMarketBasedInTonnes": {
         "prompt": "Extract the Scope 2 GHG emissions in tonnes from the consumption of purchased electricity, steam, or other energy sources (computed using the market-based method, preferably equity share approach) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope2GhgEmissionsLocationBasedInTonnes":{
+    "extendedDecimalScope2GhgEmissionsLocationBasedInTonnes": {
         "prompt": "Extract the Scope 2 GHG emissions in tonnes from the consumption of purchased electricity, steam, or other sources of energy (computed using the location-based method, preferably equity share approach) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalGhgIntensityScope2InTonnesPerMillionEURRevenue":{
-        "prompt":"Extract the Scope 2 GHG intensity measured in tonnes of emissions per million EUR revenue (preferably based on location-based Scope 2 data) as a decimal number from the following text:\n\n{context}"
+    "extendedDecimalGhgIntensityScope2InTonnesPerMillionEURRevenue": {
+        "prompt": "Extract the Scope 2 GHG intensity measured in tonnes of emissions per million EUR revenue (preferably based on location-based Scope 2 data) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2GhgEmissionsInTonnes":{
+    "extendedDecimalScope1And2GhgEmissionsInTonnes": {
         "prompt": "Extract the total scope 1 and 2 GHG emissions in tonnes as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2And3GhgEmissionsInTonnes":{
+    "extendedDecimalScope1And2And3GhgEmissionsInTonnes": {
         "prompt": "Extract the total scope 1, 2, and 3 GHG emissions in tonnes as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2GhgEmissionsMarketBasedInTonnes":{
+    "extendedDecimalScope1And2GhgEmissionsMarketBasedInTonnes": {
         "prompt": "Extract the total scope 1 and 2 GHG emissions in tonnes (with scope 2 calculated using the market-based method) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2GhgEmissionsLocationBasedInTonnes":{
+    "extendedDecimalScope1And2GhgEmissionsLocationBasedInTonnes": {
         "prompt": "Extract the total scope 1 and 2 GHG emissions in tonnes (with scope 2 calculated using the location-based method) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2And3GhgEmissionsMarketBasedInTonnes":{
+    "extendedDecimalScope1And2And3GhgEmissionsMarketBasedInTonnes": {
         "prompt": "Extract the total scope 1, 2, and 3 GHG emissions in tonnes (with scope 2 calculated using the market-based method) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedDecimalScope1And2And3GhgEmissionsLocationBasedInTonnes":{
+    "extendedDecimalScope1And2And3GhgEmissionsLocationBasedInTonnes": {
         "prompt": "Extract the total scope 1, 2, and 3 GHG emissions in tonnes (with scope 2 calculated using the location-based method) as a decimal number from the following text:\n\n{context}"
     },
-    "extendedCurrencyAverageGrossHourlyEarningsFemaleEmployees":{
-        "prompt":"Extract the average gross hourly earnings for female employees in the specified currency from the following text:\n\n{context}"
+    "extendedCurrencyAverageGrossHourlyEarningsFemaleEmployees": {
+        "prompt": "Extract the average gross hourly earnings for female employees in the specified currency from the following text:\n\n{context}"
     },
-    "extendedCurrencyAverageGrossHourlyEarningsMaleEmployees":{
-        "prompt":"Extract the average gross hourly earnings for male employees in the specified currency from the following text:\n\n{context}"
+    "extendedCurrencyAverageGrossHourlyEarningsMaleEmployees": {
+        "prompt": "Extract the average gross hourly earnings for male employees in the specified currency from the following text:\n\n{context}"
     }
-
-
 }
