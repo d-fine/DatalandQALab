@@ -2,8 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dataland_qa_lab.dataland.alerting import send_alert_message
-from dataland_qa_lab.dataland.scheduled_processor import run_scheduled_processing
+from dataland_qa_lab.utils.alerting import send_alert_message
+from dataland_qa_lab.dataland.scheduled_processor import old_run_scheduled_processing
 
 
 @patch("dataland_qa_lab.dataland.scheduled_processor.UnreviewedDatasets")
@@ -14,7 +14,7 @@ def test_run_scheduled_processing_unreviewed_datasets_error(
     mock_unreviewed_datasets.side_effect = Exception("Error while creating UnreviewedDatasets")
     mock_send_alert_message.return_value = None
     with pytest.raises(Exception) as context:  # noqa: PT011
-        run_scheduled_processing()
+        old_run_scheduled_processing()
     assert str(context.value) == "Error while creating UnreviewedDatasets"
 
 

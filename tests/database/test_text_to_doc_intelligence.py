@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pypdf
 from azure.ai.documentintelligence.models import AnalyzeResult
 
-from dataland_qa_lab.pages.text_to_doc_intelligence import extract_text_of_pdf, get_markdown_from_dataset
+from dataland_qa_lab.pages.text_to_doc_intelligence import old_extract_text_of_pdf, old_get_markdown_from_dataset
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.config.get_config")
@@ -19,7 +19,7 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
     mock_client_instance.begin_analyze_document.return_value = mock_poller
     mock_config.return_value = MagicMock(azure_docintel_api_key="fake_key", azure_docintel_endpoint="fake_endpoint")
 
-    result = extract_text_of_pdf(mock_pdf)
+    result = old_extract_text_of_pdf(mock_pdf)
 
     mock_client.assert_called_once_with(endpoint="fake_endpoint", credential=mock_credential.return_value)
     mock_client_instance.begin_analyze_document.assert_called_once_with(
@@ -46,7 +46,7 @@ def test_get_markdown_from_dataset_new_entry(
     pdf_reader = MagicMock(spec=pypdf.PdfReader)
     pages = [1, 2, 3]
 
-    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
+    result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
     mock_get_entity.assert_called_once()
     mock_extract_text.assert_called_once_with(pdf_reader)
@@ -70,7 +70,7 @@ def test_get_markdown_from_dataset_existing_entry(
     pdf_reader = MagicMock(spec=pypdf.PdfReader)
     pages = [1, 2, 3]
 
-    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
+    result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
     mock_get_entity.assert_called_once()
     mock_add_entity.assert_not_called()

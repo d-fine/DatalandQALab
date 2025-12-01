@@ -9,7 +9,7 @@ from dataland_qa.models.qa_report_meta_information import QaReportMetaInformatio
 from dataland_qa_lab.database.database_engine import delete_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
-from dataland_qa_lab.review.dataset_reviewer import review_dataset
+from dataland_qa_lab.review.dataset_reviewer import old_review_dataset
 from dataland_qa_lab.utils import config
 
 
@@ -99,7 +99,7 @@ def mocked_review_dataset(
         with patch("dataland_qa_lab.review.dataset_reviewer.send_alert_message") as mocked_post:
             mocked_post.return_value = None
 
-            report_data = review_dataset(data_id=data_id, force_review=True)
+            report_data = old_review_dataset(data_id=data_id, force_review=True)
         return report_data
 
 

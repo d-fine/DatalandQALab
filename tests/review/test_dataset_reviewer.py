@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.dataland_qa_lab.review.dataset_reviewer import review_dataset, review_dataset_via_api
+from src.dataland_qa_lab.review.dataset_reviewer import old_review_dataset, old_review_dataset_via_api
 
 
 @pytest.fixture
@@ -67,7 +67,7 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
 
     mock_config_client.post_nuclear_and_gas_data_qa_report.return_value = mock_response
 
-    result = review_dataset(data_id)
+    result = old_review_dataset(data_id)
 
     assert result == "report_123"
     mock_dependencies["add_entity"].assert_called_once()
@@ -96,7 +96,7 @@ def test_review_dataset_returns_existing_report(mock_dependencies: dict[str, Mag
 
     mock_dependencies["get_entity"].return_value = existing_report
 
-    result = review_dataset(data_id)
+    result = old_review_dataset(data_id)
 
     assert result == existing_report.report_id
     mock_dependencies["add_entity"].assert_not_called()
@@ -123,6 +123,6 @@ def test_review_dataset_via_api(report_id: str, expected: dict) -> None:
         mock_config.dataland_client = mock_client
 
         with patch("src.dataland_qa_lab.review.dataset_reviewer.config.get_config", return_value=mock_config):
-            result = review_dataset_via_api(data_id)
+            result = old_review_dataset_via_api(data_id)
 
             assert result == expected

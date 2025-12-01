@@ -38,11 +38,17 @@ class DatalandQaLabSettings(BaseSettings):
 
     slack_webhook_url: str | None = None
     environment: str | None = None
+    frameworks: str = "sfdr"
 
     @property
     def dataland_client(self) -> DatalandClient:
         """Get the Dataland client."""
         return DatalandClient(self.dataland_url, self.dataland_api_key)
+
+    @property
+    def frameworks_list(self) -> list[str]:
+        """Get the list of frameworks."""
+        return [framework.strip() for framework in self.frameworks.split(",") if framework.strip()]
 
 
 @cache
