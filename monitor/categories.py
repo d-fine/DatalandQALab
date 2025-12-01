@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
+
 class ESGCategory(StrEnum):
     """Enum representing ESG categories."""
+
     NUCLEAR = "nuclear"
     GAS = "gas"
     RENEWABLE_ENERGY = "renewable_energy"
@@ -13,8 +15,11 @@ class ESGCategory(StrEnum):
     SOCIAL_IMPACT = "social_impact"
     GOVERNANCE = "governance"
 
+
 @dataclass
 class CategoryConfig:
+    """Configuration for a specific ESG category."""
+
     id: str
     display_name: str
     dataset_type: str
@@ -23,10 +28,13 @@ class CategoryConfig:
     validation_rules: dict = None
 
     def __post_init__(self) -> None:
+        """Ensure validation_rules is initialized."""
         if self.validation_rules is None:
             self.validation_rules = {}
 
+
 def detect_category_from_dataset(dataset: dict) -> ESGCategory | None:
+    """Detect ESG category from dataset content."""
     if not dataset:
         return None
     metadata_type = dataset.get("metadata", {}).get("type", "").lower()
@@ -36,7 +44,9 @@ def detect_category_from_dataset(dataset: dict) -> ESGCategory | None:
             return category
     return ESGCategory.NUCLEAR
 
+
 def get_category_config(category: ESGCategory) -> CategoryConfig:
+    """Return the configuration for a given ESG category."""
     configs = {
         ESGCategory.NUCLEAR: CategoryConfig(
             id="nuclear",
@@ -44,7 +54,7 @@ def get_category_config(category: ESGCategory) -> CategoryConfig:
             dataset_type="nuclear_facility",
             key_fields=["facility_id", "name"],
             required_fields=["capacity", "status", "location"],
-            validation_rules={"capacity": {"min": 0, "max": 10000}}
+            validation_rules={"capacity": {"min": 0, "max": 10000}},
         ),
         ESGCategory.GAS: CategoryConfig(
             id="gas",
@@ -52,7 +62,7 @@ def get_category_config(category: ESGCategory) -> CategoryConfig:
             dataset_type="gas_infrastructure",
             key_fields=["facility_id", "name"],
             required_fields=["gas_type", "volume", "operator"],
-            validation_rules={"volume": {"min": 0}}
+            validation_rules={"volume": {"min": 0}},
         ),
         ESGCategory.RENEWABLE_ENERGY: CategoryConfig(
             id="renewable_energy",
@@ -60,14 +70,17 @@ def get_category_config(category: ESGCategory) -> CategoryConfig:
             dataset_type="renewable_energy",
             key_fields=["project_id", "name"],
             required_fields=["energy_type", "capacity", "co2_savings"],
-            validation_rules={"capacity": {"min": 0}}
+            validation_rules={"capacity": {"min": 0}},
         ),
     }
-    return configs.get(category, CategoryConfig(
-        id=category.value,
-        display_name=category.value.replace("_", " ").title(),
-        dataset_type=category.value,
-        key_fields=["id", "name"],
-        required_fields=[],
-        validation_rules={}
-    ))
+    return configs.get(
+        category,
+        CategoryConfig(
+            id=category.value,
+            display_name=category.value.replace("_", " ").title(),
+            dataset_type=category.value,
+            key_fields=["id", "name"],
+            required_fields=[],
+            validation_rules={},
+        ),
+    )

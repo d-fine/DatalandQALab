@@ -1,16 +1,20 @@
 from monitor.categories import ESGCategory, get_category_config
 
+
 class ESGMonitor:
     """Performs validation of datasets based on category-specific rules.
+
     The fetching is still handled by main.py calling get_dataset_by_id().
     """
 
     def __init__(self, category: ESGCategory) -> None:
+        """Initialize the monitor with a specific category."""
         self.category = category
         self.config = get_category_config(category)
 
     def validate(self, source_of_truth: dict) -> list[str]:
         """Validate dataset fields based on the category's configuration.
+
         Returns a list of validation error messages.
         """
         errors = [
@@ -19,7 +23,6 @@ class ESGMonitor:
             if field not in source_of_truth
         ]
 
-        # Check validation rules
         for field, rules in self.config.validation_rules.items():
             if field in source_of_truth:
                 value = source_of_truth[field]
