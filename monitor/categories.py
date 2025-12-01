@@ -1,9 +1,7 @@
 from dataclasses import dataclass
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
-
-class ESGCategory(str, Enum):
+class ESGCategory(StrEnum):
     """Enum representing ESG categories."""
     NUCLEAR = "nuclear"
     GAS = "gas"
@@ -15,10 +13,8 @@ class ESGCategory(str, Enum):
     SOCIAL_IMPACT = "social_impact"
     GOVERNANCE = "governance"
 
-
 @dataclass
 class CategoryConfig:
-    """Configuration for a single ESG category dataset."""
     id: str
     display_name: str
     dataset_type: str
@@ -30,9 +26,7 @@ class CategoryConfig:
         if self.validation_rules is None:
             self.validation_rules = {}
 
-
 def detect_category_from_dataset(dataset: dict) -> ESGCategory | None:
-    """Detect ESG category based on dataset content."""
     if not dataset:
         return None
     metadata_type = dataset.get("metadata", {}).get("type", "").lower()
@@ -42,9 +36,7 @@ def detect_category_from_dataset(dataset: dict) -> ESGCategory | None:
             return category
     return ESGCategory.NUCLEAR
 
-
 def get_category_config(category: ESGCategory) -> CategoryConfig:
-    """Return the CategoryConfig for a given ESGCategory."""
     configs = {
         ESGCategory.NUCLEAR: CategoryConfig(
             id="nuclear",
@@ -71,14 +63,11 @@ def get_category_config(category: ESGCategory) -> CategoryConfig:
             validation_rules={"capacity": {"min": 0}}
         ),
     }
-    return configs.get(
-        category,
-        CategoryConfig(
-            id=category.value,
-            display_name=category.value.replace("_", " ").title(),
-            dataset_type=category.value,
-            key_fields=["id", "name"],
-            required_fields=[],
-            validation_rules={}
-        )
-    )
+    return configs.get(category, CategoryConfig(
+        id=category.value,
+        display_name=category.value.replace("_", " ").title(),
+        dataset_type=category.value,
+        key_fields=["id", "name"],
+        required_fields=[],
+        validation_rules={}
+    ))
