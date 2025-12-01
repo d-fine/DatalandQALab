@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(level
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
 logger.info("Launching the Dataland QA Lab server")
+database_engine.check_connection()
 database_engine.create_tables()
 
 

@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 
 import dataland_backend
 import dataland_documents
-import dataland_qa
 
 
 class DatalandClient:
@@ -33,6 +32,11 @@ class DatalandClient:
         """Retrieves the client for accessing the backend API."""
         config = dataland_backend.Configuration(access_token=self.api_key, host=urljoin(self.dataland_url, "api"))
         return dataland_backend.ApiClient(config)
+
+    @property
+    def data_points_api(self) -> dataland_backend.DataPointControllerApi:
+        """Function to run the document-controller API."""
+        return dataland_backend.DataPointControllerApi(self.backend_client)
 
     @property
     def company_api(self) -> dataland_backend.CompanyDataControllerApi:
@@ -66,24 +70,3 @@ class DatalandClient:
     def meta_api(self) -> dataland_backend.MetaDataControllerApi:
         """Function to run the meta-data-controller API."""
         return dataland_backend.MetaDataControllerApi(self.backend_client)
-
-    @property
-    def qa_client(self) -> dataland_qa.ApiClient:
-        """Retrieves the client for accessing the qa API."""
-        config = dataland_qa.Configuration(access_token=self.api_key, host=urljoin(self.dataland_url, "qa"))
-        return dataland_qa.ApiClient(config)
-
-    @property
-    def qa_api(self) -> dataland_qa.QaControllerApi:
-        """Function to run the qa-controller API."""
-        return dataland_qa.QaControllerApi(self.qa_client)
-
-    @property
-    def eu_taxonomy_nf_qa_api(self) -> dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi:
-        """Function to run the QA report controller for EU Taxonomy non-financials."""
-        return dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi(self.qa_client)
-
-    @property
-    def eu_taxonomy_nuclear_gas_qa_api(self) -> dataland_qa.NuclearAndGasDataQaReportControllerApi:
-        """Function to run the QA report controller for EU Taxonomy nuclear and gas."""
-        return dataland_qa.NuclearAndGasDataQaReportControllerApi(self.qa_client)

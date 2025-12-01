@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 import pypdf
 import requests
-
+from clients.backend.build.lib.dataland_backend.models.uploaded_data_point import UploadedDataPoint
+from qa_lab.dataland import dataland_client
 from qa_lab.utils import config
 
 config = config.get_config()
@@ -13,6 +14,8 @@ headers = {
     "Authorization": "Bearer " + config.dataland_api_key,
     "accept": "application/json",
 }
+
+dataland_client = dataland_client.DatalandClient(config.dataland_url, config.dataland_api_key)
 
 
 @dataclass
@@ -55,16 +58,19 @@ def set_dataset_status(dataset_id: str, qa_status: str) -> None:
     )
 
 
-def get_data_point(data_point_id: str) -> dict:
+def get_data_point(data_point_id: str) -> UploadedDataPoint:
     """Get document details from Dataland."""
-    url = f"{config.dataland_url}/api/data-points/{data_point_id}"
-    res = requests.request("GET", url, headers=headers)
+    return dataland_client.data_points_api.get_data_point(data_point_id)
 
-    if res.status_code == requests.codes.ok:
-        res = res.json()
-        res["dataPoint"] = json.loads(res["dataPoint"])
-        return res
-    return {}
+
+#    url = f"{config.dataland_url}/api/data-points/{data_point_id}"
+#   res = requests.request("GET", url, headers=headers)
+#
+#   if res.status_code == requests.codes.ok:
+#      res = res.json()
+#    res["dataPoint"] = json.loads(res["dataPoint"])
+#   return res
+# return {}
 
 
 def get_document(file_reference: str, page_numbers: list[int]) -> io.BytesIO:

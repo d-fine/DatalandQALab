@@ -1,7 +1,8 @@
+import sys
 import logging
 from typing import Any
 
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
@@ -15,6 +16,18 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 logger = logging.getLogger(__name__)
+
+
+def check_connection() -> bool:
+    """Return True if DB connection works, False otherwise."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return True
+    except SQLAlchemyError as e:
+        logger.exception("Database connection failed", exc_info=e)
+        sys.exit(1)
+        return False
 
 
 def create_tables() -> bool | None:

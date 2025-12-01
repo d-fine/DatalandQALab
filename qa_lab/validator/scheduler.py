@@ -14,9 +14,9 @@ def run_scheduled_processing() -> None:
     logger.info("Scheduled processing started.")
     unreviewed_datasets = api.get_pending_datasets()
 
-    slack.send_slack_message("------------------------------------------------------------------")
     logger.info("Found %d unreviewed datasets. Starting processing.", len(unreviewed_datasets))
     for dataset in unreviewed_datasets:
+        slack.send_slack_message("------------------------------------------------------------------")
         slack.send_slack_message(f"⏳ Starting validation for dataset ID: {dataset.get('dataId', '')}")
         logger.info("Processing dataset ID: %s", dataset.get("dataId", ""))
         data_points = api.get_dataset_data_points(dataset_id=dataset.get("dataId", ""))
