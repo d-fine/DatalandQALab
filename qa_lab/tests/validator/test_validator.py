@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from qa_lab.dataland.api import QaStatus
-from qa_lab.validator.validator import get_file_using_ocr, validate_datapoint
+from qa_lab.validator.validator import _get_file_using_ocr, validate_datapoint
 
 DUMMY_FILE = b"%PDF-1.4 dummy content"
 
@@ -14,7 +14,7 @@ def test_get_file_using_ocr_cached(mock_get_entity: MagicMock) -> None:
     cached_doc = MagicMock(ocr_output="cached text")
     mock_get_entity.return_value = cached_doc
 
-    result = get_file_using_ocr("file.pdf", "ref1", 1)
+    result = _get_file_using_ocr("file.pdf", "ref1", 1)
     assert result == "cached text"
     mock_get_entity.assert_called_once()
 
@@ -33,7 +33,7 @@ def test_get_file_using_ocr_not_cached(
     mock_get_document.return_value = DUMMY_FILE
     mock_extract_pdf.return_value = "extracted text"
 
-    result = get_file_using_ocr("file.pdf", "ref1", 1)
+    result = _get_file_using_ocr("file.pdf", "ref1", 1)
     assert result == "extracted text"
     mock_add_entity.assert_called_once()
 

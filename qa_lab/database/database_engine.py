@@ -1,5 +1,5 @@
-import sys
 import logging
+import sys
 from typing import Any
 
 from sqlalchemy import create_engine, inspect, text
@@ -23,7 +23,7 @@ def check_connection() -> bool:
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        return True
+            return True
     except SQLAlchemyError as e:
         logger.exception("Database connection failed", exc_info=e)
         sys.exit(1)

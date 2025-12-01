@@ -2,5 +2,8 @@
     "_comment": "This file contains the prompts used for validation of the SFDR data points. To add or modify prompts, edit this file accordingly.",
     "extendedDecimalEstimatedScope1GhgEmissionsInTonnes": {
         "prompt": "Extract the estimated scope 1 GHG emissions in tonnes as a decimal number from the following text:\n\n{context}"
+    },
+    "extendedIntegerMaleBoardMembersBoardOfDirectors": {
+        "prompt": "Extract the number of male board members from the board of directors as an integer from the following text:\n\n{context}"
     }
 }

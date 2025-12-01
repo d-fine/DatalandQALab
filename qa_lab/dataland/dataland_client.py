@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 
 import dataland_backend
 import dataland_documents
+import dataland_qa
 
 
 class DatalandClient:
@@ -39,6 +40,22 @@ class DatalandClient:
         return dataland_backend.DataPointControllerApi(self.backend_client)
 
     @property
+    def metadata_api(self) -> dataland_backend.MetaDataControllerApi:
+        """Function to run the document-controller API."""
+        return dataland_backend.MetaDataControllerApi(self.backend_client)
+
+    @property
+    def qa_client(self) -> dataland_qa.ApiClient:
+        """Retrieves the client for accessing the QA  API."""
+        config = dataland_qa.Configuration(access_token=self.api_key, host=urljoin(self.dataland_url, "qa"))
+        return dataland_qa.ApiClient(config)
+
+    @property
+    def qa_api(self) -> dataland_qa.QaControllerApi:
+        """Function to run the document-controller API."""
+        return dataland_qa.QaControllerApi(self.qa_client)
+
+    @property
     def company_api(self) -> dataland_backend.CompanyDataControllerApi:
         """Function to run the company-data-controller API."""
         return dataland_backend.CompanyDataControllerApi(self.backend_client)
@@ -65,8 +82,3 @@ class DatalandClient:
     def documents_api(self) -> dataland_documents.DocumentControllerApi:
         """Function to run the document-controller API."""
         return dataland_documents.DocumentControllerApi(self.documents_client)
-
-    @property
-    def meta_api(self) -> dataland_backend.MetaDataControllerApi:
-        """Function to run the meta-data-controller API."""
-        return dataland_backend.MetaDataControllerApi(self.backend_client)

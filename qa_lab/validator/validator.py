@@ -1,9 +1,14 @@
+import io
 import json
 import logging
 import time
 
+import pypdf
+from attr import dataclass
+from dataland_qa.models.qa_status import QaStatus
+
 from qa_lab.database import database_engine, database_tables
-from qa_lab.dataland import api, dataland_client
+from qa_lab.dataland import dataland_client
 from qa_lab.utils import config, prompts
 from qa_lab.validator import ai, ocr
 
@@ -14,9 +19,25 @@ config = config.get_config()
 dataland_client = dataland_client.DatalandClient(config.dataland_url, config.dataland_api_key)
 
 
-def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, override: bool = False) -> dict:
+@dataclass
+class ValidatedDatapoint:
+    """Structure to hold validated datapoint information."""
+
+    data_point_id: str
+    previous_answer: str
+    predicted_answer: str
+    confidence: float
+    reasoning: str
+    qa_status: str
+    timestamp: int
+    ai_model: str
+    use_ocr: bool
+
+
+def validate_datapoint(
+    data_point_id: str, ai_model: str, use_ocr: bool = True, override: bool = False
+) -> ValidatedDatapoint:
     """Validate a datapoint using predefined prompts."""
-    # todo: use the openapi thing instead
     data_point = dataland_client.data_points_api.get_data_point(data_point_id)
     dp_json = json.loads(data_point.data_point)
 
@@ -31,36 +52,34 @@ def validate_datapoint(data_point_id: str, ai_model: str, use_ocr: bool = True, 
         msg = f"No prompt found for data point type: {data_point_type}"
         raise ValueError(msg)
 
-    context = get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
+    context = _get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
 
     prompt = prompt_template.format(context=context)
     ai_response = ai.execute_prompt(prompt, ai_model=ai_model)
 
     predicted_answer = ai_response.get("answer", "")
 
-    qa_status = api.QaStatus.Accepted if predicted_answer == previous_answer else api.QaStatus.Rejected
+    qa_status = QaStatus.ACCEPTED if predicted_answer == previous_answer else QaStatus.REJECTED
 
     if override:
-        api.update_data_point_qa_report(
-            data_point_id,
-            qa_status=qa_status,
-            comment=ai_response.get("reasoning", ""),
+        dataland_client.qa_api.change_data_point_qa_status(
+            data_point_id, qa_status=qa_status, comment=ai_response.get("reasoning", "")
         )
 
-    return {
-        "data_point_id": data_point_id,
-        "previous_answer": previous_answer,
-        "predicted_answer": predicted_answer,
-        "confidence": ai_response.get("confidence", 0.0),
-        "reasoning": ai_response.get("reasoning", ""),
-        "qa_status": qa_status,
-        "timestamp": int(time.time()),
-        "ai_model": ai_model,
-        "use_ocr": use_ocr,
-    }
+    return ValidatedDatapoint(
+        data_point_id=data_point_id,
+        previous_answer=previous_answer,
+        predicted_answer=predicted_answer,
+        confidence=ai_response.get("confidence", 0.0),
+        reasoning=ai_response.get("reasoning", ""),
+        qa_status=qa_status,
+        timestamp=int(time.time()),
+        ai_model=ai_model,
+        use_ocr=use_ocr,
+    )
 
 
-def get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
+def _get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
     """Retrieve file using OCR and check db for cache."""
     cached_document = database_engine.get_entity(
         database_tables.CachedDocument, file_reference=file_reference, page=page
@@ -69,7 +88,7 @@ def get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
     if cached_document:
         return cached_document.ocr_output
 
-    document = api.get_document(file_reference, [page])
+    document = _get_document(reference_id=file_reference, page_numbers=[page])
     markdown = ocr.extract_pdf(document)
 
     database_engine.add_entity(
@@ -81,3 +100,22 @@ def get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
         )
     )
     return markdown
+
+
+def _get_document(reference_id: str, page_numbers: list[int]) -> io.BytesIO:
+    """Return a PDF document stream for specific pages."""
+    full_pdf = dataland_client.documents_api.get_document(reference_id)
+    full_pdf_stream = io.BytesIO(full_pdf)
+
+    original_pdf = pypdf.PdfReader(full_pdf_stream)
+    output_pdf = pypdf.PdfWriter()
+
+    for page_num in page_numbers:
+        if 0 <= page_num - 1 < len(original_pdf.pages):
+            output_pdf.add_page(original_pdf.pages[page_num - 1])
+
+    extracted_pdf_stream = io.BytesIO()
+    output_pdf.write(extracted_pdf_stream)
+    extracted_pdf_stream.seek(0)
+
+    return extracted_pdf_stream

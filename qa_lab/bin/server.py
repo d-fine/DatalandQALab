@@ -46,13 +46,14 @@ def review_data_point_id(
     ai_model: str = "gpt-4o",
     use_ocr: bool = True,
     override: bool = False,
-) -> dict:
+) -> validator.ValidatedDatapoint | dict | None:
     """Review a single dataset via API call (configurable)."""
     # todo: use_ocr needs to be implemented still
     try:
         res = validator.validate_datapoint(
             data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override
         )
-        return res
-    except Exception as e:
+        if res:
+            return res
+    except Exception as e:  # noqa: BLE001
         return {"error": str(e)}
