@@ -125,8 +125,8 @@ def test_match_sot_basic() -> None:
         "data": {
             "general": {
                 "general": {
-                    "field_one": "value",
-                    "field_two": "value",
+                    "field_one": {"value": "yes"},
+                    "field_two": {"value": "no"},
                     "referenced_reports": ["id1"],
                 }
             }
@@ -139,8 +139,8 @@ def test_match_sot_basic() -> None:
             "report": {
                 "general": {
                     "general": {
-                        "fieldOne": {"verdict": "QaAccepted"},
-                        "fieldTwo": {"verdict": "QaRejected"},
+                        "fieldOne": {"verdict": "yes"},
+                        "fieldTwo": {"verdict": "maybe"},
                     }
                 },
             },
@@ -184,10 +184,10 @@ def test_all_verdict_types() -> None:
         "data": {
             "general": {
                 "general": {
-                    "a": "",
-                    "b": "",
-                    "c": "",
-                    "d": "",
+                    "a": {"value": "yes"},
+                    "b": {"value": "no"},
+                    "c": {"value": None},
+                    "d": {"value": None},
                     "referenced_reports": [],
                 }
             }
@@ -199,10 +199,10 @@ def test_all_verdict_types() -> None:
             "report": {
                 "general": {
                     "general": {
-                        "a": {"verdict": "QaAccepted"},
-                        "b": {"verdict": "QaRejected"},
-                        "c": {"verdict": "QaInconclusive"},
-                        "d": {"verdict": "QaNotAttempted"},
+                        "a": {"verdict": "yes"},
+                        "b": {"verdict": "maybe"},
+                        "c": {"verdict": "test"},
+                        "d": {"verdict": None},
                     }
                 }
             }
