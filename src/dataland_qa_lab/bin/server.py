@@ -11,8 +11,8 @@ from dataland_qa_lab.database.database_engine import create_tables, verify_datab
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review.dataset_reviewer import review_dataset_via_api
 from dataland_qa_lab.utils import console_logger
-from dataland_qa_lab.utils.notifications import install_global_exception_hook
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
+from dataland_qa_lab.utils.notifications import install_global_exception_hook
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 
