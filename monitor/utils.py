@@ -6,6 +6,8 @@ import time
 from collections import Counter
 from dataclasses import dataclass, field
 
+from dataland_qa_lab.matching import improved_match_sot_and_qareport
+
 base_dir = pathlib.Path(__file__).parent
 output_dir = base_dir / "output"
 config_path = base_dir / "config.json"
@@ -65,7 +67,11 @@ def store_output(data: str | list | dict, file_name: str, timestamp: bool = True
 
 
 def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
-    """Compare source of truth with QALab report to check for consistency."""
+    """Compare source of truth with QALab report to check for consistency.
+
+    Counts verdict types from QALab report (QaAccepted, QaRejected, etc.).
+    This maintains backward compatibility with existing tests and workflows.
+    """
     fields = {
         key
         for key in source_of_truth.get("data", {}).get("general", {}).get("general", {})
@@ -87,6 +93,18 @@ def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
         "qa_inconclusive": counter["QaInconclusive"],
         "qa_not_attempted": counter["QaNotAttempted"],
     }
+
+
+def match_sot_and_qareport_improved(source_of_truth: dict, qalab_report: dict, category: str | None = None) -> dict:
+    """Use improved matching with epsilon tolerance and category support.
+
+    This uses the hardened matching algorithm that handles edge cases like:
+    - Numeric epsilon tolerance (0.05 vs 0.0500001)
+    - Case-insensitive string comparison
+    - Missing fields and null values
+    - Category-specific epsilon values
+    """
+    return improved_match_sot_and_qareport(source_of_truth, qalab_report, category)
 
 
 def snake_case_to_camel_case(snake_str: str) -> str:

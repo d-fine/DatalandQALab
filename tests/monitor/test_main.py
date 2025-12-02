@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from monitor.categories import ESGCategory
 from monitor.main import main, monitor_documents
 
 
@@ -81,3 +82,65 @@ def test_main_successful_run() -> None:
 
     mock_health.assert_called_once()
     mock_monitor.assert_called_once_with(documents=["111", "222"], ai_model="gpt-4")
+
+
+def test_monitor_documents_with_category_detection() -> None:
+    """Verify category detection and ESGMonitor integration."""
+    mock_dataland = MagicMock()
+    mock_dataland.model_dump_json.return_value = json.dumps(
+        {
+            "metadata": {"type": "renewable_energy"},
+            "data": {"general": {"general": {"capacity": 100}}},
+        }
+    )
+
+    with (
+        patch("monitor.main.get_dataset_by_id", return_value=mock_dataland),
+        patch("monitor.main.run_report_on_qalab", return_value={"data": {"report": {"general": {"general": {}}}}}),
+        patch("monitor.main.store_output"),
+        patch("monitor.main.detect_category_from_dataset") as mock_detect,
+        patch("monitor.main.ESGMonitor") as mock_monitor_class,
+    ):
+        mock_detect.return_value = ESGCategory.RENEWABLE_ENERGY
+        mock_monitor_instance = MagicMock()
+        mock_monitor_instance.validate.return_value = []
+        mock_monitor_class.return_value = mock_monitor_instance
+
+        monitor_documents(documents=["123"], ai_model="gpt-4")
+
+        mock_detect.assert_called_once()
+        mock_monitor_class.assert_called_once_with(ESGCategory.RENEWABLE_ENERGY)
+        mock_monitor_instance.validate.assert_called_once()
+
+
+def test_monitor_documents_uses_improved_matching() -> None:
+    """Verify that improved matching function is called with category."""
+    mock_dataland = MagicMock()
+    mock_dataland.model_dump_json.return_value = json.dumps(
+        {
+            "metadata": {"type": "nuclear"},
+            "data": {"general": {"general": {"field": "value"}}},
+        }
+    )
+
+    with (
+        patch("monitor.main.get_dataset_by_id", return_value=mock_dataland),
+        patch("monitor.main.run_report_on_qalab", return_value={"data": {"report": {"general": {"general": {}}}}}),
+        patch("monitor.main.store_output"),
+        patch("monitor.main.detect_category_from_dataset", return_value=ESGCategory.NUCLEAR),
+        patch("monitor.main.ESGMonitor"),
+        patch("monitor.main.match_sot_and_qareport_improved") as mock_match,
+    ):
+        mock_match.return_value = {
+            "total_fields": 1,
+            "qa_accepted": 1,
+            "qa_rejected": 0,
+            "qa_inconclusive": 0,
+            "qa_not_attempted": 0,
+        }
+
+        monitor_documents(documents=["123"], ai_model="gpt-4")
+
+        mock_match.assert_called_once()
+        call_args = mock_match.call_args
+        assert call_args.kwargs["category"] == "nuclear"
