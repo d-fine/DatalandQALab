@@ -38,7 +38,7 @@ def review_dataset_via_api(
     )
 
 
-def review_dataset(
+def review_dataset(  # noqa: PLR0915
     data_id: str,
     force_review: bool = False,
     ai_model: str | None = None,

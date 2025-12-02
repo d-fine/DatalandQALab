@@ -2,9 +2,17 @@ from unittest.mock import MagicMock, patch
 
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
 
-client = TestClient(dataland_qa_lab)
+def client() -> TestClient:
+    """Generate a test client, without building a real database connection"""
+    with (
+        patch("dataland_qa_lab.database.database_engine.verify_database_connection"),
+        patch("dataland_qa_lab.database.database_engine.create_tables"),
+    ):
+        from dataland_qa_lab.bin.server import dataland_qa_lab  # noqa: PLC0415
+
+        return TestClient(dataland_qa_lab)
+
 
 # test_health.py
 
