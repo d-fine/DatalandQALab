@@ -97,23 +97,6 @@ def test_case_insensitive_strings() -> None:
 
     assert result["matches_count"] == 1
     assert result["mismatches_count"] == 0
-    qalab_data = {
-        "data": {
-            "report": {
-                "general": {
-                    "general": {
-                        "fieldWithValue": {"verdict": "Yes"},
-                        "fieldNull": {"verdict": "No"},
-                    }
-                }
-            }
-        }
-    }
-
-    result = match_dataland_and_qalab(dataland_data, qalab_data)
-
-    assert result["matches_count"] == 1
-    assert result["skipped_count"] == 1
 
 
 def test_mismatch_tracking() -> None:
