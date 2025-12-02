@@ -9,9 +9,10 @@ logger = logging.getLogger(__name__)
 
 def send_alert_message(message: str) -> requests.Response | None:
     """Sends an Alert Message to the Slackbot."""
-    url: str | None = config.get_config().slack_webhook_url
-    environment: str | None = config.get_config().environment
-    if not url or not url.strip():
+    url = config.get_config().slack_webhook_url
+    environment = config.get_config().environment
+
+    if not url:
         logger.warning("Slack webhook URL is missing in the configuration. Alert not sent. Slack message: %s", message)
         return None
 
