@@ -10,6 +10,12 @@ from dataland_qa.models.qa_status import QaStatus
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
+from dataland_qa_lab.review.exceptions import (
+    DataCollectionError,
+    DatasetNotFoundError,
+    OCRProcessingError,
+    ReportSubmissionError,
+)
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from dataland_qa_lab.utils import ai, config, prompts, slack
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
@@ -22,8 +28,13 @@ validation_prompts = prompts.get_prompts()
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 def old_review_dataset_via_api(
     data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
+=======
+def review_dataset_via_api(
+    data_id: str, force_review: bool = False, ai_model: str | None = None, use_ocr: bool = True
+>>>>>>> origin/main
 ) -> dict:
     """Review a dataset via API call."""
     report_id = old_review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
@@ -37,16 +48,24 @@ def old_review_dataset_via_api(
     )
 
 
+<<<<<<< HEAD
 def old_review_dataset(
+=======
+def review_dataset(  # noqa: PLR0915
+>>>>>>> origin/main
     data_id: str,
     force_review: bool = False,
-    ai_model: str = "gpt-4o",
+    ai_model: str | None = None,
     use_ocr: bool = True,
 ) -> str:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
     dataset = dataset_provider.get_dataset_by_id(data_id)
+    if dataset is None:
+        msg = f"Dataset with data_id '{data_id}' was not found."
+        logger.warning(msg)
+        raise DatasetNotFoundError(msg)
 
     existing_report = database_engine.get_entity(database_tables.ReviewedDataset, data_id=data_id)
 
@@ -67,31 +86,59 @@ def old_review_dataset(
         logger.info("Adding the dataset to the database.")
         database_engine.add_entity(review_dataset)
 
-        data_collection = NuclearAndGasDataCollection(dataset.data)
+        try:
+            data_collection = NuclearAndGasDataCollection(dataset.data)
+        except Exception as exc:
+            msg = f"Could not build NuclearAndGasDataCollection for data_id '{data_id}': {exc}"
+            logger.exception(msg)
+            raise DataCollectionError(msg) from exc
+
         logger.info("Data collection created.")
 
         page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
         generator = NuclearAndGasReportGenerator(ai_model=ai_model)
 
-        if relevant_pages_pdf_reader is None:
+        if relevant_pages_pdf_reader is None or not use_ocr:
             report = generator.generate_report(relevant_pages=None, dataset=data_collection)
         else:
+<<<<<<< HEAD
             if use_ocr:
                 readable_text = text_to_doc_intelligence.old_get_markdown_from_dataset(
+=======
+            try:
+                readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+>>>>>>> origin/main
                     data_id=data_id,
                     page_numbers=page_numbers,
                     relevant_pages_pdf_reader=relevant_pages_pdf_reader,
                 )
-            else:
-                readable_text = None
+            except Exception as exc:
+                msg = f"OCR/Text extraction failed for data_id '{data_id}': {exc}"
+                logger.exception(msg)
+                raise OCRProcessingError(msg) from exc
+
             report = generator.generate_report(
                 relevant_pages=readable_text,
                 dataset=data_collection,
             )
+<<<<<<< HEAD
         data = config.dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
             data_id=data_id, nuclear_and_gas_data=report
         )
+=======
+        try:
+            data = (
+                config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+                    data_id=data_id,
+                    nuclear_and_gas_data=report,
+                )
+            )
+        except Exception as exc:
+            msg = f"Failed to post QA report for data_id '{data_id}': {exc}"
+            logger.exception(msg)
+            raise ReportSubmissionError(msg) from exc
+>>>>>>> origin/main
 
         old_update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
 

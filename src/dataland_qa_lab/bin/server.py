@@ -4,13 +4,14 @@ from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
-from dataland_qa_lab.bin.models import ReviewMeta, ReviewRequest, ReviewResponse
+from dataland_qa_lab.bin import models
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer
+from dataland_qa_lab.review import exceptions
 from dataland_qa_lab.utils import console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
@@ -43,59 +44,64 @@ def health_check() -> dict:
     return {"status": "ok", "timestamp": get_german_time_as_string()}
 
 
-@dataland_qa_lab.post("/review/{data_id}", response_model=ReviewResponse)
-def review_dataset_post_endpoint(data_id: str, data: ReviewRequest) -> ReviewResponse:
+@dataland_qa_lab.post("/review/{data_id}", response_model=models.ReviewResponse)
+def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> models.ReviewResponse:
     """Review a single dataset via API call (configurable)."""
-    report = dataset_reviewer.old_review_dataset_via_api(
-        data_id=data_id,
-        force_review=data.force_review,
-        ai_model=data.ai_model,
-        use_ocr=data.use_ocr,
-    )
+    try:
+        report = dataset_reviewer.old_review_dataset_via_api(
+            data_id=data_id,
+            force_review=data.force_review,
+            ai_model=data.ai_model,
+            use_ocr=data.use_ocr,
+        )
+    except exceptions.DatasetNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except (exceptions.OCRProcessingError, exceptions.DataCollectionError, exceptions.ReportSubmissionError) as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
+    except exceptions.ReviewError as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc
 
-    meta = ReviewMeta(
+    meta = models.ReviewMeta(
         timestamp=get_german_time_as_string(),
         ai_model=data.ai_model,
         force_review=data.force_review,
         use_ocr=data.use_ocr,
     )
 
-    return ReviewResponse(data=report, meta=meta)
+    return models.ReviewResponse(data=report, meta=meta)
 
 
 # new validation flow using datapoints
 
 
-@dataland_qa_lab.post("/review-data-point/{data_point_id}")
-def review_data_point_id(  # noqa: ANN201
+@dataland_qa_lab.post("/review-data-point/{data_point_id}", response_model=models.ReviewDataPointResponse)
+def review_data_point_id(
     data_point_id: str,
-    ai_model: str = "gpt-4o",
-    use_ocr: bool = True,
-    override: bool = False,
-):
+    data: models.ReviewDataPointRequest,
+) -> models.ReviewDataPointResponse:
     """Review a single dataset via API call (configurable)."""
     try:
         res = dataset_reviewer.validate_datapoint(
-            data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override
+            data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
         )
-        if res:
-            return JSONResponse(
-                content={
-                    "data_point_id": res.data_point_id,
-                    "data_point_type": res.data_point_type,
-                    "previous_answer": res.previous_answer,
-                    "predicted_answer": res.predicted_answer,
-                    "confidence": res.confidence,
-                    "reasoning": res.reasoning,
-                    "qa_status": res.qa_status,
-                    "timestamp": res.timestamp,
-                    "ai_model": res.ai_model,
-                    "use_ocr": res.use_ocr,
-                    "file_reference": res.file_reference,
-                    "file_name": res.file_name,
-                    "page": res.page,
-                },
-                status_code=200,
-            )
-    except Exception as e:  # noqa: BLE001
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+        return models.ReviewDataPointResponse(
+            data_point_id=res.data_point_id,
+            data_point_type=res.data_point_type,
+            previous_answer=res.previous_answer,
+            predicted_answer=res.predicted_answer,
+            confidence=res.confidence,
+            reasoning=res.reasoning,
+            qa_status=res.qa_status,
+            timestamp=res.timestamp,
+            ai_model=res.ai_model,
+            use_ocr=res.use_ocr,
+            file_reference=res.file_reference,
+            file_name=res.file_name,
+            page=res.page,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e

@@ -4,8 +4,20 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
 
+<<<<<<< HEAD
+=======
+def client() -> TestClient:
+    """Generate a test client, without building a real database connection"""
+    with (
+        patch("dataland_qa_lab.database.database_engine.verify_database_connection"),
+        patch("dataland_qa_lab.database.database_engine.create_tables"),
+    ):
+        from dataland_qa_lab.bin.server import dataland_qa_lab  # noqa: PLC0415
+
+        return TestClient(dataland_qa_lab)
+
+>>>>>>> origin/main
 
 @pytest.fixture
 def client():  # noqa: ANN201
@@ -14,7 +26,8 @@ def client():  # noqa: ANN201
 
 def test_health_check(client: MagicMock) -> None:
     """Test the /health endpoint of the server."""
-    response = client.get("/health")
+    test_client = client()
+    response = test_client.get("/health")
     assert response.status_code == 200
 
     data = response.json()
@@ -36,7 +49,8 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
 
-    response = client.post(f"/review/{data_id}", json=body)
+    test_client = client()
+    response = test_client.post(f"/review/{data_id}", json=body)
 
     assert response.status_code == 200
 
