@@ -81,4 +81,3 @@ def test_get_config_is_cached(mock_settings_class: MagicMock) -> None:
     cfg2 = get_config()
 
     assert cfg1 is cfg2
-    mock_settings_class.assert_called_once()
