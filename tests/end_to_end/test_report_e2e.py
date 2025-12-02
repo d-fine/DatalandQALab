@@ -85,15 +85,15 @@ def test_report_generator_end_to_end() -> None:
     assert QaReportDataPointVerdict.QAREJECTED in data_taxonomy_eligible_but_not_aligned["verdict"]
 
 
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.old_extract_text_of_pdf")
 @patch("dataland_qa_lab.database.database_engine.get_entity")
 def mocked_review_dataset(
     data_id: str,
     mock_get_entity: MagicMock,
-    mock_extract_text_of_pdf: MagicMock,
+    mock_old_extract_text_of_pdf: MagicMock,
 ) -> QaReportMetaInformation:
     """Review the dataset with mocked Azure calls."""
-    mock_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
+    mock_old_extract_text_of_pdf.return_value = mock_constants.E2E_AZURE_DOCUMENT_INTELLIGENCE_MOCK
     mock_get_entity.return_value = None
     with patch("openai.resources.chat.Completions.create", side_effect=mock_open_ai):
         with patch("dataland_qa_lab.review.dataset_reviewer.send_alert_message") as mocked_post:
