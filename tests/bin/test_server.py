@@ -19,7 +19,8 @@ def client() -> TestClient:
 
 def test_health_check() -> None:
     """Test the /health endpoint of the server."""
-    response = client.get("/health")
+    test_client = client()
+    response = test_client.get("/health")
     assert response.status_code == 200
 
     data = response.json()
@@ -41,7 +42,8 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
 
-    response = client.post(f"/review/{data_id}", json=body)
+    test_client = client()
+    response = test_client.post(f"/review/{data_id}", json=body)
 
     assert response.status_code == 200
 
