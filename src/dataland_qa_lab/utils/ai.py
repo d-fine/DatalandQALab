@@ -6,16 +6,16 @@ from openai import AzureOpenAI
 from dataland_qa_lab.utils import config
 
 logger = logging.getLogger(__name__)
-config = config.get_config()
+conf = config.get_config()
 
 client = AzureOpenAI(
-    api_key=config.azure_openai_api_key,
+    api_key=conf.azure_openai_api_key,
     api_version="2024-07-01-preview",
-    azure_endpoint=config.azure_openai_endpoint,
+    azure_endpoint=conf.azure_openai_endpoint,
 )
 
 
-def execute_prompt(prompt: str, ai_model: str = "gpt-4o", retries: int = 3) -> dict:
+def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> dict:
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
 
@@ -36,10 +36,12 @@ Rules you must follow:
 6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
 
 """  # noqa: E501
+    if not ai_model:
+        ai_model = conf.ai_model
 
     response = client.chat.completions.create(
         model=ai_model,
-        temperature=0,
+        temperature=1 if "gpt-5" in ai_model else 0,
         messages=[
             {"role": "user", "content": prompt},
         ],
