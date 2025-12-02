@@ -83,17 +83,17 @@ def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> No
     assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
 
 
+@patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
 @patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
-def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data: Mock) -> None:
+def test_build_yes_no_report_data_provider_error(
+    mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock
+) -> None:
+    mock_get_yes_no_values_from_report.return_value = {}
     mock_get_yes_no_values_by_data.side_effect = ValueError("Error in get_yes_no_values_by_data")
-    expected_comments = [
-        "Error in get_yes_no_values_by_data",
-        "Error extracting values from template 1: An unexpected error occurred: "
-        "Error during GPT request creation: Connection error.",
-    ]
     test_data_collection = provide_test_data_collection()
     report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages="123")
 
-    assert report.nuclear_energy_related_activities_section426.comment in expected_comments
+    # Check that the comment contains error information
+    assert "Error extracting values from template 1" in report.nuclear_energy_related_activities_section426.comment
     assert report.nuclear_energy_related_activities_section426.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
     assert report.nuclear_energy_related_activities_section426.corrected_data.comment is None

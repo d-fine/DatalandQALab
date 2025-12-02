@@ -12,8 +12,8 @@ class GenerateGptRequest:
     """Generates the actual GPT request."""
 
     @staticmethod
-    def generate_gpt_request(mainprompt: str, subprompt: str, ai_model: str = "gpt-4o") -> list:
-        """Generates the actual GPT request."""
+    def generate_gpt_request(mainprompt: str, subprompt: str) -> list:
+        """Generates the GPT request and returns the extracted information."""
         try:
             try:
                 conf = config.get_config()
@@ -33,8 +33,9 @@ class GenerateGptRequest:
 
             try:
                 updated_openai_response = client.chat.completions.create(
-                    model=ai_model,
-                    temperature=0,  # todo: fix temperature issue
+                    # Use dynamic model selection from config
+                    model=conf.ai_model_name,
+                    temperature=1 if conf.ai_model_name == "gpt-5" else 0,
                     messages=[
                         {"role": "system", "content": mainprompt},
                     ],
