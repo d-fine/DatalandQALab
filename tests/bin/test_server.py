@@ -71,6 +71,9 @@ def test_review_data_point_post_endpoint(client: MagicMock) -> None:
             timestamp="2025-01-01T12:00:00",
             ai_model="gpt-4o",
             use_ocr=True,
+            file_reference="abcde",
+            file_name="File.pdf",
+            page=2,
         )
 
         data_point_id = "dp-1"
@@ -92,6 +95,9 @@ def test_review_data_point_post_endpoint(client: MagicMock) -> None:
         assert json_resp["timestamp"] == "2025-01-01T12:00:00"
         assert json_resp["ai_model"] == "gpt-4o"
         assert json_resp["use_ocr"] is True
+        assert json_resp["file_reference"] == "abcde"
+        assert json_resp["file_name"] == "File.pdf"
+        assert json_resp["page"] == 2
 
         mock_validate.assert_called_once_with(
             data_point_id="dp-1",
