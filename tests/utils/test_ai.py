@@ -1,9 +1,7 @@
 import json
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from dataland_qa_lab.utils.ai import execute_prompt
-from dataland_qa_lab.utils import ai as ai_module
 
 
 @patch("dataland_qa_lab.utils.ai.client")

@@ -4,7 +4,7 @@ from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI, Path
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin.models import ReviewMeta, ReviewRequest, ReviewResponse

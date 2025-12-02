@@ -82,7 +82,11 @@ def test_run_scheduled_processing_no_datasets(mock_config: MagicMock) -> None:
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
 def test_run_scheduled_processing_all_accepted(
-    mock_slack: MagicMock, mock_add: MagicMock, mock_get: MagicMock, mock_validate: MagicMock, mock_config: MagicMock
+    mock_slack: MagicMock,
+    mock_add: MagicMock,  # noqa: ARG001
+    mock_get: MagicMock,  # noqa: ARG001
+    mock_validate: MagicMock,
+    mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where all datapoints are accepted."""
     dataset, datapoints = create_mock_dataset("ds1", {"A": "dp1", "B": "dp2"})
@@ -117,12 +121,16 @@ def test_run_scheduled_processing_all_accepted(
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
 def test_run_scheduled_processing_mixed(
-    mock_slack: MagicMock, mock_add: MagicMock, mock_get: MagicMock, mock_validate: MagicMock, mock_config: MagicMock
+    mock_slack: MagicMock,
+    mock_add: MagicMock,  # noqa: ARG001
+    mock_get: MagicMock,  # noqa: ARG001
+    mock_validate: MagicMock,
+    mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where some datapoints are rejected."""
     dataset, datapoints = create_mock_dataset("ds2", {"type1": "dp1", "type2": "dp2"})
 
-    def validate_side_effect(dp, **_):
+    def validate_side_effect(dp: str, **_) -> SimpleNamespace:  # noqa: ANN003
         if dp == "dp1":
             return SimpleNamespace(qa_status=QaStatus.ACCEPTED)
         return SimpleNamespace(qa_status=QaStatus.REJECTED)
@@ -157,7 +165,11 @@ def test_run_scheduled_processing_mixed(
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
 def test_run_scheduled_processing_exception(
-    mock_slack: MagicMock, mock_add: MagicMock, mock_get: MagicMock, mock_validate: MagicMock, mock_config: MagicMock
+    mock_slack: MagicMock,
+    mock_add: MagicMock,  # noqa: ARG001
+    mock_get: MagicMock,  # noqa: ARG001
+    mock_validate: MagicMock,
+    mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where validation raises an exception."""
     dataset, datapoints = create_mock_dataset("ds3", {"only": "dp1"})

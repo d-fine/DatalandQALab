@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 from dataland_qa_lab.utils import config

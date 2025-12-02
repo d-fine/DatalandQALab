@@ -5,11 +5,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 from dataland_qa.models.qa_status import QaStatus
 
-from dataland_qa_lab.review.dataset_reviewer import _get_file_using_ocr, validate_datapoint
+from dataland_qa_lab.review.dataset_reviewer import _get_file_using_ocr, validate_datapoint  # noqa: PLC2701
 
 
 def fake_dp(
-    dp_id: str, dp_type: str = "extendedDecimalEstimatedScope1GhgEmissionsInTonnes", value: str = "ABC", page: int = 1
+    dp_id: str,  # noqa: ARG001
+    dp_type: str = "extendedDecimalEstimatedScope1GhgEmissionsInTonnes",
+    value: str = "ABC",
+    page: int = 1,
 ) -> SimpleNamespace:
     """Create a fake Dataland data point object."""
     return SimpleNamespace(
@@ -101,7 +104,7 @@ def test_validate_datapoint_no_prompt_raises(mock_config: MagicMock) -> None:
 
     mock_config.validation_prompts = {}
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError):  # noqa: PT011
         validate_datapoint("dp3", ai_model="gpt-4o")
 
 
@@ -111,15 +114,13 @@ def test_validate_datapoint_no_prompt_raises(mock_config: MagicMock) -> None:
 @patch("dataland_qa_lab.review.dataset_reviewer._get_document")
 @patch("dataland_qa_lab.review.dataset_reviewer.config")
 def test_get_file_using_ocr_uses_cache(
-    mock_config: MagicMock,
+    mock_config: MagicMock,  # noqa: ARG001
     mock_get_document: MagicMock,
     mock_extract_pdf: MagicMock,
     mock_add: MagicMock,
     mock_get: MagicMock,
 ) -> None:
     """If CachedDocument exists, it should return its OCR output."""
-    from dataland_qa_lab.review.dataset_reviewer import _get_file_using_ocr
-
     mock_get.return_value = SimpleNamespace(ocr_output="CACHED_OCR")
 
     output = _get_file_using_ocr("file.pdf", "ref123", 2)
@@ -136,11 +137,11 @@ def test_get_file_using_ocr_uses_cache(
 @patch("dataland_qa_lab.review.dataset_reviewer._get_document")
 @patch("dataland_qa_lab.review.dataset_reviewer.config")
 def test_get_file_using_ocr_generates_new_ocr(
-    mock_config: MagicMock,
+    mock_config: MagicMock,  # noqa: ARG001
     mock_get_document: MagicMock,
     mock_extract_pdf: MagicMock,
     mock_add: MagicMock,
-    mock_get: MagicMock,
+    mock_get: MagicMock,  # noqa: ARG001
 ) -> None:
     """When no cache exists, OCR should be generated and added to DB."""
     mock_extract_pdf.return_value = "NEW_OCR"

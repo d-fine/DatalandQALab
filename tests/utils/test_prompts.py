@@ -1,6 +1,7 @@
 import json
-from dataland_qa_lab.utils import prompts
 from pathlib import Path
+
+from dataland_qa_lab.utils import prompts
 
 
 def test_get_prompts_success(tmp_path: Path) -> None:

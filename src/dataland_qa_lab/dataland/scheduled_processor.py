@@ -75,7 +75,7 @@ def run_scheduled_processing() -> None:
                     )
                 except Exception:
                     slack_message.append(
-                        f"🟡 Couldn't find a verdict for data point ID: {v} (of type {k}). Maybe it's not yet implemented?"
+                        f"🟡 Couldn't find a verdict for data point ID: {v} (of type {k}). Maybe it's not yet implemented?"  # noqa: E501
                     )
                     logger.exception("Error processing data point ID %s", v)
                     qa_status[QaStatus.PENDING] += 1

@@ -1,4 +1,3 @@
-import json
 from unittest.mock import MagicMock, patch
 
 from dataland_qa_lab.utils.slack import send_slack_message
