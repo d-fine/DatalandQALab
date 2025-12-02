@@ -99,3 +99,83 @@ def test_returns_none_on_requests_exception(monkeypatch):
     monkeypatch.setattr(notifications.requests, "post", failing_post)
 
     assert notifications.send_alert_message("This should fail") is None
+
+def test_send_error_to_slack_formats_and_forwards(monkeypatch):
+    captured = {}
+
+    def fake_send_alert(text):
+        captured["text"] = text
+        return DummyResponse(204, "")
+
+    # send_error_to_slack soll nur send_alert_message aufrufen
+    monkeypatch.setattr(notifications, "send_alert_message", fake_send_alert)
+
+    exc = ValueError("bad value")
+    resp = notifications.send_error_to_slack(exc, prefix="PREFIX")
+
+    # Rückgabewert wird von send_alert_message durchgereicht
+    assert isinstance(resp, DummyResponse)
+
+    # Nachricht enthält Prefix, Typ, Message und Code-Block
+    assert "PREFIX" in captured["text"]
+    assert "ValueError" in captured["text"]
+    assert "bad value" in captured["text"]
+    assert captured["text"].count("```") == 2
+
+def test_install_global_exception_hook_sends_errors_and_delegates(monkeypatch):
+    captured = {}
+
+    def fake_send_error(exc):
+        captured["exc"] = exc
+        return DummyResponse()
+
+    # send_error_to_slack faken
+    monkeypatch.setattr(notifications, "send_error_to_slack", fake_send_error)
+
+    original_called = {}
+
+    def fake_original(exc_type, exc, tb):
+        original_called["args"] = (exc_type, exc, tb)
+
+    # ursprünglichen excepthook faken
+    monkeypatch.setattr(sys, "excepthook", fake_original)
+
+    # unseren Hook installieren
+    notifications.install_global_exception_hook()
+
+    # „Ungefangene“ Exception simulieren, indem wir den Hook direkt aufrufen
+    try:
+        raise RuntimeError("boom")
+    except RuntimeError as e:
+        tb = e.__traceback__
+        sys.excepthook(type(e), e, tb)
+
+    # send_error_to_slack wurde aufgerufen
+    assert isinstance(captured["exc"], RuntimeError)
+    # und der ursprüngliche Hook wurde auch aufgerufen
+    assert original_called["args"][0] is RuntimeError
+    assert original_called["args"][1] is captured["exc"]
+
+
+def test_install_global_exception_hook_ignores_keyboardinterrupt(monkeypatch):
+    called = {"send_error": False}
+
+    def fake_send_error(exc):
+        called["send_error"] = True
+
+    monkeypatch.setattr(notifications, "send_error_to_slack", fake_send_error)
+
+    original_called = {"called": False}
+
+    def fake_original(exc_type, exc, tb):
+        original_called["called"] = True
+
+    monkeypatch.setattr(sys, "excepthook", fake_original)
+
+    notifications.install_global_exception_hook()
+
+    # KeyboardInterrupt soll nur an den Original-Hook gehen
+    sys.excepthook(KeyboardInterrupt, KeyboardInterrupt(), None)
+
+    assert not called["send_error"]
+    assert original_called["called"]
