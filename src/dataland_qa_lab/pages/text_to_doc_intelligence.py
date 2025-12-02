@@ -38,7 +38,10 @@ def old_get_markdown_from_dataset(
 
     german_time = get_german_time_as_string()
 
-    exist_markdown = get_entity(entity_id=data_id, entity_class=ReviewedDatasetMarkdowns)
+    exist_markdown = get_entity(
+        ReviewedDatasetMarkdowns,
+        data_id=data_id,
+    )
 
     if exist_markdown:
         readable_text = exist_markdown.markdown_text
