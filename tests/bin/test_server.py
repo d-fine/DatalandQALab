@@ -1,15 +1,18 @@
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
 
-client = TestClient(dataland_qa_lab)
 
-# test_health.py
+@pytest.fixture
+def client():  # noqa: ANN201
+    return TestClient(dataland_qa_lab)
 
 
-def test_health_check() -> None:
+def test_health_check(client: MagicMock) -> None:
     """Test the /health endpoint of the server."""
     response = client.get("/health")
     assert response.status_code == 200
@@ -22,9 +25,9 @@ def test_health_check() -> None:
     assert isinstance(data["timestamp"], str)
 
 
-@patch("dataland_qa_lab.bin.server.review_dataset_via_api")
+@patch("dataland_qa_lab.bin.server.dataset_reviewer.old_review_dataset_via_api")
 @patch("dataland_qa_lab.bin.server.get_german_time_as_string")
-def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: MagicMock) -> None:
+def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: MagicMock, client: MagicMock) -> None:
     """Test the /review/{data_id} POST endpoint of the server."""
     mock_time.return_value = "2025-01-01T12:00:00"
     mock_review_api.return_value = {"foo": "bar"}
@@ -52,3 +55,47 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
         ai_model="gpt-4o",
         use_ocr=True,
     )
+
+
+def test_review_data_point_post_endpoint(client: MagicMock) -> None:
+    """Test the /review-data-point/{data_point_id} POST endpoint."""
+    with patch("dataland_qa_lab.bin.server.dataset_reviewer.validate_datapoint") as mock_validate:
+        mock_validate.return_value = SimpleNamespace(
+            data_point_id="dp-1",
+            data_point_type="text",
+            previous_answer="old",
+            predicted_answer="new",
+            confidence=0.95,
+            reasoning="model reasoning",
+            qa_status="REVIEWED",
+            timestamp="2025-01-01T12:00:00",
+            ai_model="gpt-4o",
+            use_ocr=True,
+        )
+
+        data_point_id = "dp-1"
+
+        body = {"ai_model": "gpt-4o", "use_ocr": True, "override": False}
+
+        response = client.post(f"/review-data-point/{data_point_id}", json=body)
+
+        assert response.status_code == 200
+        json_resp = response.json()
+
+        assert json_resp["data_point_id"] == "dp-1"
+        assert json_resp["data_point_type"] == "text"
+        assert json_resp["previous_answer"] == "old"
+        assert json_resp["predicted_answer"] == "new"
+        assert json_resp["confidence"] == 0.95
+        assert json_resp["reasoning"] == "model reasoning"
+        assert json_resp["qa_status"] == "REVIEWED"
+        assert json_resp["timestamp"] == "2025-01-01T12:00:00"
+        assert json_resp["ai_model"] == "gpt-4o"
+        assert json_resp["use_ocr"] is True
+
+        mock_validate.assert_called_once_with(
+            data_point_id="dp-1",
+            ai_model="gpt-4o",
+            use_ocr=True,
+            override=False,
+        )
