@@ -26,12 +26,12 @@ def match_dataland_and_qalab(
     category: str | None = None,
 ) -> dict:
     """Match Dataland and QALab data with epsilon tolerance.
-    
+
     Args:
         dataland_data: Reference data from Dataland (expected values)
         qalab_data: Extracted data from QALab (actual values)
         category: Optional category for specific epsilon tolerance
-        
+
     Returns:
         Dictionary with matching statistics and list of ValidationDiff objects
     """
