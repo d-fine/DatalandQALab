@@ -7,7 +7,7 @@ from collections import Counter
 from monitor.categories import detect_category_from_dataset
 from monitor.esg_monitor import ESGMonitor
 from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
-from monitor.utils import load_config, match_sot_and_qareport_improved, store_output
+from monitor.utils import load_config, match_sot_and_qareport, store_output
 from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 
 logging.basicConfig(level=logging.INFO)
@@ -58,7 +58,7 @@ def monitor_documents(documents: list[str], ai_model: str) -> None:
 
         logger.info("Starting matching for document ID: %s", document_id)
         # Pass category to match function for category-specific epsilon
-        res = match_sot_and_qareport_improved(
+        res = match_sot_and_qareport(
             source_of_truth=source_of_truth,
             qalab_report=qalab_response,
             category=category.value if category else None,
@@ -104,16 +104,13 @@ def main() -> None:
         {
             "total_fields_checked": counter["total_fields"],
             "total_documents_monitored": len(config.documents),
-            "total_qa_accepted": counter["qa_accepted"],
-            "total_qa_rejected": counter["qa_rejected"],
-            "total_qa_inconclusive": counter.get("qa_inconclusive", 0),
-            "total_qa_not_attempted": counter["qa_not_attempted"],
-            "total_mismatches": len(counter.get("mismatches", [])),
-            "category_statistics": category_stats,
+            "total_matches": counter["matches_count"],
+            "total_mismatches": counter["mismatches_count"],
+            "total_skipped": counter["skipped_count"],
             "start_time": start_time,
             "end_time": end_time,
             "monitoring_duration_seconds": end_time - start_time,
-            "score_percent": counter["qa_accepted"] / counter["total_fields"] if counter["total_fields"] > 0 else 0,
+            "score_percent": counter["matches_count"] / counter["total_fields"] if counter["total_fields"] > 0 else 0,
         },
         "monitoring_summary",
         timestamp=False,

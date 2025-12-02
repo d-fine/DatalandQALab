@@ -129,14 +129,13 @@ def test_monitor_documents_uses_improved_matching() -> None:
         patch("monitor.main.store_output"),
         patch("monitor.main.detect_category_from_dataset", return_value=ESGCategory.NUCLEAR),
         patch("monitor.main.ESGMonitor"),
-        patch("monitor.main.match_sot_and_qareport_improved") as mock_match,
+        patch("monitor.main.match_sot_and_qareport") as mock_match,
     ):
         mock_match.return_value = {
             "total_fields": 1,
-            "qa_accepted": 1,
-            "qa_rejected": 0,
-            "qa_inconclusive": 0,
-            "qa_not_attempted": 0,
+            "matches_count": 1,
+            "mismatches_count": 0,
+            "skipped_count": 0,
         }
 
         monitor_documents(documents=["123"], ai_model="gpt-4")

@@ -4,12 +4,19 @@ from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 
 from dataland_qa_lab.bin.models import ReviewMeta, ReviewRequest, ReviewResponse
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review.dataset_reviewer import review_dataset_via_api
+from dataland_qa_lab.review.exceptions import (
+    DataCollectionError,
+    DatasetNotFoundError,
+    OCRProcessingError,
+    ReportSubmissionError,
+    ReviewError,
+)
 from dataland_qa_lab.utils import console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
@@ -46,12 +53,23 @@ def health_check() -> dict:
 def review_dataset_post_endpoint(data_id: str, data: ReviewRequest) -> ReviewResponse:
     """Review a single dataset via API call (configurable)."""
     # todo: use_ocr needs to be implemented still
-    report = review_dataset_via_api(
-        data_id=data_id,
-        force_review=data.force_review,
-        ai_model=data.ai_model,
-        use_ocr=data.use_ocr,
-    )
+
+    try:
+        report = review_dataset_via_api(
+            data_id=data_id,
+            force_review=data.force_review,
+            ai_model=data.ai_model,
+            use_ocr=data.use_ocr,
+        )
+    except DatasetNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc),
+        ) from exc
+    except (OCRProcessingError, DataCollectionError, ReportSubmissionError) as exc:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
+    except ReviewError as exc:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc
 
     meta = ReviewMeta(
         timestamp=get_german_time_as_string(),
