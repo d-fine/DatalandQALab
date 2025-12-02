@@ -3,8 +3,9 @@ import logging
 import os
 import pathlib
 import time
-from collections import Counter
 from dataclasses import dataclass, field
+
+from dataland_qa_lab.matching import match_dataland_and_qalab
 
 base_dir = pathlib.Path(__file__).parent
 output_dir = base_dir / "output"
@@ -72,29 +73,9 @@ def store_output(data: str | list | dict, file_name: str, timestamp: bool = True
             f.write(str(data))
 
 
-def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict) -> dict:
-    """Compare source of truth with QALab report to check for consistency."""
-    fields = {
-        key
-        for key in source_of_truth.get("data", {}).get("general", {}).get("general", {})
-        if key != "referenced_reports"
-    }
-    qa_general = qalab_report.get("data", {}).get("report", {}).get("general", {}).get("general", {})
-
-    counter = Counter()
-
-    for report_field in fields:
-        qa_field = snake_case_to_camel_case(report_field)
-        verdict = qa_general.get(qa_field, {}).get("verdict")
-        counter[verdict] += 1
-
-    return {
-        "total_fields": len(fields),
-        "qa_accepted": counter["QaAccepted"],
-        "qa_rejected": counter["QaRejected"],
-        "qa_inconclusive": counter["QaInconclusive"],
-        "qa_not_attempted": counter["QaNotAttempted"],
-    }
+def match_sot_and_qareport(source_of_truth: dict, qalab_report: dict, category: str | None = None) -> dict:
+    """Compare source of truth with QALab report using improved matching logic."""
+    return match_dataland_and_qalab(source_of_truth, qalab_report, category)
 
 
 def snake_case_to_camel_case(snake_str: str) -> str:

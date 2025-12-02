@@ -3,6 +3,6 @@
 Fixes the exact-match problem in monitor/utils.py
 """
 
-from dataland_qa_lab.matching.core import improved_match_sot_and_qareport
+from dataland_qa_lab.matching.core import match_dataland_and_qalab
 
-__all__ = ["improved_match_sot_and_qareport"]
+__all__ = ["match_dataland_and_qalab"]
