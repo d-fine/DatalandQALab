@@ -18,23 +18,32 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 
 
 def build_taxonomy_aligned_numerator_report(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str | None,
+    ai_model: str | None = None,
 ) -> NuclearAndGasGeneralTaxonomyAlignedNumerator:
     """Create Report Frame for the Nuclear and Gas General Taxonomy Aligned Numerator."""
     return NuclearAndGasGeneralTaxonomyAlignedNumerator(
-        nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(dataset, relevant_pages, "Revenue"),
-        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(dataset, relevant_pages, "CapEx"),
+        nuclearAndGasTaxonomyAlignedRevenueNumerator=build_numerator_report_frame(
+            dataset, relevant_pages, "Revenue", ai_model=ai_model
+        ),
+        nuclearAndGasTaxonomyAlignedCapexNumerator=build_numerator_report_frame(
+            dataset, relevant_pages, "CapEx", ai_model=ai_model
+        ),
     )
 
 
 def build_numerator_report_frame(
-    dataset: NuclearAndGasDataCollection, relevant_pages: str, kpi: str
+    dataset: NuclearAndGasDataCollection,
+    relevant_pages: str,
+    kpi: str,
+    ai_model: str | None = None,
 ) -> QaReportDataPointExtendedDataPointNuclearAndGasAlignedNumerator:
     """Build a report frame for a specific KPI numerator (Revenue or CapEx)."""
     if relevant_pages is None:
         return create_not_attempted_report("No relevant pages found")
     try:
-        prompted_values = NumericValueGenerator.get_taxonomy_aligned_numerator(relevant_pages, kpi)
+        prompted_values = NumericValueGenerator.get_taxonomy_aligned_numerator(relevant_pages, kpi, ai_model=ai_model)
     except ValueError:
         return create_not_attempted_report("Error retrieving prompted values for template 3")
     try:
