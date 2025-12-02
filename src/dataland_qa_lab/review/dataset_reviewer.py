@@ -1,3 +1,4 @@
+import json
 import logging
 
 from dataland_qa_lab.database.database_engine import add_entity, delete_entity, get_entity, update_entity
@@ -5,6 +6,12 @@ from dataland_qa_lab.database.database_tables import ReviewedDataset
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.dataland.alerting import send_alert_message
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
+from dataland_qa_lab.review.exceptions import (
+    DataCollectionError,
+    DatasetNotFoundError,
+    OCRProcessingError,
+    ReportSubmissionError,
+)
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
 from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
@@ -13,11 +20,38 @@ from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasD
 logger = logging.getLogger(__name__)
 
 
-def review_dataset(data_id: str, force_review: bool = False) -> str | None:
+def review_dataset_via_api(
+    data_id: str, force_review: bool = False, ai_model: str | None = None, use_ocr: bool = True
+) -> dict:
+    """Review a dataset via API call."""
+    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
+    report_id = review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
+
+    if report_id is None:
+        return {"error": "Failed to retrieve data"}
+    return json.loads(
+        config.get_config()
+        .dataland_client.eu_taxonomy_nuclear_gas_qa_api.get_nuclear_and_gas_data_qa_report(
+            data_id=data_id, qa_report_id=report_id
+        )
+        .to_json()
+    )
+
+
+def review_dataset(  # noqa: PLR0915
+    data_id: str,
+    force_review: bool = False,
+    ai_model: str | None = None,
+    use_ocr: bool = True,
+) -> str:
     """Review a dataset."""
     logger.info("Starting the review of the Dataset: %s", data_id)
 
     dataset = dataset_provider.get_dataset_by_id(data_id)
+    if dataset is None:
+        msg = f"Dataset with data_id '{data_id}' was not found."
+        logger.warning(msg)
+        raise DatasetNotFoundError(msg)
 
     existing_report = get_entity(data_id, ReviewedDataset)
 
@@ -38,27 +72,48 @@ def review_dataset(data_id: str, force_review: bool = False) -> str | None:
         logger.info("Adding the dataset to the database.")
         add_entity(review_dataset)
 
-        data_collection = NuclearAndGasDataCollection(dataset.data)
+        try:
+            data_collection = NuclearAndGasDataCollection(dataset.data)
+        except Exception as exc:
+            msg = f"Could not build NuclearAndGasDataCollection for data_id '{data_id}': {exc}"
+            logger.exception(msg)
+            raise DataCollectionError(msg) from exc
+
         logger.info("Data collection created.")
 
         page_numbers = pages_provider.get_relevant_page_numbers(data_collection)
-
         relevant_pages_pdf_reader = pages_provider.get_relevant_pages_of_pdf(data_collection)
-        if relevant_pages_pdf_reader is None:
-            report = NuclearAndGasReportGenerator().generate_report(relevant_pages=None, dataset=data_collection)
+        generator = NuclearAndGasReportGenerator(ai_model=ai_model)
 
+        if relevant_pages_pdf_reader is None or not use_ocr:
+            report = generator.generate_report(relevant_pages=None, dataset=data_collection)
         else:
-            readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
-                data_id=data_id, page_numbers=page_numbers, relevant_pages_pdf_reader=relevant_pages_pdf_reader
-            )
+            try:
+                readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+                    data_id=data_id,
+                    page_numbers=page_numbers,
+                    relevant_pages_pdf_reader=relevant_pages_pdf_reader,
+                )
+            except Exception as exc:
+                msg = f"OCR/Text extraction failed for data_id '{data_id}': {exc}"
+                logger.exception(msg)
+                raise OCRProcessingError(msg) from exc
 
-            report = NuclearAndGasReportGenerator().generate_report(
-                relevant_pages=readable_text, dataset=data_collection
+            report = generator.generate_report(
+                relevant_pages=readable_text,
+                dataset=data_collection,
             )
-
-        data = config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-            data_id=data_id, nuclear_and_gas_data=report
-        )
+        try:
+            data = (
+                config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+                    data_id=data_id,
+                    nuclear_and_gas_data=report,
+                )
+            )
+        except Exception as exc:
+            msg = f"Failed to post QA report for data_id '{data_id}': {exc}"
+            logger.exception(msg)
+            raise ReportSubmissionError(msg) from exc
 
         update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
 

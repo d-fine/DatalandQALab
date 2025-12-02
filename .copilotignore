@@ -1,0 +1,11 @@
+# .copilotignore - MINIMAL SETUP
+# Ignore files and directories that should not be included in the deployment package
+.env
+.env.*
+env/
+venv/
+.venv/
+*.pem
+*.key
+secrets/
+
