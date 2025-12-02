@@ -1,21 +1,29 @@
-import json
+import logging
 
 import requests
 
 from dataland_qa_lab.utils import config
+
+logger = logging.getLogger(__name__)
 
 
 def send_alert_message(message: str) -> requests.Response | None:
     """Sends an Alert Message to the Slackbot."""
     url: str | None = config.get_config().slack_webhook_url
     environment: str | None = config.get_config().environment
-    if url is None:
+    if not url or not url.strip():
+        logger.warning("Slack webhook URL is missing in the configuration. Alert not sent. Slack message: %s", message)
         return None
 
-    msg = message if environment is None else "[" + environment + "] " + message
+    msg = f"[{environment}] {message}" if environment else message
 
     payload = {"text": msg}
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(url=url, data=json.dumps(payload), headers=headers)
+    try:
+        response = requests.post(url=url, json=payload, timeout=5)
+        response.raise_for_status()
 
-    return response
+    except requests.exceptions.RequestException as exc:
+        logger.warning("Failed to send alert message to Slack. Error: %s", exc)
+        return None
+    else:
+        return response
