@@ -26,7 +26,6 @@ def old_review_dataset_via_api(
     data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
 ) -> dict:
     """Review a dataset via API call."""
-    # todo: so this just always overrides - it's a quick fix for testing for now; in future there should be an option to  always get the json object but not override the database and/or the dataland.com instance.  # noqa: E501
     report_id = old_review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
 
     if report_id is None:
@@ -135,6 +134,9 @@ class ValidatedDatapoint:
     timestamp: int
     ai_model: str
     use_ocr: bool
+    file_name: str
+    file_reference: str
+    page: int
 
 
 def validate_datapoint(
@@ -145,6 +147,9 @@ def validate_datapoint(
     dp_json = json.loads(data_point.data_point)
 
     data_point_type = data_point.data_point_type
+    if dp_json.get("dataSource") is None:
+        msg = f"Data point {data_point_id} is missing dataSource information."
+        raise ValueError(msg)
     page = int(dp_json["dataSource"].get("page", 0))
     file_reference = dp_json["dataSource"].get("fileReference", "")
     file_name = dp_json["dataSource"].get("fileName", "")
@@ -180,6 +185,9 @@ def validate_datapoint(
         timestamp=int(time.time()),
         ai_model=ai_model,
         use_ocr=use_ocr,
+        file_reference=file_reference,
+        file_name=file_name,
+        page=page,
     )
 
 

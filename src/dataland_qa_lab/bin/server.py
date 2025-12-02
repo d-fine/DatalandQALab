@@ -46,7 +46,6 @@ def health_check() -> dict:
 @dataland_qa_lab.post("/review/{data_id}", response_model=ReviewResponse)
 def review_dataset_post_endpoint(data_id: str, data: ReviewRequest) -> ReviewResponse:
     """Review a single dataset via API call (configurable)."""
-    # todo: use_ocr needs to be implemented still
     report = dataset_reviewer.old_review_dataset_via_api(
         data_id=data_id,
         force_review=data.force_review,
@@ -75,7 +74,6 @@ def review_data_point_id(  # noqa: ANN201
     override: bool = False,
 ):
     """Review a single dataset via API call (configurable)."""
-    # todo: use_ocr needs to be implemented still
     try:
         res = dataset_reviewer.validate_datapoint(
             data_point_id=data_point_id, ai_model=ai_model, use_ocr=use_ocr, override=override
@@ -93,6 +91,9 @@ def review_data_point_id(  # noqa: ANN201
                     "timestamp": res.timestamp,
                     "ai_model": res.ai_model,
                     "use_ocr": res.use_ocr,
+                    "file_reference": res.file_reference,
+                    "file_name": res.file_name,
+                    "page": res.page,
                 },
                 status_code=200,
             )

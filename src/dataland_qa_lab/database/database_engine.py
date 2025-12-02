@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = config.get_config().database_connection_string
 
-# Create engine once
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
