@@ -3,11 +3,10 @@ from collections import Counter
 
 from dataland_qa.models.qa_status import QaStatus
 
+from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review import dataset_reviewer
 from dataland_qa_lab.utils import config, slack
-
-from dataland_qa_lab.database import database_engine, database_tables
 
 logger = logging.getLogger(__name__)
 config = config.get_config()

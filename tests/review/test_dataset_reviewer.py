@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.dataland_qa_lab.review.dataset_reviewer import old_review_dataset, old_review_dataset_via_api
+from dataland_qa_lab.review.dataset_reviewer import old_review_dataset, old_review_dataset_via_api
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def mock_dependencies() -> Generator[dict[str, MagicMock], None, None]:
         patch("src.dataland_qa_lab.review.dataset_reviewer.pages_provider") as mock_pages_provider,
         patch("src.dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence") as mock_text_to_doc,
         patch("src.dataland_qa_lab.review.dataset_reviewer.NuclearAndGasReportGenerator") as mock_report_gen,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.send_alert_message") as mock_send_alert,
+        patch("src.dataland_qa_lab.review.dataset_reviewer.send_slack_message") as mock_send_slack,
         patch("src.dataland_qa_lab.review.dataset_reviewer.get_german_time_as_string") as mock_time,
         patch("src.dataland_qa_lab.review.dataset_reviewer.config") as mock_config,
         patch("src.dataland_qa_lab.review.dataset_reviewer.NuclearAndGasDataCollection") as mock_data_collection,
@@ -33,7 +33,7 @@ def mock_dependencies() -> Generator[dict[str, MagicMock], None, None]:
             "pages_provider": mock_pages_provider,
             "text_to_doc_intelligence": mock_text_to_doc,
             "NuclearAndGasReportGenerator": mock_report_gen,
-            "send_alert_message": mock_send_alert,
+            "send_slack_message": mock_send_slack,
             "get_german_time_as_string": mock_time,
             "config": mock_config,
             "NuclearAndGasDataCollection": mock_data_collection,
@@ -74,10 +74,10 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
     mock_dependencies["update_reviewed_dataset_in_database"].assert_called_once_with(
         data_id=data_id, report_id="report_123"
     )
-    mock_dependencies["send_alert_message"].assert_any_call(
+    mock_dependencies["send_slack_message"].assert_any_call(
         message=f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     )
-    mock_dependencies["send_alert_message"].assert_any_call(
+    mock_dependencies["send_slack_message"].assert_any_call(
         message=f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: report_123"
     )
 
