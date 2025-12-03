@@ -7,9 +7,13 @@ Handles:
 - camel case to snake_case conversion
 """
 
+import logging
+
 from pydantic import BaseModel
 
 from dataland_qa_lab.matching.config import CATEGORY_EPSILON, DEFAULT_EPSILON
+
+logger = logging.getLogger(__name__)
 
 
 class ValidationDiff(BaseModel):
@@ -77,7 +81,18 @@ def match_dataland_and_qalab(
 
 
 def extract_dataland_fields(data: dict) -> dict:
-    """Extract fields from Dataland data."""
+    """Extract fields from Dataland data.
+
+    Extracts fields from the nested structure data.general.general.
+    Returns an empty dict if the expected structure is not present.
+
+    Args:
+        data: Dictionary containing Dataland data structure
+
+    Returns:
+        Dictionary of field names to values. Returns empty dict if
+        data structure is malformed or missing expected keys.
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("general", {}).get("general", {})
@@ -89,14 +104,26 @@ def extract_dataland_fields(data: dict) -> dict:
                 fields[key] = value["value"]
             else:
                 fields[key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except (KeyError, AttributeError, TypeError) as e:
+        logger.warning("Failed to extract Dataland fields: %s. Data structure: %s", e, type(data))
 
     return fields
 
 
 def extract_qalab_fields(data: dict) -> dict:
-    """Extract fields from QALab data."""
+    """Extract fields from QALab data.
+
+    Extracts fields from the nested structure data.report.general.general.
+    Converts camelCase field names to snake_case for matching with Dataland.
+    Returns an empty dict if the expected structure is not present.
+
+    Args:
+        data: Dictionary containing QALab data structure
+
+    Returns:
+        Dictionary of field names (in snake_case) to values. Returns empty dict if
+        data structure is malformed or missing expected keys.
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("report", {}).get("general", {}).get("general", {})
@@ -107,8 +134,8 @@ def extract_qalab_fields(data: dict) -> dict:
                 fields[snake_key] = value["verdict"]
             else:
                 fields[snake_key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except (KeyError, AttributeError, TypeError) as e:
+        logger.warning("Failed to extract QALab fields: %s. Data structure: %s", e, type(data))
 
     return fields
 
@@ -125,7 +152,15 @@ def camel_to_snake(name: str) -> str:
 
 
 def values_are_equal(value1: object, value2: object, epsilon: float) -> bool:
-    """Check if two values match (uses epsilon for numbers)."""
+    """Check if two values match (uses epsilon for numbers).
+
+    Comparison order:
+    1. None check - returns True only if both are None
+    2. String comparison - case-insensitive with whitespace trimmed
+    3. Numeric comparison - uses epsilon tolerance for int/float
+    4. String-to-number conversion attempt - for values that may be numeric strings
+    5. Direct equality - fallback for other types
+    """
     if value1 is None or value2 is None:
         return value1 == value2
 
@@ -140,6 +175,7 @@ def values_are_equal(value1: object, value2: object, epsilon: float) -> bool:
         num2 = float(value2)
         return abs(num1 - num2) <= epsilon
     except (ValueError, TypeError):
+        # Values cannot be converted to floats, fall through to direct comparison
         pass
 
     return value1 == value2
