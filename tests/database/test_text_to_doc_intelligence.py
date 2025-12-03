@@ -1,15 +1,25 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pypdf
 from azure.ai.documentintelligence.models import AnalyzeResult
 
-from dataland_qa_lab.pages.text_to_doc_intelligence import extract_text_of_pdf, get_markdown_from_dataset
+from dataland_qa_lab.pages.text_to_doc_intelligence import (
+    extract_pdf,
+    old_extract_text_of_pdf,
+    old_get_markdown_from_dataset,
+)
+
+dummy_pdf = b"%PDF-1.4 dummy content"
+
+mock_config = MagicMock()
+mock_config.azure_docintel_api_key = "fake_key"
+mock_config.azure_docintel_endpoint = "fake_endpoint"
 
 
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config.get_config")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.AzureKeyCredential")
-def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock, mock_config: MagicMock) -> None:
+def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock) -> None:
     mock_pdf = MagicMock()
     mock_result = MagicMock(spec=AnalyzeResult)
     mock_result.content = "content"
@@ -19,7 +29,7 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
     mock_client_instance.begin_analyze_document.return_value = mock_poller
     mock_config.return_value = MagicMock(azure_docintel_api_key="fake_key", azure_docintel_endpoint="fake_endpoint")
 
-    result = extract_text_of_pdf(mock_pdf)
+    result = old_extract_text_of_pdf(mock_pdf)
 
     mock_client.assert_called_once_with(endpoint="fake_endpoint", credential=mock_credential.return_value)
     mock_client_instance.begin_analyze_document.assert_called_once_with(
@@ -31,7 +41,7 @@ def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock,
     assert result == "content"
 
 
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence.extract_text_of_pdf")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.old_extract_text_of_pdf")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
 def test_get_markdown_from_dataset_new_entry(
@@ -46,7 +56,7 @@ def test_get_markdown_from_dataset_new_entry(
     pdf_reader = MagicMock(spec=pypdf.PdfReader)
     pages = [1, 2, 3]
 
-    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
+    result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
     mock_get_entity.assert_called_once()
     mock_extract_text.assert_called_once_with(pdf_reader)
@@ -70,8 +80,74 @@ def test_get_markdown_from_dataset_existing_entry(
     pdf_reader = MagicMock(spec=pypdf.PdfReader)
     pages = [1, 2, 3]
 
-    result = get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
+    result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
 
     mock_get_entity.assert_called_once()
     mock_add_entity.assert_not_called()
     assert result == "old_text"
+
+
+# for the new method
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
+def test_extract_pdf_calls_client(mock_docintel_client_class: MagicMock) -> None:
+    """Test that extract_pdf calls DocumentIntelligenceClient with correct parameters."""
+    mock_client = MagicMock()
+    mock_docintel_client_class.return_value = mock_client
+
+    mock_poller = MagicMock()
+    mock_client.begin_analyze_document.return_value = mock_poller
+
+    mock_result = MagicMock()
+    mock_result.content = "Extracted text"
+    mock_poller.result.return_value = mock_result
+
+    result = extract_pdf(dummy_pdf)
+
+    mock_docintel_client_class.assert_called_once_with(endpoint=mock_config.azure_docintel_endpoint, credential=ANY)
+    mock_client.begin_analyze_document.assert_called_once_with(
+        "prebuilt-layout",
+        body=dummy_pdf,
+        content_type="application/octet-stream",
+        output_content_format=mock_docintel_client_class.return_value.begin_analyze_document.call_args[1][
+            "output_content_format"
+        ],
+    )
+    assert result == "Extracted text"
+
+
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
+def test_extract_pdf_returns_content(mock_docintel_client_class: MagicMock) -> None:
+    """Test that extract_pdf returns the correct content from the OCR process."""
+    mock_client = MagicMock()
+    mock_docintel_client_class.return_value = mock_client
+
+    mock_poller = MagicMock()
+    mock_client.begin_analyze_document.return_value = mock_poller
+
+    expected_content = "This is a test document."
+    mock_result = MagicMock()
+    mock_result.content = expected_content
+    mock_poller.result.return_value = mock_result
+
+    result = extract_pdf(dummy_pdf)
+    assert result == expected_content
+
+
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.AzureKeyCredential")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
+def test_extract_pdf_uses_credential(mock_docintel_client_class: MagicMock, mock_azure_key_cred: MagicMock) -> None:
+    """Test that extract_pdf uses AzureKeyCredential with the correct API key."""
+    mock_client = MagicMock()
+    mock_docintel_client_class.return_value = mock_client
+    mock_poller = MagicMock()
+    mock_client.begin_analyze_document.return_value = mock_poller
+    mock_result = MagicMock()
+    mock_result.content = "text"
+    mock_poller.result.return_value = mock_result
+
+    extract_pdf(dummy_pdf)
+
+    mock_azure_key_cred.assert_called_once_with(mock_config.azure_docintel_api_key)

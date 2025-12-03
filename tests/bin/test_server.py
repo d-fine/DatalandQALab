@@ -1,26 +1,16 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
 
+from dataland_qa_lab.bin.server import dataland_qa_lab
 
-def client() -> TestClient:
-    """Generate a test client, without building a real database connection"""
-    with (
-        patch("dataland_qa_lab.database.database_engine.verify_database_connection"),
-        patch("dataland_qa_lab.database.database_engine.create_tables"),
-    ):
-        from dataland_qa_lab.bin.server import dataland_qa_lab  # noqa: PLC0415
-
-        return TestClient(dataland_qa_lab)
-
-
-# test_health.py
+client = TestClient(dataland_qa_lab)
 
 
 def test_health_check() -> None:
     """Test the /health endpoint of the server."""
-    test_client = client()
-    response = test_client.get("/health")
+    response = client.get("/health")
     assert response.status_code == 200
 
     data = response.json()
@@ -31,7 +21,7 @@ def test_health_check() -> None:
     assert isinstance(data["timestamp"], str)
 
 
-@patch("dataland_qa_lab.bin.server.review_dataset_via_api")
+@patch("dataland_qa_lab.bin.server.dataset_reviewer.old_review_dataset_via_api")
 @patch("dataland_qa_lab.bin.server.get_german_time_as_string")
 def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: MagicMock) -> None:
     """Test the /review/{data_id} POST endpoint of the server."""
@@ -42,8 +32,7 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
 
     body = {"force_review": False, "ai_model": "gpt-4o", "use_ocr": True}
 
-    test_client = client()
-    response = test_client.post(f"/review/{data_id}", json=body)
+    response = client.post(f"/review/{data_id}", json=body)
 
     assert response.status_code == 200
 
@@ -62,3 +51,60 @@ def test_review_dataset_post_endpoint(mock_time: MagicMock, mock_review_api: Mag
         ai_model="gpt-4o",
         use_ocr=True,
     )
+
+
+@pytest.fixture
+def mock_validate_datapoint() -> None:
+    """Mock dataset_reviewer.validate_datapoint()"""
+    with patch("dataland_qa_lab.bin.server.dataset_reviewer.validate_datapoint") as mock:
+        mock_res = MagicMock()
+        mock_res.data_point_id = "123"
+        mock_res.data_point_type = "text"
+        mock_res.previous_answer = "old"
+        mock_res.predicted_answer = "new"
+        mock_res.confidence = 0.95
+        mock_res.reasoning = "model reasoning"
+        mock_res.qa_status = "reviewed"
+        mock_res.timestamp = 12345
+        mock_res.ai_model = "gpt-4"
+        mock_res.use_ocr = False
+        mock_res.file_reference = "file-1"
+        mock_res.file_name = "sample.pdf"
+        mock_res.page = 2
+
+        mock.return_value = mock_res
+        yield mock
+
+
+def test_review_data_point_success(mock_validate_datapoint: MagicMock) -> None:
+    """Test the /review-data-point/{data_point_id} POST endpoint of the server."""
+    payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
+
+    response = client.post("/review-data-point/123", json=payload)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["data_point_id"] == "123"
+    assert data["predicted_answer"] == "new"
+    assert data["confidence"] == 0.95
+    assert data["qa_status"] == "reviewed"
+    assert data["file_name"] == "sample.pdf"
+
+    # Ensure the mock was called correctly
+    mock_validate_datapoint.assert_called_once_with(
+        data_point_id="123", ai_model="gpt-4", use_ocr=False, override=False
+    )
+
+
+def test_review_data_point_internal_error() -> None:
+    """Test that exceptions inside the handler produce a 500 response."""
+    with patch("dataland_qa_lab.bin.server.dataset_reviewer.validate_datapoint") as mock:
+        mock.side_effect = Exception("Something went wrong")
+
+        payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
+
+        response = client.post("/review-data-point/123", json=payload)
+
+        assert response.status_code == 500
+        assert "Something went wrong" in response.json()["detail"]
