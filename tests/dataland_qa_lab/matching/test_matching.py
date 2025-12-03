@@ -37,6 +37,7 @@ def test_exact_match() -> None:
     assert result["total_fields"] == 2
     assert result["matches_count"] == 2
     assert result["mismatches_count"] == 0
+    assert result["skipped_count"] == 0
 
 
 def test_floating_point_tolerance() -> None:
@@ -67,6 +68,7 @@ def test_floating_point_tolerance() -> None:
 
     assert result["matches_count"] == 1
     assert result["mismatches_count"] == 0
+    assert result["skipped_count"] == 0
 
 
 def test_case_insensitive_strings() -> None:
@@ -96,6 +98,7 @@ def test_case_insensitive_strings() -> None:
     result = match_dataland_and_qalab(dataland_data, qalab_data)
 
     assert result["matches_count"] == 1
+    assert result["skipped_count"] == 0
 
 
 def test_null_handling() -> None:
@@ -159,5 +162,9 @@ def test_mismatch_tracking() -> None:
     result = match_dataland_and_qalab(dataland_data, qalab_data)
 
     assert result["mismatches_count"] == 1
+    assert result["matches_count"] == 1
+    assert result["skipped_count"] == 0
     assert len(result["mismatches"]) == 1
     assert result["mismatches"][0].field == "field_one"
+    assert result["mismatches"][0].expected == "Yes"
+    assert result["mismatches"][0].actual == "No"
