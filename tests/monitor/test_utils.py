@@ -123,8 +123,8 @@ def test_match_sot_basic() -> None:
         "data": {
             "general": {
                 "general": {
-                    "field_one": "value",
-                    "field_two": "value",
+                    "field_one": {"value": "yes"},
+                    "field_two": {"value": "no"},
                     "referenced_reports": ["id1"],
                 }
             }
@@ -137,8 +137,8 @@ def test_match_sot_basic() -> None:
             "report": {
                 "general": {
                     "general": {
-                        "fieldOne": {"verdict": "QaAccepted"},
-                        "fieldTwo": {"verdict": "QaRejected"},
+                        "fieldOne": {"verdict": "yes"},
+                        "fieldTwo": {"verdict": "maybe"},
                     }
                 },
             },
@@ -148,10 +148,9 @@ def test_match_sot_basic() -> None:
     res = match_sot_and_qareport(source_of_truth, qalab_report)
 
     assert res["total_fields"] == 2
-    assert res["qa_accepted"] == 1
-    assert res["qa_rejected"] == 1
-    assert res["qa_inconclusive"] == 0
-    assert res["qa_not_attempted"] == 0
+    assert res["matches_count"] == 1
+    assert res["mismatches_count"] == 1
+    assert res["skipped_count"] == 0
 
 
 def test_missing_field_in_qalab() -> None:
@@ -172,10 +171,9 @@ def test_missing_field_in_qalab() -> None:
     res = match_sot_and_qareport(source_of_truth, qalab_report)
 
     assert res["total_fields"] == 1
-    assert res["qa_accepted"] == 0
-    assert res["qa_rejected"] == 0
-    assert res["qa_inconclusive"] == 0
-    assert res["qa_not_attempted"] == 0
+    assert res["matches_count"] == 0
+    assert res["mismatches_count"] == 0
+    assert res["skipped_count"] == 1
 
 
 def test_all_verdict_types() -> None:
@@ -184,10 +182,10 @@ def test_all_verdict_types() -> None:
         "data": {
             "general": {
                 "general": {
-                    "a": "",
-                    "b": "",
-                    "c": "",
-                    "d": "",
+                    "a": {"value": "yes"},
+                    "b": {"value": "no"},
+                    "c": {"value": None},
+                    "d": {"value": None},
                     "referenced_reports": [],
                 }
             }
@@ -199,10 +197,10 @@ def test_all_verdict_types() -> None:
             "report": {
                 "general": {
                     "general": {
-                        "a": {"verdict": "QaAccepted"},
-                        "b": {"verdict": "QaRejected"},
-                        "c": {"verdict": "QaInconclusive"},
-                        "d": {"verdict": "QaNotAttempted"},
+                        "a": {"verdict": "yes"},
+                        "b": {"verdict": "maybe"},
+                        "c": {"verdict": "test"},
+                        "d": {"verdict": None},
                     }
                 }
             }
@@ -211,13 +209,10 @@ def test_all_verdict_types() -> None:
 
     res = match_sot_and_qareport(source_of_truth, qalab_report)
 
-    assert res == {
-        "total_fields": 4,
-        "qa_accepted": 1,
-        "qa_rejected": 1,
-        "qa_inconclusive": 1,
-        "qa_not_attempted": 1,
-    }
+    assert res["total_fields"] == 4
+    assert res["matches_count"] == 1
+    assert res["mismatches_count"] == 1
+    assert res["skipped_count"] == 2
 
 
 def test_unrecognized_verdict() -> None:
@@ -247,7 +242,6 @@ def test_unrecognized_verdict() -> None:
     res = match_sot_and_qareport(source_of_truth, qalab_report)
 
     assert res["total_fields"] == 1
-    assert res["qa_accepted"] == 0
-    assert res["qa_rejected"] == 0
-    assert res["qa_inconclusive"] == 0
-    assert res["qa_not_attempted"] == 0
+    assert res["matches_count"] == 0
+    assert res["mismatches_count"] == 1
+    assert res["skipped_count"] == 0
