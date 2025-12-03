@@ -1,5 +1,5 @@
 {
-    "qa_lab_url": "http://127.0.0.1:8000",
+    "qa_lab_url": "http://127.0.0.1:8000",  
     "_ai_models_comment": [
         "Please pick a model from the following:",
         "gpt-4",
@@ -8,5 +8,7 @@
     ],
     "ai_model": "",
     "use_ocr": false,
-    "documents": []
+    "force_review": false,
+    "documents": [],
+    "framework": ""
 }
