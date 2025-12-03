@@ -109,11 +109,9 @@ def old_review_dataset(  # noqa: PLR0915
                 dataset=data_collection,
             )
         try:
-            data = (
-                config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-                    data_id=data_id,
-                    nuclear_and_gas_data=report,
-                )
+            data = config.dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
+                data_id=data_id,
+                nuclear_and_gas_data=report,
             )
         except Exception as exc:
             msg = f"Failed to post QA report for data_id '{data_id}': {exc}"
