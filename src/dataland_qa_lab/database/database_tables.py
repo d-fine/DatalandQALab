@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 from sqlalchemy import ARRAY, Boolean, Column, DateTime, Integer, String
@@ -26,3 +27,25 @@ class ReviewedDatasetMarkdowns(Base):
     last_saved = Column("last_saved", DateTime, default=datetime.utcnow)
     last_updated = Column("last_updated", DateTime, default=datetime.utcnow)
     markdown_text = Column("markdown_text", String, nullable=False)
+
+
+class CachedDocument(Base):
+    """Database entity for cached documents."""
+
+    __tablename__ = "cached_documents"
+    id = Column("id", Integer, primary_key=True, autoincrement=True)
+    file_name = Column("file_name", String, nullable=False)
+    file_reference = Column("file_reference", String, nullable=False)
+    ocr_output = Column("ocr_output", String, nullable=False)
+    page = Column("page", Integer, nullable=False)
+
+    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=False)
+
+
+class ValidatedDataPoint(Base):
+    """Database entity for validated data points."""
+
+    __tablename__ = "validated_data_point"
+    data_point_id = Column("data_point_id", String, primary_key=True)
+    qa_status = Column("qa_status", String, nullable=False)
+    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=False)
