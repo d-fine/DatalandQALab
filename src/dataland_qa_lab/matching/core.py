@@ -105,7 +105,7 @@ def extract_dataland_fields(data: dict) -> dict:
             else:
                 fields[key] = value
     except (KeyError, AttributeError, TypeError) as e:
-        logger.warning("Failed to extract Dataland fields: %s. Data structure: %s", e, type(data))
+        logger.warning("Failed to extract Dataland fields: %s", type(e).__name__)
 
     return fields
 
@@ -135,7 +135,7 @@ def extract_qalab_fields(data: dict) -> dict:
             else:
                 fields[snake_key] = value
     except (KeyError, AttributeError, TypeError) as e:
-        logger.warning("Failed to extract QALab fields: %s. Data structure: %s", e, type(data))
+        logger.warning("Failed to extract QALab fields: %s", type(e).__name__)
 
     return fields
 
