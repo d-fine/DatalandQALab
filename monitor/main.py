@@ -6,7 +6,6 @@ from collections import Counter
 
 from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
 from monitor.utils import load_config, match_sot_and_qareport, store_output
-from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -15,10 +14,12 @@ config = load_config()
 counter = Counter()
 
 
-def monitor_documents(documents: list[str], ai_model: str) -> None:
+def monitor_documents(documents: list[str], ai_model: str, framework: str) -> None:
     """Monitor documents by comparing source of truth with QALab responses."""
     for document_id in documents:
         logger.info("Processing document: %s", document_id)
+        from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
+
         dataland_response = get_dataset_by_id(document_id)
 
         if not dataland_response:
@@ -31,7 +32,12 @@ def monitor_documents(documents: list[str], ai_model: str) -> None:
             logger.warning("Failed to parse dataset for document ID: %s: %s", document_id, e)
             continue
 
-        qalab_response = run_report_on_qalab(data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr)
+        qalab_response = run_report_on_qalab(
+            data_id=document_id,
+            ai_model=ai_model,
+            use_ocr=config.use_ocr,
+            framework=framework,  # <- dynamisch
+        )
 
         store_output(
             {
@@ -50,12 +56,16 @@ def monitor_documents(documents: list[str], ai_model: str) -> None:
 def main() -> None:
     """Main monitoring function."""
     logger.info("======= Starting Monitoring =======")
-    logger.info("======= Please note this script currently only works for nuclear and gas datasets =======")
+    logger.info("======= Monitoring framework: %s =======", config.framework)
 
     start_time = int(time.time())
 
     if not config.documents:
         logger.warning("No documents specified in config. Please add document IDs to monitor.")
+        sys.exit(1)
+
+    if not config.framework:
+        logger.warning("No framework specified in config or environment variables. Exiting.")
         sys.exit(1)
 
     logger.info("Using AI Model: %s", config.ai_model)
@@ -64,7 +74,7 @@ def main() -> None:
     check_qalab_api_health()
 
     logger.info("Monitoring the following documents: %s", ", ".join(config.documents))
-    monitor_documents(documents=config.documents, ai_model=config.ai_model)
+    monitor_documents(documents=config.documents, ai_model=config.ai_model, framework=config.framework)
 
     end_time = int(time.time())
     store_output(

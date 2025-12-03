@@ -10,7 +10,6 @@ base_dir = pathlib.Path(__file__).parent
 output_dir = base_dir / "output"
 config_path = base_dir / "config.json"
 
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
@@ -24,10 +23,11 @@ class MonitorConfig:
     ai_model: str = "gpt-4"
     use_ocr: bool = False
     force_review: bool = False
+    framework: str = ""  # <- kein Default
 
 
 def load_config() -> MonitorConfig:
-    """Load configuration from a JSON file or environment variables (if no json is found)."""
+    """Load configuration from JSON or environment variables."""
     try:
         with pathlib.Path(config_path).open(encoding="utf-8") as f:
             config = json.load(f)
@@ -37,19 +37,23 @@ def load_config() -> MonitorConfig:
                 ai_model=config.get("ai_model", "gpt-4"),
                 use_ocr=config.get("use_ocr", False),
                 force_review=config.get("force_review", False),
+                framework=config.get("framework", ""),  # <- aus config.json
             )
     except (json.JSONDecodeError, OSError):
         logger.warning("Config file not found or invalid, falling back to environment variables.")
 
-    qa_lab_url = os.getenv("QA_LAB_URL", "http://localhost:8000")
+    framework = os.getenv("FRAMEWORK", "")
+
     documents_env = os.getenv("DOCUMENTS", "")
     documents = documents_env.split(",") if documents_env else []
-    ai_model = os.getenv("AI_MODEL", "gpt-4")
-    use_ocr = os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"}
-    force_review = os.getenv("FORCE_REVIEW", "0").strip().lower() in {"1", "true", "yes"}
 
     return MonitorConfig(
-        qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr, force_review=force_review
+        qa_lab_url=os.getenv("QA_LAB_URL", "http://localhost:8000"),
+        documents=documents,
+        ai_model=os.getenv("AI_MODEL", "gpt-4"),
+        use_ocr=os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"},
+        force_review=os.getenv("FORCE_REVIEW", "0").strip().lower() in {"1", "true", "yes"},
+        framework=framework,
     )
 
 
