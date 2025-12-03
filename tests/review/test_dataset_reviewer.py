@@ -11,12 +11,6 @@ from dataland_qa_lab.review.dataset_reviewer import (
     old_review_dataset,
     validate_datapoint,
 )
-from dataland_qa_lab.review.exceptions import (
-    DataCollectionError,
-    DatasetNotFoundError,
-    OCRProcessingError,
-    ReportSubmissionError,
-)
 
 
 def fake_dp(
@@ -66,47 +60,34 @@ def mock_dependencies() -> Generator[dict[str, MagicMock], None, None]:
         }
 
 
-def test_review_dataset_creates_new_report(mock_dependencies):
-    import json
-    from unittest.mock import MagicMock
-
+def test_review_dataset_creates_new_report(mock_dependencies: MagicMock) -> None:
+    """Test that reviewing a dataset creates a new report when none exists."""
     data_id = "report_123"
 
-    # Dataset mock
     mock_dataset = MagicMock()
     mock_dataset.general = {"some_key": "some_value"}
     mock_dataset.data = "dummy_data"
     mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = mock_dataset
 
-    # No existing report
     mock_dependencies["get_entity"].return_value = None
 
-    # Time
     mock_dependencies["get_german_time_as_string"].return_value = "2025-11-17T12:00:00"
 
-    # Data collection
     mock_data_collection_instance = MagicMock()
     mock_dependencies["NuclearAndGasDataCollection"].return_value = mock_data_collection_instance
 
-    # Report generation
     mock_report_instance = MagicMock()
     mock_report_instance.to_json.return_value = json.dumps({"report": "data"})
     mock_dependencies["NuclearAndGasReportGenerator"].return_value.generate_report.return_value = mock_report_instance
 
-    # API: MUST mock full chain
     mock_response = MagicMock()
     mock_response.qa_report_id = data_id
 
     api_client = mock_dependencies["config"].dataland_client.eu_taxonomy_nuclear_gas_qa_api
     api_client.post_nuclear_and_gas_data_qa_report.return_value = mock_response
 
-    # --- Call the method under test ---
     result = old_review_dataset(data_id)
 
-    # --- Debug output (optional) ---
-    print("result:", result)
-
-    # --- Assertion ---
     assert result == data_id
 
 
