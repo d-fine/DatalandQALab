@@ -28,13 +28,8 @@ validation_prompts = prompts.get_prompts()
 logger = logging.getLogger(__name__)
 
 
-<<<<<<< HEAD
 def old_review_dataset_via_api(
-    data_id: str, force_review: bool = False, ai_model: str = "gpt-4o", use_ocr: bool = True
-=======
-def review_dataset_via_api(
     data_id: str, force_review: bool = False, ai_model: str | None = None, use_ocr: bool = True
->>>>>>> origin/main
 ) -> dict:
     """Review a dataset via API call."""
     report_id = old_review_dataset(data_id=data_id, force_review=force_review, ai_model=ai_model, use_ocr=use_ocr)
@@ -48,11 +43,7 @@ def review_dataset_via_api(
     )
 
 
-<<<<<<< HEAD
-def old_review_dataset(
-=======
-def review_dataset(  # noqa: PLR0915
->>>>>>> origin/main
+def old_review_dataset(  # noqa: PLR0915
     data_id: str,
     force_review: bool = False,
     ai_model: str | None = None,
@@ -102,13 +93,8 @@ def review_dataset(  # noqa: PLR0915
         if relevant_pages_pdf_reader is None or not use_ocr:
             report = generator.generate_report(relevant_pages=None, dataset=data_collection)
         else:
-<<<<<<< HEAD
-            if use_ocr:
-                readable_text = text_to_doc_intelligence.old_get_markdown_from_dataset(
-=======
             try:
                 readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
->>>>>>> origin/main
                     data_id=data_id,
                     page_numbers=page_numbers,
                     relevant_pages_pdf_reader=relevant_pages_pdf_reader,
@@ -122,11 +108,6 @@ def review_dataset(  # noqa: PLR0915
                 relevant_pages=readable_text,
                 dataset=data_collection,
             )
-<<<<<<< HEAD
-        data = config.dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
-            data_id=data_id, nuclear_and_gas_data=report
-        )
-=======
         try:
             data = (
                 config.get_config().dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report(
@@ -138,7 +119,6 @@ def review_dataset(  # noqa: PLR0915
             msg = f"Failed to post QA report for data_id '{data_id}': {exc}"
             logger.exception(msg)
             raise ReportSubmissionError(msg) from exc
->>>>>>> origin/main
 
         old_update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
 
