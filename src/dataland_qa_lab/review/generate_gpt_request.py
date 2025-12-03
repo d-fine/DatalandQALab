@@ -34,7 +34,7 @@ class GenerateGptRequest:
             try:
                 updated_openai_response = client.chat.completions.create(
                     model=ai_model,
-                    temperature=0,  # todo: fix temperature issue
+                    temperature=0,
                     messages=[
                         {"role": "system", "content": mainprompt},
                     ],

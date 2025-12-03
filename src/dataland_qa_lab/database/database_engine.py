@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = config.get_config().database_connection_string
 
-# Create engine once
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
@@ -58,20 +57,22 @@ def add_entity(entity: Any) -> bool:  # noqa: ANN401
     return True
 
 
-def get_entity(entity_id: str, entity_class: type[Any]) -> Any | None:  # noqa: ANN401
+def get_entity(entity_class: Any, **filters) -> Any:  # noqa: ANN003, ANN401
     """Generic method to get an entity from the database by its ID."""
     session = SessionLocal()
-    entity = None
 
     try:
-        primary_key_column = inspect(entity_class).primary_key[0]
-        entity = session.query(entity_class).filter(primary_key_column == entity_id).first()
-    except SQLAlchemyError as e:
-        logger.exception(msg="Error retrieving entity", exc_info=e)
+        query = session.query(entity_class)
+        for field, value in filters.items():
+            query = query.filter(getattr(entity_class, field) == value)
+
+        session.commit()
+        return query.first()
+    except SQLAlchemyError:
+        session.rollback()
+        return None
     finally:
         session.close()
-
-    return entity
 
 
 def update_entity(entity: Any) -> bool:  # noqa: ANN401

@@ -28,11 +28,17 @@ class DatalandClient:
         self.dataland_url = dataland_url
         self.api_key = api_key
 
+    # --- Backend APIs ---
     @property
     def backend_client(self) -> dataland_backend.ApiClient:
         """Retrieves the client for accessing the backend API."""
         config = dataland_backend.Configuration(access_token=self.api_key, host=urljoin(self.dataland_url, "api"))
         return dataland_backend.ApiClient(config)
+
+    @property
+    def data_points_api(self) -> dataland_backend.DataPointControllerApi:
+        """Function to run the company-data-controller API."""
+        return dataland_backend.DataPointControllerApi(self.backend_client)
 
     @property
     def company_api(self) -> dataland_backend.CompanyDataControllerApi:
@@ -67,6 +73,7 @@ class DatalandClient:
         """Function to run the meta-data-controller API."""
         return dataland_backend.MetaDataControllerApi(self.backend_client)
 
+    # --- QA APIs ---
     @property
     def qa_client(self) -> dataland_qa.ApiClient:
         """Retrieves the client for accessing the qa API."""
