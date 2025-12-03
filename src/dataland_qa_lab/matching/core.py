@@ -7,6 +7,8 @@ Handles:
 - camel case to snake_case conversion
 """
 
+import re
+
 from pydantic import BaseModel
 
 from dataland_qa_lab.matching.config import CATEGORY_EPSILON, DEFAULT_EPSILON
@@ -114,14 +116,19 @@ def extract_qalab_fields(data: dict) -> dict:
 
 
 def camel_to_snake(name: str) -> str:
-    """Convert camelCase to snake_case (fieldOne -> field_one)."""
-    result = []
-    for i, char in enumerate(name):
-        if char.isupper() and i > 0:
-            result.extend(("_", char.lower()))
-        else:
-            result.append(char.lower())
-    return "".join(result)
+    """Convert camelCase to snake_case (fieldOne -> field_one).
+
+    Handles consecutive uppercase letters (acronyms) correctly.
+    Examples:
+        - fieldOne -> field_one
+        - XMLParser -> xml_parser
+        - HTTPSConnection -> https_connection
+    """
+    # Handle transitions from uppercase acronyms to words (e.g., XMLParser -> XML_Parser)
+    s1 = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", name)
+    # Handle transitions from lowercase/digits to uppercase (e.g., fieldOne -> field_One)
+    s2 = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", s1)
+    return s2.lower()
 
 
 def values_are_equal(value1: object, value2: object, epsilon: float) -> bool:
