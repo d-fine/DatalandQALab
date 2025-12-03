@@ -159,5 +159,9 @@ def test_mismatch_tracking() -> None:
     result = match_dataland_and_qalab(dataland_data, qalab_data)
 
     assert result["mismatches_count"] == 1
+    assert result["matches_count"] == 1
+    assert result["skipped_count"] == 0
     assert len(result["mismatches"]) == 1
     assert result["mismatches"][0].field == "field_one"
+    assert result["mismatches"][0].expected == "Yes"
+    assert result["mismatches"][0].actual == "No"
