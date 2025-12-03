@@ -1,12 +1,18 @@
 import json
+from collections.abc import Generator
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
-<<<<<<< HEAD
-from dataland_qa.models.qa_status import QaStatus
 
-from dataland_qa_lab.review.dataset_reviewer import _get_file_using_ocr, validate_datapoint  # noqa: PLC2701
+from dataland_qa_lab.review.dataset_reviewer import _get_file_using_ocr, old_review_dataset, validate_datapoint
+from dataland_qa_lab.review.exceptions import (
+    DataCollectionError,
+    DatasetNotFoundError,
+    OCRProcessingError,
+    ReportSubmissionError,
+)
+from dataland_qa.models.qa_status import QaStatus
 
 
 def fake_dp(
@@ -21,43 +27,35 @@ def fake_dp(
         data_point=json.dumps(
             {"dataSource": {"page": page, "fileReference": "ref1", "fileName": "f.pdf"}, "value": value}
         ),
-=======
-
-from dataland_qa_lab.review.exceptions import (
-    DataCollectionError,
-    DatasetNotFoundError,
-    OCRProcessingError,
-    ReportSubmissionError,
-)
-from src.dataland_qa_lab.review.dataset_reviewer import review_dataset, review_dataset_via_api
+    )
 
 
 @pytest.fixture
 def mock_dependencies() -> Generator[dict[str, MagicMock], None, None]:
     with (
-        patch("src.dataland_qa_lab.review.dataset_reviewer.dataset_provider") as mock_dataset_provider,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.get_entity") as mock_get_entity,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.add_entity") as mock_add_entity,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.delete_entity") as mock_delete_entity,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.update_reviewed_dataset_in_database") as mock_update_db,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.pages_provider") as mock_pages_provider,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence") as mock_text_to_doc,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.NuclearAndGasReportGenerator") as mock_report_gen,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.send_alert_message") as mock_send_alert,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.get_german_time_as_string") as mock_time,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.config") as mock_config,
-        patch("src.dataland_qa_lab.review.dataset_reviewer.NuclearAndGasDataCollection") as mock_data_collection,
+        patch("dataland_qa_lab.review.dataset_reviewer.dataset_provider") as mock_dataset_provider,
+        patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity") as mock_get_entity,
+        patch("dataland_qa_lab.review.dataset_reviewer.database_engine.add_entity") as mock_add_entity,
+        patch("dataland_qa_lab.review.dataset_reviewer.database_engine.delete_entity") as mock_delete_entity,
+        patch("dataland_qa_lab.review.dataset_reviewer.old_update_reviewed_dataset_in_database") as mock_update_db,
+        patch("dataland_qa_lab.review.dataset_reviewer.pages_provider") as mock_pages_provider,
+        patch("dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence") as mock_text_to_doc,
+        patch("dataland_qa_lab.review.dataset_reviewer.NuclearAndGasReportGenerator") as mock_report_gen,
+        patch("dataland_qa_lab.review.dataset_reviewer.slack.send_slack_message") as mock_send_slack,
+        patch("dataland_qa_lab.review.dataset_reviewer.get_german_time_as_string") as mock_time,
+        patch("dataland_qa_lab.review.dataset_reviewer.config") as mock_config,
+        patch("dataland_qa_lab.review.dataset_reviewer.NuclearAndGasDataCollection") as mock_data_collection,
     ):
         yield {
             "dataset_provider": mock_dataset_provider,
             "get_entity": mock_get_entity,
             "add_entity": mock_add_entity,
             "delete_entity": mock_delete_entity,
-            "update_reviewed_dataset_in_database": mock_update_db,
+            "old_update_reviewed_dataset_in_database": mock_update_db,
             "pages_provider": mock_pages_provider,
             "text_to_doc_intelligence": mock_text_to_doc,
             "NuclearAndGasReportGenerator": mock_report_gen,
-            "send_alert_message": mock_send_alert,
+            "send_slack_message": mock_send_slack,
             "get_german_time_as_string": mock_time,
             "config": mock_config,
             "NuclearAndGasDataCollection": mock_data_collection,
@@ -91,19 +89,18 @@ def test_review_dataset_creates_new_report(mock_dependencies: dict[str, MagicMoc
 
     mock_config_client.post_nuclear_and_gas_data_qa_report.return_value = mock_response
 
-    result = review_dataset(data_id)
+    result = old_review_dataset(data_id)
 
     assert result == "report_123"
     mock_dependencies["add_entity"].assert_called_once()
-    mock_dependencies["update_reviewed_dataset_in_database"].assert_called_once_with(
+    mock_dependencies["old_update_reviewed_dataset_in_database"].assert_called_once_with(
         data_id=data_id, report_id="report_123"
     )
-    mock_dependencies["send_alert_message"].assert_any_call(
+    mock_dependencies["send_slack_message"].assert_any_call(
         message=f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
     )
-    mock_dependencies["send_alert_message"].assert_any_call(
+    mock_dependencies["send_slack_message"].assert_any_call(
         message=f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: report_123"
->>>>>>> origin/main
     )
 
 
@@ -215,7 +212,6 @@ def test_get_file_using_ocr_uses_cache(
     mock_add.assert_not_called()
 
 
-<<<<<<< HEAD
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity", return_value=None)
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.add_entity")
 @patch("dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence.extract_pdf")
@@ -238,8 +234,6 @@ def test_get_file_using_ocr_generates_new_ocr(
     mock_add.assert_called_once()
     mock_extract_pdf.assert_called_once()
     mock_get_document.assert_called_once()
-=======
-            assert result == expected
 
 
 def test_review_dataset_raises_dataset_not_found(mock_dependencies: dict[str, MagicMock]) -> None:
@@ -249,7 +243,7 @@ def test_review_dataset_raises_dataset_not_found(mock_dependencies: dict[str, Ma
     mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = None
 
     with pytest.raises(DatasetNotFoundError):
-        review_dataset(data_id)
+        old_review_dataset(data_id)
 
 
 def test_review_dataset_raises_data_collection_error(mock_dependencies: dict[str, MagicMock]) -> None:
@@ -265,7 +259,7 @@ def test_review_dataset_raises_data_collection_error(mock_dependencies: dict[str
     mock_dependencies["NuclearAndGasDataCollection"].side_effect = Exception("boom")
 
     with pytest.raises(DataCollectionError):
-        review_dataset(data_id)
+        old_review_dataset(data_id)
 
 
 def test_review_dataset_raises_ocr_processing_error(mock_dependencies: dict[str, MagicMock]) -> None:
@@ -286,7 +280,7 @@ def test_review_dataset_raises_ocr_processing_error(mock_dependencies: dict[str,
     mock_dependencies["text_to_doc_intelligence"].get_markdown_from_dataset.side_effect = Exception("ocr fail")
 
     with pytest.raises(OCRProcessingError):
-        review_dataset(data_id)
+        old_review_dataset(data_id)
 
 
 def test_review_dataset_raises_report_submission_error(mock_dependencies: dict[str, MagicMock]) -> None:
@@ -310,5 +304,4 @@ def test_review_dataset_raises_report_submission_error(mock_dependencies: dict[s
     mock_client.post_nuclear_and_gas_data_qa_report.side_effect = Exception("post fail")
 
     with pytest.raises(ReportSubmissionError):
-        review_dataset(data_id)
->>>>>>> origin/main
+        old_review_dataset(data_id)
