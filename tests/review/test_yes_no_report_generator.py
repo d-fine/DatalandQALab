@@ -34,7 +34,7 @@ def build_simple_openai_chat_completion() -> ChatCompletion:
 
 @patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
 @patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
-@patch("dataland_qa_lab.review.data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions")
+@patch("dataland_qa_lab.dataland.data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions")
 def test_compare_yes_no_values(mock_get_yes_no_values: Mock, mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock) -> None:  # noqa: E501
     test_data_collection = provide_test_data_collection()
     mock_get_yes_no_values_from_report.return_value = {
@@ -85,8 +85,8 @@ def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> No
     assert report.nuclear_energy_related_activities_section426.corrected_data.value is None
 
 
-@patch("dataland_qa_lab.review.report_generator.yes_no_report_generator.data_provider.get_yes_no_values_by_data")
-@patch("dataland_qa_lab.review.report_generator.yes_no_report_generator.yes_no_value_generator.get_yes_no_values_from_report")
+@patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
+@patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
 def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock) -> None:  # noqa: E501
     mock_get_yes_no_values_from_report.return_value = {}
     mock_get_yes_no_values_by_data.side_effect = ValueError("Error in get_yes_no_values_by_data")
@@ -95,3 +95,23 @@ def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data:
 
     assert report.nuclear_energy_related_activities_section426.comment == "Error in get_yes_no_values_by_data"
     assert report.nuclear_energy_related_activities_section426.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+
+
+@patch("dataland_qa_lab.dataland.data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions")
+def test_create_not_attempted_report_datasource_error(mock_get_datasources: Mock) -> None:
+    expected_error = "Database connection failed"
+    mock_get_datasources.side_effect = ValueError("Error in get_datasources_of_nuclear_and_gas_yes_no_questions")
+
+    test_data_collection = provide_test_data_collection()
+    report = yes_no_report_generator.NuclearAndGasGeneralGeneral()
+    initial_comment = "Initial QA-Error"
+    yes_no_report_generator.create_not_attempted_report(
+        report=report,
+        error_message=initial_comment,
+        dataset=test_data_collection,
+    )
+
+    fallback_field = report.nuclear_energy_related_activities_section426
+    assert fallback_field.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
+    assert initial_comment in fallback_field.comment
+    assert expected_error in fallback_field.comment
