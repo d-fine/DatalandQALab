@@ -35,7 +35,9 @@ def build_simple_openai_chat_completion() -> ChatCompletion:
 @patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
 @patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
 @patch("dataland_qa_lab.dataland.data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions")
-def test_compare_yes_no_values(mock_get_yes_no_values: Mock, mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock) -> None:  # noqa: E501
+def test_compare_yes_no_values(
+    mock_get_yes_no_values: Mock, mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock
+) -> None:
     test_data_collection = provide_test_data_collection()
     mock_get_yes_no_values_from_report.return_value = {
         "nuclear_energy_related_activities_section426": "No",
@@ -50,7 +52,9 @@ def test_compare_yes_no_values(mock_get_yes_no_values: Mock, mock_get_yes_no_val
         "fossil_gas_related_activities_section430": "Source B",
     }
 
-    report = yes_no_report_generator.build_yes_no_report(dataset=test_data_collection, relevant_pages="Dummy relevant pages", ai_model="test-model")  # noqa: E501
+    report = yes_no_report_generator.build_yes_no_report(
+        dataset=test_data_collection, relevant_pages="Dummy relevant pages", ai_model="test-model"
+    )
 
     nuclear_report = report.nuclear_energy_related_activities_section426
     fossil_report = report.fossil_gas_related_activities_section430
@@ -73,7 +77,9 @@ def test_build_yes_no_report_no_relevant_pages() -> None:
     assert report.fossil_gas_related_activities_section429.verdict == QaReportDataPointVerdict.QANOTATTEMPTED
 
 
-@patch("dataland_qa_lab.review.report_generator.yes_no_report_generator.yes_no_value_generator.get_yes_no_values_from_report")
+@patch(
+    "dataland_qa_lab.review.report_generator.yes_no_report_generator.yes_no_value_generator.get_yes_no_values_from_report"
+)
 def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> None:
     mock_get_yes_no_values.side_effect = ValueError("Error in get_yes_no_values_from_report")
 
@@ -87,7 +93,9 @@ def test_build_yes_no_report_generator_error(mock_get_yes_no_values: Mock) -> No
 
 @patch("dataland_qa_lab.review.yes_no_value_generator.get_yes_no_values_from_report")
 @patch("dataland_qa_lab.dataland.data_provider.get_yes_no_values_by_data")
-def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock) -> None:  # noqa: E501
+def test_build_yes_no_report_data_provider_error(
+    mock_get_yes_no_values_by_data: Mock, mock_get_yes_no_values_from_report: Mock
+) -> None:
     mock_get_yes_no_values_from_report.return_value = {}
     mock_get_yes_no_values_by_data.side_effect = ValueError("Error in get_yes_no_values_by_data")
     test_data_collection = provide_test_data_collection()
