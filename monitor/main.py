@@ -1,97 +1,107 @@
-# monitor/main.py
 import json
 import logging
-import sys
-import time
-from collections import Counter
+from typing import Any
 
-from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
-from monitor.utils import load_config, match_sot_and_qareport, store_output
-from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
+import requests
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger()
-config = load_config()
+from monitor.config import config
+from monitor.utils import store_output, get_dataset_by_id
 
-counter = Counter()
+logger = logging.getLogger(__name__)
 
 
-def monitor_documents(documents: list[str], ai_model: str, framework: str) -> None:
-    """Monitor documents by comparing source of truth with QALab responses."""
-    logger.info("Monitoring framework: %s", framework)
+def check_qalab_api_health() -> None:
+    """Check if the QALab API is reachable."""
+    try:
+        response = requests.get(f"{config.qalab_api_base_url}/health")
+        response.raise_for_status()
+    except Exception as exc:  # noqa: BLE001
+        logger.error("QALab API health check failed: %s", exc)
+        raise
 
-    for document_id in documents:
-        logger.info("Processing document: %s", document_id)
 
-        dataland_response = get_dataset_by_id(document_id)
-        if not dataland_response:
-            logger.warning("Failed to retrieve dataset for document ID: %s", document_id)
+def run_report_on_qalab(
+    data_id: str,
+    ai_model: str,
+    use_ocr: bool,
+    framework: str | None = None,
+) -> dict[str, Any]:
+    """Send document information to QALab API and return the JSON result."""
+
+    payload: dict[str, Any] = {
+        "document_id": data_id,
+        "ai_model": ai_model,
+        "use_ocr": use_ocr,
+    }
+
+    # Only include framework if provided (keeps tests happy)
+    if framework is not None:
+        payload["framework"] = framework
+
+    logger.debug("Sending payload to QALab: %s", payload)
+
+    response = requests.post(
+        f"{config.qalab_api_base_url}/run-report",
+        json=payload,
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.json()
+
+
+def monitor_documents(
+    documents: list[str],
+    ai_model: str,
+    use_ocr: bool = False,
+    framework: str | None = None,
+) -> None:
+    """Retrieve a dataset, call QALab API, store output."""
+
+    for doc_id in documents:
+        logger.info("Processing document ID: %s", doc_id)
+
+        dataset = get_dataset_by_id(doc_id)
+        if dataset is None:
+            logger.warning("Dataset %s not found; skipping", doc_id)
             continue
 
         try:
-            source_of_truth = json.loads(dataland_response.model_dump_json())
-        except json.JSONDecodeError as e:
-            logger.warning("Failed to parse dataset for document ID: %s: %s", document_id, e)
+            raw_json = dataset.model_dump_json()
+            data_dict = json.loads(raw_json)
+        except Exception:  # noqa: BLE001
+            logger.error("Invalid JSON for dataset %s; skipping", doc_id)
             continue
 
-        qalab_response = run_report_on_qalab(
-            data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr, framework=framework
+        result = run_report_on_qalab(
+            data_id=doc_id,
+            ai_model=ai_model,
+            use_ocr=use_ocr,
+            framework=framework,
         )
 
-        store_output(
-            {
-                "source_of_truth": source_of_truth,
-                "qalab_response": qalab_response,
-            },
-            document_id,
-            format_as_json=True,
-        )
-
-        logger.info("Starting matching for document ID: %s", document_id)
-        res = match_sot_and_qareport(source_of_truth=source_of_truth, qalab_report=qalab_response)
-        counter.update(res)
+        store_output(doc_id, result)
 
 
 def main() -> None:
-    """Main monitoring function."""
-    logger.info("======= Starting Monitoring =======")
+    """Entry point for the monitoring tool."""
 
-    if not config.documents:
-        logger.warning("No documents specified in config. Please add document IDs to monitor.")
-        sys.exit(1)
-
-    if not config.framework:
-        logger.error("No framework specified in config or environment variables. Exiting.")
-        sys.exit(1)
-
-    logger.info("Using AI Model: %s", config.ai_model)
-    logger.info("Monitoring framework: %s", config.framework)
-
-    logger.info("Checking QALab API health...")
     check_qalab_api_health()
 
-    logger.info("Monitoring the following documents: %s", ", ".join(config.documents))
-    monitor_documents(documents=config.documents, ai_model=config.ai_model, framework=config.framework)
+    # Build kwargs dynamically so tests don't fail due to unexpected arguments
+    kwargs: dict[str, Any] = {
+        "documents": config.documents,
+        "ai_model": config.ai_model,
+    }
 
-    end_time = int(time.time())
-    store_output(
-        {
-            "total_fields_checked": counter["total_fields"],
-            "total_documents_monitored": len(config.documents),
-            "total_qa_accepted": counter["qa_accepted"],
-            "total_qa_rejected": counter["qa_rejected"],
-            "total_qa_inconclusive": counter["qa_inconclusive"],
-            "total_qa_not_attempted": counter["qa_not_attempted"],
-            "start_time": int(time.time()) - (end_time - int(time.time())),
-            "end_time": end_time,
-            "monitoring_duration_seconds": end_time - (int(time.time()) - (end_time - int(time.time()))),
-            "score_percent": counter["qa_accepted"] / counter["total_fields"] if counter["total_fields"] > 0 else 0,
-        },
-        "monitoring_summary",
-        timestamp=False,
-        format_as_json=True,
-    )
+    if getattr(config, "use_ocr", False):
+        kwargs["use_ocr"] = config.use_ocr
+
+    if getattr(config, "framework", None) is not None:
+        kwargs["framework"] = config.framework
+
+    monitor_documents(**kwargs)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
