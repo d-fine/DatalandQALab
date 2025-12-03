@@ -67,6 +67,7 @@ def test_floating_point_tolerance() -> None:
 
     assert result["matches_count"] == 1
     assert result["mismatches_count"] == 0
+    assert result["skipped_count"] == 0
 
 
 def test_case_insensitive_strings() -> None:
