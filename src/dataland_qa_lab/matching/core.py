@@ -7,9 +7,13 @@ Handles:
 - camel case to snake_case conversion
 """
 
+import logging
+
 from pydantic import BaseModel
 
 from dataland_qa_lab.matching.config import CATEGORY_EPSILON, DEFAULT_EPSILON
+
+logger = logging.getLogger(__name__)
 
 
 class ValidationDiff(BaseModel):
@@ -77,7 +81,21 @@ def match_dataland_and_qalab(
 
 
 def extract_dataland_fields(data: dict) -> dict:
-    """Extract fields from Dataland data."""
+    """Extract fields from Dataland data.
+
+    Navigates the expected Dataland data structure (data.general.general) and extracts
+    field values. If the data structure is malformed or missing expected keys, logs a
+    warning and returns whatever fields were successfully extracted.
+
+    Args:
+        data: Dataland data dictionary with expected structure {data: {general: {general: {...}}}}
+
+    Returns:
+        Dictionary of field names to their values. Returns empty dict if:
+        - Input data is not a dictionary (TypeError)
+        - Required nested keys are missing or None (AttributeError when calling .get() on None)
+        - Data structure doesn't match expected format
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("general", {}).get("general", {})
@@ -89,14 +107,35 @@ def extract_dataland_fields(data: dict) -> dict:
                 fields[key] = value["value"]
             else:
                 fields[key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except (AttributeError, TypeError) as e:
+        logger.warning(
+            "Failed to extract Dataland fields due to malformed data structure: %s. "
+            "Data keys: %s",
+            e,
+            list(data.keys()) if isinstance(data, dict) else type(data).__name__,
+        )
 
     return fields
 
 
 def extract_qalab_fields(data: dict) -> dict:
-    """Extract fields from QALab data."""
+    """Extract fields from QALab data.
+
+    Navigates the expected QALab data structure (data.report.general.general) and extracts
+    field values. Converts camelCase keys to snake_case for matching with Dataland fields.
+    If the data structure is malformed or missing expected keys, logs a warning and
+    returns whatever fields were successfully extracted.
+
+    Args:
+        data: QALab data dictionary with expected structure
+              {data: {report: {general: {general: {...}}}}}
+
+    Returns:
+        Dictionary of field names (snake_case) to their values. Returns empty dict if:
+        - Input data is not a dictionary (TypeError)
+        - Required nested keys are missing or None (AttributeError when calling .get() on None)
+        - Data structure doesn't match expected format
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("report", {}).get("general", {}).get("general", {})
@@ -107,8 +146,13 @@ def extract_qalab_fields(data: dict) -> dict:
                 fields[snake_key] = value["verdict"]
             else:
                 fields[snake_key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except (AttributeError, TypeError) as e:
+        logger.warning(
+            "Failed to extract QALab fields due to malformed data structure: %s. "
+            "Data keys: %s",
+            e,
+            list(data.keys()) if isinstance(data, dict) else type(data).__name__,
+        )
 
     return fields
 
