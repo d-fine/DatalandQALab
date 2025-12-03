@@ -1,3 +1,4 @@
+# monitor/main.py
 import json
 import logging
 import sys
@@ -6,6 +7,7 @@ from collections import Counter
 
 from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
 from monitor.utils import load_config, match_sot_and_qareport, store_output
+from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -16,12 +18,12 @@ counter = Counter()
 
 def monitor_documents(documents: list[str], ai_model: str, framework: str) -> None:
     """Monitor documents by comparing source of truth with QALab responses."""
+    logger.info("Monitoring framework: %s", framework)
+
     for document_id in documents:
         logger.info("Processing document: %s", document_id)
-        from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 
         dataland_response = get_dataset_by_id(document_id)
-
         if not dataland_response:
             logger.warning("Failed to retrieve dataset for document ID: %s", document_id)
             continue
@@ -33,10 +35,7 @@ def monitor_documents(documents: list[str], ai_model: str, framework: str) -> No
             continue
 
         qalab_response = run_report_on_qalab(
-            data_id=document_id,
-            ai_model=ai_model,
-            use_ocr=config.use_ocr,
-            framework=framework,  # <- dynamisch
+            data_id=document_id, ai_model=ai_model, use_ocr=config.use_ocr, framework=framework
         )
 
         store_output(
@@ -56,19 +55,17 @@ def monitor_documents(documents: list[str], ai_model: str, framework: str) -> No
 def main() -> None:
     """Main monitoring function."""
     logger.info("======= Starting Monitoring =======")
-    logger.info("======= Monitoring framework: %s =======", config.framework)
-
-    start_time = int(time.time())
 
     if not config.documents:
         logger.warning("No documents specified in config. Please add document IDs to monitor.")
         sys.exit(1)
 
     if not config.framework:
-        logger.warning("No framework specified in config or environment variables. Exiting.")
+        logger.error("No framework specified in config or environment variables. Exiting.")
         sys.exit(1)
 
     logger.info("Using AI Model: %s", config.ai_model)
+    logger.info("Monitoring framework: %s", config.framework)
 
     logger.info("Checking QALab API health...")
     check_qalab_api_health()
@@ -85,9 +82,9 @@ def main() -> None:
             "total_qa_rejected": counter["qa_rejected"],
             "total_qa_inconclusive": counter["qa_inconclusive"],
             "total_qa_not_attempted": counter["qa_not_attempted"],
-            "start_time": start_time,
+            "start_time": int(time.time()) - (end_time - int(time.time())),
             "end_time": end_time,
-            "monitoring_duration_seconds": end_time - start_time,
+            "monitoring_duration_seconds": end_time - (int(time.time()) - (end_time - int(time.time()))),
             "score_percent": counter["qa_accepted"] / counter["total_fields"] if counter["total_fields"] > 0 else 0,
         },
         "monitoring_summary",
