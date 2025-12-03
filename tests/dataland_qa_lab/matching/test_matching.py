@@ -161,3 +161,36 @@ def test_mismatch_tracking() -> None:
     assert result["mismatches_count"] == 1
     assert len(result["mismatches"]) == 1
     assert result["mismatches"][0].field == "field_one"
+
+
+def test_extra_qalab_fields() -> None:
+    """Test that fields only in QALab are tracked as extra fields."""
+    dataland_data = {
+        "data": {
+            "general": {
+                "general": {
+                    "field_one": {"value": "Yes"},
+                }
+            }
+        }
+    }
+
+    qalab_data = {
+        "data": {
+            "report": {
+                "general": {
+                    "general": {
+                        "fieldOne": {"verdict": "Yes"},
+                        "fieldExtra": {"verdict": "Extra"},
+                        "anotherExtraField": {"verdict": "Also extra"},
+                    }
+                }
+            }
+        }
+    }
+
+    result = match_dataland_and_qalab(dataland_data, qalab_data)
+
+    assert result["matches_count"] == 1
+    assert result["extra_fields_count"] == 2
+    assert set(result["extra_fields"]) == {"field_extra", "another_extra_field"}

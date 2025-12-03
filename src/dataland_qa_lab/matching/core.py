@@ -65,6 +65,9 @@ def match_dataland_and_qalab(
                 )
             )
 
+    extra_fields = set(qalab_fields.keys()) - set(dataland_fields.keys())
+    extra_fields_count = len(extra_fields)
+
     total_fields = matches_count + mismatches_count + skipped_count
 
     return {
@@ -72,6 +75,8 @@ def match_dataland_and_qalab(
         "matches_count": matches_count,
         "mismatches_count": mismatches_count,
         "skipped_count": skipped_count,
+        "extra_fields_count": extra_fields_count,
+        "extra_fields": list(extra_fields),
         "mismatches": mismatches,
     }
 
