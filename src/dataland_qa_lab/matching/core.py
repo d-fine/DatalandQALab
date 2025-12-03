@@ -132,9 +132,6 @@ def values_are_equal(value1: object, value2: object, epsilon: float) -> bool:
     if isinstance(value1, str) and isinstance(value2, str):
         return value1.lower().strip() == value2.lower().strip()
 
-    if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
-        return abs(float(value1) - float(value2)) <= epsilon
-
     try:
         num1 = float(value1)
         num2 = float(value2)
