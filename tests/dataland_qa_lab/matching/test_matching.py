@@ -419,7 +419,7 @@ def test_very_large_numbers() -> None:
 
 
 def test_scientific_notation() -> None:
-    """Test scientific notation comparisons."""
+    """Test scientific notation vs decimal comparisons (1.5e-10 == 0.00000000015)."""
     dataland_data = {
         "data": {
             "general": {
