@@ -41,8 +41,8 @@ class ReviewDataPointResponse(BaseModel):
 
     data_point_id: str
     data_point_type: str
-    previous_answer: str
-    predicted_answer: str
+    previous_answer: Any
+    predicted_answer: Any
     confidence: float
     reasoning: str
     qa_status: str
