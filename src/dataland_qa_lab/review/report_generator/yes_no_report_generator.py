@@ -41,7 +41,9 @@ def build_yes_no_report(
     return report
 
 
-def create_not_attempted_report(report: NuclearAndGasGeneralGeneral, error_message: str, dataset: NuclearAndGasDataCollection) -> None:  # noqa: E501
+def create_not_attempted_report(
+    report: NuclearAndGasGeneralGeneral, error_message: str, dataset: NuclearAndGasDataCollection
+) -> None:
     """Populate the report with 'not attempted' data points, based on existing dataset keys."""
     data_point_report = QaReportDataPointExtendedDataPointYesNo(
         comment=error_message,
