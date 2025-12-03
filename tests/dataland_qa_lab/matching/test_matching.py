@@ -3,7 +3,9 @@
 Checking if the epsilon tolerance and other fixes work.
 """
 
-from dataland_qa_lab.matching.core import match_dataland_and_qalab
+import pytest
+
+from dataland_qa_lab.matching.core import camel_to_snake, match_dataland_and_qalab
 
 
 def test_exact_match() -> None:
@@ -161,3 +163,46 @@ def test_mismatch_tracking() -> None:
     assert result["mismatches_count"] == 1
     assert len(result["mismatches"]) == 1
     assert result["mismatches"][0].field == "field_one"
+
+
+class TestCamelToSnake:
+    """Tests for the camel_to_snake function."""
+
+    @pytest.mark.parametrize(
+        "input_val,expected",
+        [
+            ("fieldOne", "field_one"),
+            ("fieldTwo", "field_two"),
+            ("simpleCase", "simple_case"),
+            ("camelCaseTest", "camel_case_test"),
+        ],
+    )
+    def test_basic_camel_case(self, input_val: str, expected: str) -> None:
+        """Test basic camelCase to snake_case conversion."""
+        assert camel_to_snake(input_val) == expected
+
+    @pytest.mark.parametrize(
+        "input_val,expected",
+        [
+            ("XMLParser", "xml_parser"),
+            ("HTTPSConnection", "https_connection"),
+            ("getHTTPResponse", "get_http_response"),
+            ("IOError", "io_error"),
+        ],
+    )
+    def test_acronyms(self, input_val: str, expected: str) -> None:
+        """Test that consecutive uppercase letters (acronyms) are handled correctly."""
+        assert camel_to_snake(input_val) == expected
+
+    @pytest.mark.parametrize(
+        "input_val,expected",
+        [
+            ("a", "a"),
+            ("A", "a"),
+            ("ABC", "abc"),
+            ("lowercase", "lowercase"),
+        ],
+    )
+    def test_edge_cases(self, input_val: str, expected: str) -> None:
+        """Test edge cases like single characters and all-uppercase."""
+        assert camel_to_snake(input_val) == expected
