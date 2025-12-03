@@ -7,8 +7,8 @@ from dataland_qa_lab.utils import config
 logger = logging.getLogger(__name__)
 
 
-def send_alert_message(message: str) -> requests.Response | None:
-    """Sends an Alert Message to the Slackbot."""
+def send_slack_message(message: str) -> requests.Response | None:
+    """Sends an Slack Message to the Slackbot."""
     url = config.get_config().slack_webhook_url
     environment = config.get_config().environment
 

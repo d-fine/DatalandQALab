@@ -11,14 +11,14 @@ from dataland_qa_lab.utils import config
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
 logger = logging.getLogger(__name__)
+config = config.get_config()
 
 
-def extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
+def old_extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
     """Use Azure Document Intelligence to make text readable for azure open ai."""
-    conf = config.get_config()
-    docintel_cred = AzureKeyCredential(conf.azure_docintel_api_key)
+    docintel_cred = AzureKeyCredential(config.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
-        endpoint=conf.azure_docintel_endpoint, credential=docintel_cred
+        endpoint=config.azure_docintel_endpoint, credential=docintel_cred
     )
 
     poller = document_intelligence_client.begin_analyze_document(
@@ -30,18 +30,23 @@ def extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
     return poller.result().content
 
 
-def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.PdfReader, page_numbers: list[int]) -> str:
+def old_get_markdown_from_dataset(
+    data_id: str, relevant_pages_pdf_reader: pypdf.PdfReader, page_numbers: list[int]
+) -> str:
     """Adds or updates a markdown document in the database if necessary and returns it."""
     readable_text = None
 
     german_time = get_german_time_as_string()
 
-    exist_markdown = get_entity(entity_id=data_id, entity_class=ReviewedDatasetMarkdowns)
+    exist_markdown = get_entity(
+        ReviewedDatasetMarkdowns,
+        data_id=data_id,
+    )
 
     if exist_markdown:
         readable_text = exist_markdown.markdown_text
     else:
-        readable_text = extract_text_of_pdf(relevant_pages_pdf_reader)
+        readable_text = old_extract_text_of_pdf(relevant_pages_pdf_reader)
 
         if readable_text is None:
             return None
@@ -59,3 +64,21 @@ def get_markdown_from_dataset(data_id: str, relevant_pages_pdf_reader: pypdf.Pdf
     logger.debug("Markdown extracted from the relevant pages.")
 
     return readable_text
+
+
+# new method for the new validation flow
+
+
+def extract_pdf(pdf) -> str:  # noqa: ANN001
+    """Use Azure Document Intelligence to make text readable for azure open ai."""
+    docintel_cred = AzureKeyCredential(config.azure_docintel_api_key)
+    document_intelligence_client = DocumentIntelligenceClient(
+        endpoint=config.azure_docintel_endpoint, credential=docintel_cred
+    )
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        body=pdf,
+        content_type="application/octet-stream",
+        output_content_format=DocumentContentFormat.MARKDOWN,
+    )
+    return poller.result().content
