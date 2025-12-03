@@ -48,10 +48,23 @@ def create_not_attempted_report(
     data_point_report = QaReportDataPointExtendedDataPointYesNo(
         comment=error_message,
         verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
-        correctedData=ExtendedDataPointYesNo(),
+        corrected_data=ExtendedDataPointYesNo(),
     )
-    data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
-    valid_field_names = data_sources.keys()
-
-    for field_name in valid_field_names:
-        setattr(report, field_name, data_point_report)
+    data_sources_error = None
+    try:
+        data_sources = data_provider.get_datasources_of_nuclear_and_gas_yes_no_questions(data=dataset)
+        valid_field_names = data_sources.keys()
+    except Exception as e:  # noqa: BLE001
+        data_sources_error = str(e)
+        valid_field_names = []
+    if valid_field_names:
+        for field_name in valid_field_names:
+            setattr(report, field_name, data_point_report)
+    else:
+        error_message = (
+            "Failed to retrieve valid field names for not attempted report. "
+            "Original error: " + data_sources_error
+        )
+        error_data_point = yes_no_value_generator.create_error_data_point(error_message)
+        fallback_field_name = "nuclear_energy_related_activities_section426"
+        setattr(report, fallback_field_name, error_data_point)
