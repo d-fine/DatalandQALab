@@ -62,8 +62,7 @@ def create_not_attempted_report(
             setattr(report, field_name, data_point_report)
     else:
         error_message = (
-            "Failed to retrieve valid field names for not attempted report. "
-            "Original error: " + data_sources_error
+            "Failed to retrieve valid field names for not attempted report. Original error: " + data_sources_error
         )
         error_data_point = yes_no_value_generator.create_error_data_point(error_message)
         fallback_field_name = "nuclear_energy_related_activities_section426"
