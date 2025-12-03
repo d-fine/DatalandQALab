@@ -7,9 +7,13 @@ Handles:
 - camel case to snake_case conversion
 """
 
+import logging
+
 from pydantic import BaseModel
 
 from dataland_qa_lab.matching.config import CATEGORY_EPSILON, DEFAULT_EPSILON
+
+logger = logging.getLogger(__name__)
 
 
 class ValidationDiff(BaseModel):
@@ -77,7 +81,20 @@ def match_dataland_and_qalab(
 
 
 def extract_dataland_fields(data: dict) -> dict:
-    """Extract fields from Dataland data."""
+    """Extract fields from Dataland data.
+
+    Expected structure: data["data"]["general"]["general"] containing field values.
+    Each field can be a direct value or a dict with a "value" key.
+
+    Args:
+        data: Dataland data dictionary with expected nested structure.
+
+    Returns:
+        Dictionary of field name to value. Returns empty dict if:
+        - The input data is None or not a dict (TypeError)
+        - The nested path data.data.general.general doesn't exist (KeyError)
+        - Any intermediate value is None when calling .get() (AttributeError)
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("general", {}).get("general", {})
@@ -89,14 +106,38 @@ def extract_dataland_fields(data: dict) -> dict:
                 fields[key] = value["value"]
             else:
                 fields[key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except KeyError as e:
+        logger.warning("KeyError extracting Dataland fields: %s. Data structure: %s", e, type(data).__name__)
+    except AttributeError as e:
+        logger.warning(
+            "AttributeError extracting Dataland fields (likely None in path): %s. Data structure: %s",
+            e,
+            type(data).__name__,
+        )
+    except TypeError as e:
+        logger.warning(
+            "TypeError extracting Dataland fields (data may not be a dict): %s. Data type: %s", e, type(data).__name__
+        )
 
     return fields
 
 
 def extract_qalab_fields(data: dict) -> dict:
-    """Extract fields from QALab data."""
+    """Extract fields from QALab data.
+
+    Expected structure: data["data"]["report"]["general"]["general"] containing field values.
+    Field names are converted from camelCase to snake_case.
+    Each field can be a direct value or a dict with a "verdict" key.
+
+    Args:
+        data: QALab data dictionary with expected nested structure.
+
+    Returns:
+        Dictionary of field name (snake_case) to value. Returns empty dict if:
+        - The input data is None or not a dict (TypeError)
+        - The nested path data.data.report.general.general doesn't exist (KeyError)
+        - Any intermediate value is None when calling .get() (AttributeError)
+    """
     fields = {}
     try:
         general = data.get("data", {}).get("report", {}).get("general", {}).get("general", {})
@@ -107,8 +148,18 @@ def extract_qalab_fields(data: dict) -> dict:
                 fields[snake_key] = value["verdict"]
             else:
                 fields[snake_key] = value
-    except (KeyError, AttributeError, TypeError):
-        pass
+    except KeyError as e:
+        logger.warning("KeyError extracting QALab fields: %s. Data structure: %s", e, type(data).__name__)
+    except AttributeError as e:
+        logger.warning(
+            "AttributeError extracting QALab fields (likely None in path): %s. Data structure: %s",
+            e,
+            type(data).__name__,
+        )
+    except TypeError as e:
+        logger.warning(
+            "TypeError extracting QALab fields (data may not be a dict): %s. Data type: %s", e, type(data).__name__
+        )
 
     return fields
 
