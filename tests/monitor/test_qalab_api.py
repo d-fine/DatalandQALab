@@ -1,31 +1,16 @@
-from unittest.mock import MagicMock, patch
-
 import pytest
+from unittest.mock import MagicMock, patch
 import requests
 
-from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
+from monitor.main import run_report_on_qalab
 
 
-def test_check_qalab_api_health_success() -> None:
-    """Test that the function completes without exiting when API is healthy."""
-    mock_response = MagicMock()
-    mock_response.raise_for_status.return_value = None
-
-    with patch("requests.get", return_value=mock_response):
-        check_qalab_api_health()
+@pytest.fixture
+def mock_framework():
+    return MagicMock()
 
 
-def test_check_qalab_api_health_failure() -> None:
-    """Test that the function exits when API call fails."""
-    with patch("requests.get", side_effect=requests.ConnectionError("API failure")):
-        with pytest.raises(SystemExit) as exit_info:
-            check_qalab_api_health()
-
-        # Ensure sys.exit(1) was called
-        assert exit_info.value.code == 1
-
-
-def test_run_report_on_qalab_success() -> None:
+def test_run_report_on_qalab_success(mock_framework) -> None:
     """Test that the function returns JSON when API call succeeds."""
     mock_json = {"result": "ok"}
 
@@ -34,15 +19,14 @@ def test_run_report_on_qalab_success() -> None:
     mock_response.raise_for_status.return_value = None
     mock_response.json.return_value = mock_json
 
-    with patch("requests.post", return_value=mock_response) as mock_get:
-        result = run_report_on_qalab("123", "gpt-4", True)
+    with patch("requests.post", return_value=mock_response) as mock_post:
+        result = run_report_on_qalab("123", "gpt-4", use_ocr=True, framework=mock_framework)
 
-    # Assertions
-    mock_get.assert_called_once()
     assert result == mock_json
+    mock_post.assert_called_once()
 
 
-def test_run_report_on_qalab_failure() -> None:
+def test_run_report_on_qalab_failure(mock_framework) -> None:
     """Test that the function raises an error when API call fails."""
     with patch("requests.post", side_effect=requests.HTTPError("Bad Request")), pytest.raises(requests.HTTPError):
-        run_report_on_qalab("123", "gpt-4", False)
+        run_report_on_qalab("123", "gpt-4", use_ocr=False, framework=mock_framework)

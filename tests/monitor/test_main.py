@@ -6,7 +6,12 @@ import pytest
 from monitor.main import main, monitor_documents
 
 
-def test_monitor_documents_success() -> None:
+@pytest.fixture
+def mock_framework():
+    return MagicMock()
+
+
+def test_monitor_documents_success(mock_framework) -> None:
     """Ensure the function retrieves, parses, calls QALab API, and stores output."""
     mock_dataland = MagicMock()
     mock_dataland.model_dump_json.return_value = json.dumps({"foo": "bar"})
@@ -16,26 +21,26 @@ def test_monitor_documents_success() -> None:
         patch("monitor.main.run_report_on_qalab", return_value={"ok": True}) as mock_qalab,
         patch("monitor.main.store_output") as mock_store,
     ):
-        monitor_documents(documents=["123"], ai_model="gpt-4")
+        monitor_documents(documents=["123"], ai_model="gpt-4", framework=mock_framework)
 
-    mock_qalab.assert_called_once_with(data_id="123", ai_model="gpt-4", use_ocr=False)
+    mock_qalab.assert_called_once_with(data_id="123", ai_model="gpt-4", use_ocr=False, framework=mock_framework)
     mock_store.assert_called_once()
 
 
-def test_monitor_documents_dataset_not_found() -> None:
+def test_monitor_documents_dataset_not_found(mock_framework) -> None:
     """If dataset is missing, it should skip without errors."""
     with (
         patch("monitor.main.get_dataset_by_id", return_value=None),
         patch("monitor.main.run_report_on_qalab") as mock_qalab,
         patch("monitor.main.store_output") as mock_store,
     ):
-        monitor_documents(documents=["missing"], ai_model="gpt-4")
+        monitor_documents(documents=["missing"], ai_model="gpt-4", framework=mock_framework)
 
     mock_qalab.assert_not_called()
     mock_store.assert_not_called()
 
 
-def test_monitor_documents_invalid_json() -> None:
+def test_monitor_documents_invalid_json(mock_framework) -> None:
     """If model_dump_json returns invalid JSON, function should skip."""
     mock_dataland = MagicMock()
     mock_dataland.model_dump_json.return_value = "{invalid: json"
@@ -45,7 +50,7 @@ def test_monitor_documents_invalid_json() -> None:
         patch("monitor.main.run_report_on_qalab") as mock_qalab,
         patch("monitor.main.store_output") as mock_store,
     ):
-        monitor_documents(["123"], "gpt-4")
+        monitor_documents(["123"], "gpt-4", framework=mock_framework)
 
     mock_qalab.assert_not_called()
     mock_store.assert_not_called()
@@ -66,7 +71,7 @@ def test_main_no_documents_exits() -> None:
         assert exit_info.value.code == 1
 
 
-def test_main_successful_run() -> None:
+def test_main_successful_run(mock_framework) -> None:
     """Successfully running main() should call health check and monitoring."""
     mock_config = MagicMock()
     mock_config.documents = ["111", "222"]
@@ -80,4 +85,4 @@ def test_main_successful_run() -> None:
         main()
 
     mock_health.assert_called_once()
-    mock_monitor.assert_called_once_with(documents=["111", "222"], ai_model="gpt-4")
+    mock_monitor.assert_called_once_with(documents=["111", "222"], ai_model="gpt-4", framework=mock_framework)
