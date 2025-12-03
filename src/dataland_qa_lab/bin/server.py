@@ -5,13 +5,11 @@ from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
-from dataland_qa_lab.review import dataset_reviewer
-from dataland_qa_lab.review import exceptions
+from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 

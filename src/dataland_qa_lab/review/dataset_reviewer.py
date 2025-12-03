@@ -94,7 +94,7 @@ def old_review_dataset(  # noqa: PLR0915
             report = generator.generate_report(relevant_pages=None, dataset=data_collection)
         else:
             try:
-                readable_text = text_to_doc_intelligence.get_markdown_from_dataset(
+                readable_text = text_to_doc_intelligence.old_get_markdown_from_dataset(
                     data_id=data_id,
                     page_numbers=page_numbers,
                     relevant_pages_pdf_reader=relevant_pages_pdf_reader,
