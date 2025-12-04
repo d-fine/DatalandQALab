@@ -64,6 +64,10 @@ def create_not_attempted_report(
         error_message = (
             "Failed to retrieve valid field names for not attempted report. Original error: " + data_sources_error
         )
-        error_data_point = yes_no_value_generator.create_error_data_point(error_message)
+        error_data_point = QaReportDataPointExtendedDataPointYesNo(
+            comment=error_message,
+            verdict=QaReportDataPointVerdict.QANOTATTEMPTED,
+            corrected_data=ExtendedDataPointYesNo(),
+        )
         fallback_field_name = "nuclear_energy_related_activities_section426"
         setattr(report, fallback_field_name, error_data_point)
