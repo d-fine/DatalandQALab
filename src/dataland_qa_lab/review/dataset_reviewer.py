@@ -2,9 +2,9 @@ import io
 import json
 import logging
 import time
+from dataclasses import dataclass
 
 import pypdf
-from attr import dataclass
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.database import database_engine, database_tables
