@@ -52,3 +52,9 @@ class ReviewDataPointResponse(BaseModel):
     file_name: str
     file_reference: str
     page: int
+
+
+class ReviewDataPointDatasetResponse(BaseModel):
+    """Response model for a dataset of reviewed data points."""
+
+    data_points: dict[str, ReviewDataPointResponse]

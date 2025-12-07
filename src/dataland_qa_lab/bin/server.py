@@ -1,19 +1,24 @@
 import logging
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import asynccontextmanager
 from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from dataland_qa.models.qa_status import QaStatus
 from fastapi import FastAPI, HTTPException, status
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
-from dataland_qa_lab.utils import console_logger
+from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
+config = config.get_config()
+
 
 console_logger.configure_console_logger()
 logger.info("Launching the Dataland QA Lab server")
@@ -23,7 +28,7 @@ create_tables()
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
 job = scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
-scheduler.start()
+# scheduler.start()
 
 
 @asynccontextmanager
@@ -103,3 +108,63 @@ def review_data_point_id(
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
+
+
+@dataland_qa_lab.post("/review-data-point-dataset/{data_id}", response_model=models.ReviewDataPointDatasetResponse)
+def review_data_point_dataset_id(
+    data_id: str,
+    data: models.ReviewDataPointRequest,
+) -> models.ReviewDataPointDatasetResponse:
+    """Review a single dataset via API call (configurable)."""
+    data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+    res = {}
+
+    def process_datapoint(k, v):
+        """Thread worker."""
+        try:
+            result = dataset_reviewer.validate_datapoint(
+                data_point_id=v,
+                ai_model=data.ai_model,
+                use_ocr=data.use_ocr,
+                override=data.override,
+            )
+            return k, models.ReviewDataPointResponse(
+                data_point_id=result.data_point_id,
+                data_point_type=result.data_point_type,
+                previous_answer=result.previous_answer,
+                predicted_answer=result.predicted_answer,
+                confidence=result.confidence,
+                reasoning=result.reasoning,
+                qa_status=result.qa_status,
+                timestamp=result.timestamp,
+                ai_model=result.ai_model,
+                use_ocr=result.use_ocr,
+                file_reference=result.file_reference,
+                file_name=result.file_name,
+                page=result.page,
+            )
+        except Exception as e:
+            return k, models.ReviewDataPointResponse(
+                data_point_id=v,
+                data_point_type=k,
+                previous_answer=None,
+                predicted_answer=None,
+                confidence=0.0,
+                reasoning=str(e),
+                qa_status=QaStatus.PENDING,
+                timestamp=int(time.time()),
+                ai_model=data.ai_model,
+                use_ocr=data.use_ocr,
+                file_reference="",
+                file_name="",
+                page=0,
+            )
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(process_datapoint, k, v) for k, v in data_points.items()]
+
+        for fut in as_completed(futures):
+            key, value = fut.result()
+            res[key] = value
+
+    return models.ReviewDataPointDatasetResponse(data_points=res)
