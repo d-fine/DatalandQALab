@@ -15,7 +15,7 @@ client = AzureOpenAI(
 )
 
 
-def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> dict:
+def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3, images: list[str] | None = None) -> dict:
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
 
@@ -38,19 +38,37 @@ Rules you must follow:
 """  # noqa: E501
     if not ai_model:
         ai_model = conf.ai_model
+    
+    if images:
+        content = [
+            {"type": "text", "text": prompt}
+        ]
+        for img_base64 in images:
+            content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{img_base64}",
+                    "detail": conf.vision.detail_level
+                }
+            })
+            logger.debug("Sending prompt with %d images to AI model %s", len(images), ai_model)
+    else:
+        content = prompt
+        logger.debug("Sending prompt without images to AI model %s", ai_model)
+        
 
     response = client.chat.completions.create(
         model=ai_model,
         temperature=1 if "gpt-5" in ai_model else 0,
         messages=[
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": content},
         ],
     )
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
-            return execute_prompt(prompt, ai_model, retries - 1)
+            return execute_prompt(prompt, ai_model, retries - 1, images)
         return {"answer": None, "confidence": 0.0, "reasoning": "No content returned from AI model."}
 
     try:
@@ -58,5 +76,5 @@ Rules you must follow:
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
-            return execute_prompt(prompt, ai_model, retries - 1)
+            return execute_prompt(prompt, ai_model, retries - 1, images)
         return {"answer": None, "confidence": 0.0, "reasoning": "Couldn't parse response."}

@@ -9,7 +9,7 @@ from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.dataland import dataset_provider
-from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
+from dataland_qa_lab.pages import pages_provider, pdf_renderer, text_to_doc_intelligence
 from dataland_qa_lab.review.exceptions import (
     DataCollectionError,
     DatasetNotFoundError,
@@ -17,7 +17,7 @@ from dataland_qa_lab.review.exceptions import (
     ReportSubmissionError,
 )
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
-from dataland_qa_lab.utils import ai, config, prompts, slack
+from dataland_qa_lab.utils import ai, config, image_helper, prompts, slack
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 
@@ -184,11 +184,31 @@ def validate_datapoint(
     if prompt_template is None:
         msg = f"No prompt found for data point type: {data_point_type}"
         raise ValueError(msg)
+    
+    if not use_ocr and config.vision.enabled:
+        logger.info("Validating datapoint %s using Vision AI (page %d of '%s').", data_point_id, page, file_name)
+        
+        try:
+            pdf_stream = _get_document(reference_id=file_reference, page_numbers=[page])
+            pil_images = pdf_renderer.render_pdf_stream_to_images(pdf_stream)
+            if not pil_images:
+                msg = f"No images rendered from PDF for page {page} of '{file_name}'."
+                raise ValueError(msg)
+                
+            encoded_images = [image_helper.encode_image_to_base64(img) for img in pil_images]
+            prompt = prompt_template.format(context="Please analyse the attached image of the report page.")
+            ai_response = ai.execute_prompt(prompt, ai_model=ai_model, images=encoded_images)
+        
+        except Exception as e:
+            logger.error("Vision AI processing failed for datapoint %s: %s", data_point_id, e, exc_info=True)
+            raise OCRProcessingError(f"Vision AI processing failed for datapoint {data_point_id}: {e}") from e
+    else:
+        logger.info("Validating datapoint %s using OCR (page %d of '%s').", data_point_id, page, file_name)
 
-    context = _get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
+        context = _get_file_using_ocr(file_name=file_name, file_reference=file_reference, page=page)
 
-    prompt = prompt_template.format(context=context)
-    ai_response = ai.execute_prompt(prompt, ai_model=ai_model)
+        prompt = prompt_template.format(context=context)
+        ai_response = ai.execute_prompt(prompt, ai_model=ai_model)
 
     predicted_answer = ai_response.get("answer", "")
 
