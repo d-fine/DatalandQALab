@@ -44,21 +44,7 @@ Rules you must follow:
         temperature=1 if "gpt-5" in ai_model else 0,
         messages=[
             {"role": "user", "content": prompt},
-        ],
-        functions=[
-            {
-                "name": "sum_numbers",
-                "description": "Sums a list of numbers and returns the total",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "numbers": {"type": "array", "items": {"type": "number"}, "description": "Numbers to sum"}
-                    },
-                    "required": ["numbers"],
-                },
-            }
-        ],
-        function_call="auto",
+        ]
     )
 
     if not response.choices[0].message.content:
