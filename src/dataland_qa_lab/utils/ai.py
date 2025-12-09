@@ -60,7 +60,6 @@ Rules you must follow:
         ],
         function_call="auto",
     )
-    print(response.choices[0].message.function_call)
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)

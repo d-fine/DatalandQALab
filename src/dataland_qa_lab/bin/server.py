@@ -6,8 +6,8 @@ from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from dataland_qa.models.qa_status import QaStatus
 from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
@@ -81,12 +81,13 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
 
 
 @dataland_qa_lab.post(
-    "/data-point-flow/review-data-point/{data_point_id}", response_model=models.DatapointFlowReviewDataPointResponse
+    "/data-point-flow/review-data-point/{data_point_id}",
+    response_model=models.DatapointFlowReviewDataPointResponse | models.DatapointFlowCannotReviewDatapointResponse,
 )
 def review_data_point_id(
     data_point_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> models.DatapointFlowReviewDataPointResponse:
+) -> models.DatapointFlowReviewDataPointResponse | JSONResponse:
     """Review a single dataset via API call (configurable)."""
     try:
         res = dataset_reviewer.validate_datapoint(
@@ -109,7 +110,17 @@ def review_data_point_id(
             page=res.page,
         )
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
+        return JSONResponse(
+            status_code=500,
+            content=models.DatapointFlowCannotReviewDatapointResponse(
+                data_point_id=data_point_id,
+                data_point_type="unknown",
+                reasoning=str(e),
+                timestamp=int(time.time()),
+                ai_model=data.ai_model,
+                use_ocr=data.use_ocr,
+            ).model_dump(),
+        )
 
 
 @dataland_qa_lab.post(
@@ -148,20 +159,13 @@ def review_data_point_dataset_id(
                 page=result.page,
             )
         except Exception as e:
-            return k, models.DatapointFlowReviewDataPointResponse(
+            return k, models.DatapointFlowCannotReviewDatapointResponse(
                 data_point_id=v,
                 data_point_type=k,
-                previous_answer=None,
-                predicted_answer=None,
-                confidence=0.0,
                 reasoning=str(e),
-                qa_status=QaStatus.PENDING,
                 timestamp=int(time.time()),
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
-                file_reference="",
-                file_name="",
-                page=0,
             )
 
     with ThreadPoolExecutor(max_workers=10) as executor:
