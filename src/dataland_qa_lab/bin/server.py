@@ -109,7 +109,7 @@ def review_data_point_id(
             file_name=res.file_name,
             page=res.page,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return JSONResponse(
             status_code=500,
             content=models.DatapointFlowCannotReviewDatapointResponse(
@@ -134,8 +134,13 @@ def review_data_point_dataset_id(
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
     res = {}
 
-    def process_datapoint(k, v):
-        """Thread worker."""
+    def process_datapoint(
+        k: str, v: str
+    ) -> (
+        tuple[str, models.DatapointFlowReviewDataPointResponse]
+        | tuple[str, models.DatapointFlowCannotReviewDatapointResponse]
+    ):
+        """Process a single datapoint and return its review result."""
         try:
             result = dataset_reviewer.validate_datapoint(
                 data_point_id=v,
@@ -158,7 +163,7 @@ def review_data_point_dataset_id(
                 file_name=result.file_name,
                 page=result.page,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return k, models.DatapointFlowCannotReviewDatapointResponse(
                 data_point_id=v,
                 data_point_type=k,
