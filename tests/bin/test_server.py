@@ -4,7 +4,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
-from dataland_qa.models.qa_status import QaStatus
 
 client = TestClient(dataland_qa_lab)
 
