@@ -45,7 +45,22 @@ Rules you must follow:
         messages=[
             {"role": "user", "content": prompt},
         ],
+        functions=[
+            {
+                "name": "sum_numbers",
+                "description": "Sums a list of numbers and returns the total",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "numbers": {"type": "array", "items": {"type": "number"}, "description": "Numbers to sum"}
+                    },
+                    "required": ["numbers"],
+                },
+            }
+        ],
+        function_call="auto",
     )
+    print(response.choices[0].message.function_call)
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)

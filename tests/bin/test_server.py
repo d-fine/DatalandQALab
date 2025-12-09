@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa.models.qa_status import QaStatus
 
 client = TestClient(dataland_qa_lab)
 
@@ -77,10 +78,10 @@ def mock_validate_datapoint() -> None:
 
 
 def test_review_data_point_success(mock_validate_datapoint: MagicMock) -> None:
-    """Test the /review-data-point/{data_point_id} POST endpoint of the server."""
+    """Test the data-point-flow/review-data-point/{data_point_id} POST endpoint of the server."""
     payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
 
-    response = client.post("/review-data-point/123", json=payload)
+    response = client.post("data-point-flow/review-data-point/123", json=payload)
 
     assert response.status_code == 200
     data = response.json()
@@ -104,7 +105,87 @@ def test_review_data_point_internal_error() -> None:
 
         payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
 
-        response = client.post("/review-data-point/123", json=payload)
+        response = client.post("data-point-flow/review-data-point/123", json=payload)
 
         assert response.status_code == 500
         assert "Something went wrong" in response.json()["detail"]
+
+
+def test_review_data_point_dataset_id_success_and_failure():
+    # --- Arrange -------------------------------------------------------------
+
+    data_id = "dataset123"
+
+    # Mock dataset content returned by meta_api
+    mocked_data_points = {
+        "invoice": "dp_1",
+        "receipt": "dp_2",
+    }
+
+    # Mock successful validate_datapoint result
+    successful_result = MagicMock(
+        data_point_id="dp_1",
+        data_point_type="invoice",
+        previous_answer="old",
+        predicted_answer="new",
+        confidence=0.95,
+        reasoning="looks correct",
+        qa_status=QaStatus.ACCEPTED,
+        timestamp=123456,
+        ai_model="gpt-4",
+        use_ocr=True,
+        file_reference="ref1",
+        file_name="file1.pdf",
+        page=1,
+    )
+
+    # Side effect to simulate one success, one failure
+    def mock_validate(datapoint_id, ai_model, use_ocr, override):
+        if datapoint_id == "dp_1":
+            return successful_result
+        else:
+            raise RuntimeError("Processing error")
+
+    # --- Patch dependencies using correct module path ------------------------
+
+    with (
+        patch(
+            "dataland_qa_lab.bin.server.config.dataland_client.meta_api.get_contained_data_points",
+            return_value=mocked_data_points,
+        ),
+        patch(
+            "dataland_qa_lab.bin.server.dataset_reviewer.validate_datapoint",
+            side_effect=mock_validate,
+        ),
+    ):
+        # --- Act -------------------------------------------------------------
+        response = client.post(
+            f"/data-point-flow/review-dataset/{data_id}",
+            json={
+                "ai_model": "gpt-4",
+                "use_ocr": True,
+                "override": False,
+            },
+        )
+
+    # --- Assert --------------------------------------------------------------
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert "data_points" in body
+    dp = body["data_points"]
+
+    # Validate successful datapoint
+    invoice = dp["invoice"]
+    assert invoice["data_point_id"] == "dp_1"
+    assert invoice["qa_status"] == QaStatus.ACCEPTED
+    assert invoice["predicted_answer"] == "new"
+    assert invoice["reasoning"] == "looks correct"
+
+    # Validate failed datapoint
+    receipt = dp["receipt"]
+    assert receipt["data_point_id"] == "dp_2"
+    assert receipt["qa_status"] == QaStatus.PENDING
+    assert receipt["predicted_answer"] is None
+    assert "Processing error" in receipt["reasoning"]

@@ -80,18 +80,20 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
 # new validation flow using datapoints
 
 
-@dataland_qa_lab.post("/review-data-point/{data_point_id}", response_model=models.ReviewDataPointResponse)
+@dataland_qa_lab.post(
+    "/data-point-flow/review-data-point/{data_point_id}", response_model=models.DatapointFlowReviewDataPointResponse
+)
 def review_data_point_id(
     data_point_id: str,
-    data: models.ReviewDataPointRequest,
-) -> models.ReviewDataPointResponse:
+    data: models.DatapointFlowReviewDataPointRequest,
+) -> models.DatapointFlowReviewDataPointResponse:
     """Review a single dataset via API call (configurable)."""
     try:
         res = dataset_reviewer.validate_datapoint(
             data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
         )
 
-        return models.ReviewDataPointResponse(
+        return models.DatapointFlowReviewDataPointResponse(
             data_point_id=res.data_point_id,
             data_point_type=res.data_point_type,
             previous_answer=res.previous_answer,
@@ -110,11 +112,13 @@ def review_data_point_id(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
-@dataland_qa_lab.post("/review-data-point-dataset/{data_id}", response_model=models.ReviewDataPointDatasetResponse)
+@dataland_qa_lab.post(
+    "/data-point-flow/review-dataset/{data_id}", response_model=models.DatapointFlowReviewDatasetResponse
+)
 def review_data_point_dataset_id(
     data_id: str,
-    data: models.ReviewDataPointRequest,
-) -> models.ReviewDataPointDatasetResponse:
+    data: models.DatapointFlowReviewDataPointRequest,
+) -> models.DatapointFlowReviewDatasetResponse:
     """Review a single dataset via API call (configurable)."""
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
     res = {}
@@ -128,7 +132,7 @@ def review_data_point_dataset_id(
                 use_ocr=data.use_ocr,
                 override=data.override,
             )
-            return k, models.ReviewDataPointResponse(
+            return k, models.DatapointFlowReviewDataPointResponse(
                 data_point_id=result.data_point_id,
                 data_point_type=result.data_point_type,
                 previous_answer=result.previous_answer,
@@ -144,7 +148,7 @@ def review_data_point_dataset_id(
                 page=result.page,
             )
         except Exception as e:
-            return k, models.ReviewDataPointResponse(
+            return k, models.DatapointFlowReviewDataPointResponse(
                 data_point_id=v,
                 data_point_type=k,
                 previous_answer=None,
@@ -167,4 +171,4 @@ def review_data_point_dataset_id(
             key, value = fut.result()
             res[key] = value
 
-    return models.ReviewDataPointDatasetResponse(data_points=res)
+    return models.DatapointFlowReviewDatasetResponse(data_points=res)

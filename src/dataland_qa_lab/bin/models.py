@@ -28,7 +28,7 @@ class ReviewResponse(BaseModel):
 
 
 # models for the new dataset validation
-class ReviewDataPointRequest(BaseModel):
+class DatapointFlowReviewDataPointRequest(BaseModel):
     """Request model for initiating a data point review."""
 
     ai_model: str = "gpt-4o"
@@ -36,7 +36,7 @@ class ReviewDataPointRequest(BaseModel):
     override: bool = False
 
 
-class ReviewDataPointResponse(BaseModel):
+class DatapointFlowReviewDataPointResponse(BaseModel):
     """Response model for a reviewed data point."""
 
     data_point_id: str
@@ -54,7 +54,7 @@ class ReviewDataPointResponse(BaseModel):
     page: int
 
 
-class ReviewDataPointDatasetResponse(BaseModel):
+class DatapointFlowReviewDatasetResponse(BaseModel):
     """Response model for a dataset of reviewed data points."""
 
-    data_points: dict[str, ReviewDataPointResponse]
+    data_points: dict[str, DatapointFlowReviewDataPointResponse]
