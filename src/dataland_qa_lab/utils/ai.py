@@ -44,7 +44,7 @@ Rules you must follow:
         temperature=1 if "gpt-5" in ai_model else 0,
         messages=[
             {"role": "user", "content": prompt},
-        ]
+        ],
     )
 
     if not response.choices[0].message.content:
