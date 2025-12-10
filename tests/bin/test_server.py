@@ -77,10 +77,10 @@ def mock_validate_datapoint() -> None:
 
 
 def test_review_data_point_success(mock_validate_datapoint: MagicMock) -> None:
-    """Test the /review-data-point/{data_point_id} POST endpoint of the server."""
+    """Test the data-point-flow/review-data-point/{data_point_id} POST endpoint of the server."""
     payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
 
-    response = client.post("/review-data-point/123", json=payload)
+    response = client.post("data-point-flow/review-data-point/123", json=payload)
 
     assert response.status_code == 200
     data = response.json()
@@ -104,7 +104,77 @@ def test_review_data_point_internal_error() -> None:
 
         payload = {"ai_model": "gpt-4", "use_ocr": False, "override": False}
 
-        response = client.post("/review-data-point/123", json=payload)
+        response = client.post("data-point-flow/review-data-point/123", json=payload)
 
         assert response.status_code == 500
-        assert "Something went wrong" in response.json()["detail"]
+        assert "Something went wrong" in response.json()["reasoning"]
+
+
+@pytest.fixture
+def mock_data_points() -> dict:
+    """Mock datapoints contained in a dataset."""
+    return {
+        "dp1": "id_1",
+        "dp2": "id_2",
+    }
+
+
+@pytest.fixture
+def mock_success_result() -> MagicMock:
+    """Mock successful result from validate_datapoint."""
+    m = MagicMock()
+    m.data_point_id = "id_1"
+    m.data_point_type = "invoice"
+    m.previous_answer = "A"
+    m.predicted_answer = "B"
+    m.confidence = 0.95
+    m.reasoning = "Looks correct"
+    m.qa_status = "reviewed"
+    m.timestamp = 1735689600
+    m.ai_model = "gpt-4o"
+    m.use_ocr = True
+    m.file_reference = "ref.pdf"
+    m.file_name = "file.pdf"
+    m.page = 1
+    return m
+
+
+def test_review_dataset_endpoint_success_and_error(mock_data_points: MagicMock, mock_success_result: MagicMock) -> None:
+    """Test the data-point-flow/review-dataset/{data_id} POST endpoint with mixed"""
+    payload = {
+        "ai_model": "gpt-4o",
+        "use_ocr": True,
+        "override": False,
+    }
+    with patch("dataland_qa_lab.bin.server.config", autospec=True) as mock_config:
+        mock_config.dataland_client.meta_api.get_contained_data_points.return_value = mock_data_points
+
+        def validate_mock(data_point_id: str, ai_model: str, use_ocr: bool, override: bool) -> MagicMock:  # noqa: ARG001
+            if data_point_id == "id_1":
+                return mock_success_result
+            msg = "Failed to process datapoint"
+            raise ValueError(msg)
+
+        with patch(
+            "dataland_qa_lab.bin.server.dataset_reviewer.validate_datapoint",
+            side_effect=validate_mock,
+        ) as mock_validate:
+            response = client.post(
+                "/data-point-flow/review-dataset/test_dataset",
+                json=payload,
+            )
+
+    assert response.status_code == 200
+
+    resp = response.json()
+    dp1 = resp["data_points"]["dp1"]
+    dp2 = resp["data_points"]["dp2"]
+
+    assert dp1["status"] == "success"
+    assert dp1["predicted_answer"] == "B"
+
+    assert dp2["status"] == "error"
+    assert "Failed to process datapoint" in dp2["reasoning"]
+
+    mock_config.dataland_client.meta_api.get_contained_data_points.assert_called_once_with("test_dataset")
+    assert mock_validate.call_count == 2
