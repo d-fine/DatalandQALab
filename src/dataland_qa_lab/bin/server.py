@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -12,7 +13,7 @@ from fastapi.responses import JSONResponse
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
-from dataland_qa_lab.review import dataset_reviewer, exceptions
+from dataland_qa_lab.review import dataset_reviewer, exceptions, datapoint_flow
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
@@ -84,16 +85,16 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
     "/data-point-flow/review-data-point/{data_point_id}",
     response_model=models.DatapointFlowReviewDataPointResponse | models.DatapointFlowCannotReviewDatapointResponse,
 )
-def review_data_point_id(
+async def review_data_point_id(
     data_point_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
 ) -> models.DatapointFlowReviewDataPointResponse | JSONResponse:
     """Review a single dataset via API call (configurable)."""
-    try:
-        res = dataset_reviewer.validate_datapoint(
-            data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
-        )
 
+    res = await datapoint_flow.validate_datapoint(
+        data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
+    )
+    if res:
         return models.DatapointFlowReviewDataPointResponse(
             data_point_id=res.data_point_id,
             data_point_type=res.data_point_type,
@@ -109,75 +110,25 @@ def review_data_point_id(
             file_name=res.file_name,
             page=res.page,
         )
-    except Exception as e:  # noqa: BLE001
-        return JSONResponse(
-            status_code=500,
-            content=models.DatapointFlowCannotReviewDatapointResponse(
-                data_point_id=data_point_id,
-                data_point_type="unknown",
-                reasoning=str(e),
-                timestamp=int(time.time()),
-                ai_model=data.ai_model,
-                use_ocr=data.use_ocr,
-            ).model_dump(),
-        )
 
 
-@dataland_qa_lab.post(
-    "/data-point-flow/review-dataset/{data_id}", response_model=models.DatapointFlowReviewDatasetResponse
-)
-def review_data_point_dataset_id(
+@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}")
+async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
 ) -> models.DatapointFlowReviewDatasetResponse:
     """Review a single dataset via API call (configurable)."""
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
-    res = {}
 
-    def process_datapoint(
-        k: str, v: str
-    ) -> (
-        tuple[str, models.DatapointFlowReviewDataPointResponse]
-        | tuple[str, models.DatapointFlowCannotReviewDatapointResponse]
-    ):
-        """Process a single datapoint and return its review result."""
-        try:
-            result = dataset_reviewer.validate_datapoint(
-                data_point_id=v,
-                ai_model=data.ai_model,
-                use_ocr=data.use_ocr,
-                override=data.override,
-            )
-            return k, models.DatapointFlowReviewDataPointResponse(
-                data_point_id=result.data_point_id,
-                data_point_type=result.data_point_type,
-                previous_answer=result.previous_answer,
-                predicted_answer=result.predicted_answer,
-                confidence=result.confidence,
-                reasoning=result.reasoning,
-                qa_status=result.qa_status,
-                timestamp=result.timestamp,
-                ai_model=result.ai_model,
-                use_ocr=result.use_ocr,
-                file_reference=result.file_reference,
-                file_name=result.file_name,
-                page=result.page,
-            )
-        except Exception as e:  # noqa: BLE001
-            return k, models.DatapointFlowCannotReviewDatapointResponse(
-                data_point_id=v,
-                data_point_type=k,
-                reasoning=str(e),
-                timestamp=int(time.time()),
-                ai_model=data.ai_model,
-                use_ocr=data.use_ocr,
-            )
+    tasks = {
+        k: datapoint_flow.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
+        for k, v in data_points.items()
+    }
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(process_datapoint, k, v) for k, v in data_points.items()]
+    # Run them concurrently and preserve original keys
+    results_list = await asyncio.gather(*tasks.values())
 
-        for fut in as_completed(futures):
-            key, value = fut.result()
-            res[key] = value
-
-    return models.DatapointFlowReviewDatasetResponse(data_points=res)
+    # Map results back to their keys
+    res = dict(zip(tasks.keys(), results_list))
+    print(res)
+    return res

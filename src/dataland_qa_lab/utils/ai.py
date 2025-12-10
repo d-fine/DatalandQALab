@@ -3,6 +3,7 @@ import logging
 
 from openai import AzureOpenAI
 
+from dataland_qa_lab.models import data_point_flow
 from dataland_qa_lab.utils import config
 
 logger = logging.getLogger(__name__)
@@ -15,12 +16,12 @@ client = AzureOpenAI(
 )
 
 
-def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> dict:
+def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> data_point_flow.AIResponse:
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
 
 {
-    "answer": <your answer using only the data type specified in the user's prompt>,
+    "predicted_answer": <your answer using only the data type specified in the user's prompt>,
     "confidence": <a float between 0 and 1>,
     "reasoning": <your reasoning as a string>
 }
@@ -33,7 +34,7 @@ Rules you must follow:
 4. Any deviation from this structure, including extra text or symbols, will be considered invalid and rejected.
 5. Only provide data that strictly fits the types specified by the user's query.
 
-6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
+6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"predicted_answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
 
 """  # noqa: E501
     if not ai_model:
@@ -51,12 +52,13 @@ Rules you must follow:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
             return execute_prompt(prompt, ai_model, retries - 1)
-        return {"answer": None, "confidence": 0.0, "reasoning": "No content returned from AI model."}
-
+        return data_point_flow.AIResponse(
+            predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model."
+        )
     try:
-        return json.loads(response.choices[0].message.content)
+        return data_point_flow.AIResponse(**json.loads(response.choices[0].message.content))
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
             return execute_prompt(prompt, ai_model, retries - 1)
-        return {"answer": None, "confidence": 0.0, "reasoning": "Couldn't parse response."}
+        return data_point_flow.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")

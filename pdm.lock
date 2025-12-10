@@ -5,7 +5,7 @@
 groups = ["default", "linting", "notebooks", "testing"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c82c11b1d3e7af1ddb8d1069a3de1211b979e933d34d79182cffdb300f8a7ba5"
+content_hash = "sha256:cf930c23b0fd703799fda477f6ca5a828e394d65198b18a774073b9645e57cb8"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -169,7 +169,7 @@ name = "async-lru"
 version = "2.0.5"
 requires_python = ">=3.9"
 summary = "Simple LRU cache for asyncio"
-groups = ["notebooks"]
+groups = ["default", "notebooks"]
 dependencies = [
     "typing-extensions>=4.0.0; python_version < \"3.11\"",
 ]
