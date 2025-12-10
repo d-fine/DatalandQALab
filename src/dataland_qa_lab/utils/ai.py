@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 
@@ -16,7 +17,8 @@ client = AzureOpenAI(
 )
 
 
-def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> data_point_flow.AIResponse:
+async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> data_point_flow.AIResponse:
+    logger.info("Executing prompt with AI model: %s", ai_model)
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
 
@@ -40,18 +42,27 @@ Rules you must follow:
     if not ai_model:
         ai_model = conf.ai_model
 
-    response = client.chat.completions.create(
-        model=ai_model,
-        temperature=1 if "gpt-5" in ai_model else 0,
-        messages=[
-            {"role": "user", "content": prompt},
-        ],
-    )
+    try:
+        response = await asyncio.to_thread(
+            client.chat.completions.create,
+            model=ai_model,
+            temperature=1 if "gpt-5" in ai_model else 0,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+        )
+    except Exception as e:
+        logger.error("Error while calling AI model: %s. Retries left: %d", str(e), retries)
+        if retries > 0:
+            return await execute_prompt(prompt, ai_model, retries - 1)
+        return data_point_flow.AIResponse(
+            predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e)
+        )
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
-            return execute_prompt(prompt, ai_model, retries - 1)
+            return await execute_prompt(prompt, ai_model, retries - 1)
         return data_point_flow.AIResponse(
             predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model."
         )
@@ -60,5 +71,5 @@ Rules you must follow:
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
-            return execute_prompt(prompt, ai_model, retries - 1)
+            return await execute_prompt(prompt, ai_model, retries - 1)
         return data_point_flow.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")

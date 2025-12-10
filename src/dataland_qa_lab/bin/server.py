@@ -116,7 +116,7 @@ async def review_data_point_id(
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> models.DatapointFlowReviewDatasetResponse:
+):
     """Review a single dataset via API call (configurable)."""
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
 

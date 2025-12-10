@@ -62,7 +62,7 @@ async def validate_datapoint(
                 document=downloaded_document,
             )
             prompt_text = prompt.prompt.format(context=ocr_text)
-            res = ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
+            res = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
         else:
             # implement images
             ocr_text = ""
