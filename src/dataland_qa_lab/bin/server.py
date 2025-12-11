@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.data_point_flow import review
+from dataland_qa_lab.data_point_flow import scheduler as data_point_scheduler
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
@@ -27,8 +28,12 @@ create_tables()
 
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-job = scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
-# scheduler.start()
+# old scheduler
+scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+# new scheduler
+scheduler.add_job(data_point_scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+if not config.is_dev_environment:
+    scheduler.start()
 
 
 @asynccontextmanager

@@ -7,7 +7,7 @@ class ReviewRequest(BaseModel):
     """Request model for initiating a review."""
 
     force_review: bool = False
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
 
 
@@ -31,7 +31,7 @@ class ReviewResponse(BaseModel):
 class DatapointFlowReviewDataPointRequest(BaseModel):
     """Request model for initiating a data point review."""
 
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
     override: bool = False
 
