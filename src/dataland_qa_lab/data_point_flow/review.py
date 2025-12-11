@@ -41,10 +41,17 @@ async def validate_datapoint(
     """Validates a datapoint given a data_point_id."""
     logger.info("Validating datapoint with ID: %s", data_point_id)
 
+    already_checked_data_point = await check_if_already_validated(data_point_id)
+    if already_checked_data_point:
+        if override:
+            await delete_existing_entry(data_point_id)
+        else:
+            return already_checked_data_point
+
     try:
         data_point = await get_data_point(data_point_id)
     except Exception as e:  # noqa: BLE001
-        return models.CannotValidateDatapoint(
+        res = models.CannotValidateDatapoint(
             data_point_id=data_point_id,
             data_point_type=None,
             reasoning="Couldn't fetch data point: " + str(e),
@@ -53,6 +60,8 @@ async def validate_datapoint(
             override=override,
             timestamp=int(time.time()),
         )
+        await store_data_point_in_db(res)
+        return res
 
     prompt = get_prompt_config(data_point.data_point_type)
 
@@ -66,23 +75,29 @@ async def validate_datapoint(
                 document=downloaded_document,
             )
             prompt_text = prompt.prompt.format(context=ocr_text)
-            res = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
+            already_checked_data_point = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
         else:
             # implement images
             ocr_text = ""
-            res = models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="OCR not used.")
+            already_checked_data_point = models.AIResponse(
+                predicted_answer=None, confidence=0.0, reasoning="OCR not used."
+            )
 
-        qa_status = QaStatus.ACCEPTED if res.predicted_answer == data_point.value else QaStatus.REJECTED
+        qa_status = (
+            QaStatus.ACCEPTED if already_checked_data_point.predicted_answer == data_point.value else QaStatus.REJECTED
+        )
 
-        await override_dataland_qa(data_point_id=data_point.data_point_id, reasoning=res.reasoning, qa_status=qa_status)
+        await override_dataland_qa(
+            data_point_id=data_point.data_point_id, reasoning=already_checked_data_point.reasoning, qa_status=qa_status
+        )
 
-        return models.ValidatedDatapoint(
+        res = models.ValidatedDatapoint(
             data_point_id=data_point.data_point_id,
             data_point_type=data_point.data_point_type,
             previous_answer=data_point.value,
-            predicted_answer=res.predicted_answer,
-            confidence=res.confidence,
-            reasoning=res.reasoning,
+            predicted_answer=already_checked_data_point.predicted_answer,
+            confidence=already_checked_data_point.confidence,
+            reasoning=already_checked_data_point.reasoning,
             qa_status=qa_status,
             timestamp=int(time.time()),
             ai_model=ai_model,
@@ -92,7 +107,10 @@ async def validate_datapoint(
             page=data_point.page,
             override=override,
         )
-    return models.CannotValidateDatapoint(
+        await store_data_point_in_db(res)
+        return res
+
+    res = models.CannotValidateDatapoint(
         data_point_id=data_point.data_point_id,
         data_point_type=data_point.data_point_type,
         reasoning="No Prompt configured for this data point type.",
@@ -101,6 +119,8 @@ async def validate_datapoint(
         timestamp=int(time.time()),
         override=override,
     )
+    await store_data_point_in_db(res)
+    return res
 
 
 @async_lru.alru_cache
@@ -203,4 +223,95 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
         data_point_id=data_point_id,
         qa_status=qa_status,
         comment=reasoning,
+    )
+
+
+async def store_data_point_in_db(data: models.ValidatedDatapoint | models.CannotValidateDatapoint) -> None:
+    """Store the validated data point in the database."""
+    if isinstance(data, models.CannotValidateDatapoint):
+        await asyncio.to_thread(
+            database_engine.add_entity,
+            database_tables.ValidatedDataPoint(
+                data_point_id=data.data_point_id,
+                data_point_type=data.data_point_type,
+                previous_answer=None,
+                predicted_answer=None,
+                confidence=0.0,
+                reasoning=data.reasoning,
+                qa_status=QaStatus.PENDING,
+                timestamp=int(time.time()),
+                ai_model=data.ai_model,
+                use_ocr=data.use_ocr,
+                file_reference=None,
+                file_name=None,
+                page=None,
+            ),
+        )
+    else:
+        await asyncio.to_thread(
+            database_engine.add_entity,
+            database_tables.ValidatedDataPoint(
+                data_point_id=data.data_point_id,
+                data_point_type=data.data_point_type,
+                previous_answer=data.previous_answer,
+                predicted_answer=data.predicted_answer,
+                confidence=data.confidence,
+                reasoning=data.reasoning,
+                qa_status=data.qa_status,
+                timestamp=data.timestamp,
+                ai_model=data.ai_model,
+                use_ocr=data.use_ocr,
+                file_reference=data.file_reference,
+                file_name=data.file_name,
+                page=data.page,
+            ),
+        )
+
+
+async def check_if_already_validated(
+    data_point_id: str,
+) -> models.CannotValidateDatapoint | models.ValidatedDatapoint | None:
+    """Check if the data point has already been validated."""
+    existing_validation = await asyncio.to_thread(
+        database_engine.get_entity(
+            database_tables.ValidatedDataPoint,
+            data_point_id=data_point_id,
+        )
+    )
+    if not existing_validation:
+        return None
+    if existing_validation.predicted_answer is None:
+        return models.CannotValidateDatapoint(
+            data_point_id=data_point_id,
+            data_point_type=existing_validation.data_point_type or None,
+            reasoning=existing_validation.reasoning,
+            ai_model=existing_validation.ai_model,
+            use_ocr=existing_validation.use_ocr,
+            override=None,
+            timestamp=existing_validation.timestamp,
+        )
+    return models.ValidatedDatapoint(
+        data_point_id=existing_validation.data_point_id,
+        data_point_type=existing_validation.data_point_type,
+        previous_answer=existing_validation.previous_answer,
+        predicted_answer=existing_validation.predicted_answer,
+        confidence=existing_validation.confidence,
+        reasoning=existing_validation.reasoning,
+        qa_status=existing_validation.qa_status,
+        timestamp=existing_validation.timestamp,
+        ai_model=existing_validation.ai_model,
+        use_ocr=existing_validation.use_ocr,
+        file_name=existing_validation.file_name,
+        file_reference=existing_validation.file_reference,
+        page=existing_validation.page,
+        override=None,
+    )
+
+
+async def delete_existing_entry(data_point_id: str) -> None:
+    """Delete existing validated data point entry from the database."""
+    await asyncio.to_thread(
+        database_engine.delete_entity,
+        entity_id=data_point_id,
+        entity_class=database_tables.ValidatedDataPoint,
     )

@@ -16,7 +16,7 @@ class ValidatedDatapoint:
     timestamp: int
     ai_model: str
     use_ocr: bool
-    override: bool
+    override: bool | None
     file_name: str
     file_reference: str
     page: int
@@ -31,7 +31,7 @@ class CannotValidateDatapoint:
     reasoning: str
     ai_model: str
     use_ocr: bool
-    override: bool
+    override: bool | None
     timestamp: int
 
 
