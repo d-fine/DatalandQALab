@@ -21,9 +21,9 @@ def run_scheduled_processing() -> None:
 
     logger.info("Found %d unreviewed datasets. Starting processing.", len(unreviewed_datasets))
     for dataset in unreviewed_datasets:
-        slack_message.append(f"⏳ Starting validation for dataset ID: {dataset['data_id']}")
-        logger.info("Processing dataset ID: %s", dataset["data_id"])
-        data_points = config.dataland_client.meta_api.get_contained_data_points(dataset["data_id"])
+        slack_message.append(f"⏳ Starting validation for dataset ID: {dataset.data_id}")
+        logger.info("Processing dataset ID: %s", dataset.data_id)
+        data_points = config.dataland_client.meta_api.get_contained_data_points(dataset.data_id)
 
         accepted_ids = []
         rejected_ids = []
@@ -54,9 +54,9 @@ def run_scheduled_processing() -> None:
             except Exception:
                 pass
 
-        logger.info("All data points accepted for dataset ID: %s", dataset["data_id"])
+        logger.info("All data points accepted for dataset ID: %s", dataset.data_id)
         config.dataland_client.qa_api.change_qa_status(
-            data_id=dataset["data_id"], qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
+            data_id=dataset.data_id, qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
         )
 
         slack_message.append(
