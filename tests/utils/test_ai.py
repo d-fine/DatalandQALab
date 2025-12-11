@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from dataland_qa_lab.utils.ai import execute_prompt
+from dataland_qa_lab.data_point_flow.ai import execute_prompt
 
 
 @patch("dataland_qa_lab.utils.ai.client")

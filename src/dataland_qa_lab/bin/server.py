@@ -1,7 +1,5 @@
 import asyncio
 import logging
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import asynccontextmanager
 from datetime import datetime
 
@@ -11,9 +9,10 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
+from dataland_qa_lab.data_point_flow import review
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
-from dataland_qa_lab.review import dataset_reviewer, exceptions, datapoint_flow
+from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
@@ -91,7 +90,7 @@ async def review_data_point_id(
 ) -> models.DatapointFlowReviewDataPointResponse | JSONResponse:
     """Review a single dataset via API call (configurable)."""
 
-    res = await datapoint_flow.validate_datapoint(
+    res = await review.validate_datapoint(
         data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
     )
     if res:
@@ -121,7 +120,7 @@ async def review_data_point_dataset_id(
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
 
     tasks = {
-        k: datapoint_flow.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
+        k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
         for k, v in data_points.items()
     }
 

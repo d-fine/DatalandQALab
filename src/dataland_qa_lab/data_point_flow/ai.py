@@ -4,7 +4,7 @@ import logging
 
 from openai import AzureOpenAI
 
-from dataland_qa_lab.models import data_point_flow
+from dataland_qa_lab.data_point_flow import models
 from dataland_qa_lab.utils import config
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ client = AzureOpenAI(
 )
 
 
-async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> data_point_flow.AIResponse:
+async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> models.AIResponse:
     logger.info("Executing prompt with AI model: %s", ai_model)
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
@@ -55,21 +55,17 @@ Rules you must follow:
         logger.error("Error while calling AI model: %s. Retries left: %d", str(e), retries)
         if retries > 0:
             return await execute_prompt(prompt, ai_model, retries - 1)
-        return data_point_flow.AIResponse(
-            predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e)
-        )
+        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e))
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
             return await execute_prompt(prompt, ai_model, retries - 1)
-        return data_point_flow.AIResponse(
-            predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model."
-        )
+        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model.")
     try:
-        return data_point_flow.AIResponse(**json.loads(response.choices[0].message.content))
+        return models.AIResponse(**json.loads(response.choices[0].message.content))
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
             return await execute_prompt(prompt, ai_model, retries - 1)
-        return data_point_flow.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")
+        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")

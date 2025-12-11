@@ -1,20 +1,16 @@
 import asyncio
-import async_lru
 import io
 import json
 import logging
 import time
-import functools
 
+import async_lru
 import pypdf
 from dataland_qa.models.qa_status import QaStatus
 
+from dataland_qa_lab.data_point_flow import ai, models, ocr
 from dataland_qa_lab.database import database_engine, database_tables
-from dataland_qa_lab.dataland import dataset_provider
-from dataland_qa_lab.models import data_point_flow
-from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
-from dataland_qa_lab.utils import ai, config, prompts, slack
-
+from dataland_qa_lab.utils import config, prompts
 
 config = config.get_config()
 
@@ -27,7 +23,7 @@ _lock_map = {}
 _lock_map_lock = asyncio.Lock()
 
 
-def get_lock_for(key):
+def get_lock_for(key: str):  # noqa: ANN201
     """Return a per-key lock, creating it if needed."""
 
     async def _get():
@@ -41,14 +37,14 @@ def get_lock_for(key):
 
 async def validate_datapoint(
     data_point_id: str, use_ocr: bool, ai_model: str, override: bool
-) -> data_point_flow.ValidatedDatapoint | data_point_flow.CannotValidateDatapoint:
+) -> models.ValidatedDatapoint | models.CannotValidateDatapoint:
     """Validates a datapoint given a data_point_id."""
     logger.info("Validating datapoint with ID: %s", data_point_id)
 
     try:
         data_point = await get_data_point(data_point_id)
     except Exception as e:  # noqa: BLE001
-        return data_point_flow.CannotValidateDatapoint(
+        return models.CannotValidateDatapoint(
             data_point_id=data_point_id,
             data_point_type=None,
             reasoning="Couldn't fetch data point: " + str(e),
@@ -74,13 +70,13 @@ async def validate_datapoint(
         else:
             # implement images
             ocr_text = ""
-            res = data_point_flow.AIResponse(predicted_answer=None, confidence=0.0, reasoning="OCR not used.")
+            res = models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="OCR not used.")
 
         qa_status = QaStatus.ACCEPTED if res.predicted_answer == data_point.value else QaStatus.REJECTED
 
         await override_dataland_qa(data_point_id=data_point.data_point_id, reasoning=res.reasoning, qa_status=qa_status)
 
-        return data_point_flow.ValidatedDatapoint(
+        return models.ValidatedDatapoint(
             data_point_id=data_point.data_point_id,
             data_point_type=data_point.data_point_type,
             previous_answer=data_point.value,
@@ -96,7 +92,7 @@ async def validate_datapoint(
             page=data_point.page,
             override=override,
         )
-    return data_point_flow.CannotValidateDatapoint(
+    return models.CannotValidateDatapoint(
         data_point_id=data_point.data_point_id,
         data_point_type=data_point.data_point_type,
         reasoning="No Prompt configured for this data point type.",
@@ -108,7 +104,7 @@ async def validate_datapoint(
 
 
 @async_lru.alru_cache
-async def get_data_point(data_point_id: str) -> data_point_flow.DataPoint:
+async def get_data_point(data_point_id: str) -> models.DataPoint:
     """Returns a DataPoint object for the given data_point_id and also validates its structure."""
     logger.info("Fetching data point with ID: %s", data_point_id)
     data_point = await asyncio.to_thread(
@@ -125,7 +121,7 @@ async def get_data_point(data_point_id: str) -> data_point_flow.DataPoint:
     file_name = dp_json["dataSource"].get("fileName", "")
     value = dp_json.get("value", "")
 
-    return data_point_flow.DataPoint(
+    return models.DataPoint(
         data_point_id=data_point_id,
         data_point_type=data_point_type,
         data_source=dp_json.get("dataSource", {}),
@@ -172,7 +168,7 @@ async def run_ocr_on_document(file_name: str, file_reference: str, page: int, do
         if cached_document:
             return cached_document.ocr_output
 
-        markdown = text_to_doc_intelligence.extract_pdf(document)
+        markdown = ocr.extract_pdf(document)
 
         database_engine.add_entity(
             database_tables.CachedDocument(
@@ -185,7 +181,7 @@ async def run_ocr_on_document(file_name: str, file_reference: str, page: int, do
         return markdown
 
 
-def get_prompt_config(data_point_type: str) -> data_point_flow.DataPointPrompt | None:
+def get_prompt_config(data_point_type: str) -> models.DataPointPrompt | None:
     """Retrieve the validation prompt or raise an error if not found."""
     logger.info("Retrieving prompt for data point type: %s", data_point_type)
     if config.is_dev_environment:
@@ -193,7 +189,7 @@ def get_prompt_config(data_point_type: str) -> data_point_flow.DataPointPrompt |
 
     prompt = validation_prompts.get(data_point_type)
     if prompt:
-        return data_point_flow.DataPointPrompt(prompt=prompt.get("prompt"), depends_on=prompt.get("depends_on", []))
+        return models.DataPointPrompt(prompt=prompt.get("prompt"), depends_on=prompt.get("depends_on", []))
 
     logger.warning("No prompt found for data point type: %s. Skipping...", data_point_type)
     return None
