@@ -1,14 +1,11 @@
 import asyncio
 import logging
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import asynccontextmanager
 from datetime import datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
