@@ -7,7 +7,7 @@ class ReviewRequest(BaseModel):
     """Request model for initiating a review."""
 
     force_review: bool = False
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
 
 
@@ -31,7 +31,7 @@ class ReviewResponse(BaseModel):
 class DatapointFlowReviewDataPointRequest(BaseModel):
     """Request model for initiating a data point review."""
 
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
     override: bool = False
 
@@ -65,9 +65,3 @@ class DatapointFlowCannotReviewDatapointResponse(BaseModel):
     use_ocr: bool
     timestamp: int
     status: str = "error"
-
-
-class DatapointFlowReviewDatasetResponse(BaseModel):
-    """Response model for a dataset of reviewed data points."""
-
-    data_points: dict[str, DatapointFlowReviewDataPointResponse | DatapointFlowCannotReviewDatapointResponse]

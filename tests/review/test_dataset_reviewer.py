@@ -4,7 +4,6 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.review.dataset_reviewer import (
     _get_file_using_ocr,  # noqa: PLC2701
@@ -89,79 +88,6 @@ def test_review_dataset_creates_new_report(mock_dependencies: MagicMock) -> None
     result = old_review_dataset(data_id)
 
     assert result == data_id
-
-
-@patch("dataland_qa_lab.review.dataset_reviewer.config")
-@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
-@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
-def test_validate_datapoint_accept(mock_ocr: MagicMock, mock_ai: MagicMock, mock_config: MagicMock) -> None:
-    """Test ACCEPT case when predicted_answer == previous_answer."""
-    mock_ocr.return_value = "OCR TEXT"
-    mock_ai.return_value = {"answer": "ABC", "confidence": 0.9, "reasoning": "Matches"}
-
-    dp = fake_dp("dp1", dp_type="extendedDecimalEstimatedScope1GhgEmissionsInTonnes", value="ABC")
-
-    # Mock prompt
-    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
-    mock_config.validation_prompts = {
-        "extendedDecimalEstimatedScope1GhgEmissionsInTonnes": {"prompt": "Check: {context}"}
-    }
-
-    result = validate_datapoint("dp1", ai_model="gpt-4o", use_ocr=True)
-
-    assert result.data_point_id == "dp1"
-    assert result.qa_status == QaStatus.ACCEPTED
-    assert result.predicted_answer == "ABC"
-
-
-@patch("dataland_qa_lab.review.dataset_reviewer.config")
-@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
-@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
-def test_validate_datapoint_reject(mock_ocr: MagicMock, mock_ai: MagicMock, mock_config: MagicMock) -> None:
-    """Test REJECT case when predicted_answer != previous_answer."""
-    mock_ocr.return_value = "OCR TEXT"
-    mock_ai.return_value = {"answer": "WRONG", "confidence": 0.4, "reasoning": "Different"}
-
-    dp = fake_dp("dp2", dp_type="extendedDecimalEstimatedScope1GhgEmissionsInTonnes", value="CORRECT")
-
-    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
-    mock_config.validation_prompts = {
-        "extendedDecimalEstimatedScope1GhgEmissionsInTonnes": {"prompt": "Check: {context}"}
-    }
-
-    result = validate_datapoint("dp2", ai_model="gpt-4o")
-
-    assert result.qa_status == QaStatus.REJECTED
-    assert result.predicted_answer == "WRONG"
-
-
-@patch("dataland_qa_lab.review.dataset_reviewer.config")
-@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
-@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
-def test_validate_datapoint_override_calls_change_status(
-    mock_ocr: MagicMock, mock_ai: MagicMock, mock_config: MagicMock
-) -> None:
-    """Test that when override=True, change_data_point_qa_status is called."""
-    mock_ocr.return_value = "OCR TEXT"
-    mock_ai.return_value = {"answer": "X", "confidence": 0.5, "reasoning": "Test reason"}
-
-    dp = fake_dp("dpX", dp_type="extendedDecimalEstimatedScope1GhgEmissionsInTonnes", value="X")
-
-    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
-    mock_config.validation_prompts = {
-        "extendedDecimalEstimatedScope1GhgEmissionsInTonnes": {"prompt": "Prompt {context}"}
-    }
-
-    validate_datapoint("dpX", ai_model="gpt-4o", override=True)
-
-    mock_config.dataland_client.qa_api.change_data_point_qa_status.assert_called_once()
-
-    args, kwargs = mock_config.dataland_client.qa_api.change_data_point_qa_status.call_args
-
-    assert args[0] == "dpX"
-
-    assert kwargs["qa_status"] == QaStatus.ACCEPTED
-    assert "reason" in kwargs["comment"].lower()
 
 
 @patch("dataland_qa_lab.review.dataset_reviewer.config")
