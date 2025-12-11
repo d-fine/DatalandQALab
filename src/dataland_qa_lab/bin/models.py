@@ -65,9 +65,3 @@ class DatapointFlowCannotReviewDatapointResponse(BaseModel):
     use_ocr: bool
     timestamp: int
     status: str = "error"
-
-
-class DatapointFlowReviewDatasetResponse(BaseModel):
-    """Response model for a dataset of reviewed data points."""
-
-    data_points: dict[str, DatapointFlowReviewDataPointResponse | DatapointFlowCannotReviewDatapointResponse]

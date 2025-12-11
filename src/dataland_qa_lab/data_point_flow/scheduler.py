@@ -18,7 +18,6 @@ def run_scheduled_processing() -> None:
     unreviewed_datasets = config.dataland_client.qa_api.get_info_on_datasets(
         qa_status=QaStatus.PENDING, chunk_size=2, data_types=config.frameworks_list
     )
-    unreviewed_datasets = [{"data_id": "df145948-7ee1-42a0-bdc2-0074dd5359be"}]
 
     logger.info("Found %d unreviewed datasets. Starting processing.", len(unreviewed_datasets))
     for dataset in unreviewed_datasets:
@@ -26,49 +25,46 @@ def run_scheduled_processing() -> None:
         logger.info("Processing dataset ID: %s", dataset["data_id"])
         data_points = config.dataland_client.meta_api.get_contained_data_points(dataset["data_id"])
 
-        qa_status = Counter()
+        accepted_ids = []
+        rejected_ids = []
+        not_validated_ids = []
 
         for k, v in data_points.items():
             logger.info("Validating of type %s data point ID: %s", k, v)
             try:
-                validator_response = asyncio.create_task(
-                    review.validate_datapoint(v, ai_model=config.ai_model, use_ocr=config.use_ocr, override=True)
+                validator_response = asyncio.run(
+                    review.validate_datapoint(
+                        data_point_id=v,
+                        ai_model=config.ai_model,
+                        use_ocr=config.use_ocr,
+                        override=False,
+                    )
                 )
-                if validator_response.qa_status is QaStatus.ACCEPTED:
-                    slack_message.append(f"✅ Data point ID: {v} (of type {k}) accepted.")
-                    logger.info("Data point ID: %s accepted.", v)
+
+                if isinstance(validator_response, review.models.ValidatedDatapoint):
+                    if validator_response.qa_status == "Accepted":
+                        logger.info("Data point ID: %s accepted.", v)
+                        accepted_ids.append(v)
+                    if validator_response.qa_status == "Rejected":
+                        logger.info("Data point ID: %s rejected.", v)
+                        rejected_ids.append(v)
                 else:
-                    slack_message.append(f"❌ Data point ID: {v} (of type {k}) rejected.")
-                    logger.info("Data point ID: %s rejected.", v)
-                qa_status[validator_response.qa_status] += 1
+                    not_validated_ids.append(v)
 
             except Exception:
-                slack_message.append(
-                    f"🟡 Couldn't find a verdict for data point ID: {v} (of type {k}). Maybe it's not yet implemented?"  # noqa: E501
-                )
-                logger.exception("Error processing data point ID %s", v)
-                qa_status[QaStatus.PENDING] += 1
+                pass
 
-        if qa_status[QaStatus.ACCEPTED] == len(data_points):
-            logger.info("All data points accepted for dataset ID: %s", dataset["data_id"])
-            config.dataland_client.qa_api.change_qa_status(
-                data_id=dataset["data_id"], qa_status=QaStatus.ACCEPTED, overwrite_data_point_qa_status=False
-            )
-            slack_message.append(f"🎉 Dataset ID: {dataset['data_id']} accepted with all data points.")
-        else:
-            logger.info(
-                "Dataset ID: %s has %d Accepted, %d Rejected data points. Marking as Rejected.",
-                dataset["data_id"],
-                qa_status[QaStatus.ACCEPTED],
-                qa_status[QaStatus.REJECTED],
-            )
+        logger.info("All data points accepted for dataset ID: %s", dataset["data_id"])
+        config.dataland_client.qa_api.change_qa_status(
+            data_id=dataset["data_id"], qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
+        )
 
-            config.dataland_client.qa_api.change_qa_status(
-                data_id=dataset["data_id"], qa_status=QaStatus.REJECTED, overwrite_data_point_qa_status=False
-            )
-            slack_message.append(
-                f"⚠️ Dataset ID: {dataset['data_id']} rejected with "
-                f"{qa_status[QaStatus.ACCEPTED]} accepted and {qa_status[QaStatus.REJECTED]} rejected out of {len(data_points)} data points."  # noqa: E501
-            )
-    if slack_message:
+        slack_message.append(
+            ":white_check_mark: Accepted " + str(len(accepted_ids)) + " ids:" + ", ".join(accepted_ids)
+        )
+        slack_message.append(":x: Rejected " + str(len(rejected_ids)) + " ids:" + ", ".join(rejected_ids))
+        slack_message.append(
+            ":warning: Not validated " + str(len(not_validated_ids)) + " ids:" + ", ".join(not_validated_ids)
+        )
+
         slack.send_slack_message("\n".join(slack_message))

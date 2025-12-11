@@ -16,6 +16,7 @@ from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
+from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 config = config.get_config()
@@ -34,6 +35,7 @@ trigger = CronTrigger(minute="*/10")
 scheduler.add_job(data_point_scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
 if not config.is_dev_environment:
     scheduler.start()
+scheduler.start()
 
 
 @asynccontextmanager
@@ -85,42 +87,24 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
 # new validation flow using datapoints
 
 
-@dataland_qa_lab.post(
-    "/data-point-flow/review-data-point/{data_point_id}",
-    response_model=models.DatapointFlowReviewDataPointResponse | models.DatapointFlowCannotReviewDatapointResponse,
-)
+@dataland_qa_lab.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
 async def review_data_point_id(
     data_point_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> models.DatapointFlowReviewDataPointResponse | JSONResponse:
+) -> datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint:
     """Review a single dataset via API call (configurable)."""
-
     res = await review.validate_datapoint(
         data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
     )
-    if res:
-        return models.DatapointFlowReviewDataPointResponse(
-            data_point_id=res.data_point_id,
-            data_point_type=res.data_point_type,
-            previous_answer=res.previous_answer,
-            predicted_answer=res.predicted_answer,
-            confidence=res.confidence,
-            reasoning=res.reasoning,
-            qa_status=res.qa_status,
-            timestamp=res.timestamp,
-            ai_model=res.ai_model,
-            use_ocr=res.use_ocr,
-            file_reference=res.file_reference,
-            file_name=res.file_name,
-            page=res.page,
-        )
+
+    return res
 
 
-@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}")
+@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-):
+) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint]:
     """Review a single dataset via API call (configurable)."""
     data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
 
@@ -129,9 +113,6 @@ async def review_data_point_dataset_id(
         for k, v in data_points.items()
     }
 
-    # Run them concurrently and preserve original keys
     results_list = await asyncio.gather(*tasks.values())
 
-    # Map results back to their keys
-    res = dict(zip(tasks.keys(), results_list))
-    return res
+    return dict(zip(tasks.keys(), results_list))

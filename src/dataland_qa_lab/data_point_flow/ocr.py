@@ -44,6 +44,7 @@ async def run_ocr_on_document(file_name: str, file_reference: str, page: int, do
         )
 
         if cached_document:
+            logger.info("Found cached OCR output for document with reference ID: %s, page: %d", file_reference, page)
             return cached_document.ocr_output
 
         markdown = ocr.extract_pdf(document)
