@@ -1,10 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from dataland_qa_lab.data_point_flow.ai import execute_prompt
-from dataland_qa_lab.data_point_flow import models
 
 
 @patch("dataland_qa_lab.data_point_flow.ai.client")

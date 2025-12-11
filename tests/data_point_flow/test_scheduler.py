@@ -1,15 +1,14 @@
-import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
 from dataland_qa.models.qa_status import QaStatus
-from dataland_qa_lab.data_point_flow import review, scheduler  # replace with actual module name
+
+from dataland_qa_lab.data_point_flow import review, scheduler
 
 
 @pytest.mark.parametrize(
-    "validator_result, expected_accepted, expected_rejected, expected_not_validated",
+    ("validator_result", "expected_accepted", "expected_rejected", "expected_not_validated"),
     [
-        # Single accepted data point
         (
             review.models.ValidatedDatapoint(
                 data_point_id="dp1",
@@ -31,7 +30,6 @@ from dataland_qa_lab.data_point_flow import review, scheduler  # replace with ac
             0,
             0,
         ),
-        # Single rejected data point
         (
             review.models.ValidatedDatapoint(
                 data_point_id="dp2",
@@ -53,7 +51,6 @@ from dataland_qa_lab.data_point_flow import review, scheduler  # replace with ac
             1,
             0,
         ),
-        # CannotValidateDatapoint
         (
             review.models.CannotValidateDatapoint(
                 data_point_id="dp3",
@@ -73,38 +70,33 @@ from dataland_qa_lab.data_point_flow import review, scheduler  # replace with ac
 @patch("dataland_qa_lab.data_point_flow.scheduler.slack.send_slack_message")
 @patch("dataland_qa_lab.data_point_flow.scheduler.config")
 @patch("dataland_qa_lab.data_point_flow.scheduler.review.validate_datapoint")
-def test_run_scheduled_processing(
+def test_run_scheduled_processing(  # noqa: PLR0913, PLR0917
     mock_validate: MagicMock,
     mock_config: MagicMock,
     mock_slack: MagicMock,
-    validator_result,
-    expected_accepted,
-    expected_rejected,
-    expected_not_validated,
-):
+    validator_result: MagicMock,
+    expected_accepted: int,
+    expected_rejected: int,
+    expected_not_validated: int,
+) -> None:
     """Test run_scheduled_processing with different validator responses."""
 
-    # Mock configuration and datasets
     mock_config.dataland_client.qa_api.get_info_on_datasets.return_value = [MagicMock(data_id="dataset1")]
     mock_config.dataland_client.meta_api.get_contained_data_points.return_value = {"number": "dp1"}
     mock_config.ai_model = "gpt-4"
     mock_config.use_ocr = True
     mock_config.frameworks_list = ["number"]
 
-    # Patch validate_datapoint to return the test case
     mock_validate.return_value = validator_result
 
-    # Run the scheduled processing function
     scheduler.run_scheduled_processing()
 
-    # Validate slack message was sent
     assert mock_slack.called
     sent_message = mock_slack.call_args[0][0]
     assert f"Accepted {expected_accepted}" in sent_message
     assert f"Rejected {expected_rejected}" in sent_message
     assert f"Not validated {expected_not_validated}" in sent_message
 
-    # Validate QA status change called
     mock_config.dataland_client.qa_api.change_qa_status.assert_called_once_with(
         data_id="dataset1", qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
     )

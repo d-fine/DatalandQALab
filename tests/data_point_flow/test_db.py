@@ -3,14 +3,15 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from dataland_qa.models.qa_status import QaStatus
-from dataland_qa_lab.data_point_flow import db as db_module  # replace with your module name
+
+from dataland_qa_lab.data_point_flow import db as db_module
 from dataland_qa_lab.data_point_flow import models
 from dataland_qa_lab.database import database_tables
 
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock):
+async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock) -> None:
     """Test storing a ValidatedDatapoint in the database."""
     data = models.ValidatedDatapoint(
         data_point_id="dp123",
@@ -31,7 +32,6 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock):
 
     await db_module.store_data_point_in_db(data)
 
-    # Should call add_entity with the correct entity
     mock_db_engine.add_entity.assert_called_once()
     added_entity = (
         mock_db_engine.add_entity.call_args.kwargs.get("entity") or mock_db_engine.add_entity.call_args.args[0]
@@ -43,7 +43,7 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock):
+async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock) -> None:
     """Test storing a CannotValidateDatapoint in the database."""
     data = models.CannotValidateDatapoint(
         data_point_id="dp456",
@@ -66,7 +66,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_check_if_already_validated_none(mock_db_engine: MagicMock):
+async def test_check_if_already_validated_none(mock_db_engine: MagicMock) -> None:
     """Test when no existing validation is found."""
     mock_db_engine.get_entity.return_value = None
 
@@ -76,7 +76,7 @@ async def test_check_if_already_validated_none(mock_db_engine: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_check_if_already_validated_validated(mock_db_engine: MagicMock):
+async def test_check_if_already_validated_validated(mock_db_engine: MagicMock) -> None:
     """Test returning a ValidatedDatapoint if already validated."""
     mock_entity = MagicMock()
     mock_entity.data_point_id = "dp123"
@@ -103,7 +103,7 @@ async def test_check_if_already_validated_validated(mock_db_engine: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_check_if_already_validated_cannot_validate(mock_db_engine: MagicMock):
+async def test_check_if_already_validated_cannot_validate(mock_db_engine: MagicMock) -> None:
     """Test returning a CannotValidateDatapoint if predicted_answer is None."""
     mock_entity = MagicMock()
     mock_entity.data_point_id = "dp123"
@@ -124,7 +124,7 @@ async def test_check_if_already_validated_cannot_validate(mock_db_engine: MagicM
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.db.database_engine")
-async def test_delete_existing_entry_calls_delete(mock_db_engine: MagicMock):
+async def test_delete_existing_entry_calls_delete(mock_db_engine: MagicMock) -> None:
     """Test that delete_existing_entry calls delete_entity."""
     await db_module.delete_existing_entry("dp123")
     mock_db_engine.delete_entity.assert_called_once_with(

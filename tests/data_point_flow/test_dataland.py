@@ -3,16 +3,18 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pypdf import PdfWriter, PdfReader
-
-from dataland_qa_lab.data_point_flow import dataland  # replace with actual module name
 from dataland_qa.models.qa_status import QaStatus
-from dataland_qa_lab.data_point_flow import models
+from pypdf import PdfReader, PdfWriter
+
+from dataland_qa_lab.data_point_flow import (
+    dataland,
+    models,
+)
 
 
 @pytest.mark.asyncio
-@patch("dataland_qa_lab.data_point_flow.dataland.config")  # patch the config module
-async def test_get_data_point_valid(mock_config: MagicMock):
+@patch("dataland_qa_lab.data_point_flow.dataland.config")
+async def test_get_data_point_valid(mock_config: MagicMock) -> None:
     """Test fetching a valid data point."""
     mock_dp = MagicMock()
     mock_dp.data_point = json.dumps(
@@ -35,10 +37,10 @@ async def test_get_data_point_valid(mock_config: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
-async def test_get_data_point_missing_data_source(mock_config: MagicMock):
+async def test_get_data_point_missing_data_source(mock_config: MagicMock) -> None:
     """Test that get_data_point raises ValueError if dataSource is missing."""
     mock_dp = MagicMock()
-    mock_dp.data_point = json.dumps({"value": "42"})  # missing dataSource
+    mock_dp.data_point = json.dumps({"value": "42"})
     mock_dp.data_point_type = "number"
 
     mock_config.dataland_client.data_points_api.get_data_point.return_value = mock_dp
@@ -49,9 +51,8 @@ async def test_get_data_point_missing_data_source(mock_config: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
-async def test_get_document_single_page(mock_config: MagicMock):
+async def test_get_document_single_page(mock_config: MagicMock) -> None:
     """Test get_document extracts the correct page from a PDF."""
-    # Create a PDF with 2 pages
     writer = PdfWriter()
     writer.add_blank_page(width=100, height=100)
     writer.add_blank_page(width=200, height=200)
@@ -65,10 +66,9 @@ async def test_get_document_single_page(mock_config: MagicMock):
 
     result_stream = await dataland.get_document("ref123", 2)
 
-    # Should return a PDF stream with exactly 1 page (page 2)
     reader = PdfReader(result_stream)
     assert len(reader.pages) == 1
-    # Page dimensions should match page 2
+
     page = reader.pages[0]
     assert page.mediabox.width == 200
     assert page.mediabox.height == 200
@@ -76,7 +76,7 @@ async def test_get_document_single_page(mock_config: MagicMock):
 
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
-async def test_override_dataland_qa_calls_api(mock_config: MagicMock):
+async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
     """Test that override_dataland_qa calls the QA API correctly."""
     await dataland.override_dataland_qa("dp123", "Reasoning text", QaStatus.ACCEPTED)
 
