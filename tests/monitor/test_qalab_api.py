@@ -59,9 +59,10 @@ def test_run_report_on_qalab_uses_datapoint_endpoint_when_enabled() -> None:
     mock_response.json.return_value = mock_json
 
     # Activates toggle and mocks request.post
-    with patch(
-        "monitor.qalab_api.config.use_datapoint_endpoint", True
-        ), patch("requests.post", return_value=mock_response) as mock_post:
+    with (
+        patch("monitor.qalab_api.config.use_datapoint_endpoint", True),
+        patch("requests.post", return_value=mock_response) as mock_post,
+    ):
         result = run_report_on_qalab("123", "gpt-4", True)
 
     assert result == mock_json
