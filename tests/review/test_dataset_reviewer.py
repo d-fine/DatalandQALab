@@ -4,7 +4,6 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.review.dataset_reviewer import (
     _get_file_using_ocr,  # noqa: PLC2701

@@ -6,9 +6,9 @@ from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
 
 from dataland_qa_lab.bin import models
+from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
 from dataland_qa_lab.data_point_flow import review
 from dataland_qa_lab.data_point_flow import scheduler as data_point_scheduler
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
@@ -16,7 +16,6 @@ from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
-from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 config = config.get_config()
@@ -114,4 +113,4 @@ async def review_data_point_dataset_id(
 
     results_list = await asyncio.gather(*tasks.values())
 
-    return dict(zip(tasks.keys(), results_list))
+    return dict(zip(tasks.keys(), results_list, strict=False))

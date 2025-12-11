@@ -38,7 +38,7 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
     """Test async /review-data-point endpoint."""
     mock_config.get_config.return_value.dataland_client = MagicMock()
 
-    async def mock_validate_response(*args, **kwargs):
+    async def mock_validate_response(*args, **kwargs):  # noqa: ANN002, ANN003, ANN202, ARG001, RUF029
         return dp_models.ValidatedDatapoint(
             data_point_id="dp1",
             data_point_type="number",

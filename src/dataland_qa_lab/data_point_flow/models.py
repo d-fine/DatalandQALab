@@ -50,12 +50,16 @@ class DataPoint:
 
 @dataclass
 class DataPointPrompt:
+    """Data structure for data point prompts."""
+
     prompt: str
     depends_on: list[str]
 
 
 @dataclass
 class AIResponse:
+    """Data structure for AI model responses."""
+
     predicted_answer: str | None
     confidence: float
     reasoning: str

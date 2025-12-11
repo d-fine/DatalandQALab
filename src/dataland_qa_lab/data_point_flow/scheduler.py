@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from collections import Counter
 
 from dataland_qa.models.qa_status import QaStatus
 
@@ -51,15 +50,15 @@ def run_scheduled_processing() -> None:
                 else:
                     not_validated_ids.append(v)
 
-            except Exception:
-                pass
+            except Exception as e:  # noqa: BLE001
+                logger.warning("Error validating data point ID: %s. Error: %s", v, str(e))  # noqa: RUF065
 
         logger.info("All data points accepted for dataset ID: %s", dataset.data_id)
         config.dataland_client.qa_api.change_qa_status(
             data_id=dataset.data_id, qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
         )
 
-        slack_message.append(
+        slack_message.append(  # noqa: FURB113
             ":white_check_mark: Accepted " + str(len(accepted_ids)) + " ids:" + ", ".join(accepted_ids)
         )
         slack_message.append(":x: Rejected " + str(len(rejected_ids)) + " ids:" + ", ".join(rejected_ids))

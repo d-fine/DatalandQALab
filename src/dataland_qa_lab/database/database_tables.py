@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-from sqlalchemy import ARRAY, Boolean, Column, DateTime, Integer, String, Float
+from sqlalchemy import ARRAY, Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
