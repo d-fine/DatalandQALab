@@ -156,7 +156,7 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
 async def get_document(reference_id: str, page_num: int) -> io.BytesIO:
     """Return a PDF document stream for specific pages."""
     logger.info("Downloading document with reference ID: %s", reference_id)
-    full_pdf = config.dataland_client.documents_api.get_document(reference_id)
+    full_pdf = await asyncio.to_thread(config.dataland_client.documents_api.get_document, document_id=reference_id)
     full_pdf_stream = io.BytesIO(full_pdf)
 
     original_pdf = pypdf.PdfReader(full_pdf_stream)
@@ -228,6 +228,7 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
 
 async def store_data_point_in_db(data: models.ValidatedDatapoint | models.CannotValidateDatapoint) -> None:
     """Store the validated data point in the database."""
+    logger.info("Storing validated data point ID: %s in the database.", data.data_point_id)
     if isinstance(data, models.CannotValidateDatapoint):
         await asyncio.to_thread(
             database_engine.add_entity,
@@ -250,7 +251,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
     else:
         await asyncio.to_thread(
             database_engine.add_entity,
-            database_tables.ValidatedDataPoint(
+            entity=database_tables.ValidatedDataPoint(
                 data_point_id=data.data_point_id,
                 data_point_type=data.data_point_type,
                 previous_answer=data.previous_answer,
@@ -273,13 +274,13 @@ async def check_if_already_validated(
 ) -> models.CannotValidateDatapoint | models.ValidatedDatapoint | None:
     """Check if the data point has already been validated."""
     existing_validation = await asyncio.to_thread(
-        database_engine.get_entity(
-            database_tables.ValidatedDataPoint,
-            data_point_id=data_point_id,
-        )
+        database_engine.get_entity,
+        entity_class=database_tables.ValidatedDataPoint,
+        data_point_id=data_point_id,
     )
     if not existing_validation:
         return None
+    logger.info("Data point ID: %s has already been validated.", data_point_id)
     if existing_validation.predicted_answer is None:
         return models.CannotValidateDatapoint(
             data_point_id=data_point_id,
@@ -310,6 +311,7 @@ async def check_if_already_validated(
 
 async def delete_existing_entry(data_point_id: str) -> None:
     """Delete existing validated data point entry from the database."""
+    logger.info("Deleting existing validated entry for data point ID: %s", data_point_id)
     await asyncio.to_thread(
         database_engine.delete_entity,
         entity_id=data_point_id,
