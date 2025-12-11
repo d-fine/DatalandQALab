@@ -30,12 +30,11 @@ create_tables()
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
 # old scheduler
-# scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
 # new scheduler
 scheduler.add_job(data_point_scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
 if not config.is_dev_environment:
     scheduler.start()
-scheduler.start()
 
 
 @asynccontextmanager
