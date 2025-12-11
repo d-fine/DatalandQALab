@@ -130,5 +130,4 @@ async def review_data_point_dataset_id(
 
     # Map results back to their keys
     res = dict(zip(tasks.keys(), results_list))
-    print(res)
     return res

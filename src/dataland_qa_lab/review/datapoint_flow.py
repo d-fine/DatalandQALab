@@ -41,14 +41,22 @@ def get_lock_for(key):
 
 async def validate_datapoint(
     data_point_id: str, use_ocr: bool, ai_model: str, override: bool
-) -> data_point_flow.ValidatedDatapoint | None:
+) -> data_point_flow.ValidatedDatapoint | data_point_flow.CannotValidateDatapoint:
     """Validates a datapoint given a data_point_id."""
     logger.info("Validating datapoint with ID: %s", data_point_id)
 
     try:
         data_point = await get_data_point(data_point_id)
-    except Exception as e:
-        return None
+    except Exception as e:  # noqa: BLE001
+        return data_point_flow.CannotValidateDatapoint(
+            data_point_id=data_point_id,
+            data_point_type=None,
+            reasoning="Couldn't fetch data point: " + str(e),
+            ai_model=ai_model,
+            use_ocr=use_ocr,
+            override=override,
+            timestamp=int(time.time()),
+        )
 
     prompt = get_prompt_config(data_point.data_point_type)
 
@@ -68,6 +76,10 @@ async def validate_datapoint(
             ocr_text = ""
             res = data_point_flow.AIResponse(predicted_answer=None, confidence=0.0, reasoning="OCR not used.")
 
+        qa_status = QaStatus.ACCEPTED if res.predicted_answer == data_point.value else QaStatus.REJECTED
+
+        await override_dataland_qa(data_point_id=data_point.data_point_id, reasoning=res.reasoning, qa_status=qa_status)
+
         return data_point_flow.ValidatedDatapoint(
             data_point_id=data_point.data_point_id,
             data_point_type=data_point.data_point_type,
@@ -75,23 +87,33 @@ async def validate_datapoint(
             predicted_answer=res.predicted_answer,
             confidence=res.confidence,
             reasoning=res.reasoning,
-            qa_status=QaStatus.ACCEPTED if res.predicted_answer == data_point.value else QaStatus.REJECTED,
+            qa_status=qa_status,
             timestamp=int(time.time()),
             ai_model=ai_model,
             use_ocr=use_ocr,
             file_name=data_point.file_name,
             file_reference=data_point.file_reference,
             page=data_point.page,
+            override=override,
         )
-        pass
-    return None
+    return data_point_flow.CannotValidateDatapoint(
+        data_point_id=data_point.data_point_id,
+        data_point_type=data_point.data_point_type,
+        reasoning="No Prompt configured for this data point type.",
+        ai_model=ai_model,
+        use_ocr=use_ocr,
+        timestamp=int(time.time()),
+        override=override,
+    )
 
 
 @async_lru.alru_cache
 async def get_data_point(data_point_id: str) -> data_point_flow.DataPoint:
     """Returns a DataPoint object for the given data_point_id and also validates its structure."""
     logger.info("Fetching data point with ID: %s", data_point_id)
-    data_point = config.dataland_client.data_points_api.get_data_point(data_point_id)
+    data_point = await asyncio.to_thread(
+        config.dataland_client.data_points_api.get_data_point, data_point_id=data_point_id
+    )
     dp_json = json.loads(data_point.data_point)
 
     data_point_type = data_point.data_point_type
@@ -175,3 +197,14 @@ def get_prompt_config(data_point_type: str) -> data_point_flow.DataPointPrompt |
 
     logger.warning("No prompt found for data point type: %s. Skipping...", data_point_type)
     return None
+
+
+async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: QaStatus) -> None:
+    """Override Dataland QA status for the given data point ID."""
+    logger.info("Overriding Dataland QA status for data point ID: %s to %s", data_point_id, qa_status)
+    await asyncio.to_thread(
+        config.dataland_client.qa_api.change_data_point_qa_status,
+        data_point_id=data_point_id,
+        qa_status=qa_status,
+        comment=reasoning,
+    )
