@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pypdf
 from dataland_qa.models.qa_status import QaStatus
 
-from dataland_qa_lab.data_point_flow import ai
+from dataland_qa_lab.data_point_flow import ai, prompts
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.dataland import dataset_provider
 from dataland_qa_lab.pages import pages_provider, text_to_doc_intelligence
@@ -18,7 +18,7 @@ from dataland_qa_lab.review.exceptions import (
     ReportSubmissionError,
 )
 from dataland_qa_lab.review.report_generator.nuclear_and_gas_report_generator import NuclearAndGasReportGenerator
-from dataland_qa_lab.utils import config, prompts, slack
+from dataland_qa_lab.utils import config, slack
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 from dataland_qa_lab.utils.nuclear_and_gas_data_collection import NuclearAndGasDataCollection
 

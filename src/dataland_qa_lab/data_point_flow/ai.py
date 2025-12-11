@@ -17,7 +17,8 @@ client = AzureOpenAI(
 )
 
 
-async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> models.AIResponse:
+async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> models.AIResponse:  # noqa: PLR0911
+    """Executes a prompt using the specified AI model and returns the AIResponse."""
     logger.info("Executing prompt with AI model: %s", ai_model)
     """Sends a prompt to the AI model and returns the response."""
     prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
@@ -52,7 +53,7 @@ Rules you must follow:
             ],
         )
     except Exception as e:
-        logger.error("Error while calling AI model: %s. Retries left: %d", str(e), retries)
+        logger.exception("Error while calling AI model: %s. Retries left: %d", str(e), retries)  # noqa: RUF065, TRY401
         if retries > 0:
             return await execute_prompt(prompt, ai_model, retries - 1)
         return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e))
