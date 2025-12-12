@@ -90,26 +90,30 @@ async def review_data_point_id(
     data: models.DatapointFlowReviewDataPointRequest,
 ) -> datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint:
     """Review a single dataset via API call (configurable)."""
-    res = await review.validate_datapoint(
-        data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
-    )
-
-    return res
+    try:
+        return await review.validate_datapoint(
+            data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
+        )
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
 
 
 @dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint]:
+) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint] | str:
     """Review a single dataset via API call (configurable)."""
-    data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+    try:
+        data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
 
-    tasks = {
-        k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
-        for k, v in data_points.items()
-    }
+        tasks = {
+            k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
+            for k, v in data_points.items()
+        }
 
-    results_list = await asyncio.gather(*tasks.values())
+        results_list = await asyncio.gather(*tasks.values())
 
-    return dict(zip(tasks.keys(), results_list, strict=False))
+        return dict(zip(tasks.keys(), results_list, strict=False))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
