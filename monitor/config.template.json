@@ -8,5 +8,7 @@
     ],
     "ai_model": "",
     "use_ocr": false,
+    "force_review": false,
+    "use_datapoint_endpoint": false,
     "documents": []
 }

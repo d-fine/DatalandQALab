@@ -24,6 +24,7 @@ class MonitorConfig:
     ai_model: str = "gpt-4"
     use_ocr: bool = False
     force_review: bool = False
+    use_datapoint_endpoint: bool = False
 
 
 def load_config() -> MonitorConfig:
@@ -37,6 +38,7 @@ def load_config() -> MonitorConfig:
                 ai_model=config.get("ai_model", "gpt-4"),
                 use_ocr=config.get("use_ocr", False),
                 force_review=config.get("force_review", False),
+                use_datapoint_endpoint=config.get("use_datapoint_endpoint", False),
             )
     except (json.JSONDecodeError, OSError):
         logger.warning("Config file not found or invalid, falling back to environment variables.")
@@ -47,9 +49,15 @@ def load_config() -> MonitorConfig:
     ai_model = os.getenv("AI_MODEL", "gpt-4")
     use_ocr = os.getenv("USE_OCR", "0").strip().lower() in {"1", "true", "yes"}
     force_review = os.getenv("FORCE_REVIEW", "0").strip().lower() in {"1", "true", "yes"}
+    use_datapint_endpoint = os.getenv("USE_DATAPOINT_ENDPOINT", "0").strip().lower() in {"1", "true", "yes"}
 
     return MonitorConfig(
-        qa_lab_url=qa_lab_url, documents=documents, ai_model=ai_model, use_ocr=use_ocr, force_review=force_review
+        qa_lab_url=qa_lab_url,
+        documents=documents,
+        ai_model=ai_model,
+        use_ocr=use_ocr,
+        force_review=force_review,
+        use_datapoint_endpoint=use_datapint_endpoint,
     )
 
 
