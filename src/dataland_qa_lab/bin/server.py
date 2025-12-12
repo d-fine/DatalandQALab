@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -7,13 +8,17 @@ from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
 
 from dataland_qa_lab.bin import models
+from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
+from dataland_qa_lab.data_point_flow import review
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
-from dataland_qa_lab.utils import console_logger
+from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
 logger = logging.getLogger("dataland_qa_lab.bin.server")
+config = config.get_config()
+
 
 console_logger.configure_console_logger()
 logger.info("Launching the Dataland QA Lab server")
@@ -22,8 +27,12 @@ create_tables()
 
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-job = scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
-scheduler.start()
+# old scheduler
+scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+# new scheduler
+# scheduler.add_job(data_point_scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())
+if not config.is_dev_environment:
+    scheduler.start()
 
 
 @asynccontextmanager
@@ -75,31 +84,32 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
 # new validation flow using datapoints
 
 
-@dataland_qa_lab.post("/review-data-point/{data_point_id}", response_model=models.ReviewDataPointResponse)
-def review_data_point_id(
+@dataland_qa_lab.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
+async def review_data_point_id(
     data_point_id: str,
-    data: models.ReviewDataPointRequest,
-) -> models.ReviewDataPointResponse:
+    data: models.DatapointFlowReviewDataPointRequest,
+) -> datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint:
     """Review a single dataset via API call (configurable)."""
-    try:
-        res = dataset_reviewer.validate_datapoint(
-            data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
-        )
+    res = await review.validate_datapoint(
+        data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
+    )
 
-        return models.ReviewDataPointResponse(
-            data_point_id=res.data_point_id,
-            data_point_type=res.data_point_type,
-            previous_answer=res.previous_answer,
-            predicted_answer=res.predicted_answer,
-            confidence=res.confidence,
-            reasoning=res.reasoning,
-            qa_status=res.qa_status,
-            timestamp=res.timestamp,
-            ai_model=res.ai_model,
-            use_ocr=res.use_ocr,
-            file_reference=res.file_reference,
-            file_name=res.file_name,
-            page=res.page,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
+    return res
+
+
+@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
+async def review_data_point_dataset_id(
+    data_id: str,
+    data: models.DatapointFlowReviewDataPointRequest,
+) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint]:
+    """Review a single dataset via API call (configurable)."""
+    data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+
+    tasks = {
+        k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
+        for k, v in data_points.items()
+    }
+
+    results_list = await asyncio.gather(*tasks.values())
+
+    return dict(zip(tasks.keys(), results_list, strict=False))

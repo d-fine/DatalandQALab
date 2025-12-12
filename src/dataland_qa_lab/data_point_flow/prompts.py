@@ -2,6 +2,7 @@ import json
 from logging import getLogger
 from pathlib import Path
 
+from dataland_qa_lab.data_point_flow import models
 from dataland_qa_lab.utils import config
 
 config = config.get_config()
@@ -25,3 +26,16 @@ def get_prompts(prompts_dir: Path | None = None) -> dict:
             continue
         combined.update(data)
     return combined
+
+
+def get_prompt_config(data_point_type: str) -> models.DataPointPrompt | None:
+    """Retrieve the validation prompt or raise an error if not found."""
+    logger.info("Retrieving prompt for data point type: %s", data_point_type)
+    validation_prompts = get_prompts()
+
+    prompt = validation_prompts.get(data_point_type)
+    if prompt:
+        return models.DataPointPrompt(prompt=prompt.get("prompt"), depends_on=prompt.get("depends_on", []))
+
+    logger.warning("No prompt found for data point type: %s. Skipping...", data_point_type)
+    return None

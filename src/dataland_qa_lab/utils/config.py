@@ -39,7 +39,8 @@ class DatalandQaLabSettings(BaseSettings):
     slack_webhook_url: str | None = None
     environment: str | None = None
     frameworks: str = "sfdr"
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
+    use_ocr: bool = True
 
     @property
     def dataland_client(self) -> DatalandClient:
@@ -50,6 +51,11 @@ class DatalandQaLabSettings(BaseSettings):
     def frameworks_list(self) -> list[str]:
         """Get the list of frameworks."""
         return [framework.strip() for framework in self.frameworks.split(",") if framework.strip()]
+
+    @property
+    def is_dev_environment(self) -> bool:
+        """Check if the environment is development."""
+        return self.environment in {"dev", "development"}
 
 
 @cache

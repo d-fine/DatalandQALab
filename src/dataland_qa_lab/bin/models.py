@@ -7,7 +7,7 @@ class ReviewRequest(BaseModel):
     """Request model for initiating a review."""
 
     force_review: bool = False
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
 
 
@@ -28,15 +28,15 @@ class ReviewResponse(BaseModel):
 
 
 # models for the new dataset validation
-class ReviewDataPointRequest(BaseModel):
+class DatapointFlowReviewDataPointRequest(BaseModel):
     """Request model for initiating a data point review."""
 
-    ai_model: str = "gpt-4o"
+    ai_model: str = "gpt-5"
     use_ocr: bool = True
     override: bool = False
 
 
-class ReviewDataPointResponse(BaseModel):
+class DatapointFlowReviewDataPointResponse(BaseModel):
     """Response model for a reviewed data point."""
 
     data_point_id: str
@@ -52,3 +52,16 @@ class ReviewDataPointResponse(BaseModel):
     file_name: str
     file_reference: str
     page: int
+    status: str = "success"
+
+
+class DatapointFlowCannotReviewDatapointResponse(BaseModel):
+    """Response model for a data point that cannot be reviewed."""
+
+    data_point_id: str
+    data_point_type: str
+    reasoning: str
+    ai_model: str
+    use_ocr: bool
+    timestamp: int
+    status: str = "error"
