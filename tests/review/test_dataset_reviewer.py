@@ -199,6 +199,207 @@ def test_get_file_using_ocr_uses_cache(
     mock_add.assert_not_called()
 
 
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_ghg_intensity_scope1_accept(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock,
+    mock_config: MagicMock
+) -> None:
+    """Test ACCEPT case for GHG intensity scope 1 per million EUR revenue."""
+    
+    mock_ocr.return_value = """
+    Sustainability Performance Metrics 2024
+    The Scope 1 GHG emissions intensity for the reporting period was
+    245.7 tonnes CO2e per million EUR revenue.
+    """
+    
+    mock_ai.return_value = {
+        "answer": "245.7",
+        "confidence": 0.95,
+        "reasoning": "Found Scope 1 GHG intensity value"
+    }
+    
+    dp = fake_dp(
+        "dp_ghg_intensity_scope1",
+        dp_type="extendedDecimalGhgIntensityScope1InTonnesPerMillionEURRevenue",
+        value="245.7"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalGhgIntensityScope1InTonnesPerMillionEURRevenue": {
+            "prompt": "Extract: {context}"
+        }
+    }
+    
+    result = validate_datapoint("dp_ghg_intensity_scope1", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.ACCEPTED
+    assert result.predicted_answer == "245.7"
+    assert result.data_point_type == "extendedDecimalGhgIntensityScope1InTonnesPerMillionEURRevenue"
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_ghg_intensity_scope1_reject(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock, 
+    mock_config: MagicMock
+) -> None:
+    """Test REJECT case for GHG intensity scope 1."""
+    
+    mock_ocr.return_value = "Scope 1 intensity: 245.7 tonnes per million EUR revenue."
+    
+    mock_ai.return_value = {
+        "answer": "245.7",
+        "confidence": 0.88,
+        "reasoning": "Found value"
+    }
+    
+    dp = fake_dp(
+        "dp1_reject",
+        dp_type="extendedDecimalGhgIntensityScope1InTonnesPerMillionEURRevenue",
+        value="250.0"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalGhgIntensityScope1InTonnesPerMillionEURRevenue": {"prompt": "{context}"}
+    }
+    
+    result = validate_datapoint("dp1_reject", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.REJECTED
+    assert result.predicted_answer == "245.7"
+    assert result.previous_answer == "250.0"
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_ghg_intensity_scope2_accept(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock, 
+    mock_config: MagicMock
+) -> None:
+    """Test ACCEPT case for GHG intensity scope 2."""
+    
+    mock_ocr.return_value = "Scope 2 intensity: 128.4 tonnes CO2e per million EUR revenue."
+    
+    mock_ai.return_value = {"answer": "128.4", "confidence": 0.93, "reasoning": "Found value"}
+    
+    dp = fake_dp(
+        "dp2_accept",
+        dp_type="extendedDecimalGhgIntensityScope2InTonnesPerMillionEURRevenue",
+        value="128.4"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalGhgIntensityScope2InTonnesPerMillionEURRevenue": {"prompt": "{context}"}
+    }
+    
+    result = validate_datapoint("dp2_accept", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.ACCEPTED
+    assert result.predicted_answer == "128.4"
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_ghg_intensity_scope3_accept(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock, 
+    mock_config: MagicMock
+) -> None:
+    """Test ACCEPT case for GHG intensity scope 3."""
+    
+    mock_ocr.return_value = "Scope 3 intensity: 1847.2 tonnes CO2e per million EUR revenue."
+    
+    mock_ai.return_value = {"answer": "1847.2", "confidence": 0.90, "reasoning": "Found value"}
+    
+    dp = fake_dp(
+        "dp3_accept",
+        dp_type="extendedDecimalGhgIntensityScope3InTonnesPerMillionEURRevenue",
+        value="1847.2"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalGhgIntensityScope3InTonnesPerMillionEURRevenue": {"prompt": "{context}"}
+    }
+    
+    result = validate_datapoint("dp3_accept", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.ACCEPTED
+    assert result.predicted_answer == "1847.2"
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_ghg_intensity_scope4_accept(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock, 
+    mock_config: MagicMock
+) -> None:
+    """Test ACCEPT case for GHG intensity scope 4."""
+    
+    mock_ocr.return_value = "Scope 4 avoided emissions: 320.5 tonnes per million EUR revenue."
+    
+    mock_ai.return_value = {"answer": "320.5", "confidence": 0.89, "reasoning": "Found value"}
+    
+    dp = fake_dp(
+        "dp4_accept",
+        dp_type="extendedDecimalGhgIntensityScope4InTonnesPerMillionEURRevenue",
+        value="320.5"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalGhgIntensityScope4InTonnesPerMillionEURRevenue": {"prompt": "{context}"}
+    }
+    
+    result = validate_datapoint("dp4_accept", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.ACCEPTED
+    assert result.predicted_answer == "320.5"
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.config")
+@patch("dataland_qa_lab.review.dataset_reviewer.ai.execute_prompt")
+@patch("dataland_qa_lab.review.dataset_reviewer._get_file_using_ocr")
+def test_validate_financed_scope3_accept(
+    mock_ocr: MagicMock, 
+    mock_ai: MagicMock, 
+    mock_config: MagicMock
+) -> None:
+    """Test ACCEPT case for financed Scope 3 emissions."""
+    
+    mock_ocr.return_value = "Financed Scope 3 emissions: 2547893.0 tonnes CO2e."
+    
+    mock_ai.return_value = {"answer": "2547893.0", "confidence": 0.94, "reasoning": "Found value"}
+    
+    dp = fake_dp(
+        "dp_fin3_accept",
+        dp_type="extendedDecimalFinancedScope3Emissions",
+        value="2547893.0"
+    )
+    
+    mock_config.dataland_client.data_points_api.get_data_point.return_value = dp
+    mock_config.validation_prompts = {
+        "extendedDecimalFinancedScope3Emissions": {"prompt": "{context}"}
+    }
+    
+    result = validate_datapoint("dp_fin3_accept", ai_model="gpt-4o")
+    
+    assert result.qa_status == QaStatus.ACCEPTED
+    assert result.predicted_answer == "2547893.0"
+
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity", return_value=None)
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.add_entity")
 @patch("dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence.extract_pdf")
