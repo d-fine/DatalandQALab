@@ -43,6 +43,7 @@ Rules you must follow:
         content = [
             {"type": "text", "text": prompt}
         ]
+        
         for img_base64 in images:
             content.append({
                 "type": "image_url",
@@ -51,19 +52,26 @@ Rules you must follow:
                     "detail": conf.vision.detail_level
                 }
             })
-            logger.debug("Sending prompt with %d images to AI model %s", len(images), ai_model)
+            
+        logger.debug("Sending prompt with %d images to AI model %s", len(images), ai_model)
     else:
         content = prompt
         logger.debug("Sending prompt without images to AI model %s", ai_model)
         
-
-    response = client.chat.completions.create(
-        model=ai_model,
-        temperature=1 if "gpt-5" in ai_model else 0,
-        messages=[
-            {"role": "user", "content": content},
-        ],
-    )
+    try:
+        response = client.chat.completions.create(
+            model=ai_model,
+            temperature=1 if "gpt-5" in ai_model else 0,
+            messages=[
+                {"role": "user", "content": content}
+            ],
+            timeout=conf.vision.timeout if images else 60,
+        )
+    except Exception as e:
+        logger.error("  Error during AI model call: %s. Retries left: %d", str(e), retries)
+        if retries > 0:
+            return execute_prompt(prompt, ai_model, retries - 1, images)
+        return {"answer": None, "confidence": 0.0, "reasoning": " AI model call failed."}
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
