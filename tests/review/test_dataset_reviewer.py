@@ -9,6 +9,7 @@ from dataland_qa.models.qa_status import QaStatus
 from dataland_qa_lab.review.dataset_reviewer import (
     _get_file_using_ocr,  # noqa: PLC2701
     old_review_dataset,
+    update_error_reason_in_database,
     validate_datapoint,
 )
 
@@ -221,3 +222,35 @@ def test_get_file_using_ocr_generates_new_ocr(
     mock_add.assert_called_once()
     mock_extract_pdf.assert_called_once()
     mock_get_document.assert_called_once()
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.database_engine.update_entity")
+@patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity")
+def test_update_error_reason_sets_reason(
+    mock_get_entity: MagicMock,
+    mock_upate_entity: MagicMock,
+) -> None:
+    review_row = SimpleNamespace(error_reason=None)
+    mock_get_entity.return_value = review_row
+
+    data_id = "test-id-123"
+    error_msg = "Something went wrong"
+
+    update_error_reason_in_database(data_id=data_id, error_reason=error_msg)
+
+    assert review_row.error_reason == error_msg
+
+    mock_upate_entity.assert_called_once_with(review_row)
+
+
+@patch("dataland_qa_lab.review.dataset_reviewer.database_engine.update_entity")
+@patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity")
+def test_update_error_reason_no_row_does_not_update(
+    mock_get_entity: MagicMock,
+    mock_update_entity: MagicMock,
+) -> None:
+    mock_get_entity.return_value = None
+
+    update_error_reason_in_database(data_id="missing-id", error_reason="irrelevant")
+
+    mock_update_entity.assert_not_called()

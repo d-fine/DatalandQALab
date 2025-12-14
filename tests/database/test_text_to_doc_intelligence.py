@@ -87,6 +87,47 @@ def test_get_markdown_from_dataset_existing_entry(
     assert result == "old_text"
 
 
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.old_extract_text_of_pdf")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_german_time_as_string")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
+def test_get_markdown_from_dataset_saves_llm_version(
+    mock_get_entity: MagicMock,
+    mock_add_entity: MagicMock,
+    mock_get_time: MagicMock,
+    mock_extract_text: MagicMock,
+) -> None:
+    mock_get_entity.return_value = None
+
+    mock_extract_text.return_value = "mocked_text"
+
+    mock_get_time.return_value = "2025-12-12 12:34:56"
+
+    data_id = "test_id"
+    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pages = [1, 2, 3]
+    llm_version = "gpt_4o"
+
+    result = old_get_markdown_from_dataset(
+        data_id=data_id,
+        relevant_pages_pdf_reader=pdf_reader,
+        page_numbers=pages,
+        llm_version=llm_version,
+    )
+
+    assert result == "mocked_text"
+
+    mock_add_entity.assert_called_once()
+    saved_row = mock_add_entity.call_args[0][0]
+
+    assert saved_row.data_id == data_id
+    assert saved_row.llm_version == llm_version
+    assert saved_row.markdown_text == "mocked_text"
+    assert saved_row.page_numbers == pages
+    assert saved_row.last_saved == "2025-12-12 12:34:56"
+    assert saved_row.last_updated == "2025-12-12 12:34:56"
+
+
 # for the new method
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
