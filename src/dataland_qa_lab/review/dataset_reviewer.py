@@ -78,8 +78,7 @@ def old_review_dataset(  # noqa: PLR0915
         message = f"🔍 Starting review of the Dataset with the Data-ID: {data_id}"
         slack.send_slack_message(message=message)
 
-        review_dataset = database_tables.ReviewedDataset(
-            data_id=data_id, review_start_time=datetime_now)
+        review_dataset = database_tables.ReviewedDataset(data_id=data_id, review_start_time=datetime_now)
 
         logger.info("Adding the dataset to the database.")
         database_engine.add_entity(review_dataset)
@@ -130,8 +129,9 @@ def old_review_dataset(  # noqa: PLR0915
             raise ReportSubmissionError(msg) from exc
 
         old_update_reviewed_dataset_in_database(
-            data_id=data_id, report_id=data.qa_report_id,
-            )
+            data_id=data_id,
+            report_id=data.qa_report_id,
+        )
 
         message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: {data.qa_report_id}"
         slack.send_slack_message(message=message)
