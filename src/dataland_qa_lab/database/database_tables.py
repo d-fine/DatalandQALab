@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-from sqlalchemy import ARRAY, Boolean, Column, DateTime, Integer, String
+from sqlalchemy import ARRAY, Boolean, Column, DateTime, Float, Integer, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -49,5 +49,15 @@ class ValidatedDataPoint(Base):
 
     __tablename__ = "validated_data_point"
     data_point_id = Column("data_point_id", String, primary_key=True)
-    qa_status = Column("qa_status", String, nullable=False)
-    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=False)
+    data_point_type = Column("data_point_type", String, nullable=True)
+    previous_answer = Column("previous_answer", String, nullable=True)
+    predicted_answer = Column("predicted_answer", String, nullable=True)
+    confidence = Column("confidence", Float, nullable=True)
+    reasoning = Column("reasoning", String, nullable=True)
+    qa_status = Column("qa_status", String, nullable=True)
+    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=True)
+    ai_model = Column("ai_model", String, nullable=True)
+    use_ocr = Column("use_ocr", Boolean, nullable=True)
+    file_name = Column("file_name", String, nullable=True)
+    file_reference = Column("file_reference", String, nullable=True)
+    page = Column("page", Integer, nullable=True)
