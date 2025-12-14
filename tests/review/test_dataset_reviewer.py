@@ -6,12 +6,14 @@ from unittest.mock import MagicMock, patch
 import pytest
 from dataland_qa.models.qa_status import QaStatus
 
+from dataland_qa_lab.database import database_tables
 from dataland_qa_lab.review.dataset_reviewer import (
     _get_file_using_ocr,  # noqa: PLC2701
     old_review_dataset,
     update_error_reason_in_database,
     validate_datapoint,
 )
+from dataland_qa_lab.review.exceptions import DatasetNotFoundError, OCRProcessingError
 
 
 def fake_dp(
@@ -254,3 +256,53 @@ def test_update_error_reason_no_row_does_not_update(
     update_error_reason_in_database(data_id="missing-id", error_reason="irrelevant")
 
     mock_update_entity.assert_not_called()
+
+
+def test_old_review_dataset_dataset_missing_updates_error_reason(mock_dependencies: MagicMock) -> None:
+    data_id = "missing_id"
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = None
+
+    with patch("dataland_qa_lab.review.dataset_reviewer.update_error_reason_in_database") as mock_update_err:
+        with pytest.raises(DatasetNotFoundError):
+            old_review_dataset(data_id)
+
+        mock_update_err.assert_called_once()
+
+
+def test_old_review_dataset_returns_existing_report_id_when_exists(mock_dependencies: MagicMock) -> None:
+    data_id = "abc"
+
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = MagicMock(data="dummy")
+    mock_dependencies["get_entity"].return_value = SimpleNamespace(report_id="Existing_RID")
+
+    result = old_review_dataset(data_id, force_review=False)
+
+    assert result == "Existing_RID"
+
+
+def test_old_review_dataset_force_review_deletes_old_entries_and_sets_error_reason(
+    mock_dependencies: MagicMock,
+) -> None:
+    data_id = "abc"
+
+    mock_dependencies["dataset_provider"].get_dataste_by_id.return_value = MagicMock(data="dummy")
+
+    mock_dependencies["get_entity"].side_effect = [
+        SimpleNamespace(report_id="OLD_RID"),
+        SimpleNamespace(),
+    ]
+
+    mock_dependencies["NuclearAndGasDataCollection"].return_value = MagicMock()
+    mock_dependencies["pages_provider"].get_relevant_page_numbers.return_value = [1]
+    mock_dependencies["pages_provider"].get_relevant_pages_of_pdf.return_value = object()
+
+    mock_dependencies["text_to_doc_intelligence"].old_get_markdown_from_dataset.side_effect = Exception("boom")
+
+    with patch("dataland_qa_lab.review.dataset_reviewer.update_error_reason_in_database") as mock_update_err:
+        with pytest.raises(OCRProcessingError):
+            old_review_dataset(data_id, force_review=True, use_ocr=True, ai_model="gpt-4o")
+
+        mock_dependencies["delete_entity"].assert_any_call(data_id, database_tables.ReviewedDataset)
+        mock_dependencies["delete_entity"].assert_any_call(data_id, database_tables.ReviewedDatasetMarkdowns)
+
+        mock_update_err.assert_called_once()
