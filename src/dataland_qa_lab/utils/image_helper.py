@@ -47,14 +47,14 @@ def encode_image_to_base64(image: Image.Image, image_format: ImageFormat | None 
             image.save(buffer, **save_kwargs)
             byte_data = buffer.getvalue()
         base64_str = base64.b64encode(byte_data).decode("utf-8")
-        logger.info("Successfully encoded image to base64 with format %s.", format_upper)
+        logger.debug("Successfully encoded image to base64 with format %s.", format_upper)
         return base64_str  # noqa: TRY300
 
     except OSError as e:
-        logger.exception("Error encoding image to base64: %s")
+        logger.exception("Error encoding image to base64.")
         msg = f"Failed to encode image to base64: {e}"
         raise RuntimeError(msg) from e
     except Exception as e:
-        logger.exception("Unexpected error encoding image to base64: %s")
+        logger.exception("Unexpected error encoding image to base64.")
         msg = f"Unexpected error encoding image to base64: {e}"
         raise RuntimeError(msg) from e

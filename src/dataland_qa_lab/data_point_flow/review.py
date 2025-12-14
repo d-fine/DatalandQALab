@@ -14,6 +14,16 @@ logger = logging.getLogger(__name__)
 validation_prompts = prompts.get_prompts()
 
 
+def _raise_value_error(message: str) -> None:
+    """Helper function to raise ValueError with a given message."""
+    raise ValueError(message)
+
+
+def _raise_runtime_error(message: str) -> None:
+    """Helper function to raise RuntimeError with a given message."""
+    raise RuntimeError(message)
+
+
 async def validate_datapoint(
     data_point_id: str, use_ocr: bool, ai_model: str, override: bool
 ) -> models.ValidatedDatapoint | models.CannotValidateDatapoint:
@@ -62,7 +72,7 @@ async def validate_datapoint(
             else:
                 if not config.vision.enabled:
                     msg = "Image input requested but vision features are disabled in config."
-                    raise RuntimeError(msg)
+                    _raise_runtime_error(msg)
                 logger.info("Processing via Vision AI path.")
 
                 pil_images = await asyncio.to_thread(
@@ -71,7 +81,7 @@ async def validate_datapoint(
 
                 if not pil_images:
                     msg = "No images were rendered from the PDF document."
-                    raise ValueError(msg)
+                    _raise_value_error(msg)
 
                 encoded_images = [image_helper.encode_image_to_base64(img) for img in pil_images]
                 prompt_text = prompt.prompt.format(context="Please analyze the attached image of the report page.")
