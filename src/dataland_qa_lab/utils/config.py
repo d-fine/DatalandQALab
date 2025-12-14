@@ -2,11 +2,26 @@ import logging
 from functools import cache
 from pathlib import Path
 
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from dataland_qa_lab.dataland.dataland_client import DatalandClient
 
 logger = logging.getLogger(__name__)
+
+
+class VisionConfig(BaseModel):
+    """Configuration for Vision/Bypass OCR feature."""
+
+    enabled: bool = False
+    provider: str = "azure"
+    model_name: str = "gpt-5"
+    detail_level: str = "high"
+    max_images_per_request: int = 10
+    dpi: int = 300
+    timeout: int = 200
+    image_format: str = "JPEG"
+    jpeg_quality: int = 85
 
 
 class DatalandQaLabSettings(BaseSettings):
@@ -22,7 +37,10 @@ class DatalandQaLabSettings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).parent.parent.parent.parent / ".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=Path(__file__).parent.parent.parent.parent / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_nested_delimiter="__",
     )
 
     dataland_url: str
@@ -41,6 +59,7 @@ class DatalandQaLabSettings(BaseSettings):
     frameworks: str = "sfdr"
     ai_model: str = "gpt-5"
     use_ocr: bool = True
+    vision: VisionConfig = Field(default_factory=VisionConfig)
 
     @property
     def dataland_client(self) -> DatalandClient:
