@@ -175,7 +175,8 @@ def validate_datapoint(
     if dp_json.get("dataSource") is None:
         msg = f"Data point {data_point_id} is missing dataSource information."
         raise ValueError(msg)
-    page = int(dp_json["dataSource"].get("page", 0))
+    # page can be None in some data; ensure we convert safely to int
+    page = int(dp_json["dataSource"].get("page") or 0)
     file_reference = dp_json["dataSource"].get("fileReference", "")
     file_name = dp_json["dataSource"].get("fileName", "")
     previous_answer = dp_json.get("value", "")

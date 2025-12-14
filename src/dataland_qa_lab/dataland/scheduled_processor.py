@@ -52,8 +52,10 @@ def run_scheduled_processing() -> None:
         qa_status = Counter()
 
         for k, v in data_points.items():
+            # Skip validation if this specific data point was already validated
             if not database_engine.get_entity(
                 database_tables.ValidatedDataPoint,
+                data_point_id=v,
             ):
                 logger.info("Validating of type %s data point ID: %s", k, v)
                 try:
@@ -73,7 +75,19 @@ def run_scheduled_processing() -> None:
                             qa_status=validator_response.qa_status,
                         )
                     )
+                except ValueError as ve:
+                    # Expected validation errors (e.g. missing dataSource or missing prompt)
+                    # Log as warning (no stacktrace) and mark datapoint as PENDING to avoid log/Slack spam
+                    logger.warning("Skipping data point %s (type %s): %s", v, k, ve)
+                    qa_status[QaStatus.PENDING] += 1
+                    database_engine.add_entity(
+                        database_tables.ValidatedDataPoint(
+                            data_point_id=v,
+                            qa_status=QaStatus.PENDING,
+                        )
+                    )
                 except Exception:
+                    # Unexpected errors: preserve existing behavior and record as pending
                     slack_message.append(
                         f"🟡 Couldn't find a verdict for data point ID: {v} (of type {k}). Maybe it's not yet implemented?"  # noqa: E501
                     )

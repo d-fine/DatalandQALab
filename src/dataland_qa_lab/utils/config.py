@@ -40,6 +40,8 @@ class DatalandQaLabSettings(BaseSettings):
     environment: str | None = None
     frameworks: str = "sfdr"
     ai_model: str = "gpt-4o"
+    use_ocr: bool = True
+    force_review: bool = False
 
     @property
     def dataland_client(self) -> DatalandClient:

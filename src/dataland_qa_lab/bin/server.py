@@ -22,7 +22,7 @@ create_tables()
 
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-job = scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
+job = scheduler.add_job(scheduled_processor.run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
 scheduler.start()
 
 
