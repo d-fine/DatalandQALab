@@ -218,8 +218,9 @@ async def test_vision_flow_no_images_rendered(  # noqa: PLR0913, PLR0917
     mock_config.vision.dpi = 300
     mock_db.check_if_already_validated = AsyncMock(return_value=None)
     mock_db.store_data_point_in_db = AsyncMock()
-    mock_dataland.get_data_point = AsyncMock(return_value=MagicMock(
-        data_point_type="img", value="v", file_reference="ref", page=1))
+    mock_dataland.get_data_point = AsyncMock(
+        return_value=MagicMock(data_point_type="img", value="v", file_reference="ref", page=1)
+    )
     mock_prompts.get_prompt_config.return_value = MagicMock(prompt="What is shown? {context}")
     mock_dataland.get_document = AsyncMock(return_value=io.BytesIO(b"pdf content"))
 
