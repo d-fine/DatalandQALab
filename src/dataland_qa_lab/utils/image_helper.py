@@ -5,8 +5,6 @@ from typing import Literal
 
 from PIL import Image
 
-from dataland_qa_lab.utils import config
-
 logger = logging.getLogger(__name__)
 
 ImageFormat = Literal["JPEG", "PNG", "WEBP"]
@@ -18,9 +16,8 @@ def encode_image_to_base64(image: Image.Image, image_format: ImageFormat | None 
         msg = "Image cannot be None."
         raise ValueError(msg)
 
-    conf = config.get_config()
     if image_format is None:
-        image_format = conf.vision.image_format
+        image_format = "JPEG"
 
     format_upper = image_format.upper()
 
@@ -42,7 +39,7 @@ def encode_image_to_base64(image: Image.Image, image_format: ImageFormat | None 
         with io.BytesIO() as buffer:
             save_kwargs = {"format": format_upper}
             if format_upper == "JPEG":
-                save_kwargs["quality"] = conf.vision.jpeg_quality
+                save_kwargs["quality"] = 85
                 save_kwargs["optimize"] = True
             image.save(buffer, **save_kwargs)
             byte_data = buffer.getvalue()

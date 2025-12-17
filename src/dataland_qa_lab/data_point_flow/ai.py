@@ -53,14 +53,14 @@ Rules you must follow:
             {
                 "type": "image_url",
                 "image_url": {
-                    "url": f"data:image/{conf.vision.image_format.lower()};base64,{img_base64}",
-                    "detail": conf.vision.detail_level,
+                    "url": f"data:image/jpeg;base64,{img_base64}",
+                    "detail": "high",
                 },
             }
             for img_base64 in images
         )
         messages = [{"role": "user", "content": content}]
-        call_timeout = conf.vision.timeout
+        call_timeout = 200
     else:
         messages = [{"role": "user", "content": full_prompt}]
         call_timeout = None

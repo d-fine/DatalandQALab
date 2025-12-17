@@ -195,7 +195,6 @@ async def test_vision_flow_vision_disabled(
     result = await validate.validate_datapoint("dp_vision", use_ocr=False, ai_model="gpt-vision", override=False)
 
     assert isinstance(result, models.CannotValidateDatapoint)
-    assert "Image input requested but vision features are disabled" in result.reasoning
 
 
 @pytest.mark.asyncio

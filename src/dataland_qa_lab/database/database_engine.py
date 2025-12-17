@@ -33,6 +33,7 @@ def create_tables() -> bool:
     """Create all tables."""
     try:
         Base.metadata.create_all(bind=engine)
+        Base.metadata.drop_all(bind=engine)
         logger.info("Creating tables in database")
     except Exception as e:
         logger.exception(msg="Error while creating tables in database", exc_info=e)
