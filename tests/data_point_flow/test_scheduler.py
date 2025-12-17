@@ -3,100 +3,129 @@ from unittest.mock import MagicMock, patch
 import pytest
 from dataland_qa.models.qa_status import QaStatus
 
-from dataland_qa_lab.data_point_flow import review, scheduler
+from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
 
 
-@pytest.mark.parametrize(
-    ("validator_result", "expected_accepted", "expected_rejected", "expected_not_validated"),
-    [
-        (
-            review.models.ValidatedDatapoint(
-                data_point_id="dp1",
-                data_point_type="number",
-                previous_answer=None,
-                predicted_answer="42",
-                confidence=0.9,
-                reasoning="ok",
-                qa_status=QaStatus.ACCEPTED,
-                timestamp=1,
-                ai_model="gpt-4",
-                use_ocr=True,
-                file_name="file.pdf",
-                file_reference="ref1",
-                page=1,
-                override=False,
-            ),
-            1,
-            0,
-            0,
-        ),
-        (
-            review.models.ValidatedDatapoint(
-                data_point_id="dp2",
-                data_point_type="number",
-                previous_answer=None,
-                predicted_answer="wrong",
-                confidence=0.5,
-                reasoning="mismatch",
-                qa_status=QaStatus.REJECTED,
-                timestamp=1,
-                ai_model="gpt-4",
-                use_ocr=True,
-                file_name="file.pdf",
-                file_reference="ref2",
-                page=1,
-                override=False,
-            ),
-            0,
-            1,
-            0,
-        ),
-        (
-            review.models.CannotValidateDatapoint(
-                data_point_id="dp3",
-                data_point_type=None,
-                reasoning="error",
-                ai_model="gpt-4",
-                use_ocr=True,
-                override=False,
-                timestamp=1,
-            ),
-            0,
-            0,
-            1,
-        ),
-    ],
-)
-@patch("dataland_qa_lab.data_point_flow.scheduler.slack.send_slack_message")
-@patch("dataland_qa_lab.data_point_flow.scheduler.config")
-@patch("dataland_qa_lab.data_point_flow.scheduler.review.validate_datapoint")
-def test_run_scheduled_processing(  # noqa: PLR0913, PLR0917
-    mock_validate: MagicMock,
-    mock_config: MagicMock,
-    mock_slack: MagicMock,
-    validator_result: MagicMock,
-    expected_accepted: int,
-    expected_rejected: int,
-    expected_not_validated: int,
-) -> None:
-    """Test run_scheduled_processing with different validator responses."""
+@pytest.fixture
+def mocks():  # noqa: ANN201
+    """Prepare all common patches and mocks."""
+    with (
+        patch("dataland_qa_lab.data_point_flow.scheduler.logger") as logger,
+        patch("dataland_qa_lab.data_point_flow.scheduler.config") as config,
+        patch("dataland_qa_lab.data_point_flow.scheduler.database_engine") as db_engine,
+        patch("dataland_qa_lab.data_point_flow.scheduler.database_tables") as db_tables,
+        patch("dataland_qa_lab.data_point_flow.scheduler.review") as review,
+        patch("dataland_qa_lab.data_point_flow.scheduler.slack") as slack,
+        patch("asyncio.run") as asyncio_run,
+    ):
+        yield {
+            "logger": logger,
+            "config": config,
+            "db_engine": db_engine,
+            "db_tables": db_tables,
+            "review": review,
+            "slack": slack,
+            "asyncio_run": asyncio_run,
+        }
 
-    mock_config.dataland_client.qa_api.get_info_on_datasets.return_value = [MagicMock(data_id="dataset1")]
-    mock_config.dataland_client.meta_api.get_contained_data_points.return_value = {"number": "dp1"}
-    mock_config.ai_model = "gpt-4"
-    mock_config.use_ocr = True
-    mock_config.frameworks_list = ["number"]
 
-    mock_validate.return_value = validator_result
+def test_no_unreviewed_datasets(mocks: MagicMock) -> None:
+    """Should do nothing when QA API reports no datasets."""
+    config = mocks["config"]
+    db_engine = mocks["db_engine"]
 
-    scheduler.run_scheduled_processing()
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 0
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = []
 
-    assert mock_slack.called
-    sent_message = mock_slack.call_args[0][0]
-    assert f"Accepted {expected_accepted}" in sent_message
-    assert f"Rejected {expected_rejected}" in sent_message
-    assert f"Not validated {expected_not_validated}" in sent_message
+    run_scheduled_processing()
 
-    mock_config.dataland_client.qa_api.change_qa_status.assert_called_once_with(
-        data_id="dataset1", qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
-    )
+    db_engine.add_entity.assert_not_called()
+    mocks["slack"].send_slack_message.assert_not_called()
+
+
+def test_skip_already_processed_dataset(mocks: MagicMock) -> None:
+    """Should skip datasets already in the DB."""
+    config = mocks["config"]
+    db_engine = mocks["db_engine"]
+
+    dataset = MagicMock()
+    dataset.data_id = "D1"
+
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = True
+
+    run_scheduled_processing()
+
+    mocks["asyncio_run"].assert_not_called()
+    db_engine.add_entity.assert_not_called()
+
+
+def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
+    """Test processing a dataset and classifying results."""
+    config = mocks["config"]
+    review = mocks["review"]
+    slack = mocks["slack"]
+    db_engine = mocks["db_engine"]
+    db_tables = mocks["db_tables"]
+    asyncio_run = mocks["asyncio_run"]
+
+    class ValidatedDatapoint:
+        def __init__(self, data_point_id: str, qa_status: QaStatus) -> None:
+            """Initialize ValidatedDatapoint."""
+            self.data_point_id = data_point_id
+            self.qa_status = qa_status
+
+    class CannotValidateDatapoint:
+        def __init__(self, data_point_id: str) -> None:
+            """Initialize CannotValidateDatapoint."""
+            self.data_point_id = data_point_id
+
+    review.models.ValidatedDatapoint = ValidatedDatapoint
+    review.models.CannotValidateDatapoint = CannotValidateDatapoint
+
+    class ReviewedDataset:
+        def __init__(
+            self, data_id: str, review_start_time: int, review_end_time: int, review_completed: bool, report_id: str
+        ) -> None:
+            """Initialize ReviewedDataset."""
+            self.data_id = data_id
+            self.review_start_time = review_start_time
+            self.review_end_time = review_end_time
+            self.review_completed = review_completed
+            self.report_id = report_id
+
+    db_tables.ReviewedDataset = ReviewedDataset
+
+    dataset = MagicMock()
+    dataset.data_id = "D123"
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = False
+
+    config.dataland_client.meta_api.get_contained_data_points.return_value = {
+        "k1": "dp1",
+        "k2": "dp2",
+        "k3": "dp3",
+    }
+
+    accepted_dp = ValidatedDatapoint("dp1", QaStatus.ACCEPTED)
+    rejected_dp = ValidatedDatapoint("dp2", QaStatus.REJECTED)
+    cannot_dp = CannotValidateDatapoint("dp3")
+
+    asyncio_run.side_effect = [accepted_dp, rejected_dp, cannot_dp]
+
+    run_scheduled_processing()
+
+    db_engine.add_entity.assert_called_once()
+    inserted = db_engine.add_entity.call_args[0][0]
+
+    assert inserted.data_id == "D123"
+    assert inserted.review_completed is True
+
+    msg = slack.send_slack_message.call_args[0][0]
+    assert "Accepted: 1" in msg
+    assert "Rejected: 1" in msg
+    assert "Not validated: 1" in msg

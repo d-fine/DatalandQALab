@@ -1,9 +1,11 @@
 import asyncio
 import logging
+import time
 
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import review
+from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.utils import config, slack
 
 logger = logging.getLogger(__name__)
@@ -13,57 +15,58 @@ config = config.get_config()
 def run_scheduled_processing() -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     logger.info("Scheduled processing started.")
-    slack_message = []
+
+    number_of_pending_datasets = config.dataland_client.qa_api.get_number_of_pending_datasets()
+
     unreviewed_datasets = config.dataland_client.qa_api.get_info_on_datasets(
-        qa_status=QaStatus.PENDING, chunk_size=2, data_types=config.frameworks_list
+        qa_status=QaStatus.PENDING, chunk_size=number_of_pending_datasets, data_types=["sfdr"]
     )
 
-    logger.info("Found %d unreviewed datasets. Starting processing.", len(unreviewed_datasets))
-    for dataset in unreviewed_datasets:
-        slack_message.append(f"⏳ Starting validation for dataset ID: {dataset.data_id}")
-        logger.info("Processing dataset ID: %s", dataset.data_id)
-        data_points = config.dataland_client.meta_api.get_contained_data_points(dataset.data_id)
+    dataset_ids = [i.data_id for i in unreviewed_datasets]
+
+    if len(unreviewed_datasets) > 0:
+        logger.info("Found %d unreviewed datasets. Starting processing.", len(unreviewed_datasets))
+
+    for dataset_id in reversed(dataset_ids):
+        start_time = int(time.time())
+        if database_engine.get_entity(database_tables.ReviewedDataset, data_id=dataset_id):
+            logger.info("Dataset ID: %s has already been processed. Skipping.", dataset_id)
+            continue
+
+        logger.info("Processing dataset ID: %s", dataset_id)
+        data_points = config.dataland_client.meta_api.get_contained_data_points(dataset_id)
 
         accepted_ids = []
         rejected_ids = []
         not_validated_ids = []
 
-        for k, v in data_points.items():
-            logger.info("Validating of type %s data point ID: %s", k, v)
-            try:
-                validator_response = asyncio.run(
-                    review.validate_datapoint(
-                        data_point_id=v,
-                        ai_model=config.ai_model,
-                        use_ocr=config.use_ocr,
-                        override=False,
-                    )
+        for _k, v in data_points.items():  # noqa: PERF102
+            validator_result = asyncio.run(
+                review.validate_datapoint(
+                    data_point_id=v,
+                    ai_model=config.ai_model,
+                    use_ocr=config.use_ocr,
+                    override=False,
                 )
+            )
 
-                if isinstance(validator_response, review.models.ValidatedDatapoint):
-                    if validator_response.qa_status == "Accepted":
-                        logger.info("Data point ID: %s accepted.", v)
-                        accepted_ids.append(v)
-                    if validator_response.qa_status == "Rejected":
-                        logger.info("Data point ID: %s rejected.", v)
-                        rejected_ids.append(v)
-                else:
-                    not_validated_ids.append(v)
-
-            except Exception as e:  # noqa: BLE001
-                logger.warning("Error validating data point ID: %s. Error: %s", v, str(e))  # noqa: RUF065
-
-        logger.info("All data points accepted for dataset ID: %s", dataset.data_id)
-        config.dataland_client.qa_api.change_qa_status(
-            data_id=dataset.data_id, qa_status=QaStatus.PENDING, overwrite_data_point_qa_status=False
+            if isinstance(validator_result, review.models.ValidatedDatapoint):
+                if validator_result.qa_status == QaStatus.ACCEPTED:
+                    accepted_ids.append(validator_result.data_point_id)
+                elif validator_result.qa_status == QaStatus.REJECTED:
+                    rejected_ids.append(validator_result.data_point_id)
+            if isinstance(validator_result, review.models.CannotValidateDatapoint):
+                not_validated_ids.append(validator_result.data_point_id)
+        database_engine.add_entity(
+            database_tables.ReviewedDataset(
+                data_id=dataset_id,
+                review_start_time=str(start_time),
+                review_end_time=str(time.time()),
+                review_completed=True,
+                report_id=None,
+            )
         )
 
-        slack_message.append(  # noqa: FURB113
-            ":white_check_mark: Accepted " + str(len(accepted_ids)) + " ids:" + ", ".join(accepted_ids)
+        slack.send_slack_message(
+            f"Dataset ID: {dataset_id} processed. ✅ Accepted: {len(accepted_ids)}, ❌ Rejected: {len(rejected_ids)}, ⚠️ Not validated: {len(not_validated_ids)}"  # noqa: E501
         )
-        slack_message.append(":x: Rejected " + str(len(rejected_ids)) + " ids:" + ", ".join(rejected_ids))
-        slack_message.append(
-            ":warning: Not validated " + str(len(not_validated_ids)) + " ids:" + ", ".join(not_validated_ids)
-        )
-
-        slack.send_slack_message("\n".join(slack_message))
