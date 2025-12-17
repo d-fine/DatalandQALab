@@ -28,9 +28,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def validate_list(
-    data_point_ids: list[str], ai_model: str | None = None, use_ocr: bool = True
-) -> list[dict]:
+def validate_list(data_point_ids: list[str], ai_model: str | None = None, use_ocr: bool = True) -> list[dict]:
     """Validate datapoint IDs and return result dictionaries."""
     cfg = config.get_config()
     results: list[dict] = []
