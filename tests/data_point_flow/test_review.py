@@ -222,9 +222,10 @@ async def test_vision_flow_no_images_rendered(  # noqa: PLR0913, PLR0917
     )
     mock_prompts.get_prompt_config.return_value = MagicMock(prompt="What is shown? {context}")
     mock_dataland.get_document = AsyncMock(return_value=io.BytesIO(b"pdf content"))
+    mock_dataland.override_dataland_qa = AsyncMock()
 
     mock_pdf_handler.render_pdf_to_image.return_value = []
-    mock_ai.execute_prompt = AsyncMock()
+    mock_ai.execute_prompt.side_effect = Exception("No images were rendered from the PDF document.")
     result = await validate.validate_datapoint("dp_no_images", use_ocr=False, ai_model="gpt-vision", override=False)
     assert isinstance(result, models.CannotValidateDatapoint)
     assert "No images were rendered from the PDF document." in result.reasoning
