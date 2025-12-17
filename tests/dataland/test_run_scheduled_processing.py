@@ -202,8 +202,8 @@ def test_run_scheduled_processing_exception(
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
 def test_run_scheduled_processing_skips_already_validated(
-    mock_slack: MagicMock,
-    mock_add: MagicMock,  # noqa: ARG001
+    mock_slack: MagicMock,  # noqa: ARG001
+    mock_add: MagicMock,
     mock_get: MagicMock,
     mock_validate: MagicMock,
     mock_config: MagicMock,
@@ -275,7 +275,7 @@ def test_run_scheduled_processing_value_error_marks_pending(
     )
 
     # add_entity called with PENDING status
-    args, kwargs = mock_add.call_args
+    args, _kwargs = mock_add.call_args
     pending_row = args[0]
     assert pending_row.data_point_id == "dpX"
     assert pending_row.qa_status is QaStatus.PENDING
