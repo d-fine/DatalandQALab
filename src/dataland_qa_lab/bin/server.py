@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -34,7 +34,7 @@ trigger = CronTrigger(minute="*/10")
 scheduler.add_job(
     data_point_scheduler.run_scheduled_processing,
     trigger,
-    next_run_time=datetime.now(tz=timezone.utc),
+    next_run_time=datetime.now(tz=UTC),
 )
 # Start the scheduler unless in dev environment -> delet if you want to test scheduled processing in dev
 if not config.is_dev_environment:

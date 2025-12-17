@@ -18,7 +18,7 @@ from pathlib import Path
 
 try:
     import pandas as pd  # optional, required for Excel support
-except Exception:
+except ImportError:
     pd = None
 
 from dataland_qa_lab.review import dataset_reviewer
@@ -28,17 +28,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def validate_list(data_point_ids: list[str], ai_model: str | None = None, use_ocr: bool = True):
+def validate_list(
+    data_point_ids: list[str], ai_model: str | None = None, use_ocr: bool = True
+) -> list[dict]:
+    """Validate datapoint IDs and return result dictionaries."""
     cfg = config.get_config()
-    results = []
+    results: list[dict] = []
     for dp in data_point_ids:
         logger.info("Validating data point %s", dp)
         # Pre-check: fetch datapoint and ensure it has a dataSource and a prompt
         try:
             data_point = cfg.dataland_client.data_points_api.get_data_point(dp)
             dp_json = json.loads(data_point.data_point)
-        except Exception as exc:
-            logger.exception("Failed to fetch data point %s: %s", dp, exc)
+        except Exception as exc:  # pragma: no cover - passthrough of client errors
+            logger.exception("Failed to fetch data point %s", dp)
             results.append({"data_point_id": dp, "error": f"Failed to fetch datapoint: {exc}"})
             time.sleep(1)
             continue
@@ -76,8 +79,8 @@ def validate_list(data_point_ids: list[str], ai_model: str | None = None, use_oc
                     "timestamp": res.timestamp,
                 }
             )
-        except Exception as exc:
-            logger.exception("Validation failed for %s: %s", dp, exc)
+        except Exception as exc:  # pragma: no cover - passthrough of client errors
+            logger.exception("Validation failed for %s", dp)
             results.append({"data_point_id": dp, "error": str(exc)})
         # small delay to avoid overloading services
         time.sleep(1)
@@ -85,27 +88,26 @@ def validate_list(data_point_ids: list[str], ai_model: str | None = None, use_oc
 
 
 def read_csv(input_path: str) -> list[str]:
-    ids = []
+    """Read data_point_id values from a CSV file."""
     with Path(input_path).open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            if "data_point_id" in row and row["data_point_id"].strip():
-                ids.append(row["data_point_id"].strip())
-    return ids
+        return [row["data_point_id"].strip() for row in reader if row.get("data_point_id", "").strip()]
 
 
 def read_excel(input_path: str) -> list[str]:
+    """Read data_point_id values from an Excel file."""
     if pd is None:
-        raise RuntimeError(
-            "pandas is required to read Excel files. Install it with 'pdm add pandas openpyxl' or run the script with a CSV input."
+        message = (
+            "pandas is required to read Excel files. Install it with 'pdm add pandas openpyxl' "
+            "or run the script with a CSV input."
         )
+        raise RuntimeError(message)
     df = pd.read_excel(input_path, engine="openpyxl")
-    ids = []
     if "data_point_id" in df.columns:
-        for val in df["data_point_id"].dropna():
-            ids.append(str(val).strip())
+        ids = [str(val).strip() for val in df["data_point_id"].dropna()]
     else:
-        raise RuntimeError("Excel file must contain a 'data_point_id' column")
+        message = "Excel file must contain a 'data_point_id' column"
+        raise RuntimeError(message)
     return ids
 
 
@@ -120,14 +122,11 @@ if __name__ == "__main__":
     parser.add_argument("--use_ocr", required=False, default="true", help="use OCR: true|false")
     args = parser.parse_args()
 
-    use_ocr_flag = str(args.use_ocr).lower() in ("1", "true", "yes", "y")
+    use_ocr_flag = str(args.use_ocr).lower() in {"1", "true", "yes", "y"}
 
     input_path = args.input
     p = Path(input_path)
-    if p.suffix.lower() in (".xlsx", ".xls"):
-        dps = read_excel(input_path)
-    else:
-        dps = read_csv(input_path)
+    dps = read_excel(input_path) if p.suffix.lower() in {".xlsx", ".xls"} else read_csv(input_path)
 
     if args.limit and args.limit > 0:
         dps = dps[: args.limit]
