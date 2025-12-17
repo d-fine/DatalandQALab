@@ -156,7 +156,7 @@ def test_get_file_using_ocr_generates_new_ocr(
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.get_entity")
 def test_update_error_reason_sets_reason(
     mock_get_entity: MagicMock,
-    mock_upate_entity: MagicMock,
+    mock_update_entity: MagicMock,
 ) -> None:
     review_row = SimpleNamespace(error_reason=None)
     mock_get_entity.return_value = review_row
@@ -168,7 +168,7 @@ def test_update_error_reason_sets_reason(
 
     assert review_row.error_reason == error_msg
 
-    mock_upate_entity.assert_called_once_with(review_row)
+    mock_update_entity.assert_called_once_with(review_row)
 
 
 @patch("dataland_qa_lab.review.dataset_reviewer.database_engine.update_entity")
@@ -211,7 +211,7 @@ def test_old_review_dataset_force_review_deletes_old_entries_and_sets_error_reas
 ) -> None:
     data_id = "abc"
 
-    mock_dependencies["dataset_provider"].get_dataste_by_id.return_value = MagicMock(data="dummy")
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = MagicMock(data="dummy")
 
     mock_dependencies["get_entity"].side_effect = [
         SimpleNamespace(report_id="OLD_RID"),

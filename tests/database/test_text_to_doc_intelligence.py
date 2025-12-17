@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import ANY, MagicMock, patch
 
 import pypdf
@@ -126,6 +127,51 @@ def test_get_markdown_from_dataset_saves_llm_version(
     assert saved_row.page_numbers == pages
     assert saved_row.last_saved == "2025-12-12 12:34:56"
     assert saved_row.last_updated == "2025-12-12 12:34:56"
+
+
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.get_german_time_as_string")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.add_entity")
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.old_extract_text_of_pdf")
+def test_get_markdown_from_dataset_updates_existing_llm_version(
+    mock_extract_text: MagicMock,
+    mock_add_entity: MagicMock,
+    mock_get_time: MagicMock,
+    mock_get_entity: MagicMock,
+) -> None:
+    """Test that existing markdown entries get updated with new pages, timestamps and llm_version."""
+    mock_get_time.return_value = "2025-12-12 12:34:56"
+
+    existing = SimpleNamespace(
+        data_id="test_id",
+        markdown_text="cached_text",
+        page_numbers=[1, 2],
+        last_saved="old",
+        last_updated="old",
+        llm_version="old-model",
+    )
+    mock_get_entity.return_value = existing
+
+    data_id = "test_id"
+    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pages = [3, 4]
+    llm_version = "gpt-4o"
+
+    result = old_get_markdown_from_dataset(
+        data_id=data_id,
+        relevant_pages_pdf_reader=pdf_reader,
+        page_numbers=pages,
+        llm_version=llm_version,
+    )
+
+    assert result == "cached_text"
+    mock_extract_text.assert_not_called()
+    mock_add_entity.assert_not_called()
+
+    assert existing.page_numbers == pages
+    assert existing.last_saved == "old"
+    assert existing.last_updated == "2025-12-12 12:34:56"
+    assert existing.llm_version == "gpt-4o"
 
 
 # for the new method
