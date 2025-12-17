@@ -1,6 +1,7 @@
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.dataland import scheduled_processor
@@ -58,7 +59,7 @@ def test_old_run_scheduled_processing_no_datasets(mock_unreviewed: MagicMock) ->
 
 
 @patch("dataland_qa_lab.dataland.scheduled_processor.config")
-def test_run_scheduled_processing_no_datasets(mock_config: MagicMock) -> None:
+async def test_run_scheduled_processing_no_datasets(mock_config: MagicMock) -> None:
     """Test run_scheduled_processing when there are no unreviewed datasets."""
     mock_client = MagicMock()
     mock_client.qa_api.get_info_on_datasets.return_value = []
@@ -70,22 +71,23 @@ def test_run_scheduled_processing_no_datasets(mock_config: MagicMock) -> None:
     mock_config.frameworks_list = []
 
     with patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message") as slack_mock:
-        scheduled_processor.run_scheduled_processing()
+        await scheduled_processor.run_scheduled_processing()
 
         slack_mock.assert_not_called()
         mock_client.qa_api.change_qa_status.assert_not_called()
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.dataland.scheduled_processor.config")
-@patch("dataland_qa_lab.dataland.scheduled_processor.dataset_reviewer.validate_datapoint")
+@patch("dataland_qa_lab.dataland.scheduled_processor.datapoint_review.validate_datapoint", new_callable=AsyncMock)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity", return_value=None)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
-def test_run_scheduled_processing_all_accepted(
+async def test_run_scheduled_processing_all_accepted(
     mock_slack: MagicMock,
     mock_add: MagicMock,  # noqa: ARG001
     mock_get: MagicMock,  # noqa: ARG001
-    mock_validate: MagicMock,
+    mock_validate: AsyncMock,
     mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where all datapoints are accepted."""
@@ -101,7 +103,7 @@ def test_run_scheduled_processing_all_accepted(
     mock_config.use_ocr = True
     mock_config.frameworks_list = []
 
-    scheduled_processor.run_scheduled_processing()
+    await scheduled_processor.run_scheduled_processing()
 
     mock_client.qa_api.change_qa_status.assert_called_once_with(
         data_id="ds1",
@@ -109,29 +111,31 @@ def test_run_scheduled_processing_all_accepted(
         overwrite_data_point_qa_status=False,
     )
 
+    assert mock_slack.call_count == 1
     slack_text = mock_slack.call_args[0][0]
     assert "🎉 Dataset ID: ds1 accepted" in slack_text
     assert "dp1" in slack_text
     assert "dp2" in slack_text
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.dataland.scheduled_processor.config")
-@patch("dataland_qa_lab.dataland.scheduled_processor.dataset_reviewer.validate_datapoint")
+@patch("dataland_qa_lab.dataland.scheduled_processor.datapoint_review.validate_datapoint", new_callable=AsyncMock)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity", return_value=None)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
-def test_run_scheduled_processing_mixed(
+async def test_run_scheduled_processing_mixed(
     mock_slack: MagicMock,
     mock_add: MagicMock,  # noqa: ARG001
     mock_get: MagicMock,  # noqa: ARG001
-    mock_validate: MagicMock,
+    mock_validate: AsyncMock,
     mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where some datapoints are rejected."""
     dataset, datapoints = create_mock_dataset("ds2", {"type1": "dp1", "type2": "dp2"})
 
-    def validate_side_effect(dp: str, **_) -> SimpleNamespace:  # noqa: ANN003
-        if dp == "dp1":
+    def validate_side_effect(data_point_id: str, **_) -> SimpleNamespace:  # noqa: ANN003
+        if data_point_id == "dp1":
             return SimpleNamespace(qa_status=QaStatus.ACCEPTED)
         return SimpleNamespace(qa_status=QaStatus.REJECTED)
 
@@ -146,7 +150,7 @@ def test_run_scheduled_processing_mixed(
     mock_config.use_ocr = True
     mock_config.frameworks_list = []
 
-    scheduled_processor.run_scheduled_processing()
+    await scheduled_processor.run_scheduled_processing()
 
     mock_client.qa_api.change_qa_status.assert_called_once_with(
         data_id="ds2",
@@ -159,16 +163,17 @@ def test_run_scheduled_processing_mixed(
     assert "⚠️ Dataset ID: ds2 rejected" in slack_text or "rejected with" in slack_text
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.dataland.scheduled_processor.config")
-@patch("dataland_qa_lab.dataland.scheduled_processor.dataset_reviewer.validate_datapoint")
+@patch("dataland_qa_lab.dataland.scheduled_processor.datapoint_review.validate_datapoint", new_callable=AsyncMock)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity", return_value=None)
 @patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
 @patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
-def test_run_scheduled_processing_exception(
+async def test_run_scheduled_processing_exception(
     mock_slack: MagicMock,
     mock_add: MagicMock,  # noqa: ARG001
     mock_get: MagicMock,  # noqa: ARG001
-    mock_validate: MagicMock,
+    mock_validate: AsyncMock,
     mock_config: MagicMock,
 ) -> None:
     """Test run_scheduled_processing where validation raises an exception."""
@@ -184,7 +189,7 @@ def test_run_scheduled_processing_exception(
     mock_config.use_ocr = True
     mock_config.frameworks_list = []
 
-    scheduled_processor.run_scheduled_processing()
+    await scheduled_processor.run_scheduled_processing()
 
     mock_client.qa_api.change_qa_status.assert_called_once_with(
         data_id="ds3",
@@ -194,3 +199,38 @@ def test_run_scheduled_processing_exception(
 
     slack_text = mock_slack.call_args[0][0]
     assert "🟡 Couldn't find a verdict" in slack_text
+
+
+@pytest.mark.asyncio
+@patch("dataland_qa_lab.dataland.scheduled_processor.config")
+@patch("dataland_qa_lab.dataland.scheduled_processor.datapoint_review.validate_datapoint", new_callable=AsyncMock)
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity")
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
+@patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
+async def test_run_scheduled_processing_skipped(
+    mock_slack: MagicMock,
+    mock_add: MagicMock,
+    mock_get: MagicMock,
+    mock_validate: AsyncMock,
+    mock_config: MagicMock,
+) -> None:
+    """Test that data points already in the database are skipped."""
+    dataset, datapoints = create_mock_dataset("ds_skip", {"typeA": "db_exists"})
+
+    mock_get.return_value = SimpleNamespace(data_point_id="db_exists", qa_status=QaStatus.ACCEPTED)
+    mock_client = MagicMock()
+    mock_client.qa_api.get_info_on_datasets.return_value = [dataset]
+    mock_client.meta_api.get_contained_data_points.return_value = datapoints
+    mock_config.dataland_client = mock_client
+    mock_config.ai_model = "gpt"
+    mock_config.use_ocr = True
+    mock_config.frameworks_list = []
+    await scheduled_processor.run_scheduled_processing()
+    mock_validate.assert_not_called()
+    mock_add.assert_not_called()
+    mock_client.qa_api.change_qa_status.assert_called_once_with(
+        data_id="ds_skip",
+        qa_status=QaStatus.REJECTED,
+        overwrite_data_point_qa_status=False,
+    )
+    mock_slack.assert_called_once()

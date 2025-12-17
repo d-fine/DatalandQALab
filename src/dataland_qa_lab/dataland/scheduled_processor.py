@@ -3,6 +3,7 @@ from collections import Counter
 
 from dataland_qa.models.qa_status import QaStatus
 
+from dataland_qa_lab.data_point_flow import review as datapoint_review
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.dataland.unreviewed_datasets import UnreviewedDatasets
 from dataland_qa_lab.review import dataset_reviewer
@@ -35,7 +36,7 @@ def old_run_scheduled_processing() -> None:
         raise
 
 
-def run_scheduled_processing() -> None:
+async def run_scheduled_processing() -> None:
     """Continuously processes unreviewed datasets at scheduled intervals."""
     logger.info("Scheduled processing started.")
     slack_message = []
@@ -52,13 +53,11 @@ def run_scheduled_processing() -> None:
         qa_status = Counter()
 
         for k, v in data_points.items():
-            if not database_engine.get_entity(
-                database_tables.ValidatedDataPoint,
-            ):
+            if not database_engine.get_entity(database_tables.ValidatedDataPoint, data_point_id=v):
                 logger.info("Validating of type %s data point ID: %s", k, v)
                 try:
-                    validator_response = dataset_reviewer.validate_datapoint(
-                        v, ai_model=config.ai_model, use_ocr=config.use_ocr, override=True
+                    validator_response = await datapoint_review.validate_datapoint(
+                        data_point_id=v, ai_model=config.ai_model, use_ocr=config.use_ocr, override=True
                     )
                     if validator_response.qa_status is QaStatus.ACCEPTED:
                         slack_message.append(f"✅ Data point ID: {v} (of type {k}) accepted.")
@@ -73,6 +72,17 @@ def run_scheduled_processing() -> None:
                             qa_status=validator_response.qa_status,
                         )
                     )
+
+                except ValueError as ve:
+                    logger.warning("Validation skipped for data point ID %s: %s", v, ve)
+                    qa_status[QaStatus.PENDING] += 1
+                    database_engine.add_entity(
+                        database_tables.ValidatedDataPoint(
+                            data_point_id=v,
+                            qa_status=QaStatus.PENDING,
+                        )
+                    )
+
                 except Exception:
                     slack_message.append(
                         f"🟡 Couldn't find a verdict for data point ID: {v} (of type {k}). Maybe it's not yet implemented?"  # noqa: E501
