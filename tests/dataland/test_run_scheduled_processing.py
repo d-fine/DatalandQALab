@@ -194,3 +194,94 @@ def test_run_scheduled_processing_exception(
 
     slack_text = mock_slack.call_args[0][0]
     assert "🟡 Couldn't find a verdict" in slack_text
+
+
+@patch("dataland_qa_lab.dataland.scheduled_processor.config")
+@patch("dataland_qa_lab.dataland.scheduled_processor.dataset_reviewer.validate_datapoint")
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity")
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
+@patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
+def test_run_scheduled_processing_skips_already_validated(
+    mock_slack: MagicMock,
+    mock_add: MagicMock,  # noqa: ARG001
+    mock_get: MagicMock,
+    mock_validate: MagicMock,
+    mock_config: MagicMock,
+) -> None:
+    """It should skip datapoints already present in ValidatedDataPoint."""
+    dataset, datapoints = create_mock_dataset("ds_skip", {"only": "dp1"})
+
+    # Simulate existing validation -> get_entity returns a non-None object
+    mock_get.return_value = object()
+
+    mock_client = MagicMock()
+    mock_client.qa_api.get_info_on_datasets.return_value = [dataset]
+    mock_client.meta_api.get_contained_data_points.return_value = datapoints
+
+    mock_config.dataland_client = mock_client
+    mock_config.ai_model = "gpt"
+    mock_config.use_ocr = True
+    mock_config.frameworks_list = []
+
+    scheduled_processor.run_scheduled_processing()
+
+    # validate_datapoint must NOT be called because entry exists
+    mock_validate.assert_not_called()
+
+    # Dataset should be marked rejected (0 accepted out of 1, since skipped)
+    mock_client.qa_api.change_qa_status.assert_called_once_with(
+        data_id="ds_skip",
+        qa_status=QaStatus.REJECTED,
+        overwrite_data_point_qa_status=False,
+    )
+
+    # No pending/accepted additions should be recorded when skipped
+    mock_add.assert_not_called()
+
+
+@patch("dataland_qa_lab.dataland.scheduled_processor.config")
+@patch("dataland_qa_lab.dataland.scheduled_processor.dataset_reviewer.validate_datapoint")
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.get_entity", return_value=None)
+@patch("dataland_qa_lab.dataland.scheduled_processor.database_engine.add_entity")
+@patch("dataland_qa_lab.dataland.scheduled_processor.slack.send_slack_message")
+def test_run_scheduled_processing_value_error_marks_pending(
+    mock_slack: MagicMock,
+    mock_add: MagicMock,
+    mock_get: MagicMock,  # noqa: ARG001
+    mock_validate: MagicMock,
+    mock_config: MagicMock,
+) -> None:
+    """ValueError (e.g., missing dataSource/prompt) should be logged and marked PENDING."""
+    dataset, datapoints = create_mock_dataset("ds_valerr", {"typeX": "dpX"})
+
+    mock_validate.side_effect = ValueError("missing dataSource")
+
+    mock_client = MagicMock()
+    mock_client.qa_api.get_info_on_datasets.return_value = [dataset]
+    mock_client.meta_api.get_contained_data_points.return_value = datapoints
+
+    mock_config.dataland_client = mock_client
+    mock_config.ai_model = "gpt"
+    mock_config.use_ocr = True
+    mock_config.frameworks_list = []
+
+    scheduled_processor.run_scheduled_processing()
+
+    # Expect dataset rejected because accepted < total
+    mock_client.qa_api.change_qa_status.assert_called_once_with(
+        data_id="ds_valerr",
+        qa_status=QaStatus.REJECTED,
+        overwrite_data_point_qa_status=False,
+    )
+
+    # add_entity called with PENDING status
+    args, kwargs = mock_add.call_args
+    pending_row = args[0]
+    assert pending_row.data_point_id == "dpX"
+    assert pending_row.qa_status is QaStatus.PENDING
+
+    # Slack is called once with the standard start/reject summary (no extra spam)
+    mock_slack.assert_called_once()
+    slack_text = mock_slack.call_args[0][0]
+    assert "Starting validation" in slack_text
+    assert "ds_valerr" in slack_text
