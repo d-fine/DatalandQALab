@@ -53,3 +53,20 @@ def test_render_pdf_to_image_corrupt_pdf() -> None:
     with pytest.raises(RuntimeError) as excinfo:
         pdf_handler.render_pdf_to_image(pdf_stream, dpi=72)
     assert "Failed to render PDF to images" in str(excinfo.value)
+
+
+def test_extract_single_page_zero_or_negative(sample_pdf_bytes: bytes) -> None:
+    """Test extracting an invalid lower bound page number (0 or negative)."""
+
+    with pytest.raises(ValueError):  # noqa: PT011
+        pdf_handler.extract_single_page(sample_pdf_bytes, page_number=0)
+
+    with pytest.raises(ValueError):  # noqa: PT011
+        pdf_handler.extract_single_page(sample_pdf_bytes, page_number=-1)
+
+
+def test_extract_single_page_none_input() -> None:
+    """Test behavior when input is None."""
+
+    with pytest.raises((ValueError, AttributeError, TypeError)):
+        pdf_handler.extract_single_page(None, page_number=1)
