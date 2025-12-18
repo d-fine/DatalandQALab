@@ -1,7 +1,7 @@
 import json
 from collections.abc import Generator
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from dataland_qa.models.qa_status import QaStatus
@@ -137,7 +137,14 @@ def test_review_dataset_force_review_deletes_old(mock_dependencies: MagicMock) -
 
     result = old_review_dataset("id123", force_review=True)
 
-    mock_dependencies["delete_entity"].assert_called_once()
+    mock_dependencies["delete_entity"].assert_has_calls(
+        [
+            call("id123", database_tables.ReviewedDataset),
+            call("id123", database_tables.ReviewedDatasetMarkdowns),
+        ],
+        any_order=True,
+    )
+    assert mock_dependencies["delete_entity"].call_count == 2
     assert result == "NEW"
 
 
@@ -303,8 +310,8 @@ def test_get_file_using_ocr_uses_cache(
 @patch("dataland_qa_lab.review.dataset_reviewer.text_to_doc_intelligence.extract_pdf", return_value="NEW")
 @patch("dataland_qa_lab.review.dataset_reviewer._get_document", return_value=b"PDF")
 def test_get_file_using_ocr_generates_new_ocr(
-    mock_get_document: MagicMock,  # noqa: ARG001
-    mock_extract_pdf: MagicMock,  # noqa: ARG001
+    mock_get_document: MagicMock,
+    mock_extract_pdf: MagicMock,
     mock_add: MagicMock,
     mock_get: MagicMock,  # noqa: ARG001
 ) -> None:
