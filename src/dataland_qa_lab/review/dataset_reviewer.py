@@ -4,7 +4,7 @@ import logging
 import time
 from dataclasses import dataclass
 
-import pypdf
+import fitz
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import ai, prompts
@@ -275,17 +275,15 @@ def _get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
 def _get_document(reference_id: str, page_numbers: list[int]) -> io.BytesIO:
     """Return a PDF document stream for specific pages."""
     full_pdf = config.dataland_client.documents_api.get_document(reference_id)
-    full_pdf_stream = io.BytesIO(full_pdf)
-
-    original_pdf = pypdf.PdfReader(full_pdf_stream)
-    output_pdf = pypdf.PdfWriter()
-
-    for page_num in page_numbers:
-        if 0 <= page_num - 1 < len(original_pdf.pages):
-            output_pdf.add_page(original_pdf.pages[page_num - 1])
+    with fitz.open(streaqm=full_pdf, filetype="pdf") as src_doc:
+        output_doc = fitz.open()
+        for page_num in page_numbers:
+            page_index = page_num - 1
+            if 0 <= page_index < len(src_doc):
+                output_doc.insert_pdf(src_doc, from_page=page_index, to_page=page_index)
 
     extracted_pdf_stream = io.BytesIO()
-    output_pdf.write(extracted_pdf_stream)
+    output_doc.save(extracted_pdf_stream)
     extracted_pdf_stream.seek(0)
 
     return extracted_pdf_stream
