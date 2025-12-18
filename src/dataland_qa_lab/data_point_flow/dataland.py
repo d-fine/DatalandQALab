@@ -4,11 +4,11 @@ import json
 import logging
 
 import async_lru
-import pypdf
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import models, prompts
 from dataland_qa_lab.utils import config
+from dataland_qa_lab.utils.pdf_handler import extract_single_page
 
 config = config.get_config()
 
@@ -50,19 +50,13 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
 async def get_document(reference_id: str, page_num: int) -> io.BytesIO:
     """Return a PDF document stream for specific pages."""
     logger.info("Downloading document with reference ID: %s", reference_id)
-    full_pdf = await asyncio.to_thread(config.dataland_client.documents_api.get_document, document_id=reference_id)
-    full_pdf_stream = io.BytesIO(full_pdf)
+    full_pdf_bytes = await asyncio.to_thread(
+        config.dataland_client.documents_api.get_document, document_id=reference_id
+    )
 
-    original_pdf = pypdf.PdfReader(full_pdf_stream)
-    output_pdf = pypdf.PdfWriter()
-
-    if 0 <= page_num - 1 < len(original_pdf.pages):
-        output_pdf.add_page(original_pdf.pages[page_num - 1])
-
-    extracted_pdf_stream = io.BytesIO()
-    output_pdf.write(extracted_pdf_stream)
-    extracted_pdf_stream.seek(0)
-
+    extracted_pdf_stream = await asyncio.to_thread(
+        extract_single_page, full_pdf_bytes=full_pdf_bytes, page_number=page_num
+    )
     return extracted_pdf_stream
 
 
