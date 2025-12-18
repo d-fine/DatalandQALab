@@ -17,11 +17,14 @@ client = AzureOpenAI(
 )
 
 
-async def execute_prompt(prompt: str, ai_model: str | None = None, retries: int = 3) -> models.AIResponse:  # noqa: PLR0911
+async def execute_prompt(  # noqa: PLR0911
+    prompt: str, ai_model: str | None = None, retries: int = 3, images: list[str] | None = None
+) -> models.AIResponse:
     """Executes a prompt using the specified AI model and returns the AIResponse."""
     logger.info("Executing prompt with AI model: %s", ai_model)
-    """Sends a prompt to the AI model and returns the response."""
-    prompt += """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
+    full_prompt = (
+        prompt
+        + """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
 
 {
     "predicted_answer": <your answer using only the data type specified in the user's prompt>,
@@ -40,33 +43,51 @@ Rules you must follow:
 6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"predicted_answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
 
 """  # noqa: E501
+    )
     if not ai_model:
         ai_model = conf.ai_model
+
+    if images:
+        content = [{"type": "text", "text": full_prompt}]
+        content.extend(
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/jpeg;base64,{img_base64}",
+                    "detail": "high",
+                },
+            }
+            for img_base64 in images
+        )
+        messages = [{"role": "user", "content": content}]
+        call_timeout = 200
+    else:
+        messages = [{"role": "user", "content": full_prompt}]
+        call_timeout = None
 
     try:
         response = await asyncio.to_thread(
             client.chat.completions.create,
             model=ai_model,
             temperature=1 if "gpt-5" in ai_model else 0,
-            messages=[
-                {"role": "user", "content": prompt},
-            ],
+            messages=messages,
+            timeout=call_timeout,
         )
     except Exception as e:
         logger.exception("Error while calling AI model: %s. Retries left: %d", str(e), retries)  # noqa: RUF065, TRY401
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1)
+            return await execute_prompt(prompt, ai_model, retries - 1, images)
         return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e))
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1)
+            return await execute_prompt(prompt, ai_model, retries - 1, images)
         return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model.")
     try:
         return models.AIResponse(**json.loads(response.choices[0].message.content))
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
-            return await execute_prompt(prompt, ai_model, retries - 1)
+            return await execute_prompt(prompt, ai_model, retries - 1, images)
         return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")
