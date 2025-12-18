@@ -12,20 +12,16 @@ def test_encode_image_none_error() -> None:
         _ = image_helper.encode_image_to_base64(None)
 
 
-@patch("dataland_qa_lab.utils.image_helper.config")
-def test_encode_image_default_format(mock_config: MagicMock) -> None:
+def test_encode_image_default_format() -> None:
     """Test encoding using the format from config."""
-    mock_config.get_config.return_value.vision.image_format = "PNG"
     image = Image.new("RGB", (10, 10), color="red")
     result = image_helper.encode_image_to_base64(image)
     assert isinstance(result, str)
     assert len(result) > 0
 
 
-@patch("dataland_qa_lab.utils.image_helper.config")
-def test_encode_image_jpeg_transparency_handling(mock_config: MagicMock) -> None:
+def test_encode_image_jpeg_transparency_handling() -> None:
     """Test that RGBA images are converted correctly for JPEG encoding."""
-    mock_config.get_config.return_value.vision.jpeg_quality = 80
     image = MagicMock(spec=Image.Image)
     image.mode = "RGBA"
     image.size = (100, 100)
