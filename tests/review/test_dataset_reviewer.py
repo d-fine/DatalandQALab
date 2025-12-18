@@ -10,6 +10,7 @@ from dataland_qa_lab.review.dataset_reviewer import (
     old_review_dataset,
     validate_datapoint,
 )
+from dataland_qa_lab.review.exceptions import DatasetNotFoundError
 
 
 def fake_dp(
@@ -147,3 +148,39 @@ def test_get_file_using_ocr_generates_new_ocr(
     mock_add.assert_called_once()
     mock_extract_pdf.assert_called_once()
     mock_get_document.assert_called_once()
+
+
+def test_review_dataset_dataset_not_found(mock_dependencies: MagicMock) -> None:
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = None
+
+    with pytest.raises(DatasetNotFoundError):
+        old_review_dataset("missing_id")
+
+
+def test_review_dataset_returns_existing_report(mock_dependencies: MagicMock) -> None:
+    """Test that existing report ID is returned if report already exists."""
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = MagicMock()
+    mock_dependencies["get_entity"].return_value = SimpleNamespace(report_id="EXISTING")
+
+    result = old_review_dataset("id123")
+
+    assert result == "EXISTING"
+
+
+def test_review_dataset_force_review_deletes_old(mock_dependencies: MagicMock) -> None:
+    """Test that force_review deletes old report and creates a new one."""
+    mock_dependencies["dataset_provider"].get_dataset_by_id.return_value = MagicMock()
+    mock_dependencies["get_entity"].return_value = SimpleNamespace(report_id="OLD")
+
+    mock_dependencies["NuclearAndGasDataCollection"].return_value = MagicMock()
+
+    mock_report = MagicMock()
+    mock_report.qa_report_id = "NEW"
+    mock_dependencies[
+        "config"
+    ].dataland_client.eu_taxonomy_nuclear_gas_qa_api.post_nuclear_and_gas_data_qa_report.return_value = mock_report
+
+    result = old_review_dataset("id123", force_review=True)
+
+    mock_dependencies["delete_entity"].assert_called_once()
+    assert result == "NEW"
