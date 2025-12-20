@@ -4,8 +4,8 @@ import sys
 import time
 from collections import Counter
 
-from monitor.qalab_api import check_qalab_api_health, run_report_on_qalab
-from monitor.utils import load_config, match_sot_and_qareport, store_output
+from monitor.utils.qalab_api import check_qalab_api_health, run_report_on_qalab
+from monitor.utils.utils import load_config, match_sot_and_qareport, store_output
 from src.dataland_qa_lab.dataland.dataset_provider import get_dataset_by_id
 
 logging.basicConfig(level=logging.INFO)

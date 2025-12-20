@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from monitor.main import main, monitor_documents
+from monitor.utils.main import main, monitor_documents
 
 
 def test_monitor_documents_success() -> None:

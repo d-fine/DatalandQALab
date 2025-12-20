@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from monitor.utils import load_config
+from monitor.utils.utils import load_config
 
 config = load_config()
 
