@@ -44,18 +44,32 @@ def check() -> None:
                 new_ids.remove(data_id)
                 db.update_experiment(id, ids=json.dumps(new_ids))
                 json_ids = new_ids
-
-                db.create_result(
-                    id,
-                    data_id,
-                    json.dumps(
-                        {
-                            "qa_status": "MonitorError",
-                            "message": "Error Monitor could not process the request.",
-                            "error": str(e),
-                        }
-                    ),
-                )
+                if experiment_type == "dataset":
+                    db.create_result(
+                        id,
+                        data_id,
+                        json.dumps(
+                            {
+                                "error": {
+                                    "qa_status": "MonitorError",
+                                    "message": "Error Monitor could not process the request.",
+                                    "error": str(e),
+                                }
+                            }
+                        ),
+                    )
+                else:
+                    db.create_result(
+                        id,
+                        data_id,
+                        json.dumps(
+                            {
+                                "qa_status": "MonitorError",
+                                "message": "Error Monitor could not process the request.",
+                                "error": str(e),
+                            }
+                        ),
+                    )
 
 
 while True:
