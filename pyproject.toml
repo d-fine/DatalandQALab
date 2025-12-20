@@ -48,7 +48,7 @@ combine-coverage = "coverage combine .coverage.pytest .coverage.doctest"
 export-coverage = "coverage xml"
 start = "fastapi run src/dataland_qa_lab/bin/server.py"
 dev = "fastapi dev src/dataland_qa_lab/bin/server.py"
-monitor = "streamlit run monitor/app.py"
+monitor = "python -m monitor.monitor"
 
 
 
