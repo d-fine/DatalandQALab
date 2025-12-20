@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from monitor.utils import load_config, match_sot_and_qareport, snake_case_to_camel_case, store_output
+from monitor.utils.utils import load_config, match_sot_and_qareport, snake_case_to_camel_case, store_output
 
 
 @pytest.fixture
