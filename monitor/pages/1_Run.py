@@ -20,11 +20,9 @@ else:
         use_ocr = st.toggle("Use OCR", value=True)
 
         if st.button("Start Monitoring Dataset", type="primary"):
-            # make it a nice alert box
             st.success(
                 f"Started monitoring with model {ai_model} and use_ocr={use_ocr}. This might take some time. You can check the process in the Analytics tab..."  # noqa: E501
             )
-            print(type, ids, ai_model, use_ocr)
             db.create_experiment(type, ids, ai_model, use_ocr)
     with datapoint_tab:
         st.header("Monitor a Single Datapoint")
@@ -37,5 +35,5 @@ else:
             st.success(
                 f"Started monitoring with model {ai_model} and use_ocr={use_ocr}. This might take some time. You can check the process in the Analytics tab..."  # noqa: E501
             )
-            print(type, ids, ai_model, use_ocr)
+
             db.create_experiment(type, ids, ai_model, use_ocr)
