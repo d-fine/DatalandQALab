@@ -8,22 +8,54 @@ def check() -> None:
     """Run experiments if any are pending."""
     experiment = db.get_latest_experiment()
     if experiment:
-        id, type, ids, model, use_ocr, timestamp = experiment
+        id, experiment_type, ids, model, use_ocr, override, qalab_base_url, timestamp = experiment
         json_ids = json.loads(ids)
         for data_id in json_ids:
-            print(f"Processing {type} ID: {data_id} with model {model} and use_ocr={use_ocr}")
+            print(
+                f"Processing {experiment_type} ID: {data_id} with model {model}, override={override} and use_ocr={use_ocr}"
+            )
 
-            if type == "dataset":
-                result = qalab.review_dataset(data_id, model, bool(use_ocr))
-            else:
-                result = qalab.review_data_point(data_id, model, bool(use_ocr))
+            try:
+                if experiment_type == "dataset":
+                    result = qalab.review_dataset(
+                        qalab_base_url=qalab_base_url,
+                        dataset_id=data_id,
+                        ai_model=model,
+                        use_ocr=bool(use_ocr),
+                        override=override,
+                    )
+                else:
+                    result = qalab.review_data_point(
+                        qalab_base_url=qalab_base_url,
+                        data_point_id=data_id,
+                        ai_model=model,
+                        use_ocr=bool(use_ocr),
+                        override=override,
+                    )
+                new_ids = json_ids.copy()
+                new_ids.remove(data_id)
+                db.update_experiment(id, ids=json.dumps(new_ids))
+                json_ids = new_ids
 
-            new_ids = json_ids.copy()
-            new_ids.remove(data_id)
-            db.update_experiment(id, ids=json.dumps(new_ids))
-            json_ids = new_ids
+                db.create_result(id, data_id, json.dumps(result))
 
-            db.create_result(id, data_id, json.dumps(result))
+            except Exception as e:
+                new_ids = json_ids.copy()
+                new_ids.remove(data_id)
+                db.update_experiment(id, ids=json.dumps(new_ids))
+                json_ids = new_ids
+
+                db.create_result(
+                    id,
+                    data_id,
+                    json.dumps(
+                        {
+                            "qa_status": "MonitorError",
+                            "message": "Error Monitor could not process the request.",
+                            "error": str(e),
+                        }
+                    ),
+                )
 
 
 while True:

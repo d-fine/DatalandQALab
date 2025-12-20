@@ -1,23 +1,35 @@
 import requests
 
 
-def review_data_point(data_point_id: str, ai_model: str, use_ocr: bool) -> dict:
+def is_healthy(qalab_base_url: str) -> bool:
+    """Check the health of the QaLab service."""
+    api_url = f"{qalab_base_url}/health"
+    try:
+        response = requests.request("GET", api_url)
+        return response.status_code == requests.codes.ok
+    except requests.RequestException:
+        return False
+
+
+def review_data_point(qalab_base_url: str, data_point_id: str, ai_model: str, use_ocr: bool, override: bool) -> dict:
     """Trigger monitoring for a specific data point via an API call."""
-    api_url = f"http://127.0.0.1:8000/data-point-flow/review-data-point/{data_point_id}"
+    api_url = f"{qalab_base_url}/data-point-flow/review-data-point/{data_point_id}"
     payload = {
         "ai_model": ai_model,
         "use_ocr": use_ocr,
+        "override": override,
     }
     response = requests.post(api_url, json=payload)
     return response.json()
 
 
-def review_dataset(dataset_id: str, ai_model: str, use_ocr: bool) -> dict:
+def review_dataset(qalab_base_url: str, dataset_id: str, ai_model: str, use_ocr: bool, override: bool) -> dict:
     """Trigger monitoring for a specific dataset via an API call."""
-    api_url = f"http://127.0.0.1:8000/data-point-flow/review-dataset/{dataset_id}"
+    api_url = f"{qalab_base_url}/data-point-flow/review-dataset/{dataset_id}"
     payload = {
         "ai_model": ai_model,
         "use_ocr": use_ocr,
+        "override": override,
     }
     response = requests.post(api_url, json=payload)
     return response.json()
