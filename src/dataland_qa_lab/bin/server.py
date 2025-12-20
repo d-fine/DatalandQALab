@@ -101,9 +101,17 @@ async def review_data_point_id(
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint]:
+) -> (
+    dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint] | HTTPException
+):
     """Review a single dataset via API call (configurable)."""
-    data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+    try:
+        data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+    except Exception as e:  # noqa: BLE001
+        return HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Error fetching data points from Dataland: " + str(e),
+        )
 
     tasks = {
         k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
