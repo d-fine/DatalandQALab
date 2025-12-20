@@ -65,6 +65,7 @@ def test_load_config(test_env: Iterator[None]) -> None:  # noqa: ARG001
     assert values.ai_model == "ai-model"
     assert values.use_ocr is False
     assert values.force_review is False
+    assert values.use_datapoint_endpoint is False
 
 
 def test_load_config_with_no_env_vars(
@@ -82,6 +83,7 @@ def test_load_config_with_no_env_vars(
     assert values.ai_model == "config-model"
     assert values.use_ocr is True
     assert values.force_review is False
+    assert values.use_datapoint_endpoint is False
 
 
 def test_store_output(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
