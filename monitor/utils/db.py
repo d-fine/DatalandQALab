@@ -12,7 +12,7 @@ def _get_connection() -> sqlite3.Connection:
 def _setup_db(db) -> None:
     """Set up the database with required tables."""
     db.execute(
-        "CREATE TABLE IF NOT EXISTS experiments (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, ids TEXT, ai_model TEXT, use_ocr BOOLEAN, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)"  # noqa: E501
+        "CREATE TABLE IF NOT EXISTS experiments (id INTEGER PRIMARY KEY AUTOINCREMENT, experiment_type TEXT, ids TEXT, ai_model TEXT, use_ocr BOOLEAN, override BOOLEAN, qalab_base_url TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)"  # noqa: E501
     )
     db.commit()
 
@@ -22,13 +22,15 @@ def _setup_db(db) -> None:
     db.commit()
 
 
-def create_experiment(type: str, ids: list, ai_model: str, use_ocr: bool) -> None:
+def create_experiment(
+    experiment_type: str, ids: list, ai_model: str, use_ocr: bool, override: bool, qalab_base_url: str
+) -> None:
     """Create a new experiment entry in the database."""
     db = _get_connection()
 
     db.execute(
-        "INSERT INTO experiments (type, ids, ai_model, use_ocr) VALUES (?, ?, ?, ?)",
-        (type, json.dumps(ids), ai_model, int(use_ocr)),
+        "INSERT INTO experiments (experiment_type, ids, ai_model, use_ocr, override, qalab_base_url) VALUES (?, ?, ?, ?, ?, ?)",
+        (experiment_type, json.dumps(ids), ai_model, int(use_ocr), int(override), qalab_base_url),
     )
     db.commit()
     db.close()
