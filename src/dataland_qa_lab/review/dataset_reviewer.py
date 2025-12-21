@@ -57,6 +57,7 @@ def old_review_dataset(  # noqa: PLR0915
     if dataset is None:
         msg = f"Dataset with data_id '{data_id}' was not found."
         logger.warning(msg)
+        update_error_reason_in_database(data_id=data_id, error_reason=msg)
         raise DatasetNotFoundError(msg)
 
     existing_report = database_engine.get_entity(database_tables.ReviewedDataset, data_id=data_id)
@@ -65,6 +66,11 @@ def old_review_dataset(  # noqa: PLR0915
         logger.info("Deleting old review from the database")
         database_engine.delete_entity(data_id, database_tables.ReviewedDataset)
         existing_report = None
+
+        existing_markdown = database_engine.get_entity(database_tables.ReviewedDatasetMarkdowns, data_id=data_id)
+        if existing_markdown is not None:
+            logger.info("Deleting old markdown for data_id %s", data_id)
+            database_engine.delete_entity(data_id, database_tables.ReviewedDatasetMarkdowns)
 
     if existing_report is None:
         logger.info("Dataset with the Data-ID does not exist in the database. Starting review.")
@@ -83,6 +89,7 @@ def old_review_dataset(  # noqa: PLR0915
         except Exception as exc:
             msg = f"Could not build NuclearAndGasDataCollection for data_id '{data_id}': {exc}"
             logger.exception(msg)
+            update_error_reason_in_database(data_id=data_id, error_reason=msg)
             raise DataCollectionError(msg) from exc
 
         logger.info("Data collection created.")
@@ -99,10 +106,12 @@ def old_review_dataset(  # noqa: PLR0915
                     data_id=data_id,
                     page_numbers=page_numbers,
                     relevant_pages_pdf_reader=relevant_pages_pdf_reader,
+                    llm_version=ai_model,
                 )
             except Exception as exc:
                 msg = f"OCR/Text extraction failed for data_id '{data_id}': {exc}"
                 logger.exception(msg)
+                update_error_reason_in_database(data_id=data_id, error_reason=msg)
                 raise OCRProcessingError(msg) from exc
 
             report = generator.generate_report(
@@ -117,9 +126,13 @@ def old_review_dataset(  # noqa: PLR0915
         except Exception as exc:
             msg = f"Failed to post QA report for data_id '{data_id}': {exc}"
             logger.exception(msg)
+            update_error_reason_in_database(data_id=data_id, error_reason=msg)
             raise ReportSubmissionError(msg) from exc
 
-        old_update_reviewed_dataset_in_database(data_id=data_id, report_id=data.qa_report_id)
+        old_update_reviewed_dataset_in_database(
+            data_id=data_id,
+            report_id=data.qa_report_id,
+        )
 
         message = f"✅ Review is successful for the dataset with the Data-ID: {data_id}. Report ID: {data.qa_report_id}"
         slack.send_slack_message(message=message)
@@ -132,14 +145,33 @@ def old_review_dataset(  # noqa: PLR0915
     return existing_report.report_id
 
 
-def old_update_reviewed_dataset_in_database(data_id: str, report_id: str) -> None:
+def old_update_reviewed_dataset_in_database(
+    data_id: str,
+    report_id: str,
+) -> None:
     """After review set the database entry to finished and add review end time."""
-    datetime_now = get_german_time_as_string()
+    review_end_time_str = get_german_time_as_string()
 
     review_dataset = database_tables.ReviewedDataset(
-        data_id=data_id, review_end_time=datetime_now, report_id=report_id, review_completed=True
+        data_id=data_id,
+        review_end_time=review_end_time_str,
+        report_id=report_id,
+        review_completed=True,
     )
 
+    database_engine.update_entity(review_dataset)
+
+
+def update_error_reason_in_database(data_id: str, error_reason: str) -> None:
+    """Store the reason why a review failed in the database."""
+    review_dataset = database_engine.get_entity(database_tables.ReviewedDataset, data_id=data_id)
+
+    if review_dataset is None:
+        msg = f"Tried to store error_reason for data_id '{data_id}', but no reviewed_dataset row exists yet"
+        logger.warning(msg)
+        return
+
+    review_dataset.error_reason = error_reason
     database_engine.update_entity(review_dataset)
 
 

@@ -16,6 +16,7 @@ class ReviewedDataset(Base):
     review_end_time = Column("review_end_time", String, nullable=True)
     review_completed = Column("review_completed", Boolean, nullable=True, default=False)
     report_id = Column("report_id", String, nullable=True)
+    error_reason = Column("error_reason", String, nullable=True)
 
 
 class ReviewedDatasetMarkdowns(Base):
@@ -27,6 +28,7 @@ class ReviewedDatasetMarkdowns(Base):
     last_saved = Column("last_saved", DateTime, default=datetime.utcnow)
     last_updated = Column("last_updated", DateTime, default=datetime.utcnow)
     markdown_text = Column("markdown_text", String, nullable=False)
+    llm_version = Column("llm_version", String, nullable=True)
 
 
 class CachedDocument(Base):
