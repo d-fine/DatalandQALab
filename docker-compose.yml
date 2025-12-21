@@ -3,7 +3,9 @@ services:
   qa-lab-server-dev:
     profiles:
       - dev
-    build: .
+    build: 
+      context: .
+      dockerfile: ./src/dataland_qa_lab/Dockerfile
     ports:
       - "127.0.0.1:5051:81"
     environment:
@@ -20,6 +22,14 @@ services:
       DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
       ENVIRONMENT: ${ENVIRONMENT}
+  qa-lab-monitor:
+    profiles:
+      - dev
+    build:
+      context: .
+      dockerfile: ./monitor/Dockerfile
+    ports:
+      - "127.0.0.1:8501:8501"
   qa-lab-server-prod:
     profiles:
       - prod
