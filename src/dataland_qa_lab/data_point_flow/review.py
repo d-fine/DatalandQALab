@@ -1,3 +1,4 @@
+import json
 import asyncio
 import logging
 import time
@@ -57,7 +58,20 @@ async def validate_datapoint(
                     page=data_point.page,
                     document=downloaded_document,
                 )
-                prompt_text = prompt.prompt.format(context=ocr_text)
+                prompt_text = prompt.prompt.format(
+                    context=ocr_text,
+                    # please pass all values from the data_point as additional context
+                    # this allows for more complex prompts that reference other fields
+                    # in the data point
+                    # e.g., "The data point has the following metadata: {data_point}"
+                    data_point_id=data_point.data_point_id,
+                    data_point_type=data_point.data_point_type, 
+                    data_source=json.dumps(data_point.data_source),
+                    page=data_point.page,
+                    file_reference=data_point.file_reference,
+                    file_name=data_point.file_name,
+                    value=data_point.value
+                    )
                 ai_response = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
             else:
                 logger.info("Processing via Vision AI path.")
@@ -69,7 +83,13 @@ async def validate_datapoint(
                     logger.error(msg)
 
                 encoded_images = [image_helper.encode_image_to_base64(img) for img in pil_images]
-                prompt_text = prompt.prompt.format(context="Please analyze the attached image of the report page.")
+                prompt_text = prompt.prompt.format(context="{Please analyze the attached image of the report page}.",                data_point_id=data_point.data_point_id,
+                    data_point_type=data_point.data_point_type, 
+                    data_source=json.dumps(data_point.data_source),
+                    page=data_point.page,
+                    file_reference=data_point.file_reference,
+                    file_name=data_point.file_name,
+                    value=data_point.value)
                 ai_response = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model, images=encoded_images)
 
         except Exception as e:
