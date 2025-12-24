@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
-
 from monitor.utils.qalab_api import check_qalab_api_health, run_report_on_qalab
 
 
