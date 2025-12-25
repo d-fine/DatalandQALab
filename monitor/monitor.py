@@ -2,9 +2,7 @@ import subprocess
 import sys
 
 # Run Streamlit in the background
-streamlit_process = subprocess.Popen([
-    sys.executable,
-    "-m", "streamlit", "run", "monitor/Home.py"])
+streamlit_process = subprocess.Popen([sys.executable, "-m", "streamlit", "run", "monitor/Home.py"])
 
 # Run another script concurrently
 other_process = subprocess.Popen([sys.executable, "monitor/scheduled_monitoring.py"])
