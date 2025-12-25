@@ -6,9 +6,10 @@ def is_healthy(qalab_base_url: str) -> bool:
     api_url = f"{qalab_base_url}/health"
     try:
         response = requests.request("GET", api_url)
-        return response.status_code == requests.codes.ok
     except requests.RequestException:
         return False
+    else:
+        return response.status_code == requests.codes.ok
 
 
 def review_data_point(qalab_base_url: str, data_point_id: str, ai_model: str, use_ocr: bool, override: bool) -> dict:

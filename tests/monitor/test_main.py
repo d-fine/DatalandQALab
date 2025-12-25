@@ -2,7 +2,6 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from monitor.utils.main import main, monitor_documents
 
 
