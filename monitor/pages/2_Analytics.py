@@ -1,4 +1,4 @@
-import json
+import json  # noqa: N999
 
 import pandas as pd
 import streamlit as st
