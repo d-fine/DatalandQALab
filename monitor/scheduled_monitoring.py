@@ -1,18 +1,26 @@
 import json
+import logging
 import time
 
 from utils import db, qalab
+
+logger = logging.getLogger()
 
 
 def check() -> None:
     """Run experiments if any are pending."""
     experiment = db.get_latest_experiment()
     if experiment:
-        id, experiment_type, ids, model, use_ocr, override, qalab_base_url, timestamp = experiment
+        experiment_id, experiment_type, ids, model, use_ocr, override, qalab_base_url, _timestamp = experiment
         json_ids = json.loads(ids)
         for data_id in json_ids:
-            print(
-                f"Processing {experiment_type} ID: {data_id} with model {model}, override={override} and use_ocr={use_ocr}"
+            logger.info(
+                "Processing %s ID: %s with model %s, override=%s and use_ocr=%s",
+                experiment_type,
+                data_id,
+                model,
+                override,
+                use_ocr,
             )
 
             try:
@@ -34,19 +42,19 @@ def check() -> None:
                     )
                 new_ids = json_ids.copy()
                 new_ids.remove(data_id)
-                db.update_experiment(id, ids=json.dumps(new_ids))
+                db.update_experiment(experiment_id, ids=json.dumps(new_ids))
                 json_ids = new_ids
 
-                db.create_result(id, data_id, json.dumps(result))
+                db.create_result(experiment_id, data_id, json.dumps(result))
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 new_ids = json_ids.copy()
                 new_ids.remove(data_id)
-                db.update_experiment(id, ids=json.dumps(new_ids))
+                db.update_experiment(experiment_id, ids=json.dumps(new_ids))
                 json_ids = new_ids
                 if experiment_type == "dataset":
                     db.create_result(
-                        id,
+                        experiment_id,
                         data_id,
                         json.dumps(
                             {
@@ -60,7 +68,7 @@ def check() -> None:
                     )
                 else:
                     db.create_result(
-                        id,
+                        experiment_id,
                         data_id,
                         json.dumps(
                             {

@@ -1,7 +1,5 @@
 import streamlit as st
-
 from utils import db, qalab
-
 
 st.title("Run experiment")
 

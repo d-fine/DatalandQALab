@@ -1,12 +1,11 @@
 import json
-from io import BytesIO
 
 import pandas as pd
 import streamlit as st
 from utils import db
 
 
-def _calculate_metrics(data) -> dict:
+def _calculate_metrics(data: dict) -> dict:
     """Calculate metrics from the results data."""
     total = len(data)
 
@@ -44,19 +43,22 @@ def _format_db_response(db_response: tuple, experiment_type: str) -> list:
 
 st.title("Experiment Analytics")
 
-id, experiment_type, ids, model, use_ocr, override, qalab_base_url, timestamp = db.get_latest_experiment() or (
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+experiment_id, experiment_type, ids, model, use_ocr, override, qalab_base_url, timestamp = (
+    db.get_latest_experiment()
+    or (
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    )
 )
 
 
-if id:
+if experiment_id:
     st.markdown(f"""
 Currently running an experiment with the following attributes:
 
@@ -70,14 +72,14 @@ Currently running an experiment with the following attributes:
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    data = db.get_results_by_experiment(id)
+    data = db.get_results_by_experiment(experiment_id)
     qalab_results = _format_db_response(data, experiment_type=experiment_type)
 
     df = pd.DataFrame(qalab_results)
 
     col1, col2 = st.columns([1, 1])
     if col1.button("Refresh Results", type="primary", width="stretch"):
-        data = db.get_results_by_experiment(id)
+        data = db.get_results_by_experiment(experiment_id)
     col2.download_button(
         "📥 Download CSV", df.to_csv(index=False), "experiment_results.csv", "text/csv", width="stretch"
     )
