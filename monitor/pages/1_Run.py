@@ -1,5 +1,6 @@
 import streamlit as st  # noqa: N999
-from utils import db, qalab
+
+from .utils import db, qalab
 
 st.title("Run experiment")
 

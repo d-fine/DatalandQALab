@@ -2,7 +2,8 @@ import json  # noqa: N999
 
 import pandas as pd
 import streamlit as st
-from utils import db
+
+from .utils import db
 
 
 def _calculate_metrics(data: dict) -> dict:

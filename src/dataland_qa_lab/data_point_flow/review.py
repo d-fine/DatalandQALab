@@ -66,7 +66,7 @@ async def validate_datapoint(
                     # e.g., "The data point has the following metadata: {data_point}"
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
-                    data_source=json.dumps(data_point.data_source),
+                    data_source=json.dumps(data_point.data_source) if isinstance(data_point.data_source, dict) else {},
                     page=data_point.page,
                     file_reference=data_point.file_reference,
                     file_name=data_point.file_name,
@@ -87,7 +87,7 @@ async def validate_datapoint(
                     context="{Please analyze the attached image of the report page}.",
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
-                    data_source=json.dumps(data_point.data_source),
+                    data_source=json.dumps(data_point.data_source) if isinstance(data_point.data_source, dict) else {},
                     page=data_point.page,
                     file_reference=data_point.file_reference,
                     file_name=data_point.file_name,
