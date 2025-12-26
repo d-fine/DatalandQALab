@@ -34,14 +34,16 @@ jobs:
       - name: Build and push qalab image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/dataland_qa_lab
+          context: .
+          file: ./src/dataland_qa_lab/Dockerfile  
           push: true
           tags: ghcr.io/d-fine/datalandqalab/qalab-server:${{ github.sha }}
 
       - name: Build and push monitor image
         uses: docker/build-push-action@v6
         with:
-          context: ./monitor
+          context: .
+          file: ./monitor/Dockerfile  
           push: true
           tags: ghcr.io/d-fine/datalandqalab/qalab-monitor:${{ github.sha }}
 
