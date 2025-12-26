@@ -2,7 +2,7 @@ import json
 import logging
 import time
 
-from utils import db, qalab
+from .utils import db, qalab
 
 logger = logging.getLogger()
 
@@ -80,6 +80,7 @@ def check() -> None:
                     )
 
 
-while True:
-    check()
-    time.sleep(5)  # Check every 5 seconds
+if __name__ == "__main__":
+    while True:
+        check()
+        time.sleep(5)  # Check every 5 seconds
