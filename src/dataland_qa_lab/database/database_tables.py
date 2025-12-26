@@ -58,6 +58,7 @@ class ValidatedDataPoint(Base):
     timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=True)
     ai_model = Column("ai_model", String, nullable=True)
     use_ocr = Column("use_ocr", Boolean, nullable=True)
+    override = Column("override", Boolean, nullable=True)
     file_name = Column("file_name", String, nullable=True)
     file_reference = Column("file_reference", String, nullable=True)
     page = Column("page", Integer, nullable=True)
