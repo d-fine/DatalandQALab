@@ -4,7 +4,7 @@ FROM python:$PYTHON_BASE AS builder
 RUN pip install -U pdm
 ENV PDM_CHECK_UPDATE=false
 
-RUN apt-get update && apt-get install -y default-jre
+RUN apt-get update && apt-get install -y --no-install-recommends default-jre
 
 WORKDIR /project
 COPY pyproject.toml pdm.lock README.md /project/
