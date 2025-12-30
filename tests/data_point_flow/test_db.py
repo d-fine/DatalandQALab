@@ -61,7 +61,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
     assert added_entity.data_point_id == "dp456"
     assert added_entity.predicted_answer is None
     assert added_entity.confidence == 0.0
-    assert added_entity.qa_status == QaStatus.PENDING
+    assert added_entity.qa_status == "NotAttempted"
 
 
 @pytest.mark.asyncio
