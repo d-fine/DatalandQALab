@@ -168,3 +168,6 @@ clients/
 # Custom excluded files
 monitor/config.json
 monitor/output/
+
+# Local notebooks for data exploration
+notebooks/data_exploration.ipynb
