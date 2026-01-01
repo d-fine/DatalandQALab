@@ -2,7 +2,7 @@ import json
 import logging
 import time
 
-from .utils import db, qalab
+from utils import db, qalab
 
 logger = logging.getLogger()
 

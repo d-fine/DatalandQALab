@@ -1,6 +1,6 @@
 import streamlit as st  # noqa: N999
 
-from .utils import db, qalab
+from utils import db, qalab
 
 st.title("Run experiment")
 
@@ -18,7 +18,7 @@ else:
     ids = st.text_area("Enter IDs (Comma separated)", "").replace(" ", "").split(",")
     ai_model = st.selectbox("Select AI Model", ["gpt-5", "gpt-4", "gpt-3.5-turbo"], key="dp_model")
     use_ocr = st.toggle("Use OCR", value=True, key="dp_ocr")
-    override = st.toggle("Override Existing Experiment", value=False, key="dp_override")
+    override = st.toggle("Override", value=False, key="dp_override")
 
     if st.button("Start Monitoring Datapoint", type="primary", key="dp_button"):
         if qalab.is_healthy(qalab_base_url):
