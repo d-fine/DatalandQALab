@@ -29,7 +29,8 @@ async def execute_prompt(  # noqa: PLR0911
 {
     "predicted_answer": <your answer using only the data type specified in the user's prompt>,
     "confidence": <a float between 0 and 1>,
-    "reasoning": <your reasoning as a string>
+    "reasoning": <your reasoning as a string>,
+    "qa_status": <one of "Accepted" - if both values match, "Rejected" - if there's a mismatch and you're sure of it, "Inconclusive" - if both other cases don't apply>
 }
 
 Rules you must follow:
@@ -77,17 +78,29 @@ Rules you must follow:
         logger.exception("Error while calling AI model: %s. Retries left: %d", str(e), retries)  # noqa: RUF065, TRY401
         if retries > 0:
             return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e))
+        return models.AIResponse(
+            predicted_answer=None,
+            confidence=0.0,
+            reasoning="Error calling AI model: " + str(e),
+            qa_status="Inconclusive",
+        )
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
             return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model.")
+        return models.AIResponse(
+            predicted_answer=None,
+            confidence=0.0,
+            reasoning="No content returned from AI model.",
+            qa_status="Inconclusive",
+        )
     try:
         return models.AIResponse(**json.loads(response.choices[0].message.content))
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
             return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")
+        return models.AIResponse(
+            predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.", qa_status="Inconclusive"
+        )

@@ -49,11 +49,12 @@ async def validate_datapoint(
 
     if prompt:
         # check for dependencies
+        depends_on = "Dependencies could not be resolved."
+
         if len(prompt.depends_on) and dataset_id:
-            dependencies_context = await fetch_dependency_datapoints(
+            depends_on = await fetch_dependency_datapoints(
                 dataset_id=dataset_id or "", depends_on=prompt.depends_on, use_ocr=use_ocr, ai_model=ai_model
             )
-            prompt.prompt = prompt.prompt.replace("{depends_on}", dependencies_context)
 
         # run validation
         downloaded_document = await dataland.get_document(
@@ -70,6 +71,7 @@ async def validate_datapoint(
                 )
                 prompt.prompt = prompt.prompt.format(
                     context=ocr_text,
+                    depends_on=depends_on,
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
                     data_source=json.dumps(data_point.data_source) if isinstance(data_point.data_source, dict) else {},
@@ -91,6 +93,7 @@ async def validate_datapoint(
                 encoded_images = [image_helper.encode_image_to_base64(img) for img in pil_images]
                 prompt.prompt = prompt.prompt.format(
                     context="{Please analyze the attached image of the report page}.",
+                    depends_on=depends_on,
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
                     data_source=json.dumps(data_point.data_source) if isinstance(data_point.data_source, dict) else {},
@@ -116,10 +119,10 @@ async def validate_datapoint(
             await db.store_data_point_in_db(res)
             return res
 
-        qa_status = QaStatus.ACCEPTED if ai_response.predicted_answer == data_point.value else QaStatus.REJECTED
-
         await dataland.override_dataland_qa(
-            data_point_id=data_point.data_point_id, reasoning=ai_response.reasoning, qa_status=qa_status
+            data_point_id=data_point.data_point_id,
+            reasoning=ai_response.reasoning,
+            qa_status=QaStatus.ACCEPTED if ai_response.qa_status == "ACCEPTED" else QaStatus.REJECTED,
         )
 
         res = models.ValidatedDatapoint(
@@ -129,7 +132,7 @@ async def validate_datapoint(
             predicted_answer=ai_response.predicted_answer,
             confidence=ai_response.confidence,
             reasoning=ai_response.reasoning,
-            qa_status=qa_status,
+            qa_status=ai_response.qa_status,
             ai_model=ai_model,
             use_ocr=use_ocr,
             file_name=data_point.file_name,

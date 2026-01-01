@@ -65,3 +65,4 @@ class AIResponse:
     predicted_answer: str | None
     confidence: float
     reasoning: str
+    qa_status: str
