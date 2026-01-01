@@ -3,6 +3,7 @@ import json
 import logging
 import time
 
+from dataclasses import asdict
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, prompts
@@ -16,7 +17,7 @@ validation_prompts = prompts.get_prompts()
 
 
 async def validate_datapoint(
-    data_point_id: str, use_ocr: bool, ai_model: str, override: bool
+    data_point_id: str, use_ocr: bool, ai_model: str, override: bool, dataset_id: str | None = None
 ) -> models.ValidatedDatapoint | models.CannotValidateDatapoint:
     """Validates a datapoint given a data_point_id."""
     logger.info("Validating datapoint with ID: %s", data_point_id)
@@ -39,6 +40,7 @@ async def validate_datapoint(
             use_ocr=use_ocr,
             override=override,
             timestamp=int(time.time()),
+            _prompt=None,
         )
         await db.store_data_point_in_db(res)
         return res
@@ -46,6 +48,18 @@ async def validate_datapoint(
     prompt = prompts.get_prompt_config(data_point.data_point_type)
 
     if prompt:
+        # check for dependencies
+        if len(prompt.depends_on):
+            dependencies_context = await fetch_dependency_datapoints(
+                dataset_id=dataset_id or "",
+                depends_on=prompt.depends_on,
+                use_ocr=use_ocr,
+                ai_model=ai_model,
+                override=override,
+            )
+            prompt.prompt = prompt.prompt.replace("{depends_on}", dependencies_context)
+
+        # run validation
         downloaded_document = await dataland.get_document(
             reference_id=data_point.file_reference, page_num=data_point.page
         )
@@ -60,10 +74,6 @@ async def validate_datapoint(
                 )
                 prompt_text = prompt.prompt.format(
                     context=ocr_text,
-                    # please pass all values from the data_point as additional context
-                    # this allows for more complex prompts that reference other fields
-                    # in the data point
-                    # e.g., "The data point has the following metadata: {data_point}"
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
                     data_source=json.dumps(data_point.data_source) if isinstance(data_point.data_source, dict) else {},
@@ -103,8 +113,9 @@ async def validate_datapoint(
                 reasoning=f"Processing failed: ({'OCR' if use_ocr else 'Vision'}): {e}",
                 ai_model=ai_model,
                 use_ocr=use_ocr,
-                timestamp=int(time.time()),
                 override=override,
+                _prompt=prompt.prompt,
+                timestamp=int(time.time()),
             )
             await db.store_data_point_in_db(res)
             return res
@@ -123,13 +134,14 @@ async def validate_datapoint(
             confidence=ai_response.confidence,
             reasoning=ai_response.reasoning,
             qa_status=qa_status,
-            timestamp=int(time.time()),
             ai_model=ai_model,
             use_ocr=use_ocr,
             file_name=data_point.file_name,
             file_reference=data_point.file_reference,
             page=data_point.page,
             override=override,
+            _prompt=prompt.prompt,
+            timestamp=int(time.time()),
         )
         await db.store_data_point_in_db(res)
         return res
@@ -140,8 +152,36 @@ async def validate_datapoint(
         reasoning="No Prompt configured for this data point type.",
         ai_model=ai_model,
         use_ocr=use_ocr,
-        timestamp=int(time.time()),
         override=override,
+        _prompt=None,
+        timestamp=int(time.time()),
     )
     await db.store_data_point_in_db(res)
     return res
+
+
+async def fetch_dependency_datapoints(
+    dataset_id: str, depends_on: list, use_ocr: bool, ai_model: str, override: bool
+) -> str:
+    """Fetch dependency datapoint - to be implemented."""
+    additional_context = ""
+    data_points = await dataland.get_contained_data_points(dataset_id)
+
+    for i in depends_on:
+        datapoint_id = data_points.get(i)
+        if datapoint_id:
+            additional_context += f"This is the validated output for the data point of type {i}:\n"
+            additional_context += json.dumps(
+                asdict(
+                    await validate_datapoint(
+                        data_point_id=datapoint_id,
+                        use_ocr=use_ocr,
+                        ai_model=ai_model,
+                        override=override,
+                        dataset_id=dataset_id,
+                    )
+                )
+            )
+            additional_context += "\n"
+
+    return additional_context

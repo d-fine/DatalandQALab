@@ -69,3 +69,10 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
         qa_status=qa_status,
         comment=reasoning,
     )
+
+
+@async_lru.alru_cache
+async def get_contained_data_points(dataset_id: str) -> dict[str, str]:
+    """Get all data point IDs contained in a dataset."""
+    logger.info("Fetching data points for dataset ID: %s", dataset_id)
+    return await asyncio.to_thread(config.dataland_client.meta_api.get_contained_data_points, data_id=dataset_id)
