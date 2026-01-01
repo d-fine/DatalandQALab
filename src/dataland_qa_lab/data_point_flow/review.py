@@ -2,8 +2,8 @@ import asyncio
 import json
 import logging
 import time
-
 from dataclasses import asdict
+
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, prompts
@@ -49,7 +49,7 @@ async def validate_datapoint(
 
     if prompt:
         # check for dependencies
-        if len(prompt.depends_on):
+        if len(prompt.depends_on) and dataset_id:
             dependencies_context = await fetch_dependency_datapoints(
                 dataset_id=dataset_id or "",
                 depends_on=prompt.depends_on,

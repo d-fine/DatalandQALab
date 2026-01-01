@@ -62,3 +62,4 @@ class ValidatedDataPoint(Base):
     file_name = Column("file_name", String, nullable=True)
     file_reference = Column("file_reference", String, nullable=True)
     page = Column("page", Integer, nullable=True)
+    _prompt = Column("_prompt", String, nullable=True)

@@ -81,6 +81,7 @@ async def check_if_already_validated(
             use_ocr=existing_validation.use_ocr,
             override=existing_validation.override,
             timestamp=existing_validation.timestamp,
+            _prompt=existing_validation._prompt,
         )
     return models.ValidatedDatapoint(
         data_point_id=existing_validation.data_point_id,
@@ -97,6 +98,7 @@ async def check_if_already_validated(
         file_name=existing_validation.file_name,
         file_reference=existing_validation.file_reference,
         page=existing_validation.page,
+        _prompt=existing_validation._prompt,
     )
 
 
