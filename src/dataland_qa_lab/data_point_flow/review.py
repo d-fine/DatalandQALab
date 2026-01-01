@@ -51,11 +51,7 @@ async def validate_datapoint(
         # check for dependencies
         if len(prompt.depends_on) and dataset_id:
             dependencies_context = await fetch_dependency_datapoints(
-                dataset_id=dataset_id or "",
-                depends_on=prompt.depends_on,
-                use_ocr=use_ocr,
-                ai_model=ai_model,
-                override=override,
+                dataset_id=dataset_id or "", depends_on=prompt.depends_on, use_ocr=use_ocr, ai_model=ai_model
             )
             prompt.prompt = prompt.prompt.replace("{depends_on}", dependencies_context)
 
@@ -72,7 +68,7 @@ async def validate_datapoint(
                     page=data_point.page,
                     document=downloaded_document,
                 )
-                prompt_text = prompt.prompt.format(
+                prompt.prompt = prompt.prompt.format(
                     context=ocr_text,
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
@@ -82,7 +78,7 @@ async def validate_datapoint(
                     file_name=data_point.file_name,
                     value=data_point.value,
                 )
-                ai_response = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
+                ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model)
             else:
                 logger.info("Processing via Vision AI path.")
 
@@ -93,7 +89,7 @@ async def validate_datapoint(
                     logger.error(msg)
 
                 encoded_images = [image_helper.encode_image_to_base64(img) for img in pil_images]
-                prompt_text = prompt.prompt.format(
+                prompt.prompt = prompt.prompt.format(
                     context="{Please analyze the attached image of the report page}.",
                     data_point_id=data_point.data_point_id,
                     data_point_type=data_point.data_point_type,
@@ -103,7 +99,7 @@ async def validate_datapoint(
                     file_name=data_point.file_name,
                     value=data_point.value,
                 )
-                ai_response = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model, images=encoded_images)
+                ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model, images=encoded_images)
 
         except Exception as e:
             logger.exception("Validation processing failed")
@@ -160,9 +156,7 @@ async def validate_datapoint(
     return res
 
 
-async def fetch_dependency_datapoints(
-    dataset_id: str, depends_on: list, use_ocr: bool, ai_model: str, override: bool
-) -> str:
+async def fetch_dependency_datapoints(dataset_id: str, depends_on: list, use_ocr: bool, ai_model: str) -> str:
     """Fetch dependency datapoint - to be implemented."""
     additional_context = ""
     data_points = await dataland.get_contained_data_points(dataset_id)
@@ -177,7 +171,7 @@ async def fetch_dependency_datapoints(
                         data_point_id=datapoint_id,
                         use_ocr=use_ocr,
                         ai_model=ai_model,
-                        override=override,
+                        override=False,
                         dataset_id=dataset_id,
                     )
                 )
