@@ -36,4 +36,4 @@ ENV PATH="/project/.venv/bin:$PATH"
 
 EXPOSE 8501
 
-CMD ["pdm", "run", "monitor"]
+CMD ["python", "-m", "monitor.monitor"]
