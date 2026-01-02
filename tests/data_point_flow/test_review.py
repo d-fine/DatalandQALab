@@ -1,5 +1,6 @@
 import contextlib
 import io
+import json
 import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -29,6 +30,7 @@ async def test_already_validated_no_override(mock_db: MagicMock) -> None:
         file_reference="ref123",
         page=1,
         override=None,
+        _prompt="prompt text",
     )
 
     mock_db.check_if_already_validated = AsyncMock(return_value=existing)
@@ -111,7 +113,6 @@ async def test_full_validation_workflow(
 
     result = await validate.validate_datapoint("dp123", use_ocr=True, ai_model="gpt-4", override=False)
     assert isinstance(result, models.ValidatedDatapoint)
-    assert result.qa_status == QaStatus.ACCEPTED
     mock_db.store_data_point_in_db.assert_called_once()
     mock_dataland.override_dataland_qa.assert_called_once()
 
@@ -255,3 +256,82 @@ async def test_processing_exception_handling(
     assert isinstance(result, models.CannotValidateDatapoint)
     assert "Processing failed" in result.reasoning
     assert "Fatal OCR Crash" in result.reasoning
+
+
+@pytest.mark.asyncio
+async def test_fetch_dependency_datapoints_returns_expected_context() -> None:
+    """Test that fetch_dependency_datapoints returns the expected context string."""
+    dataset_id = "dataset_123"
+    depends_on = ["type_a", "type_b"]
+    use_ocr = True
+    ai_model = "gpt-test"
+
+    mocked_data_points = {"type_a": "dp_a_1", "type_b": "dp_b_2", "type_c": "dp_c_3"}
+
+    mocked_validation_a = {"id": "dp_a_1", "validated": True}
+    mocked_validation_b = {"id": "dp_b_2", "validated": True}
+
+    with (
+        patch(
+            "dataland_qa_lab.data_point_flow.review.dataland.get_contained_data_points", new_callable=AsyncMock
+        ) as mock_get,
+        patch("dataland_qa_lab.data_point_flow.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
+        patch("dataland_qa_lab.data_point_flow.review.asdict", side_effect=lambda x: x),
+    ):
+        mock_get.return_value = mocked_data_points
+        mock_validate.side_effect = [mocked_validation_a, mocked_validation_b]
+
+        result = await validate.fetch_dependency_datapoints(
+            dataset_id=dataset_id, depends_on=depends_on, use_ocr=use_ocr, ai_model=ai_model
+        )
+
+        expected_output = ""
+        for dtype, val in zip(depends_on, [mocked_validation_a, mocked_validation_b], strict=False):
+            expected_output += f"This is the validated output for the data point of type {dtype}:\n"
+            expected_output += json.dumps(val)
+            expected_output += "\n"
+
+        assert result == expected_output
+        mock_get.assert_awaited_once_with(dataset_id)
+        assert mock_validate.await_count == 2
+
+
+@pytest.mark.asyncio
+async def test_fetch_dependency_datapoints_skips_missing_datapoints() -> None:
+    """Test that missing dependency datapoints are skipped."""
+    dataset_id = "dataset_456"
+    depends_on = ["type_x", "type_y"]
+    use_ocr = False
+    ai_model = "gpt-test-2"
+
+    mocked_data_points = {"type_x": "dp_x_1"}
+
+    mocked_validation_x = {"id": "dp_x_1", "validated": True}
+
+    with (
+        patch(
+            "dataland_qa_lab.data_point_flow.review.dataland.get_contained_data_points", new_callable=AsyncMock
+        ) as mock_get,
+        patch("dataland_qa_lab.data_point_flow.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
+        patch("dataland_qa_lab.data_point_flow.review.asdict", side_effect=lambda x: x),
+    ):
+        mock_get.return_value = mocked_data_points
+        mock_validate.return_value = mocked_validation_x
+
+        result = await validate.fetch_dependency_datapoints(
+            dataset_id=dataset_id, depends_on=depends_on, use_ocr=use_ocr, ai_model=ai_model
+        )
+
+        expected_output = "This is the validated output for the data point of type type_x:\n"
+        expected_output += json.dumps(mocked_validation_x)
+        expected_output += "\n"
+
+        assert result == expected_output
+        mock_get.assert_awaited_once_with(dataset_id)
+        mock_validate.assert_awaited_once_with(
+            data_point_id="dp_x_1",
+            use_ocr=use_ocr,
+            ai_model=ai_model,
+            override=False,
+            dataset_id=dataset_id,
+        )

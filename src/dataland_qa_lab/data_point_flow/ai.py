@@ -18,32 +18,42 @@ client = AzureOpenAI(
 
 
 async def execute_prompt(  # noqa: PLR0911
-    prompt: str, ai_model: str | None = None, retries: int = 3, images: list[str] | None = None
+    prompt: str,
+    previous_answer: str,
+    ai_model: str | None = None,
+    retries: int = 3,
+    images: list[str] | None = None,
 ) -> models.AIResponse:
     """Executes a prompt using the specified AI model and returns the AIResponse."""
     logger.info("Executing prompt with AI model: %s", ai_model)
     full_prompt = (
-        prompt
-        + """\n\nYou are an AI assistant. You must answer the user's question strictly in **valid JSON format**, following exactly this structure:
-
-{
-    "predicted_answer": <your answer using only the data type specified in the user's prompt>,
-    "confidence": <a float between 0 and 1>,
-    "reasoning": <your reasoning as a string>
-}
-
-Rules you must follow:
-
-1. Your **entire output** must be exactly one JSON dictionary as shown above.
-2. Do **not** include any text, explanation, code blocks, example JSON, or formatting outside of the dictionary.
-3. All strings and keys must use double quotes. The output must be valid JSON parsable by `json.loads`.
-4. Any deviation from this structure, including extra text or symbols, will be considered invalid and rejected.
-5. Only provide data that strictly fits the types specified by the user's query.
-
-6. Output must be machine-parsable JSON only. No human-readable explanations, no code fences, no examples. If you fail, output {"predicted_answer": null, "confidence": 0.0, "reasoning": "Formatting error prevented valid JSON output."}
-
-"""  # noqa: E501
+        f"{prompt}\n\n"
+        "You are an AI assistant performing answer validation.\n\n"
+        "Your task is to produce **exactly one valid JSON object** with the structure below. "
+        "The output must be parsable by `json.loads` without any modification.\n\n"
+        "Required JSON structure:\n"
+        "{\n"
+        '  "predicted_answer": <answer using ONLY the data type explicitly required in the user prompt>,\n'
+        '  "confidence": <float between 0.0 and 1.0>,\n'
+        '  "reasoning": <string explaining how you derived the predicted_answer>,\n'
+        '  "qa_status": <string: "ACCEPTED", "REJECTED", or "INCONCLUSIVE">\n'
+        "}\n\n"
+        "Definitions:\n"
+        "- ACCEPTED: predicted_answer matches previous_answer exactly.\n"
+        "- REJECTED: predicted_answer does NOT match previous_answer.\n"
+        "- INCONCLUSIVE: predicted_answer does not match previous_answer AND there is insufficient evidence to determine the correct answer.\n\n"  # noqa: E501
+        f"previous_answer to compare against: {previous_answer}\n\n"
+        "STRICT RULES (must follow all):\n"
+        "1. Output ONLY the JSON object — no additional text, no explanations, no markdown, no code blocks.\n"
+        "2. Use double quotes for all JSON keys and string values.\n"
+        "3. Do NOT include trailing commas.\n"
+        "4. Do NOT include comments.\n"
+        "5. Ensure the output is valid JSON and machine-readable.\n"
+        "6. If you are unable to comply for ANY reason, output EXACTLY this fallback JSON:\n"
+        '{"predicted_answer": null, "confidence": 0.0, '
+        '"reasoning": "Formatting error prevented valid JSON output.", "qa_status": "INCONCLUSIVE"}'
     )
+
     if not ai_model:
         ai_model = conf.ai_model
 
@@ -76,18 +86,36 @@ Rules you must follow:
     except Exception as e:
         logger.exception("Error while calling AI model: %s. Retries left: %d", str(e), retries)  # noqa: RUF065, TRY401
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Error calling AI model: " + str(e))
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
+        return models.AIResponse(
+            predicted_answer=None,
+            confidence=0.0,
+            reasoning="Error calling AI model: " + str(e),
+            qa_status="INCONCLUSIVE",
+        )
 
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="No content returned from AI model.")
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
+        return models.AIResponse(
+            predicted_answer=None,
+            confidence=0.0,
+            reasoning="No content returned from AI model.",
+            qa_status="INCONCLUSIVE",
+        )
     try:
         return models.AIResponse(**json.loads(response.choices[0].message.content))
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
-        return models.AIResponse(predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.")
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
+        return models.AIResponse(
+            predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.", qa_status="INCONCLUSIVE"
+        )

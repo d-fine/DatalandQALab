@@ -8,8 +8,8 @@ from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
 
 from dataland_qa_lab.bin import models
+from dataland_qa_lab.data_point_flow import dataland, review
 from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
-from dataland_qa_lab.data_point_flow import review
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
@@ -101,12 +101,22 @@ async def review_data_point_id(
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
-) -> dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint]:
+) -> (
+    dict[str, datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint] | HTTPException
+):
     """Review a single dataset via API call (configurable)."""
-    data_points = config.dataland_client.meta_api.get_contained_data_points(data_id)
+    try:
+        data_points = await dataland.get_contained_data_points(data_id)
+    except Exception as e:  # noqa: BLE001
+        return HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Error fetching data points from Dataland: " + str(e),
+        )
 
     tasks = {
-        k: review.validate_datapoint(v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override)
+        k: review.validate_datapoint(
+            v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override, dataset_id=data_id
+        )
         for k, v in data_points.items()
     }
 

@@ -13,13 +13,14 @@ class ValidatedDatapoint:
     confidence: float
     reasoning: str
     qa_status: str
-    timestamp: int
     ai_model: str
     use_ocr: bool
     override: bool | None
     file_name: str
     file_reference: str
     page: int
+    _prompt: str | None
+    timestamp: int
 
 
 @dataclass
@@ -32,6 +33,7 @@ class CannotValidateDatapoint:
     ai_model: str
     use_ocr: bool
     override: bool | None
+    _prompt: str | None
     timestamp: int
 
 
@@ -46,6 +48,9 @@ class DataPoint:
     file_reference: str
     file_name: str
     value: str
+    comment: str
+    quality: str
+    _all: dict[str, Any]
 
 
 @dataclass
@@ -63,3 +68,4 @@ class AIResponse:
     predicted_answer: str | None
     confidence: float
     reasoning: str
+    qa_status: str

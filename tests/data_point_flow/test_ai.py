@@ -11,13 +11,15 @@ async def test_execute_prompt_valid_json(mock_client: MagicMock) -> None:
         choices=[
             MagicMock(
                 message=MagicMock(
-                    content=json.dumps({"predicted_answer": "OK", "confidence": 0.9, "reasoning": "All good"})
+                    content=json.dumps(
+                        {"predicted_answer": "OK", "confidence": 0.9, "reasoning": "All good", "qa_status": "ACCEPTED"}
+                    )
                 )
             )
         ]
     )
 
-    result = await execute_prompt("test?", ai_model="gpt-4o")
+    result = await execute_prompt("test?", previous_answer="test?", ai_model="gpt-4o")
 
     assert result.predicted_answer == "OK"
     assert result.confidence == 0.9
@@ -34,14 +36,21 @@ async def test_execute_prompt_retry_on_invalid_json(mock_client: MagicMock) -> N
             choices=[
                 MagicMock(
                     message=MagicMock(
-                        content=json.dumps({"predicted_answer": 42, "confidence": 0.8, "reasoning": "Finally valid"})
+                        content=json.dumps(
+                            {
+                                "predicted_answer": 42,
+                                "confidence": 0.8,
+                                "reasoning": "Finally valid",
+                                "qa_status": "ACCEPTED",
+                            }
+                        )
                     )
                 )
             ]
         ),
     ]
 
-    result = await execute_prompt("test?", ai_model="gpt-4o", retries=3)
+    result = await execute_prompt("test?", previous_answer="test?", ai_model="gpt-4o", retries=3)
 
     assert result.predicted_answer == 42
     assert result.confidence == 0.8
@@ -53,7 +62,7 @@ async def test_execute_prompt_no_content(mock_client: MagicMock) -> None:
     """Test that execute_prompt handles no content response with fallback."""
     mock_client.chat.completions.create.return_value = MagicMock(choices=[MagicMock(message=MagicMock(content=None))])
 
-    result = await execute_prompt("test?", ai_model="gpt-4o", retries=1)
+    result = await execute_prompt("test?", previous_answer="test?", ai_model="gpt-4o", retries=1)
 
     assert result.predicted_answer is None
     assert result.confidence == 0.0
@@ -67,7 +76,7 @@ async def test_execute_prompt_invalid_json_fallback(mock_client: MagicMock) -> N
         choices=[MagicMock(message=MagicMock(content="invalid"))]
     )
 
-    result = await execute_prompt("test?", ai_model="gpt-4o", retries=2)
+    result = await execute_prompt("test?", previous_answer="test?", ai_model="gpt-4o", retries=2)
 
     assert result.predicted_answer is None
     assert result.confidence == 0.0
