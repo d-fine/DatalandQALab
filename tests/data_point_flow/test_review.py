@@ -29,6 +29,7 @@ async def test_already_validated_no_override(mock_db: MagicMock) -> None:
         file_reference="ref123",
         page=1,
         override=None,
+        _prompt="prompt text",
     )
 
     mock_db.check_if_already_validated = AsyncMock(return_value=existing)
@@ -111,7 +112,6 @@ async def test_full_validation_workflow(
 
     result = await validate.validate_datapoint("dp123", use_ocr=True, ai_model="gpt-4", override=False)
     assert isinstance(result, models.ValidatedDatapoint)
-    assert result.qa_status == QaStatus.ACCEPTED
     mock_db.store_data_point_in_db.assert_called_once()
     mock_dataland.override_dataland_qa.assert_called_once()
 

@@ -56,6 +56,7 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
             file_reference="ref1",
             page=1,
             override=False,
+            _prompt="prompt text",
         )
 
     mock_validate.side_effect = mock_validate_response

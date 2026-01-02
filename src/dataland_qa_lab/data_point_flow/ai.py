@@ -86,7 +86,9 @@ async def execute_prompt(  # noqa: PLR0911
     except Exception as e:
         logger.exception("Error while calling AI model: %s. Retries left: %d", str(e), retries)  # noqa: RUF065, TRY401
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
         return models.AIResponse(
             predicted_answer=None,
             confidence=0.0,
@@ -97,7 +99,9 @@ async def execute_prompt(  # noqa: PLR0911
     if not response.choices[0].message.content:
         logger.error("No content returned from AI model. Retries left: %d", retries)
         if retries > 0:
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
         return models.AIResponse(
             predicted_answer=None,
             confidence=0.0,
@@ -109,7 +113,9 @@ async def execute_prompt(  # noqa: PLR0911
     except json.JSONDecodeError:
         if retries > 0:
             logger.warning("Failed to parse AI response as JSON. Retrying... (%d retries left)", retries)
-            return await execute_prompt(prompt, ai_model, retries - 1, images)
+            return await execute_prompt(
+                prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
+            )
         return models.AIResponse(
             predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.", qa_status="INCONCLUSIVE"
         )
