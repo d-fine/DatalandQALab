@@ -83,7 +83,9 @@ async def validate_datapoint(
                     quality=data_point.quality,
                     _all=json.dumps(data_point._all),
                 )
-                ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model)
+                ai_response = await ai.execute_prompt(
+                    prompt=prompt.prompt, previous_answer=data_point.value, ai_model=ai_model
+                )
             else:
                 logger.info("Processing via Vision AI path.")
 
@@ -108,7 +110,9 @@ async def validate_datapoint(
                     quality=data_point.quality,
                     _all=json.dumps(data_point._all),
                 )
-                ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model, images=encoded_images)
+                ai_response = await ai.execute_prompt(
+                    prompt=prompt.prompt, previous_answer=data_point.value, ai_model=ai_model, images=encoded_images
+                )
 
         except Exception as e:
             logger.exception("Validation processing failed")
