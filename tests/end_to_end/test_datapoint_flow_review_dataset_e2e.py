@@ -66,11 +66,12 @@ def test_review_dataset_returns_200_with_datapoint_results(
         timestamp=1234567891,
     )
 
-    with patch(
-        "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-    ) as mock_get_datapoints, patch(
-        "dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock
-    ) as mock_validate:
+    with (
+        patch(
+            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
+        ) as mock_get_datapoints,
+        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
+    ):
         # Configure AsyncMocks
         mock_get_datapoints.return_value = mock_datapoints
         mock_validate.side_effect = [mock_validated_datapoint, mock_validated_datapoint_2]
@@ -148,11 +149,12 @@ def test_review_dataset_with_validation_error(
         "scope2": "dp_2",
     }
 
-    with patch(
-        "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-    ) as mock_get_datapoints, patch(
-        "dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock
-    ) as mock_validate:
+    with (
+        patch(
+            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
+        ) as mock_get_datapoints,
+        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
+    ):
         mock_get_datapoints.return_value = mock_datapoints
 
         # Create AsyncMock where second call fails
@@ -183,11 +185,12 @@ def test_review_dataset_passes_custom_ai_model(
         "scope1": "dp_1",
     }
 
-    with patch(
-        "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-    ) as mock_get_datapoints, patch(
-        "dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock
-    ) as mock_validate:
+    with (
+        patch(
+            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
+        ) as mock_get_datapoints,
+        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
+    ):
         mock_get_datapoints.return_value = mock_datapoints
         mock_validate.return_value = mock_validated_datapoint
 
