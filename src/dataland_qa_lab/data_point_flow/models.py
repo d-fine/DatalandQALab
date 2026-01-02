@@ -48,6 +48,9 @@ class DataPoint:
     file_reference: str
     file_name: str
     value: str
+    comment: str
+    quality: str
+    _all: dict[str, Any]
 
 
 @dataclass

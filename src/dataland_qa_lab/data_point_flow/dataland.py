@@ -34,6 +34,8 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
     file_reference = dp_json["dataSource"].get("fileReference", "")
     file_name = dp_json["dataSource"].get("fileName", "")
     value = dp_json.get("value", "")
+    comment = dp_json.get("comment", "")
+    quality = dp_json.get("quality", "")
 
     return models.DataPoint(
         data_point_id=data_point_id,
@@ -43,6 +45,9 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
         file_reference=file_reference,
         file_name=file_name,
         value=value,
+        comment=comment,
+        quality=quality,
+        _all=dp_json,
     )
 
 

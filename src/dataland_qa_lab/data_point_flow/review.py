@@ -79,6 +79,9 @@ async def validate_datapoint(
                     file_reference=data_point.file_reference,
                     file_name=data_point.file_name,
                     value=data_point.value,
+                    comment=data_point.comment,
+                    quality=data_point.quality,
+                    _all=json.dumps(data_point._all),
                 )
                 ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model)
             else:
@@ -101,6 +104,9 @@ async def validate_datapoint(
                     file_reference=data_point.file_reference,
                     file_name=data_point.file_name,
                     value=data_point.value,
+                    comment=data_point.comment,
+                    quality=data_point.quality,
+                    _all=json.dumps(data_point._all),
                 )
                 ai_response = await ai.execute_prompt(prompt=prompt.prompt, ai_model=ai_model, images=encoded_images)
 
