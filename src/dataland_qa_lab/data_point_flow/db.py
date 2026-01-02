@@ -26,7 +26,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
                 predicted_answer=None,
                 confidence=0.0,
                 reasoning=data.reasoning,
-                qa_status="NotAttempted",
+                qa_status="NOTATTEMPTED",
                 timestamp=int(time.time()),
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
