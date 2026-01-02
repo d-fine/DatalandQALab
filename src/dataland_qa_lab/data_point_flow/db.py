@@ -30,6 +30,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
                 timestamp=int(time.time()),
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
+                override=data.override,
                 file_reference=None,
                 file_name=None,
                 page=None,
@@ -49,6 +50,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
                 timestamp=data.timestamp,
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
+                override=data.override,
                 file_reference=data.file_reference,
                 file_name=data.file_name,
                 page=data.page,
@@ -75,8 +77,9 @@ async def check_if_already_validated(
             reasoning=existing_validation.reasoning,
             ai_model=existing_validation.ai_model,
             use_ocr=existing_validation.use_ocr,
-            override=None,
+            override=existing_validation.override,
             timestamp=existing_validation.timestamp,
+            _prompt=existing_validation._prompt,
         )
     return models.ValidatedDatapoint(
         data_point_id=existing_validation.data_point_id,
@@ -89,10 +92,11 @@ async def check_if_already_validated(
         timestamp=existing_validation.timestamp,
         ai_model=existing_validation.ai_model,
         use_ocr=existing_validation.use_ocr,
+        override=existing_validation.override,
         file_name=existing_validation.file_name,
         file_reference=existing_validation.file_reference,
         page=existing_validation.page,
-        override=None,
+        _prompt=existing_validation._prompt,
     )
 
 

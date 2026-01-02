@@ -28,6 +28,7 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock) -> No
         file_reference="ref123",
         page=1,
         override=None,
+        _prompt="prompt text",
     )
 
     await db_module.store_data_point_in_db(data)
@@ -53,6 +54,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
         use_ocr=True,
         override=None,
         timestamp=int(time.time()),
+        _prompt="prompt text",
     )
 
     await db_module.store_data_point_in_db(data)

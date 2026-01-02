@@ -34,6 +34,8 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
     file_reference = dp_json["dataSource"].get("fileReference", "")
     file_name = dp_json["dataSource"].get("fileName", "")
     value = dp_json.get("value", "")
+    comment = dp_json.get("comment", "")
+    quality = dp_json.get("quality", "")
 
     return models.DataPoint(
         data_point_id=data_point_id,
@@ -43,6 +45,9 @@ async def get_data_point(data_point_id: str) -> models.DataPoint:
         file_reference=file_reference,
         file_name=file_name,
         value=value,
+        comment=comment,
+        quality=quality,
+        _all=dp_json,
     )
 
 
@@ -69,3 +74,10 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
         qa_status=qa_status,
         comment=reasoning,
     )
+
+
+@async_lru.alru_cache
+async def get_contained_data_points(dataset_id: str) -> dict[str, str]:
+    """Get all data point IDs contained in a dataset."""
+    logger.info("Fetching data points contained in dataset ID: %s", dataset_id)
+    return await asyncio.to_thread(config.dataland_client.meta_api.get_contained_data_points, data_id=dataset_id)
