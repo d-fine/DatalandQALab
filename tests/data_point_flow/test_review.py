@@ -1,6 +1,6 @@
-import json
 import contextlib
 import io
+import json
 import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
