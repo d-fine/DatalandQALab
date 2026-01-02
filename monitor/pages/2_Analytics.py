@@ -11,25 +11,21 @@ def _calculate_metrics(data: dict) -> dict:
 
     rejected = 0
     accepted = 0
-    incomplete = 0
     inconclusive = 0
 
     for row in data:
         if isinstance(row, dict):
-            if row.get("qa_status") == "Rejected":
+            if row.get("qa_status") == "REJECTED":
                 rejected += 1
-            elif row.get("qa_status") == "Accepted":
+            elif row.get("qa_status") == "ACCEPTED":
                 accepted += 1
-            elif row.get("qa_status") == "Incomplete":
-                incomplete += 1
-            elif row.get("qa_status") == "Inconclusive":
+            elif row.get("qa_status") == "INCONCLUSIVE":
                 inconclusive += 1
 
     return {
         "total": total,
         "rejected": rejected,
         "accepted": accepted,
-        "incomplete": incomplete,
         "inconclusive": inconclusive,
     }
 
@@ -89,7 +85,6 @@ Currently running an experiment with the following attributes:
     col1, col2, col3, col4, col5 = st.columns(5)
     col2.metric("Accepted", metrics.get("accepted"))
     col1.metric("Rejected", metrics.get("rejected"))
-    col3.metric("Incomplete", metrics.get("incomplete"))
     col4.metric("Inconclusive", metrics.get("inconclusive"))
     col5.metric("Total Processed", metrics.get("total"))
 
