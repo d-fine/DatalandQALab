@@ -136,11 +136,12 @@ def test_review_dataset_empty_datapoints(test_client: TestClient) -> None:
 def test_review_dataset_with_validation_error(
     test_client: TestClient, mock_validated_datapoint: ValidatedDatapoint
 ) -> None:
-    """Test that the endpoint doesn't handle validation errors (they propagate to caller).
+    """Test that validation errors from validate_datapoint propagate out of the endpoint.
 
-    Note: The endpoint does not have error handling for asyncio.gather(),
-    so exceptions in validate_datapoint will propagate, causing a 500 error.
-    TestClient will re-raise the exception instead of returning 500.
+    Note: Exceptions from validate_datapoint propagate through asyncio.gather and are
+    converted to HTTP 500 errors by FastAPI when the endpoint is called normally. When
+    invoked via TestClient, these exceptions are re-raised instead of returning a 500
+    response, so this test asserts that the underlying RuntimeError is raised.
     """
     data_id = "dataset_with_error"
 
