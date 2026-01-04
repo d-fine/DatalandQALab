@@ -32,6 +32,7 @@ class CannotValidateDatapoint:
     reasoning: str
     ai_model: str
     use_ocr: bool
+    qa_status: str
     override: bool | None
     _prompt: str | None
     timestamp: int

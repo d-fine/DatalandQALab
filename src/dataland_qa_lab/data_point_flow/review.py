@@ -39,6 +39,7 @@ async def validate_datapoint(
             ai_model=ai_model,
             use_ocr=use_ocr,
             override=override,
+            qa_status="NOTATTEMPTED",
             timestamp=int(time.time()),
             _prompt=None,
         )
@@ -121,6 +122,7 @@ async def validate_datapoint(
                 ai_model=ai_model,
                 use_ocr=use_ocr,
                 override=override,
+                qa_status="NOTATTEMPTED",
                 _prompt=prompt.prompt,
                 timestamp=int(time.time()),
             )
@@ -160,6 +162,7 @@ async def validate_datapoint(
         ai_model=ai_model,
         use_ocr=use_ocr,
         override=override,
+        qa_status="NOTATTEMPTED",
         _prompt=None,
         timestamp=int(time.time()),
     )
