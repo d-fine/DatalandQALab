@@ -53,6 +53,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
         ai_model="gpt-4",
         use_ocr=True,
         override=None,
+        qa_status="NOTATTEMPTED",
         timestamp=int(time.time()),
         _prompt="prompt text",
     )

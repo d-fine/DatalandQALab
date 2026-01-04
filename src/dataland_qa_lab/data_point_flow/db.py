@@ -78,6 +78,7 @@ async def check_if_already_validated(
             ai_model=existing_validation.ai_model,
             use_ocr=existing_validation.use_ocr,
             override=existing_validation.override,
+            qa_status=existing_validation.qa_status,
             timestamp=existing_validation.timestamp,
             _prompt=existing_validation._prompt,
         )
