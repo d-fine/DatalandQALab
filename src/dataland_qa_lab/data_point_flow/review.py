@@ -6,8 +6,8 @@ from dataclasses import asdict
 
 from dataland_qa.models.qa_status import QaStatus
 
-from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, prompts
-from dataland_qa_lab.utils import config, image_helper, pdf_handler
+from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, pdf_handler, prompts
+from dataland_qa_lab.utils import config, image_helper
 
 config = config.get_config()
 
