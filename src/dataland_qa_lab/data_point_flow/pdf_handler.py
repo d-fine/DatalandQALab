@@ -41,7 +41,6 @@ def extract_single_page(full_pdf_bytes: bytes, page_number: int) -> io.BytesIO:
                 height=page.rect.height,
             )
 
-            # Render page content into new PDF page (NO grafting, NO widgets)
             new_page.show_pdf_page(new_page.rect, doc, page_index)
 
             output_stream = io.BytesIO(output_doc.tobytes())
