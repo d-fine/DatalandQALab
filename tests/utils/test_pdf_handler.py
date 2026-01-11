@@ -4,7 +4,7 @@ import fitz
 import pytest
 from PIL import Image
 
-from dataland_qa_lab.utils import pdf_handler
+from dataland_qa_lab.data_point_flow import pdf_handler
 
 
 @pytest.fixture
