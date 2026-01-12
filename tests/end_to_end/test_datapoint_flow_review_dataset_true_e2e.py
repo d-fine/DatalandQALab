@@ -111,8 +111,8 @@ def mock_ai_response() -> ChatCompletion:
 
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
-@patch("dataland_qa_lab.utils.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
@@ -205,8 +205,8 @@ def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
 @patch("dataland_qa_lab.database.database_engine.get_entity")
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
-@patch("dataland_qa_lab.utils.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_with_ocr_enabled(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
@@ -256,8 +256,8 @@ def test_review_dataset_with_ocr_enabled(  # noqa: PLR0913, PLR0917
 
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
-@patch("dataland_qa_lab.utils.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_without_override(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
