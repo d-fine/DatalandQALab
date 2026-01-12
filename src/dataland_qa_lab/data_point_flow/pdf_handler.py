@@ -24,20 +24,32 @@ def extract_single_page(full_pdf_bytes: bytes, page_number: int) -> io.BytesIO:
         raise ValueError(msg)
     if page_number < 1:
         msg = f"Page number must be a positive integer, got {page_number}."
-        _raise_value_error(msg)
+        raise ValueError(msg)
+
     try:
         with fitz.open(stream=full_pdf_bytes, filetype="pdf") as doc:
             if page_number > len(doc):
                 msg = f"Page number {page_number} exceeds total pages {len(doc)}."
-                _raise_value_error(msg)
+                raise ValueError(msg)  # noqa: TRY301
+
+            page_index = page_number - 1
+            page = doc.load_page(page_index)
+
             output_doc = fitz.open()
-            output_doc.insert_pdf(doc, from_page=page_number - 1, to_page=page_number - 1)
+            new_page = output_doc.new_page(
+                width=page.rect.width,
+                height=page.rect.height,
+            )
+
+            new_page.show_pdf_page(new_page.rect, doc, page_index)
+
             output_stream = io.BytesIO(output_doc.tobytes())
             output_stream.seek(0)
 
             output_doc.close()
             logger.info("Successfully extracted page %d from PDF.", page_number)
             return output_stream
+
     except ValueError:
         raise
     except Exception as e:
