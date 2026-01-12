@@ -2,8 +2,6 @@ import asyncio
 import logging
 import time
 
-from dataland_qa.models.qa_status import QaStatus
-
 from dataland_qa_lab.data_point_flow import models, prompts
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.utils import config
@@ -28,7 +26,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
                 predicted_answer=None,
                 confidence=0.0,
                 reasoning=data.reasoning,
-                qa_status=QaStatus.PENDING,
+                qa_status="NOTATTEMPTED",
                 timestamp=int(time.time()),
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
@@ -80,6 +78,7 @@ async def check_if_already_validated(
             ai_model=existing_validation.ai_model,
             use_ocr=existing_validation.use_ocr,
             override=existing_validation.override,
+            qa_status=existing_validation.qa_status,
             timestamp=existing_validation.timestamp,
             _prompt=existing_validation._prompt,
         )

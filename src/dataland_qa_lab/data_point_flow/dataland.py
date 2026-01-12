@@ -7,8 +7,8 @@ import async_lru
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import models, prompts
+from dataland_qa_lab.data_point_flow.pdf_handler import extract_single_page
 from dataland_qa_lab.utils import config
-from dataland_qa_lab.utils.pdf_handler import extract_single_page
 
 config = config.get_config()
 
