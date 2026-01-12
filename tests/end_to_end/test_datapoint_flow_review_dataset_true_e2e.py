@@ -10,7 +10,7 @@ This test file performs real end-to-end testing by:
 import json
 from io import BytesIO
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -112,11 +112,11 @@ def mock_ai_response() -> ChatCompletion:
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
 @patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
-    mock_get_document: MagicMock,
+    mock_get_document: AsyncMock,
     mock_render_pdf: MagicMock,
     mock_extract_pdf: MagicMock,
     mock_prompt_config: MagicMock,
@@ -206,11 +206,11 @@ def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
 @patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_with_ocr_enabled(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
-    mock_get_document: MagicMock,
+    mock_get_document: AsyncMock,
     mock_render_pdf: MagicMock,
     mock_extract_pdf: MagicMock,
     mock_prompt_config: MagicMock,
@@ -257,11 +257,11 @@ def test_review_dataset_with_ocr_enabled(  # noqa: PLR0913, PLR0917
 @patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
 @patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
 @patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
-@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
 @patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
 def test_review_dataset_without_override(  # noqa: PLR0913, PLR0917
     mock_ai_create: MagicMock,
-    mock_get_document: MagicMock,
+    mock_get_document: AsyncMock,
     mock_render_pdf: MagicMock,
     mock_extract_pdf: MagicMock,
     mock_prompt_config: MagicMock,
