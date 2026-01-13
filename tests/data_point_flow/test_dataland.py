@@ -83,3 +83,111 @@ async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
     mock_config.dataland_client.qa_api.change_data_point_qa_status.assert_called_once_with(
         data_point_id="dp123", qa_status=QaStatus.ACCEPTED, comment="Reasoning text"
     )
+
+
+@pytest.mark.asyncio
+async def test_get_dependency_values_empty_list() -> None:
+    """Test that empty dependency list returns empty dict."""
+    result = await dataland.get_dependency_values("dp123", [])
+    assert result == {}
+
+
+@pytest.mark.asyncio
+@patch("dataland_qa_lab.data_point_flow.dataland.config")
+async def test_get_dependency_values_with_revenue(mock_config: MagicMock) -> None:
+    """Test successful fetching of revenue dependency."""
+    mock_config.dataland_client.data_points_api.get_data_point_meta_info.return_value = MagicMock(
+        company_id="comp123", reporting_period="2023"
+    )
+    mock_config.dataland_client.meta_api.get_list_of_data_meta_info.return_value = [
+        MagicMock(data_type="DataTypeEnum.SFDR", data_id="sfdr123")
+    ]
+    mock_sfdr_data = MagicMock()
+    mock_sfdr_data.data.model_dump.return_value = {
+        "environmental": {"greenhouse_gas_emissions": {"total_revenue_in_eur": 1000000}}
+    }
+    mock_config.dataland_client.sfdr_api.get_company_associated_sfdr_data.return_value = mock_sfdr_data
+
+    result = await dataland.get_dependency_values("dp123", ["extendedDecimalTotalRevenueInEUR"])
+    assert result == {"extendedDecimalTotalRevenueInEUR": "1000000"}
+
+
+@pytest.mark.asyncio
+@patch("dataland_qa_lab.data_point_flow.dataland.config")
+async def test_get_dependency_values_no_sfdr_dataset(mock_config: MagicMock) -> None:
+    """Test when no SFDR dataset exists."""
+    mock_config.dataland_client.data_points_api.get_data_point_meta_info.return_value = MagicMock(
+        company_id="comp123", reporting_period="2023"
+    )
+    mock_config.dataland_client.meta_api.get_list_of_data_meta_info.return_value = []
+
+    result = await dataland.get_dependency_values("dp123", ["extendedDecimalTotalRevenueInEUR"])
+    assert result == {"extendedDecimalTotalRevenueInEUR": "not available"}
+
+
+@pytest.mark.asyncio
+@patch("dataland_qa_lab.data_point_flow.dataland.config")
+async def test_get_dependency_values_null_revenue(mock_config: MagicMock) -> None:
+    """Test when revenue value is None/null."""
+    mock_config.dataland_client.data_points_api.get_data_point_meta_info.return_value = MagicMock(
+        company_id="comp123", reporting_period="2023"
+    )
+    mock_config.dataland_client.meta_api.get_list_of_data_meta_info.return_value = [
+        MagicMock(data_type="DataTypeEnum.SFDR", data_id="sfdr123")
+    ]
+    mock_sfdr_data = MagicMock()
+    mock_sfdr_data.data.model_dump.return_value = {
+        "environmental": {"greenhouse_gas_emissions": {"total_revenue_in_eur": None}}
+    }
+    mock_config.dataland_client.sfdr_api.get_company_associated_sfdr_data.return_value = mock_sfdr_data
+
+    result = await dataland.get_dependency_values("dp123", ["extendedDecimalTotalRevenueInEUR"])
+    assert result == {"extendedDecimalTotalRevenueInEUR": "not available"}
+
+
+@pytest.mark.asyncio
+@patch("dataland_qa_lab.data_point_flow.dataland.config")
+async def test_get_dependency_values_api_error(mock_config: MagicMock) -> None:
+    """Test when API calls fail."""
+    mock_config.dataland_client.data_points_api.get_data_point_meta_info.side_effect = AttributeError("API error")
+
+    result = await dataland.get_dependency_values("dp123", ["extendedDecimalTotalRevenueInEUR"])
+    assert result == {"extendedDecimalTotalRevenueInEUR": "not available"}
+
+
+def test_find_sfdr_dataset_id_found() -> None:
+    """Test finding SFDR dataset ID."""
+    datasets = [
+        MagicMock(data_type="DataTypeEnum.OTHER", data_id="other123"),
+        MagicMock(data_type="DataTypeEnum.SFDR", data_id="sfdr123"),
+    ]
+    result = dataland._find_sfdr_dataset_id(datasets)
+    assert result == "sfdr123"
+
+
+def test_find_sfdr_dataset_id_not_found() -> None:
+    """Test when SFDR dataset doesn't exist."""
+    datasets = [MagicMock(data_type="DataTypeEnum.OTHER", data_id="other123")]
+    result = dataland._find_sfdr_dataset_id(datasets)
+    assert result is None
+
+
+def test_extract_dependency_values_success() -> None:
+    """Test extracting revenue from data dict."""
+    data_dict = {"environmental": {"greenhouse_gas_emissions": {"total_revenue_in_eur": 500000}}}
+    result = dataland._extract_dependency_values(["extendedDecimalTotalRevenueInEUR"], data_dict, "not available")
+    assert result == {"extendedDecimalTotalRevenueInEUR": "500000"}
+
+
+def test_extract_dependency_values_missing_key() -> None:
+    """Test when revenue key is missing."""
+    data_dict = {"environmental": {}}
+    result = dataland._extract_dependency_values(["extendedDecimalTotalRevenueInEUR"], data_dict, "not available")
+    assert result == {"extendedDecimalTotalRevenueInEUR": "not available"}
+
+
+def test_extract_dependency_values_unknown_field() -> None:
+    """Test with unknown field name."""
+    data_dict = {"environmental": {"greenhouse_gas_emissions": {"total_revenue_in_eur": 500000}}}
+    result = dataland._extract_dependency_values(["unknownField"], data_dict, "not available")
+    assert result == {"unknownField": "not available"}

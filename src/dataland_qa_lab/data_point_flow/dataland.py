@@ -79,6 +79,8 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
 
 async def get_dependency_values(data_point_id: str, dependency_field_names: list[str]) -> dict[str, str]:
     """Get values from SFDR dataset for fields we depend on."""
+    not_available = "not available"  # Define constant to avoid duplication
+
     if not dependency_field_names:
         return {}
 
@@ -97,36 +99,41 @@ async def get_dependency_values(data_point_id: str, dependency_field_names: list
         )
 
         # Look for SFDR dataset
-        sfdr_id = None
-        for dataset in datasets:
-            if "sfdr" in str(dataset.data_type).lower():
-                sfdr_id = dataset.data_id
-                break
+        sfdr_id = _find_sfdr_dataset_id(datasets)
 
         if not sfdr_id:
-            return dict.fromkeys(dependency_field_names, "not available")
+            return dict.fromkeys(dependency_field_names, not_available)
 
         # Get SFDR data
         sfdr_data = await asyncio.to_thread(
             config.dataland_client.sfdr_api.get_company_associated_sfdr_data, data_id=sfdr_id
         )
 
-        # Convert to dict to search through it
+        # Extract values from SFDR data
         data_dict = sfdr_data.data.model_dump()
-
-        # Find the values we need
-        results = {}
-        for field_name in dependency_field_names:
-            # For revenue, we know it's in environmental.greenhouse_gas_emissions.total_revenue_in_eur
-            if field_name == "extendedDecimalTotalRevenueInEUR":
-                try:
-                    value = data_dict["environmental"]["greenhouse_gas_emissions"]["total_revenue_in_eur"]
-                    results[field_name] = str(value) if value is not None else "not available"
-                except (KeyError, TypeError):
-                    results[field_name] = "not available"
-            else:
-                results[field_name] = "not available"
+        return _extract_dependency_values(dependency_field_names, data_dict, not_available)
     except (AttributeError, KeyError, TypeError):
-        return dict.fromkeys(dependency_field_names, "not available")
-    else:
-        return results
+        return dict.fromkeys(dependency_field_names, not_available)
+
+
+def _find_sfdr_dataset_id(datasets: list) -> str | None:
+    """Find SFDR dataset ID from list of datasets."""
+    for dataset in datasets:
+        if "sfdr" in str(dataset.data_type).lower():
+            return dataset.data_id
+    return None
+
+
+def _extract_dependency_values(field_names: list[str], data_dict: dict, not_available: str) -> dict[str, str]:
+    """Extract dependency values from SFDR data dictionary."""
+    results = {}
+    for field_name in field_names:
+        if field_name == "extendedDecimalTotalRevenueInEUR":
+            try:
+                value = data_dict["environmental"]["greenhouse_gas_emissions"]["total_revenue_in_eur"]
+                results[field_name] = str(value) if value is not None else not_available
+            except (KeyError, TypeError):
+                results[field_name] = not_available
+        else:
+            results[field_name] = not_available
+    return results
