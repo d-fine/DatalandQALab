@@ -78,57 +78,55 @@ async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: Qa
 
 
 async def get_dependency_values(data_point_id: str, dependency_field_names: list[str]) -> dict[str, str]:
-    # Get values from SFDR dataset for fields we depend on
+    """Get values from SFDR dataset for fields we depend on."""
     if not dependency_field_names:
         return {}
-    
+
     try:
         # Get info about the datapoint
         meta = await asyncio.to_thread(
-            config.dataland_client.data_points_api.get_data_point_meta_info,
-            data_point_id=data_point_id
+            config.dataland_client.data_points_api.get_data_point_meta_info, data_point_id=data_point_id
         )
-        
+
         # Find all datasets for this company and year
         datasets = await asyncio.to_thread(
             config.dataland_client.meta_api.get_list_of_data_meta_info,
             company_id=meta.company_id,
             reporting_period=meta.reporting_period,
-            show_only_active=True
+            show_only_active=True,
         )
-        
+
         # Look for SFDR dataset
         sfdr_id = None
         for dataset in datasets:
             if "sfdr" in str(dataset.data_type).lower():
                 sfdr_id = dataset.data_id
                 break
-        
+
         if not sfdr_id:
             return dict.fromkeys(dependency_field_names, "not available")
-        
+
         # Get SFDR data
         sfdr_data = await asyncio.to_thread(
-            config.dataland_client.sfdr_api.get_company_associated_sfdr_data,
-            data_id=sfdr_id
+            config.dataland_client.sfdr_api.get_company_associated_sfdr_data, data_id=sfdr_id
         )
-        
+
         # Convert to dict to search through it
         data_dict = sfdr_data.data.model_dump()
-        
+
         # Find the values we need
         results = {}
         for field_name in dependency_field_names:
             # For revenue, we know it's in environmental.greenhouse_gas_emissions.total_revenue_in_eur
-            if field_name == 'extendedDecimalTotalRevenueInEUR':
+            if field_name == "extendedDecimalTotalRevenueInEUR":
                 try:
-                    value = data_dict['environmental']['greenhouse_gas_emissions']['total_revenue_in_eur']
+                    value = data_dict["environmental"]["greenhouse_gas_emissions"]["total_revenue_in_eur"]
                     results[field_name] = str(value) if value is not None else "not available"
                 except (KeyError, TypeError):
                     results[field_name] = "not available"
             else:
                 results[field_name] = "not available"
-    except (AttributeError, KeyError, TypeError):  # noqa: BLE001
+    except (AttributeError, KeyError, TypeError):
         return dict.fromkeys(dependency_field_names, "not available")
     else:
         return results

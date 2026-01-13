@@ -54,18 +54,18 @@ async def validate_datapoint(
                 page=data_point.page,
                 document=downloaded_document,
             )
-            
+
             # Get dependency values if needed
             deps = {}
             if prompt.depends_on:
                 deps = await dataland.get_dependency_values(data_point_id, prompt.depends_on)
-            
+
             # Build the prompt text
             prompt_vars = {"context": ocr_text, "value": data_point.value}
             if "{depends_on}" in prompt.prompt:
                 deps_text = "\n".join([f"{k}: {v}" for k, v in deps.items()]) if deps else "not applicable"
                 prompt_vars["depends_on"] = deps_text
-            
+
             prompt_text = prompt.prompt.format(**prompt_vars)
             already_checked_data_point = await ai.execute_prompt(prompt=prompt_text, ai_model=ai_model)
         else:
