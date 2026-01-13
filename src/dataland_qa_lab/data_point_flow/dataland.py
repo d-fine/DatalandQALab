@@ -105,7 +105,7 @@ async def get_dependency_values(data_point_id: str, dependency_field_names: list
                 break
         
         if not sfdr_id:
-            return {name: "not available" for name in dependency_field_names}
+            return dict.fromkeys(dependency_field_names, "not available")
         
         # Get SFDR data
         sfdr_data = await asyncio.to_thread(
@@ -128,8 +128,7 @@ async def get_dependency_values(data_point_id: str, dependency_field_names: list
                     results[field_name] = "not available"
             else:
                 results[field_name] = "not available"
-        
+    except (AttributeError, KeyError, TypeError):  # noqa: BLE001
+        return dict.fromkeys(dependency_field_names, "not available")
+    else:
         return results
-        
-    except Exception:
-        return {name: "not available" for name in dependency_field_names}

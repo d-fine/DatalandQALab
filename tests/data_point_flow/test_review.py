@@ -101,8 +101,9 @@ async def test_full_validation_workflow(
         )
     )
     mock_dataland.get_document = AsyncMock(return_value=io.BytesIO(b"pdf content"))
+    mock_dataland.get_dependency_values = AsyncMock(return_value={})
     mock_dataland.override_dataland_qa = AsyncMock()
-    mock_prompts.get_prompt_config.return_value = MagicMock(prompt="Answer: {context}")
+    mock_prompts.get_prompt_config.return_value = MagicMock(prompt="Answer: {context}", depends_on=None)
     mock_ocr.run_ocr_on_document = AsyncMock(return_value="extracted text")
     mock_ai.execute_prompt = AsyncMock(
         return_value=MagicMock(predicted_answer="42", confidence=0.9, reasoning="Matches")
