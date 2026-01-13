@@ -94,3 +94,9 @@ class DatalandClient:
     def eu_taxonomy_nuclear_gas_qa_api(self) -> dataland_qa.NuclearAndGasDataQaReportControllerApi:
         """Function to run the QA report controller for EU Taxonomy nuclear and gas."""
         return dataland_qa.NuclearAndGasDataQaReportControllerApi(self.qa_client)
+
+    @property
+    def sfdr_api(self) -> dataland_backend.SfdrDataControllerApi:
+        """Function to run the SFDR-data-controller API."""
+        return dataland_backend.SfdrDataControllerApi(self.backend_client)
+
