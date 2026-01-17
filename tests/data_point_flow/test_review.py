@@ -5,7 +5,6 @@ import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import models
 from dataland_qa_lab.data_point_flow import review as validate
@@ -22,7 +21,7 @@ async def test_already_validated_no_override(mock_db: MagicMock) -> None:
         predicted_answer=12,
         confidence=0.9,
         reasoning="Already validated",
-        qa_status=QaStatus.ACCEPTED,
+        qa_status="QaAcceped",
         timestamp=int(time.time()),
         ai_model="gpt-4",
         use_ocr=True,
@@ -30,6 +29,7 @@ async def test_already_validated_no_override(mock_db: MagicMock) -> None:
         file_reference="ref123",
         page=1,
         override=None,
+        qa_report_id="report_id",
         _prompt="prompt text",
     )
 
