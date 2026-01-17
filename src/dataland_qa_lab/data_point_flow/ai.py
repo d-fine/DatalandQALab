@@ -36,12 +36,12 @@ async def execute_prompt(  # noqa: PLR0911
         '  "predicted_answer": <answer using ONLY the data type explicitly required in the user prompt>,\n'
         '  "confidence": <float between 0.0 and 1.0>,\n'
         '  "reasoning": <string explaining how you derived the predicted_answer>,\n'
-        '  "qa_status": <string: "ACCEPTED", "REJECTED", or "INCONCLUSIVE">\n'
+        '  "qa_status": <string: "QaAccepted", "QaRejected", or "QaInconclusive">\n'
         "}\n\n"
         "Definitions:\n"
-        "- ACCEPTED: predicted_answer matches previous_answer exactly.\n"
-        "- REJECTED: predicted_answer does NOT match previous_answer.\n"
-        "- INCONCLUSIVE: predicted_answer does not match previous_answer AND there is insufficient evidence to determine the correct answer.\n\n"  # noqa: E501
+        "- QaAccepted: predicted_answer matches previous_answer exactly.\n"
+        "- QaRejected: predicted_answer does NOT match previous_answer.\n"
+        "- QaInconclusive: predicted_answer does not match previous_answer AND there is insufficient evidence to determine the correct answer.\n\n"  # noqa: E501
         f"previous_answer to compare against: {previous_answer}\n\n"
         "STRICT RULES (must follow all):\n"
         "1. Output ONLY the JSON object — no additional text, no explanations, no markdown, no code blocks.\n"
@@ -51,7 +51,7 @@ async def execute_prompt(  # noqa: PLR0911
         "5. Ensure the output is valid JSON and machine-readable.\n"
         "6. If you are unable to comply for ANY reason, output EXACTLY this fallback JSON:\n"
         '{"predicted_answer": null, "confidence": 0.0, '
-        '"reasoning": "Formatting error prevented valid JSON output.", "qa_status": "INCONCLUSIVE"}'
+        '"reasoning": "Formatting error prevented valid JSON output.", "qa_status": "QaInconclusive"}'
     )
 
     if not ai_model:
@@ -93,7 +93,7 @@ async def execute_prompt(  # noqa: PLR0911
             predicted_answer=None,
             confidence=0.0,
             reasoning="Error calling AI model: " + str(e),
-            qa_status="INCONCLUSIVE",
+            qa_status="QaInconclusive",
         )
 
     if not response.choices[0].message.content:
@@ -106,7 +106,7 @@ async def execute_prompt(  # noqa: PLR0911
             predicted_answer=None,
             confidence=0.0,
             reasoning="No content returned from AI model.",
-            qa_status="INCONCLUSIVE",
+            qa_status="QaInconclusive",
         )
     try:
         return models.AIResponse(**json.loads(response.choices[0].message.content))
@@ -117,5 +117,5 @@ async def execute_prompt(  # noqa: PLR0911
                 prompt=prompt, previous_answer=previous_answer, ai_model=ai_model, retries=retries - 1, images=images
             )
         return models.AIResponse(
-            predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.", qa_status="INCONCLUSIVE"
+            predicted_answer=None, confidence=0.0, reasoning="Couldn't parse response.", qa_status="QaInconclusive"
         )
