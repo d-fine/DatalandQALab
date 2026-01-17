@@ -5,7 +5,7 @@
 groups = ["default", "linting", "notebooks", "testing"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:683df4b6fe21bfe677c3812fab21ff861055688d49497914acb6b81fc983d257"
+content_hash = "sha256:ac02360f0a5334e13e225c808c947bedca7e93e4298f04a0fd45d1338c0c4975"
 
 [[metadata.targets]]
 requires_python = ">=3.12"
@@ -3066,14 +3066,14 @@ files = [
 
 [[package]]
 name = "streamlit"
-version = "1.52.2"
+version = "1.53.0"
 requires_python = ">=3.10"
 summary = "A faster way to build and share data apps"
 groups = ["default"]
 dependencies = [
     "altair!=5.4.0,!=5.4.1,<7,>=4.0",
     "blinker<2,>=1.5.0",
-    "cachetools<7,>=4.0",
+    "cachetools<7,>=5.5",
     "click<9,>=7.0",
     "gitpython!=3.1.19,<4,>=3.0.7",
     "numpy<3,>=1.23",
@@ -3087,12 +3087,39 @@ dependencies = [
     "tenacity<10,>=8.1.0",
     "toml<2,>=0.10.1",
     "tornado!=6.5.0,<7,>=6.0.3",
-    "typing-extensions<5,>=4.4.0",
+    "typing-extensions<5,>=4.10.0",
     "watchdog<7,>=2.1.5; platform_system != \"Darwin\"",
 ]
 files = [
-    {file = "streamlit-1.52.2-py3-none-any.whl", hash = "sha256:a16bb4fbc9781e173ce9dfbd8ffb189c174f148f9ca4fb8fa56423e84e193fc8"},
-    {file = "streamlit-1.52.2.tar.gz", hash = "sha256:64a4dda8bc5cdd37bfd490e93bb53da35aaef946fcfc283a7980dacdf165108b"},
+    {file = "streamlit-1.53.0-py3-none-any.whl", hash = "sha256:e8b65210bd1a785d121340b794a47c7c912d8da401af9e4403e16c84e3bc4410"},
+    {file = "streamlit-1.53.0.tar.gz", hash = "sha256:0114116d34589f2e652bf4ac735a3aca69807e659f92f99c98e7b620d000838f"},
+]
+
+[[package]]
+name = "streamlit-pdf"
+version = "2.0.1"
+requires_python = ">=3.9"
+summary = "A Streamlit component for viewing PDF files"
+groups = ["default"]
+files = [
+    {file = "streamlit_pdf-2.0.1-py3-none-any.whl", hash = "sha256:8330d7f954e46edc7574b7e498378462555a8e25e829946abb78dbf5684b0a1e"},
+    {file = "streamlit_pdf-2.0.1.tar.gz", hash = "sha256:c6306381d0eeb291d7a4f6eb16cfbf937560a29be78049c64251fa2c3276e1a2"},
+]
+
+[[package]]
+name = "streamlit"
+version = "1.53.0"
+extras = ["pdf"]
+requires_python = ">=3.10"
+summary = "A faster way to build and share data apps"
+groups = ["default"]
+dependencies = [
+    "streamlit-pdf>=1.0.0",
+    "streamlit==1.53.0",
+]
+files = [
+    {file = "streamlit-1.53.0-py3-none-any.whl", hash = "sha256:e8b65210bd1a785d121340b794a47c7c912d8da401af9e4403e16c84e3bc4410"},
+    {file = "streamlit-1.53.0.tar.gz", hash = "sha256:0114116d34589f2e652bf4ac735a3aca69807e659f92f99c98e7b620d000838f"},
 ]
 
 [[package]]
