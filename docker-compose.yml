@@ -23,6 +23,9 @@ services:
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
       ENVIRONMENT: ${ENVIRONMENT}
   qa-lab-monitor:
+    environment:
+      DATALAND_URL: ${DATALAND_URL}
+      DATALAND_API_KEY: ${DATALAND_API_KEY}
     profiles:
       - prod
     image: ghcr.io/d-fine/datalandqalab/qalab-monitor:${QALAB_SERVER_VERSION}

@@ -86,6 +86,11 @@ class DatalandClient:
         return dataland_qa.QaControllerApi(self.qa_client)
 
     @property
+    def datapoint_qa_controller_api(self) -> dataland_qa.DataPointQaReportControllerApi:
+        """Function to run the qa-controller API."""
+        return dataland_qa.DataPointQaReportControllerApi(self.qa_client)
+
+    @property
     def eu_taxonomy_nf_qa_api(self) -> dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi:
         """Function to run the QA report controller for EU Taxonomy non-financials."""
         return dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi(self.qa_client)

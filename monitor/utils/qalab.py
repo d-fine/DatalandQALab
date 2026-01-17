@@ -33,4 +33,8 @@ def review_dataset(qalab_base_url: str, dataset_id: str, ai_model: str, use_ocr:
         "override": override,
     }
     response = requests.post(api_url, json=payload)
-    return response.json()
+    json_data = response.json()
+    for k in json_data:
+        json_data[k]["dataset_id"] = dataset_id
+
+    return json_data

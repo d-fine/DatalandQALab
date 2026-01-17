@@ -19,6 +19,7 @@ class ValidatedDatapoint:
     file_name: str
     file_reference: str
     page: int
+    qa_report_id: str
     _prompt: str | None
     timestamp: int
 
