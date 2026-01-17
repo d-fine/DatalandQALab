@@ -1,6 +1,6 @@
-import tempfile  # noqa: N999
+import pathlib  # noqa: N999
+import tempfile
 
-import Path
 import streamlit as st
 from utils import dataland
 
@@ -21,5 +21,5 @@ else:
         tmp_file_path = tmp_file.name
 
     # Serve the PDF via Streamlit's download_button (creates an HTTP endpoint)
-    with Path.open(tmp_file_path, "rb") as f:
+    with pathlib.Path(tmp_file_path).open("rb") as f:
         st.download_button("View PDF in browser", f, file_name="document.pdf", mime="application/pdf")
