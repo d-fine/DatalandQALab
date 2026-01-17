@@ -26,7 +26,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
                 predicted_answer=None,
                 confidence=0.0,
                 reasoning=data.reasoning,
-                qa_status="NOTATTEMPTED",
+                qa_status="QaNotAttempted",
                 timestamp=int(time.time()),
                 ai_model=data.ai_model,
                 use_ocr=data.use_ocr,
@@ -97,6 +97,7 @@ async def check_if_already_validated(
         file_name=existing_validation.file_name,
         file_reference=existing_validation.file_reference,
         page=existing_validation.page,
+        qa_report_id=existing_validation.qa_report_id,
         _prompt=existing_validation._prompt,
     )
 
