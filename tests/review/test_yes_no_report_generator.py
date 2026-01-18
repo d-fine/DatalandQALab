@@ -88,7 +88,7 @@ def test_build_yes_no_report_data_provider_error(mock_get_yes_no_values_by_data:
     mock_get_yes_no_values_by_data.side_effect = ValueError("Error in get_yes_no_values_by_data")
     expected_comments = [
         "Error in get_yes_no_values_by_data",
-        "Error extracting values from template 1: An unexpected error occurred: ",
+        "Error extracting values from template 1: An unexpected error occurred: "  # noqa: ISC004
         "Error during GPT request creation: Connection error.",
     ]
     test_data_collection = provide_test_data_collection()
