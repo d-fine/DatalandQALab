@@ -1,7 +1,6 @@
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from dataland_qa.models.qa_status import QaStatus
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
@@ -48,13 +47,14 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
             predicted_answer=10,
             confidence=1.0,
             reasoning="ok",
-            qa_status=QaStatus.ACCEPTED,
+            qa_status="QaAccepted",
             timestamp=1,
             ai_model="gpt-4",
             use_ocr=True,
             file_name="file.pdf",
             file_reference="ref1",
             page=1,
+            qa_report_id="test",
             override=False,
             _prompt="prompt text",
         )
@@ -68,7 +68,7 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
     assert response.status_code == 200
     data = response.json()
     assert data["data_point_id"] == "dp1"
-    assert data["qa_status"] == "Accepted"
+    assert data["qa_status"] == "QaAccepted"
 
 
 def test_review_dataset_returns_http_exception() -> None:

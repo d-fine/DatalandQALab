@@ -16,13 +16,13 @@ def _calculate_metrics(data: dict) -> dict:
 
     for row in data:
         if isinstance(row, dict):
-            if row.get("qa_status") == "REJECTED":
+            if row.get("qa_status") == "QaRejected":
                 rejected += 1
-            elif row.get("qa_status") == "ACCEPTED":
+            elif row.get("qa_status") == "QaAccepted":
                 accepted += 1
-            elif row.get("qa_status") == "INCONCLUSIVE":
+            elif row.get("qa_status") == "QaInconclusive":
                 inconclusive += 1
-            elif row.get("qa_status") == "NOTATTEMPTED":
+            elif row.get("qa_status") == "QaNotAttempted":
                 not_attempted += 1
 
     return {
@@ -76,6 +76,7 @@ Currently running an experiment with the following attributes:
     qalab_results = _format_db_response(data, experiment_type=experiment_type)
 
     df = pd.DataFrame(qalab_results)
+    df["View PDF"] = df["file_reference"].apply(lambda x: f"/PDF_Viewer?reference_id={x!s}")
 
     col1, col2 = st.columns([1, 1])
     if col1.button("Refresh Results", type="primary", width="stretch"):
@@ -93,7 +94,11 @@ Currently running an experiment with the following attributes:
     col4.metric("Inconclusive", metrics.get("inconclusive"))
     col5.metric("Total Processed", metrics.get("total"))
 
-    st.dataframe(qalab_results, width="stretch")
+    st.dataframe(
+        df,
+        width="stretch",
+        column_config={"View PDF": st.column_config.LinkColumn("View PDF", display_text="📄 Open")},
+    )
 
     st.markdown("<hr>", unsafe_allow_html=True)
     with st.popover("Reset experiment"):
