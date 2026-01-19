@@ -71,4 +71,4 @@ class DatapointInReview(Base):
 
     __tablename__ = "datapoint_in_review"
     data_point_id = Column("data_point_id", String, primary_key=True)
-    locked_at = Column("locked_at", Integer, default=int(time.time()), nullable=False)
+    locked_at = Column("locked_at", Integer, default=lambda: int(time.time()), nullable=False)
