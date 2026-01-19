@@ -63,3 +63,11 @@ class ValidatedDataPoint(Base):
     file_reference = Column("file_reference", String, nullable=True)
     page = Column("page", Integer, nullable=True)
     _prompt = Column("_prompt", String, nullable=True)
+
+
+class DatapointInReview(Base):
+    """Database entity for datapoints currently in review."""
+
+    __tablename__ = "datapoint_in_review"
+    data_point_id = Column("data_point_id", String, primary_key=True)
+    locked_at = Column("locked_at", Integer, default=int(time.time()), nullable=False)
