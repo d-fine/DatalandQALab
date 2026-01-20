@@ -24,11 +24,11 @@ COPY --from=builder /project/.venv /project/.venv
 COPY --from=builder /project/src /project/src
 COPY --from=builder /project/bin /project/bin
 
-# ✅ CURL FÜR HEALTHCHECKS INSTALLIEREN
-RUN apt-get update && apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN chown -R appuser:appuser /project
+# ✅ CURL FÜR HEALTHCHECKS INSTALLIEREN UND USER RECHTE SETZEN
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    chown -R appuser:appuser /project
 
 USER appuser
 
