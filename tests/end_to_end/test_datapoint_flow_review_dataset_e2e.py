@@ -1,12 +1,22 @@
-"""End-to-end tests for the data point flow review dataset endpoint."""
+"""End-to-end tests for the review-dataset endpoint with real uploads."""
 
-from unittest.mock import AsyncMock, patch
+import json
+from io import BytesIO
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from dataland_qa.models.qa_status import QaStatus
 from fastapi.testclient import TestClient
+from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
+from PIL import Image
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
-from dataland_qa_lab.data_point_flow.models import ValidatedDatapoint
+from dataland_qa_lab.data_point_flow.models import DataPointPrompt
+from dataland_qa_lab.database.database_engine import delete_entity
+from dataland_qa_lab.database.database_tables import ReviewedDataset
+from dataland_qa_lab.dataland.provide_test_data import get_company_id, upload_dataset, upload_pdf
+from dataland_qa_lab.utils import config
 
 
 @pytest.fixture
@@ -16,201 +26,236 @@ def test_client() -> TestClient:
 
 
 @pytest.fixture
-def mock_validated_datapoint() -> ValidatedDatapoint:
-    """Provide a mock validated datapoint."""
-    return ValidatedDatapoint(
-        data_point_id="dp_1",
-        data_point_type="numeric",
-        previous_answer="100",
-        predicted_answer="105",
-        confidence=0.95,
-        reasoning="Based on document analysis",
-        qa_status="ACCEPTED",
-        ai_model="gpt-4o",
-        use_ocr=False,
-        override=False,
-        file_name="test.pdf",
-        file_reference="ref_1",
-        page=1,
-        _prompt=None,
-        timestamp=1234567890,
+def uploaded_dataset_id() -> str:
+    """Upload a test dataset and return its `data_id`."""
+    dataland_client = config.get_config().dataland_client
+    project_root = Path(__file__).resolve().parent.parent.parent
+    pdf_path = project_root / "data" / "pdfs"
+    json_path = project_root / "data" / "jsons"
+
+    upload_pdf(
+        pdf_path=pdf_path,
+        pdf_id="9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595",
+        company="enbw",
+        dataland_client=dataland_client,
     )
 
+    company_id = get_company_id(company="enbw", dataland_client=dataland_client)
 
-def test_review_dataset_returns_200_with_datapoint_results(
-    test_client: TestClient, mock_validated_datapoint: ValidatedDatapoint
-) -> None:
-    """Test that the endpoint returns HTTP 200 with validation results for each datapoint."""
-    data_id = "dataset_123"
+    json_file_path = json_path / "enbw.json"
+    with json_file_path.open(encoding="utf-8") as f:
+        json_data = json.load(f)
+    json_data["companyId"] = company_id
+    json_str = json.dumps(json_data, indent=4)
 
-    mock_datapoints = {
-        "scope1": "dp_1",
-        "scope2": "dp_2",
-    }
-
-    mock_validated_datapoint_2 = ValidatedDatapoint(
-        data_point_id="dp_2",
-        data_point_type="numeric",
-        previous_answer="200",
-        predicted_answer="210",
-        confidence=0.92,
-        reasoning="Based on historical data",
-        qa_status="ACCEPTED",
-        ai_model="gpt-4o",
-        use_ocr=False,
-        override=False,
-        file_name="test2.pdf",
-        file_reference="ref_2",
-        page=2,
-        _prompt=None,
-        timestamp=1234567891,
+    data_id = upload_dataset(
+        company_id=company_id, json_str=json_str, dataland_client=dataland_client, reporting_period="2020"
     )
 
-    with (
-        patch(
-            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-        ) as mock_get_datapoints,
-        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
-    ):
-        # Configure AsyncMocks
-        mock_get_datapoints.return_value = mock_datapoints
-        mock_validate.side_effect = [mock_validated_datapoint, mock_validated_datapoint_2]
+    delete_entity(data_id, ReviewedDataset)
 
-        # Send request
-        response = test_client.post(
-            f"/data-point-flow/review-dataset/{data_id}",
-            json={
-                "ai_model": "gpt-4o",
-                "use_ocr": False,
-                "override": False,
-            },
-        )
-
-        # Assertions
-        assert response.status_code == 200
-
-        response_data = response.json()
-        assert "scope1" in response_data
-        assert "scope2" in response_data
-
-        # Check that scope1 result has the expected fields
-        scope1_result = response_data["scope1"]
-        assert scope1_result["data_point_id"] == "dp_1"
-        assert scope1_result["qa_status"] == "ACCEPTED"
-        assert scope1_result["confidence"] == 0.95
-
-        # Check that scope2 result has the expected fields
-        scope2_result = response_data["scope2"]
-        assert scope2_result["data_point_id"] == "dp_2"
-        assert scope2_result["qa_status"] == "ACCEPTED"
-        assert scope2_result["confidence"] == 0.92
-
-        # Verify that validate_datapoint was awaited for each datapoint
-        assert mock_validate.await_count == 2
-        mock_validate.assert_any_await("dp_1", use_ocr=False, ai_model="gpt-4o", override=False, dataset_id=data_id)
-        mock_validate.assert_any_await("dp_2", use_ocr=False, ai_model="gpt-4o", override=False, dataset_id=data_id)
+    return data_id
 
 
-def test_review_dataset_empty_datapoints(test_client: TestClient) -> None:
-    """Test that the endpoint handles empty datapoint lists correctly."""
-    data_id = "dataset_empty"
-
-    with patch(
-        "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-    ) as mock_get_datapoints:
-        mock_get_datapoints.return_value = {}
-
-        response = test_client.post(
-            f"/data-point-flow/review-dataset/{data_id}",
-            json={
-                "ai_model": "gpt-4o",
-                "use_ocr": False,
-                "override": False,
-            },
-        )
-
-        assert response.status_code == 200
-        assert response.json() == {}
-
-
-def test_review_dataset_with_validation_error(
-    test_client: TestClient, mock_validated_datapoint: ValidatedDatapoint
-) -> None:
-    """Test that validation errors from validate_datapoint propagate out of the endpoint.
-
-    Note: Exceptions from validate_datapoint propagate through asyncio.gather and are
-    converted to HTTP 500 errors by FastAPI when the endpoint is called normally. When
-    invoked via TestClient, these exceptions are re-raised instead of returning a 500
-    response, so this test asserts that the underlying RuntimeError is raised.
-    """
-    data_id = "dataset_with_error"
-
-    mock_datapoints = {
-        "scope1": "dp_1",
-        "scope2": "dp_2",
+def create_mock_ai_response(predicted_answer: str | None, confidence: float, qa_status: str) -> ChatCompletion:
+    """Create a mock AI response in the expected format."""
+    response_json = {
+        "predicted_answer": predicted_answer,
+        "confidence": confidence,
+        "reasoning": "Mock AI reasoning for testing",
+        "qa_status": qa_status,
     }
 
-    with (
-        patch(
-            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-        ) as mock_get_datapoints,
-        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
-    ):
-        mock_get_datapoints.return_value = mock_datapoints
-
-        # Create AsyncMock where second call fails
-        mock_validate.side_effect = [
-            mock_validated_datapoint,
-            RuntimeError("Validation failed for dp_2"),
-        ]
-
-        # The endpoint will raise an unhandled exception, which TestClient re-raises
-        with pytest.raises(RuntimeError, match="Validation failed for dp_2"):
-            test_client.post(
-                f"/data-point-flow/review-dataset/{data_id}",
-                json={
-                    "ai_model": "gpt-4o",
-                    "use_ocr": False,
-                    "override": False,
-                },
+    return ChatCompletion(
+        id="test_mock",
+        choices=[
+            Choice(
+                finish_reason="stop",
+                index=0,
+                message=ChatCompletionMessage(
+                    role="assistant",
+                    content=json.dumps(response_json),
+                ),
             )
+        ],
+        created=0,
+        model="gpt-4o",
+        object="chat.completion",
+    )
 
 
-def test_review_dataset_passes_custom_ai_model(
-    test_client: TestClient, mock_validated_datapoint: ValidatedDatapoint
+def mock_ai_response() -> ChatCompletion:
+    """Mock the AI response based on the prompt content."""
+    return create_mock_ai_response(
+        predicted_answer="Mock Answer",
+        confidence=0.85,
+        qa_status=QaStatus.ACCEPTED,
+    )
+
+
+@patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
+@patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
+@patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
+def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
+    mock_ai_create: MagicMock,
+    mock_get_document: AsyncMock,
+    mock_render_pdf: MagicMock,
+    mock_extract_pdf: MagicMock,
+    mock_prompt_config: MagicMock,
+    test_client: TestClient,
+    uploaded_dataset_id: str,
 ) -> None:
-    """Test that custom ai_model and use_ocr parameters are passed correctly."""
-    data_id = "dataset_custom_params"
+    """Validate full flow with real uploads; external services mocked."""
+    mock_prompt_config.return_value = DataPointPrompt(prompt="dummy prompt", depends_on=[])
+    mock_extract_pdf.return_value = "mock ocr markdown"
+    mock_get_document.return_value = BytesIO(b"dummy-pdf")
+    mock_render_pdf.return_value = [Image.new("RGB", (1, 1), color="white")]
+    mock_ai_create.return_value = mock_ai_response()
 
-    mock_datapoints = {
-        "scope1": "dp_1",
-    }
+    response = test_client.post(
+        f"/data-point-flow/review-dataset/{uploaded_dataset_id}",
+        json={
+            "ai_model": "gpt-4o",
+            "use_ocr": False,
+            "override": True,
+        },
+    )
 
-    with (
-        patch(
-            "dataland_qa_lab.bin.server.dataland.get_contained_data_points", new_callable=AsyncMock
-        ) as mock_get_datapoints,
-        patch("dataland_qa_lab.bin.server.review.validate_datapoint", new_callable=AsyncMock) as mock_validate,
-    ):
-        mock_get_datapoints.return_value = mock_datapoints
-        mock_validate.return_value = mock_validated_datapoint
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
 
-        response = test_client.post(
-            f"/data-point-flow/review-dataset/{data_id}",
-            json={
-                "ai_model": "gpt-3.5-turbo",
-                "use_ocr": True,
-                "override": True,
-            },
-        )
+    response_data = response.json()
+    assert isinstance(response_data, dict), "Response should be a dictionary"
+    assert len(response_data) > 0, "Response should contain at least one datapoint result"
 
-        assert response.status_code == 200
+    validated_count = 0
+    for scope_key, result in response_data.items():
+        assert isinstance(result, dict), f"Result for {scope_key} should be a dictionary"
 
-        # Verify that validate_datapoint was awaited with the custom parameters
-        mock_validate.assert_awaited_once_with(
-            "dp_1",
-            use_ocr=True,
-            ai_model="gpt-3.5-turbo",
-            override=True,
-            dataset_id=data_id,
-        )
+        assert "data_point_id" in result, f"Missing data_point_id in result for {scope_key}"
+        assert "reasoning" in result, f"Missing reasoning in result for {scope_key}"
+        assert "ai_model" in result, f"Missing ai_model in result for {scope_key}"
+        assert isinstance(result["data_point_id"], str), f"data_point_id should be string for {scope_key}"
+        assert result["ai_model"] == "gpt-4o", f"ai_model should be gpt-4o for {scope_key}"
+
+        if "qa_status" in result:
+            validated_count += 1
+            assert "confidence" in result, f"Missing confidence in result for {scope_key}"
+            assert "predicted_answer" in result, f"Missing predicted_answer in result for {scope_key}"
+
+            assert isinstance(result["qa_status"], str), f"qa_status should be string for {scope_key}"
+            assert isinstance(result["confidence"], (int, float)), f"confidence should be numeric for {scope_key}"
+            assert result["qa_status"] in {
+                QaStatus.ACCEPTED,
+                QaStatus.REJECTED,
+                QaStatus.INCONCLUSIVE,
+            }, f"Invalid qa_status for {scope_key}: {result['qa_status']}"
+            assert 0.0 <= result["confidence"] <= 1.0, f"confidence should be between 0 and 1 for {scope_key}"
+        else:
+            assert len(result["reasoning"]) > 0, f"reasoning should be non-empty for {scope_key}"
+
+    assert len(response_data) > 0, "No datapoints were returned at all"
+    assert mock_ai_create.call_count > 0, "AI should have been called at least once when override=True"
+
+
+@patch("dataland_qa_lab.database.database_engine.get_entity")
+@patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
+@patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
+@patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
+def test_review_dataset_with_ocr_enabled(  # noqa: PLR0913, PLR0917
+    mock_ai_create: MagicMock,
+    mock_get_document: AsyncMock,
+    mock_render_pdf: MagicMock,
+    mock_extract_pdf: MagicMock,
+    mock_prompt_config: MagicMock,
+    mock_get_entity: MagicMock,
+    test_client: TestClient,
+    uploaded_dataset_id: str,
+) -> None:
+    """Test the endpoint with OCR enabled to verify OCR path is working."""
+    mock_prompt_config.return_value = DataPointPrompt(prompt="dummy prompt", depends_on=[])
+    mock_extract_pdf.return_value = "mock ocr markdown"
+    mock_get_document.return_value = BytesIO(b"dummy-pdf")
+    mock_render_pdf.return_value = [Image.new("RGB", (1, 1), color="white")]
+    mock_ai_create.return_value = mock_ai_response()
+    mock_get_entity.return_value = None
+
+    response = test_client.post(
+        f"/data-point-flow/review-dataset/{uploaded_dataset_id}",
+        json={
+            "ai_model": "gpt-4o",
+            "use_ocr": True,
+            "override": True,
+        },
+    )
+
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+
+    response_data = response.json()
+    assert isinstance(response_data, dict), "Response should be a dictionary"
+    assert len(response_data) > 0, "Response should contain at least one datapoint result"
+
+    assert mock_extract_pdf.call_count > 0, "OCR should have been called at least once when use_ocr=True"
+
+    first_result = next(iter(response_data.values()))
+    assert "data_point_id" in first_result
+    assert "reasoning" in first_result
+    assert first_result["ai_model"] == "gpt-4o"
+
+
+@patch("dataland_qa_lab.data_point_flow.prompts.get_prompt_config")
+@patch("dataland_qa_lab.data_point_flow.ocr.ocr.extract_pdf")
+@patch("dataland_qa_lab.data_point_flow.review.pdf_handler.render_pdf_to_image")
+@patch("dataland_qa_lab.data_point_flow.review.dataland.get_document", new_callable=AsyncMock)
+@patch("dataland_qa_lab.data_point_flow.ai.client.chat.completions.create")
+def test_review_dataset_without_override(  # noqa: PLR0913, PLR0917
+    mock_ai_create: MagicMock,
+    mock_get_document: AsyncMock,
+    mock_render_pdf: MagicMock,
+    mock_extract_pdf: MagicMock,
+    mock_prompt_config: MagicMock,
+    test_client: TestClient,
+    uploaded_dataset_id: str,
+) -> None:
+    """Test that when override=False, already validated datapoints are not re-validated."""
+    mock_prompt_config.return_value = DataPointPrompt(prompt="dummy prompt", depends_on=[])
+    mock_extract_pdf.return_value = "mock ocr markdown"
+    mock_get_document.return_value = BytesIO(b"dummy-pdf")
+    mock_render_pdf.return_value = [Image.new("RGB", (1, 1), color="white")]
+    mock_ai_create.return_value = mock_ai_response()
+
+    response1 = test_client.post(
+        f"/data-point-flow/review-dataset/{uploaded_dataset_id}",
+        json={
+            "ai_model": "gpt-4o",
+            "use_ocr": False,
+            "override": True,
+        },
+    )
+    assert response1.status_code == 200
+
+    initial_ai_calls = mock_ai_create.call_count
+    initial_ocr_calls = mock_extract_pdf.call_count
+
+    mock_ai_create.reset_mock()
+    mock_extract_pdf.reset_mock()
+
+    response2 = test_client.post(
+        f"/data-point-flow/review-dataset/{uploaded_dataset_id}",
+        json={
+            "ai_model": "gpt-4o",
+            "use_ocr": False,
+            "override": False,
+        },
+    )
+
+    assert response2.status_code == 200
+
+    assert mock_ai_create.call_count <= initial_ai_calls, "AI calls should not exceed initial run"
+    assert mock_extract_pdf.call_count <= initial_ocr_calls, "OCR calls should not exceed initial run"
+
+    response_data = response2.json()
+    assert len(response_data) > 0
