@@ -54,34 +54,34 @@
     "extendedDecimalGhgIntensityInTonnesPerMillionEURRevenue": {
         "prompt": "Extract the GHG Emissions Intensity expressed as greenhouse gas (GHG) emissions in tonnes per million monetary units of Revenue (or Sales/Turnover).\n\nTarget Metric Definition:\n- Numerator: Total GHG Emissions (usually Scope 1+2+3).\n- Denominator: Revenue/Sales in millions.\n- Typical Units: 'tCO2e / €M Revenue', 'tCO2e per million Sales', 'GHG Intensity (Revenue)', 'Carbon Intensity (Sales)'.\n\nCurrency Handling (CRITICAL):\n- **Priority 1 (EUR):** Prioritize values where the denominator is in EUR (e.g., per €M Revenue).\n- **Priority 2 (Any Currency):** If the report uses another currency (e.g., tCO2e / $M Revenue) and no EUR version is available, extract that value. Do NOT return 'null' just because the currency is not EUR.\n\nReturn rules:\n- **Format:** Return only the numeric decimal value. No units.\n- **Separators:** Use a dot (.) as the decimal separator. Remove thousand separators.\n- **Recency:** Select the most recent year.\n- **Exclusion:** Do NOT extract intensity based on Enterprise Value or physical production.\n- **Null Handling:** If no Revenue-based intensity is found, return 'null'.\n\nInput:\n{context}"
     },
-    "LAND_DEGRADATION_DESERTIFICATION_SOIL_SEALING_EXPOSURE": {
+    "extendedEnumYesNoLandDegradationDesertificationSoilSealingExposure": {
         "prompt": "Extract whether the company is involved in activities which cause land degradation, desertification, or soil sealing from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text indicates involvement, contribution, operations, projects, or exposure related to land degradation, desertification, or soil sealing.\n- Return \"No\" if the text explicitly states no involvement/exposure, or states that the company does not engage in such activities.\n- If the text is ambiguous, purely generic, or does not address this topic, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-    "SUSTAINABLE_AGRICULTURE_POLICY": {
+    "extendedEnumYesNoSustainableAgriculturePolicy": {
         "prompt": "Extract whether the company has sustainable land or agriculture practices or policies from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text mentions a policy, strategy, commitments, targets, or documented practices related to sustainable agriculture/land use (e.g., sustainable farming, regenerative agriculture, sustainable sourcing of agricultural commodities, soil stewardship, sustainable land management).\n- Return \"No\" if the text explicitly states no such policy/practices.\n- If the text does not clearly provide evidence, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-    "SUSTAINABLE_OCEANS_AND_SEAS_POLICY": {
+    "extendedEnumYesNoSustainableOceansAndSeasPolicy": {
         "prompt": "Extract whether the company has sustainable oceans or seas practices or policies from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text mentions a policy, strategy, commitments, targets, or documented practices related to sustainable oceans/seas (e.g., marine conservation, sustainable fisheries/seafood sourcing, protection of marine ecosystems, ocean plastics, maritime impacts).\n- Return \"No\" if the text explicitly states no such policy/practices.\n- If the text does not clearly provide evidence, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-    "THREATENED_SPECIES_EXPOSURE": {
+    "extendedEnumYesNoThreatenedSpeciesExposure": {
         "prompt": "Extract whether the company has operations which affect threatened species from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text indicates operations, sites, supply chains, or projects that impact threatened/endangered species, or references biodiversity impacts on threatened species.\n- Return \"No\" if the text explicitly states no such impacts/exposure.\n- If the text is silent or not specific enough, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-    "BIODIVERSITY_PROTECTION_POLICY": {
+    "extendedEnumYesNoBiodiversityProtectionPolicy": {
         "prompt": "Extract whether the company has a biodiversity protection policy that encompasses operational sites owned, leased, managed in, or adjacent to protected areas or areas of high biodiversity value (outside protected areas) from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text describes a biodiversity policy/program that explicitly covers sites in/near protected areas or high biodiversity value areas (e.g., nature protection plans for operational sites, protected area management, key biodiversity areas).\n- Return \"No\" if the text explicitly states no such policy.\n- If the text mentions biodiversity in general but does not cover the scope above, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-    "DEFORESTATION_POLICY": {
+    "extendedEnumYesNoDeforestationPolicy": {
         "prompt": "Extract whether the company has a policy to address deforestation from the text below.\n\nInterpretation:\n- Return \"Yes\" if the text mentions a deforestation-free policy, no-deforestation commitment, forest protection policy, zero-deforestation targets, or policies addressing deforestation risks in operations or supply chains.\n- Return \"No\" if the text explicitly states no such policy.\n- If the text is ambiguous or does not mention deforestation/forest conversion policy, return null.\n\nReturn rules:\n- Return only \"Yes\", \"No\", or null.\n\nText:\n{context}"
     },
-      "EMISSIONS_TO_WATER_IN_T": {
+      "extendedDecimalEmissionsToWaterInT": {
     "prompt": "Extract the emissions to water reported in tonnes from the text below.\n\nDefinition:\n- Emissions to water refers to direct emissions of priority substances (Directive 2000/60/EC Article 2(30)) and direct emissions of nitrates, phosphates and pesticides.\n\nExtraction rules:\n- Extract the absolute value (not an intensity) in tonnes.\n- If multiple annual values are provided, always select the most recent year.\n- If a range is given, extract the midpoint as a single decimal number.\n\nReturn rules:\n- Return only the numeric value (no units, no text).\n- Use a dot (.) as the decimal separator.\n- Remove thousand separators.\n- If no suitable value is found, return null.\n\nText:\n{context}"
     },
-    "WATER_CONS_IN_M3": {
+    "extendedDecimalWaterConsumptionInCubicMeters": {
         "prompt": "Extract the amount of water consumed by the company in cubic meters (m3) from the text below.\n\nExtraction rules:\n- Extract the absolute value (not an intensity).\n- If multiple annual values are provided, always select the most recent year.\n- If a range is given, extract the midpoint as a single decimal number.\n\nReturn rules:\n- Return only the numeric value (no units, no text).\n- Use a dot (.) as the decimal separator.\n- Remove thousand separators.\n- If no suitable value is found, return null.\n\nText:\n{context}"
     },
-    "WATER_REUSED_IN_M3": {
+    "extendedDecimalWaterReusedInCubicMeters": {
         "prompt": "Extract the amount of water recycled and reused by the company in cubic meters (m3) from the text below.\n\nExtraction rules:\n- Extract the absolute value (not an intensity).\n- If multiple annual values are provided, always select the most recent year.\n- If a range is given, extract the midpoint as a single decimal number.\n\nReturn rules:\n- Return only the numeric value (no units, no text).\n- Use a dot (.) as the decimal separator.\n- Remove thousand separators.\n- If no suitable value is found, return null.\n\nText:\n{context}"
     },
-    "REL_WATER_USAGE_IN_M3_PER_MIO_EUR_REVENUE": {
+    "extendedDecimalRelativeWaterUsageInCubicMetersPerMillionEURRevenue": {
         "prompt": "Extract the amount in cubic meters of fresh water used per million EUR revenue from the text below.\n\nExtraction rules:\n- Extract the intensity metric (m3 per million EUR revenue), not the absolute water consumption.\n- Prefer values explicitly expressed per million EUR (or equivalent wording such as \"per €m revenue\", \"m3/€m\", \"m3 per EUR million\", \"m3 per million revenue\").\n- If multiple annual values are provided, always select the most recent year.\n- If a range is given, extract the midpoint as a single decimal number.\n- Do NOT calculate the ratio from water consumption and revenue unless the text explicitly provides the intensity; if not explicitly present, return null.\n\nReturn rules:\n- Return only the numeric value (no units, no text).\n- Use a dot (.) as the decimal separator.\n- Remove thousand separators.\n- If no suitable value is found, return null.\n\nText:\n{context}"
     }
 
