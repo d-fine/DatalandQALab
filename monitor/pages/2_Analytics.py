@@ -76,7 +76,10 @@ Currently running an experiment with the following attributes:
     qalab_results = _format_db_response(data, experiment_type=experiment_type)
 
     df = pd.DataFrame(qalab_results)
-    df["View PDF"] = df["file_reference"].apply(lambda x: f"/PDF_Viewer?reference_id={x!s}")
+    # check if the df has the dataframe column "file_reference"
+
+    if "file_reference" in df:
+        df["View PDF"] = df["file_reference"].apply(lambda x: f"/PDF_Viewer?reference_id={x!s}")
 
     col1, col2 = st.columns([1, 1])
     if col1.button("Refresh Results", type="primary", width="stretch"):
