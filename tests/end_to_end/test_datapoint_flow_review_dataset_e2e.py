@@ -149,7 +149,7 @@ def test_review_dataset_true_e2e(  # noqa: PLR0913, PLR0917
             assert result["qa_status"] in {
                 QaStatus.ACCEPTED,
                 QaStatus.REJECTED,
-                QaStatus.INCONCLUSIVE,
+                QaStatus.PENDING,
             }, f"Invalid qa_status for {scope_key}: {result['qa_status']}"
             assert 0.0 <= result["confidence"] <= 1.0, f"confidence should be between 0 and 1 for {scope_key}"
         else:
