@@ -35,7 +35,7 @@ async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     """Ensures that the scheduler shuts down correctly."""
     logger.info("Server startup initiated. Configuring scheduler.")
 
-    if not config.is_dev_environment:
+    if config.is_dev_environment:
         logger.info("Development environment detected. Using new scheduler.")
 
         logger.info("Adding scheduled processor job to scheduler.")

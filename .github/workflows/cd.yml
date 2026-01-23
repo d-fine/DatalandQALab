@@ -78,7 +78,6 @@ jobs:
       PRIVATE_SSH_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       ENVIRONMENT: ${{vars.ENVIRONMENT}}
-      ENABLE_DATA_POINT_SCHEDULER: ${{ vars.ENABLE_DATA_POINT_SCHEDULER || 'false'}}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
