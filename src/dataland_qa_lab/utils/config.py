@@ -60,7 +60,7 @@ class DatalandQaLabSettings(BaseSettings):
     @property
     def is_dev_environment(self) -> bool:
         """Check if the environment is development."""
-        return self.environment in {"dev", "development"}
+        return self.environment in {"dev", "development", "DEV"}
 
 
 @cache

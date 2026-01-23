@@ -36,24 +36,20 @@ async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     logger.info("Server startup initiated. Configuring scheduler.")
 
     if not config.is_dev_environment:
-        logger.info("Adding scheduled processor job to scheduler.")
-        scheduler.add_job(
-            scheduled_processor.old_run_scheduled_processing,
-            trigger,
-            next_run_time=datetime.now(),  # noqa: DTZ005
-        )
-    else:
-        logger.info("Development environment detected. Skipping scheduled processor job addition.")
+        logger.info("Development environment detected. Using new scheduler.")
 
-    if config.enable_data_point_scheduler:
-        logger.info("Datapoint scheduler is enabled and on dev. Adding datapoint scheduled job.")
+        logger.info("Adding scheduled processor job to scheduler.")
         scheduler.add_job(
             data_point_scheduler.run_scheduled_processing,
             trigger,
             next_run_time=datetime.now(),  # noqa: DTZ005
         )
     else:
-        logger.info("Datapoint scheduler is disabled. Skipping datapoint scheduled processing job addition.")
+        scheduler.add_job(
+            scheduled_processor.old_run_scheduled_processing,
+            trigger,
+            next_run_time=datetime.now(),  # noqa: DTZ005
+        )
 
     if scheduler.get_jobs():
         logger.info("Starting scheduler with %d jobs.", len(scheduler.get_jobs()))
