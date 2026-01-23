@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Iterator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 from dataland_qa.models.qa_status import QaStatus
 from sqlalchemy.exc import IntegrityError
+from fastapi.testclient import TestClient
 
 from dataland_qa_lab.data_point_flow.scheduler import (
     LOCK_TTL_SECONDS,
@@ -152,6 +155,56 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     assert "Accepted: 1" in msg
     assert "Rejected: 1" in msg
     assert "Not validated: 1" in msg
+
+
+@pytest.fixture(autouse=True)
+def mock_db_setup() -> Iterator[None]:
+    """Fixture to set up and tear down the database for testing."""
+    with (
+        patch("dataland_qa_lab.database.database_engine.create_tables"),
+        patch("dataland_qa_lab.database.database_engine.verify_database_connection"),
+    ):
+        yield
+
+
+@pytest.fixture
+def server_mocks() -> Iterator[dict[str, Any]]:
+    """Fixture to mock config and scheduler in server."""
+    with (
+        patch("dataland_qa_lab.bin.server.config") as config_mock,
+        patch("dataland_qa_lab.bin.server.scheduler") as scheduler_mock,
+        patch("dataland_qa_lab.bin.server.data_point_scheduler.run_scheduled_processing") as mock_job_func,
+    ):
+        yield {"app": dataland_qa_lab, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
+
+
+def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
+    """Test that the new scheduler logic is used in dev environment."""
+    mocks = server_mocks
+    mocks["config"].is_dev_environment = True
+    with TestClient(mocks["app"]):
+        pass
+
+    scheduler_mock = mocks["scheduler"]
+    assert scheduler_mock.add_job.called
+
+    passed_function = scheduler_mock.add_job.call_args[0][0]
+    assert passed_function == mocks["job_func"]
+
+
+def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> None:
+    """Test that the old scheduler logic is used in prod environment."""
+    mocks = server_mocks
+    mocks["config"].is_dev_environment = False
+
+    with TestClient(mocks["app"]):
+        pass
+
+    scheduler_mock = mocks["scheduler"]
+    assert scheduler_mock.add_job.called
+    passed_function = scheduler_mock.add_job.call_args[0][0]
+
+    assert passed_function == scheduled_processor.old_run_scheduled_processing
 
 
 def test_try_acquire_no_existing(mocks: MagicMock) -> None:
