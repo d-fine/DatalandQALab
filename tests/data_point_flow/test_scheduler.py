@@ -1,20 +1,24 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Iterator
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 from dataland_qa.models.qa_status import QaStatus
-from sqlalchemy.exc import IntegrityError
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import IntegrityError
 
+from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
     LOCK_TTL_SECONDS,
     run_scheduled_processing,
     try_acquire_lock,
 )
+from dataland_qa_lab.dataland import scheduled_processor
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 @pytest.fixture
