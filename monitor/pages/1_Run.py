@@ -8,7 +8,6 @@ experiment = db.get_latest_experiment()
 if experiment:
     st.info("An experiment has already been run. Please check the Analytics tab for results.")
 else:
-    st.header("Monitor a Single Datapoint")
     experiment_type = st.segmented_control(
         "Select Experiment Type", options=["data_point", "dataset"], default="data_point", key="dp_experiment_type"
     )
