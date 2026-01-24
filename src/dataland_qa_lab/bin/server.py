@@ -3,6 +3,7 @@ import logging
 from contextlib import asynccontextmanager
 from datetime import datetime
 
+import sentry_sdk
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
@@ -30,10 +31,27 @@ scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
 
 
+def init_sentry() -> None:
+    """Initialize Sentry for error tracking."""
+    cfg = config
+    if not cfg.sentry_dsn:
+        logger.info("Sentry DSN not provided. Skipping Sentry initialization.")
+        return
+
+    sentry_sdk.init(
+        dsn=cfg.sentry_dsn,
+        environment=cfg.environment or "dev",
+        enable_logs=True,
+        send_default_pii=False,
+    )
+    logger.info("Sentry initialized.")
+
+
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     """Ensures that the scheduler shuts down correctly."""
     logger.info("Server startup initiated. Configuring scheduler.")
+    init_sentry()
 
     if config.is_dev_environment:
         logger.info("Development environment detected. Using new scheduler.")
