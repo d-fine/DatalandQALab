@@ -77,7 +77,7 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     asyncio_run = mocks["asyncio_run"]
 
     class ValidatedDatapoint:
-        def __init__(self, data_point_id: str, qa_status: QaStatus) -> None:
+        def __init__(self, data_point_id: str, qa_status: str) -> None:
             """Initialize ValidatedDatapoint."""
             self.data_point_id = data_point_id
             self.qa_status = qa_status
@@ -116,8 +116,8 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
         "k3": "dp3",
     }
 
-    accepted_dp = ValidatedDatapoint("dp1", QaStatus.ACCEPTED)
-    rejected_dp = ValidatedDatapoint("dp2", QaStatus.REJECTED)
+    accepted_dp = ValidatedDatapoint("dp1", "QaAccepted")
+    rejected_dp = ValidatedDatapoint("dp2", "QaRejected")
     cannot_dp = CannotValidateDatapoint("dp3")
 
     asyncio_run.side_effect = [accepted_dp, rejected_dp, cannot_dp]
