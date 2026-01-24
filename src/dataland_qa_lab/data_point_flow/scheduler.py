@@ -68,7 +68,8 @@ def run_scheduled_processing() -> None:
 
         accepted_ids = []
         rejected_ids = []
-        not_validated_ids = []
+        inconclusive = []
+        not_attempted = []
 
         for _k, v in data_points.items():  # noqa: PERF102
             if not try_acquire_lock(v):
@@ -91,12 +92,15 @@ def run_scheduled_processing() -> None:
                 database_engine.delete_entity(entity_id=v, entity_class=database_tables.DatapointInReview)
 
             if isinstance(validator_result, review.models.ValidatedDatapoint):
-                if validator_result.qa_status == QaStatus.ACCEPTED:
+                if validator_result.qa_status == "QaAccepted":
                     accepted_ids.append(validator_result.data_point_id)
-                elif validator_result.qa_status == QaStatus.REJECTED:
+                elif validator_result.qa_status == "QaRejected":
                     rejected_ids.append(validator_result.data_point_id)
+                elif validator_result.qa_status == "QaInconclusive":
+                    inconclusive.append(validator_result.data_point_id)
             if isinstance(validator_result, review.models.CannotValidateDatapoint):
-                not_validated_ids.append(validator_result.data_point_id)
+                not_attempted.append(validator_result.data_point_id)
+
         database_engine.add_entity(
             database_tables.ReviewedDataset(
                 data_id=dataset_id,
@@ -108,5 +112,5 @@ def run_scheduled_processing() -> None:
         )
 
         slack.send_slack_message(
-            f"Dataset ID: {dataset_id} processed. ✅ Accepted: {len(accepted_ids)}, ❌ Rejected: {len(rejected_ids)}, ⚠️ Not validated: {len(not_validated_ids)}"  # noqa: E501
+            f"Dataset ID: {dataset_id} processed. ✅ Accepted: {len(accepted_ids)}, ❌ Rejected: {len(rejected_ids)}, ⚠️ Inconclusive: {len(inconclusive)}, ⚠️ Not validated: {len(not_attempted)}"  # noqa: E501
         )
