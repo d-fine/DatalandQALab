@@ -35,6 +35,7 @@ def mock_validated_datapoint() -> ValidatedDatapoint:
         page=1,
         _prompt=None,
         timestamp=1234567890,
+        qa_report_id="qa_report_1",
     )
 
 
@@ -65,6 +66,7 @@ def test_review_dataset_returns_200_with_datapoint_results(
         page=2,
         _prompt=None,
         timestamp=1234567891,
+        qa_report_id="qa_report_2",
     )
 
     with (
