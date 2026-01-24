@@ -3,7 +3,6 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
