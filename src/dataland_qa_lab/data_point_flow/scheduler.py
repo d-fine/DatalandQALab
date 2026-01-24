@@ -86,7 +86,7 @@ def run_scheduled_processing() -> None:
                 )
             except Exception:
                 logger.exception("Error occurred while validating datapoint ID: %s", v)
-                not_validated_ids.append(v)
+                not_attempted.append(v)
                 continue
             finally:
                 database_engine.delete_entity(entity_id=v, entity_class=database_tables.DatapointInReview)
