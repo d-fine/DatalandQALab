@@ -3,7 +3,6 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 from pypdf import PdfReader, PdfWriter
 
 from dataland_qa_lab.data_point_flow import (
@@ -78,8 +77,17 @@ async def test_get_document_single_page(mock_config: MagicMock) -> None:
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
 async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
     """Test that override_dataland_qa calls the QA API correctly."""
-    await dataland.override_dataland_qa("dp123", "Reasoning text", QaStatus.ACCEPTED)
+    await dataland.override_dataland_qa(
+        data_point_id="dp123", comment="Reasoning text", qa_status="QaAccepted", predicted_answer="Yes", data_source={}
+    )
 
-    mock_config.dataland_client.qa_api.change_data_point_qa_status.assert_called_once_with(
-        data_point_id="dp123", qa_status=QaStatus.ACCEPTED, comment="Reasoning text"
+    mock_config.dataland_client.qa_api.datapoint_qa_controller_api.post_qa_report(
+        data_point_id="dp123",
+        qa_report_data_point_string={
+            "comment": "Reasoning text",
+            "verdict": "QaAccepted",
+            "correctedData": json.dumps(
+                {"value": "Yes", "quaility": "Incomplete", "comment": "program neural circuit", "dataSource": {}}
+            ),
+        },
     )

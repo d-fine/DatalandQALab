@@ -129,6 +129,17 @@ def test_qa_api(mock_api: MagicMock, client: MagicMock) -> None:
     mock_api.assert_called_once_with("mocked_qa_client")
 
 
+@patch("dataland_qa_lab.dataland.dataland_client.dataland_qa.DataPointQaReportControllerApi")
+def test_datapoint_qa_controller_api(mock_api: MagicMock, client: MagicMock) -> None:
+    """Test the datapoint_qa_controller_api property."""
+    mock_api.return_value = "datapoint_qa_controller_api_instance"
+    with patch.object(DatalandClient, "qa_client", new_callable=PropertyMock) as mock_qa_client:
+        mock_qa_client.return_value = "mocked_qa_client"
+        result = client.datapoint_qa_controller_api
+    assert result == "datapoint_qa_controller_api_instance"
+    mock_api.assert_called_once_with("mocked_qa_client")
+
+
 @patch("dataland_qa_lab.dataland.dataland_client.dataland_qa.EutaxonomyNonFinancialsDataQaReportControllerApi")
 def test_eu_taxonomy_nf_qa_api(mock_api: MagicMock, client: MagicMock) -> None:
     """Test the api client"""
