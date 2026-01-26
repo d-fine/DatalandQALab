@@ -76,12 +76,12 @@ def _create_excel_export(df: pd.DataFrame) -> BytesIO | None:
 
                     # Set column width with min 10 and max 50 characters
                     ws.column_dimensions[col[0].column_letter].width = min(max(max_len + 2, 10), 50)
-
-        buffer.seek(0)
-        return buffer
-    except Exception as e:
+    except (OSError, ValueError, KeyError) as e:
         st.error(f"❌ Excel export failed: {e}")
         return None
+    else:
+        buffer.seek(0)
+        return buffer
 
 
 st.title("Experiment Analytics")
