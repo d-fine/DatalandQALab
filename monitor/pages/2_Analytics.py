@@ -1,7 +1,9 @@
 import json  # noqa: N999
+from io import BytesIO
 
 import pandas as pd
 import streamlit as st
+from openpyxl.styles import Font, PatternFill
 from utils import db
 
 
@@ -41,6 +43,47 @@ def _format_db_response(db_response: tuple, experiment_type: str) -> list:
     return [json.loads(row[3]) for row in db_response]
 
 
+def _create_excel_export(df: pd.DataFrame) -> BytesIO | None:
+    """Create formatted Excel file from DataFrame.
+
+    Args:
+        df: DataFrame to export with experiment results
+
+    Returns:
+        BytesIO buffer containing Excel data with formatted headers and optimized column widths,
+        or None if export fails
+    """
+    try:
+        buffer = BytesIO()
+        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+            df.to_excel(writer, index=False, sheet_name="Results")
+            ws = writer.sheets["Results"]
+
+            # Format header row with bold white text on blue background
+            if ws.max_row > 0:
+                for cell in ws[1]:
+                    cell.font = Font(bold=True, color="FFFFFF")
+                    cell.fill = PatternFill(fgColor="4472C4", fill_type="solid")
+
+            # Optimize column widths based on content and header length
+            for col in ws.columns:
+                if col:
+                    # Calculate max length from header
+                    header_len = len(str(col[0].value or ""))
+                    # Calculate max length from data cells
+                    data_max = max((len(str(cell.value or "")) for cell in col[1:]), default=0)
+                    max_len = max(header_len, data_max)
+
+                    # Set column width with min 10 and max 50 characters
+                    ws.column_dimensions[col[0].column_letter].width = min(max(max_len + 2, 10), 50)
+
+        buffer.seek(0)
+        return buffer
+    except Exception as e:
+        st.error(f"❌ Excel export failed: {e}")
+        return None
+
+
 st.title("Experiment Analytics")
 
 experiment_id, experiment_type, ids, model, use_ocr, override, qalab_base_url, timestamp = (
@@ -77,12 +120,32 @@ Currently running an experiment with the following attributes:
 
     df = pd.DataFrame(qalab_results)
 
-    col1, col2 = st.columns([1, 1])
-    if col1.button("Refresh Results", type="primary", width="stretch"):
-        data = db.get_results_by_experiment(experiment_id)
-    col2.download_button(
-        "📥 Download CSV", df.to_csv(index=False), "experiment_results.csv", "text/csv", width="stretch"
+    # Create three columns for action buttons
+    btn_col1, btn_col2, btn_col3 = st.columns([1, 1, 1])
+
+    # Refresh button: reloads the entire page to fetch latest results
+    if btn_col1.button("Refresh Results", type="primary", width="stretch"):
+        st.rerun()
+
+    # CSV download button
+    btn_col2.download_button(
+        "📥 Download CSV",
+        df.to_csv(index=False),
+        "experiment_results.csv",
+        "text/csv",
+        width="stretch",
     )
+
+    # Excel download button with formatted output
+    excel_buffer = _create_excel_export(df)
+    if excel_buffer:
+        btn_col3.download_button(
+            "📥 Download XLSX",
+            data=excel_buffer.getvalue(),
+            file_name="experiment_results.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            width="stretch",
+        )
 
     metrics = _calculate_metrics(qalab_results)
 
