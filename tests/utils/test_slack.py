@@ -1,30 +1,34 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from dataland_qa_lab.utils.slack import send_slack_message
 
 
 @patch("dataland_qa_lab.utils.slack.config")
-@patch("dataland_qa_lab.utils.slack.requests.post")
-def test_send_slack_message_success(mock_post: MagicMock, mock_config: MagicMock) -> None:
-    """Test sending a Slack message successfully."""
-    mock_config.get_config.return_value.slack_webhook_url = "https://hooks.slack.com/services/"
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_post.return_value = mock_response
+@patch("dataland_qa_lab.utils.slack.sentry_sdk.capture_message")
+def test_send_slack_message_success(mock_capture: MagicMock, mock_config: MagicMock) -> None:
+    mock_config.get_config.return_value.environment = "dev"
 
     send_slack_message("Test message")
-    mock_post.assert_called_once()
+
+    mock_capture.assert_called_once_with(
+        "Notification: [dev] Test message",
+        level="warning",
+    )
 
 
+@patch("dataland_qa_lab.utils.slack.logger")
 @patch("dataland_qa_lab.utils.slack.config")
-@patch("dataland_qa_lab.utils.slack.requests.post")
-def test_send_slack_message_failure(mock_post: MagicMock, mock_config: MagicMock) -> None:
-    """Test handling of a failed Slack message send."""
-    mock_config.get_config.return_value.slack_webhook_url = "https://hooks.slack.com/services/"
-    mock_post.side_effect = Exception("Network error")
-    with pytest.raises(Exception, match="Network error"):
-        send_slack_message("Test message")
+@patch("dataland_qa_lab.utils.slack.sentry_sdk.capture_message")
+def test_send_slack_message_failure(
+    mock_capture: MagicMock,
+    mock_config: MagicMock,
+    mock_logger: MagicMock,
+) -> None:
+    mock_config.get_config.return_value.environment = "dev"
+    exc = Exception("Network error")
+    mock_capture.side_effect = exc
 
-    mock_post.assert_called_once()
+    send_slack_message("Test message")
+
+    mock_capture.assert_called_once()
+    mock_logger.warning.assert_any_call("Failed to send notification to Sentry: %s", exc)

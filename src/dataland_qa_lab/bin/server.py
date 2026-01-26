@@ -7,6 +7,7 @@ import sentry_sdk
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
+from sentry_sdk.utils import BadDsn
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.data_point_flow import dataland, review
@@ -34,17 +35,27 @@ trigger = CronTrigger(minute="*/10")
 def init_sentry() -> None:
     """Initialize Sentry for error tracking."""
     cfg = config
-    if not cfg.sentry_dsn:
+    dsn = getattr(cfg, "sentry_dsn", None)
+
+    if hasattr(dsn, "get_secret_value"):
+        dsn = dsn.get_secret_value()
+
+    dsn = "" if dsn is None else str(dsn).strip()
+
+    if not dsn:
         logger.info("Sentry DSN not provided. Skipping Sentry initialization.")
         return
 
-    sentry_sdk.init(
-        dsn=cfg.sentry_dsn,
-        environment=cfg.environment or "dev",
-        enable_logs=True,
-        send_default_pii=False,
-    )
-    logger.info("Sentry initialized.")
+    try:
+        sentry_sdk.init(
+            dsn=dsn,
+            environment=cfg.environment or "dev",
+            enable_logs=True,
+            send_default_pii=False,
+        )
+        logger.info("Sentry initialized.")
+    except BadDsn as e:
+        logger.warning("Skipping Sentry init (invalid DSN): %s", e)
 
 
 @asynccontextmanager
