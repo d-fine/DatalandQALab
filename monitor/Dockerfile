@@ -28,6 +28,10 @@ COPY --from=builder /project/.venv /project/.venv
 COPY --from=builder /project/monitor /project/monitor
 COPY --from=builder /project/bin /project/bin
 
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN chown -R appuser:appuser /project
 
 USER appuser
@@ -35,5 +39,9 @@ USER appuser
 ENV PATH="/project/.venv/bin:$PATH"
 
 EXPOSE 8501
+
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 CMD ["python", "-m", "monitor.monitor"]
