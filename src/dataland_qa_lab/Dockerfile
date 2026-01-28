@@ -24,12 +24,20 @@ COPY --from=builder /project/.venv /project/.venv
 COPY --from=builder /project/src /project/src
 COPY --from=builder /project/bin /project/bin
 
-RUN chown -R appuser:appuser /project
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    chown -R appuser:appuser /project
 
 USER appuser
 
 ENV PATH="/project/.venv/bin:$PATH"
 
 EXPOSE 81
+
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:81/health || exit 1
 
 CMD ["uvicorn", "dataland_qa_lab.bin.server:dataland_qa_lab", "--host", "0.0.0.0", "--port", "81"]

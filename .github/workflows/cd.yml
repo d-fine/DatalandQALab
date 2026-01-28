@@ -101,3 +101,45 @@ jobs:
       
       - name: Launch instance
         run: ssh ubuntu@"$SERVER_URL" "cd ~/qalab && docker compose --profile prod up -d"
+
+      - name: Wait for services to become healthy
+        run: |
+          echo "Waiting for services to become healthy on remote server..."
+          
+          ssh ubuntu@"$SERVER_URL" "
+            cd ~/qalab
+            echo 'Starting health checks...'
+            
+            # Timeout von 3 Minuten (36 * 5s)
+            for i in {1..36}; do
+              # Prüfe QA Lab Server Health Status
+              if docker compose --profile prod ps qa-lab-server-prod | grep -q '(healthy)'; then
+                echo 'QA Lab Server is healthy'
+                
+                # Prüfe Monitor
+                if docker compose --profile prod ps qa-lab-monitor | grep -q '(healthy)'; then
+                  echo 'Monitor is healthy'
+                  echo 'All services healthy!'
+                  exit 0
+                else
+                  echo 'Monitor not healthy yet, waiting...'
+                fi
+              fi
+              
+              echo \"Still waiting... (\$((i*5))s elapsed)\"
+              sleep 5
+            done
+            
+            echo 'ERROR: Services did not become healthy within 3 minutes'
+            echo 'Last logs:'
+            docker compose --profile prod logs --tail=50
+            exit 1
+          "
+          
+          # Prüfe den Exit-Code des SSH-Befehls
+          if [ $? -ne 0 ]; then
+            echo "Health check failed"
+            exit 1
+          else
+            echo "All services are healthy and running"
+          fi
