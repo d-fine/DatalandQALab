@@ -1,14 +1,10 @@
-import io
 import json
 from unittest.mock import MagicMock, patch
 
+import pymupdf
 import pytest
-from pymupdf import PdfReader, PdfWriter
 
-from dataland_qa_lab.data_point_flow import (
-    dataland,
-    models,
-)
+from dataland_qa_lab.data_point_flow import dataland, models
 
 
 @pytest.mark.asyncio
@@ -52,25 +48,25 @@ async def test_get_data_point_missing_data_source(mock_config: MagicMock) -> Non
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
 async def test_get_document_single_page(mock_config: MagicMock) -> None:
     """Test get_document extracts the correct page from a PDF."""
-    writer = PdfWriter()
-    writer.add_blank_page(width=100, height=100)
-    writer.add_blank_page(width=200, height=200)
-
-    pdf_bytes = io.BytesIO()
-    writer.write(pdf_bytes)
-    pdf_bytes.seek(0)
-    pdf_data = pdf_bytes.read()
+    # create a 2-page PDF using PyMuPDF
+    doc = pymupdf.open()
+    doc.new_page(width=100, height=100)
+    doc.new_page(width=200, height=200)
+    pdf_data = doc.tobytes()
+    doc.close()
 
     mock_config.dataland_client.documents_api.get_document.return_value = pdf_data
 
     result_stream = await dataland.get_document("ref123", 2)
 
-    reader = PdfReader(result_stream)
-    assert len(reader.pages) == 1
+    # verify result is a 1-page PDF and has the expected page size
+    out_doc = pymupdf.open(stream=result_stream.getvalue(), filetype="pdf")
+    assert len(out_doc) == 1
 
-    page = reader.pages[0]
-    assert page.mediabox.width == 200
-    assert page.mediabox.height == 200
+    page = out_doc[0]
+    assert page.rect.width == 200
+    assert page.rect.height == 200
+    out_doc.close()
 
 
 @pytest.mark.asyncio
@@ -78,7 +74,11 @@ async def test_get_document_single_page(mock_config: MagicMock) -> None:
 async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
     """Test that override_dataland_qa calls the QA API correctly."""
     await dataland.override_dataland_qa(
-        data_point_id="dp123", comment="Reasoning text", qa_status="QaAccepted", predicted_answer="Yes", data_source={}
+        data_point_id="dp123",
+        comment="Reasoning text",
+        qa_status="QaAccepted",
+        predicted_answer="Yes",
+        data_source={},
     )
 
     mock_config.dataland_client.qa_api.datapoint_qa_controller_api.post_qa_report(

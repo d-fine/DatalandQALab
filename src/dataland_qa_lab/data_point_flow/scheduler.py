@@ -70,4 +70,3 @@ def run_scheduled_processing() -> None:
         slack.send_slack_message(
             f"Dataset ID: {dataset_id} processed. ✅ Accepted: {len(accepted_ids)}, ❌ Rejected: {len(rejected_ids)}, ⚠️ Not validated: {len(not_validated_ids)}"  # noqa: E501
         )
-        
