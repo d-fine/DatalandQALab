@@ -1,6 +1,6 @@
 import logging
 
-import pypdf
+import pymupdf
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentContentFormat
 from azure.core.credentials import AzureKeyCredential
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 config = config.get_config()
 
 
-def old_extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
+def old_extract_text_of_pdf(pdf: pymupdf.PdfReader) -> str:
     """Use Azure Document Intelligence to make text readable for azure open ai."""
     docintel_cred = AzureKeyCredential(config.azure_docintel_api_key)
     document_intelligence_client = DocumentIntelligenceClient(
@@ -31,7 +31,7 @@ def old_extract_text_of_pdf(pdf: pypdf.PdfReader) -> str:
 
 
 def old_get_markdown_from_dataset(
-    data_id: str, relevant_pages_pdf_reader: pypdf.PdfReader, page_numbers: list[int], llm_version: str | None = None
+    data_id: str, relevant_pages_pdf_reader: pymupdf.PdfReader, page_numbers: list[int], llm_version: str | None = None
 ) -> str | None:
     """Adds or updates a markdown document in the database if necessary and returns it."""
     german_time = get_german_time_as_string()

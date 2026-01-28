@@ -1,7 +1,7 @@
 import io
 import logging
 
-import fitz
+import pymupdf
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ def extract_single_page(full_pdf_bytes: bytes, page_number: int) -> io.BytesIO:
         raise ValueError(msg)
 
     try:
-        with fitz.open(stream=full_pdf_bytes, filetype="pdf") as doc:
+        with pymupdf.open(stream=full_pdf_bytes, filetype="pdf") as doc:
             if page_number > len(doc):
                 msg = f"Page number {page_number} exceeds total pages {len(doc)}."
                 raise ValueError(msg)  # noqa: TRY301
@@ -35,7 +35,7 @@ def extract_single_page(full_pdf_bytes: bytes, page_number: int) -> io.BytesIO:
             page_index = page_number - 1
             page = doc.load_page(page_index)
 
-            output_doc = fitz.open()
+            output_doc = pymupdf.open()
             new_page = output_doc.new_page(
                 width=page.rect.width,
                 height=page.rect.height,
@@ -76,13 +76,13 @@ def render_pdf_to_image(pdf_stream: io.BytesIO, dpi: int = 300) -> list[Image.Im
             msg = "PDF stream is empty."
             _raise_value_error(msg)
 
-        with fitz.open(stream=stream_content, filetype="pdf") as doc:
+        with pymupdf.open(stream=stream_content, filetype="pdf") as doc:
             if len(doc) == 0:
                 msg = "PDF document contains no pages."
                 _raise_value_error(msg)
 
             zoom = dpi / 72.0
-            mat = fitz.Matrix(zoom, zoom)
+            mat = pymupdf.Matrix(zoom, zoom)
 
             for page_number, page in enumerate(doc, start=1):
                 try:
