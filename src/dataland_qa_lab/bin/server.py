@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException, status
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.data_point_flow import dataland, review
 from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
+from dataland_qa_lab.data_point_flow import scheduler as data_point_scheduler
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
 from dataland_qa_lab.dataland import scheduled_processor
 from dataland_qa_lab.review import dataset_reviewer, exceptions
@@ -27,19 +28,40 @@ create_tables()
 
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(minute="*/10")
-# old scheduler
-scheduler.add_job(scheduled_processor.old_run_scheduled_processing, trigger, next_run_time=datetime.now())  # noqa: DTZ005
-# new scheduler
-# scheduler.add_job(data_point_scheduler.run_scheduled_processing, trigger, next_run_time=datetime.now())
-if not config.is_dev_environment:
-    scheduler.start()
 
 
 @asynccontextmanager
 async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     """Ensures that the scheduler shuts down correctly."""
+    logger.info("Server startup initiated. Configuring scheduler.")
+
+    if config.is_dev_environment:
+        logger.info("Development environment detected. Using new scheduler.")
+
+        logger.info("Adding scheduled processor job to scheduler.")
+        scheduler.add_job(
+            data_point_scheduler.run_scheduled_processing,
+            trigger,
+            next_run_time=datetime.now(),  # noqa: DTZ005
+        )
+    else:
+        scheduler.add_job(
+            scheduled_processor.old_run_scheduled_processing,
+            trigger,
+            next_run_time=datetime.now(),  # noqa: DTZ005
+        )
+
+    if scheduler.get_jobs():
+        logger.info("Starting scheduler with %d jobs.", len(scheduler.get_jobs()))
+        scheduler.start()
+    else:
+        logger.info("No jobs to schedule. Scheduler will not be started.")
+
     yield
-    scheduler.shutdown()
+    logger.info("Server shutdown initiated. Shutting down scheduler.")
+    if scheduler.running:
+        logger.info("Shutting down scheduler.")
+        scheduler.shutdown()
 
 
 dataland_qa_lab = FastAPI(lifespan=lifespan)

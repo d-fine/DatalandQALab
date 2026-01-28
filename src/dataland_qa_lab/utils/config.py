@@ -45,6 +45,8 @@ class DatalandQaLabSettings(BaseSettings):
     ai_model: str = "gpt-5"
     use_ocr: bool = True
 
+    enable_data_point_scheduler: bool = False
+
     @property
     def dataland_client(self) -> DatalandClient:
         """Get the Dataland client."""
@@ -58,7 +60,7 @@ class DatalandQaLabSettings(BaseSettings):
     @property
     def is_dev_environment(self) -> bool:
         """Check if the environment is development."""
-        return self.environment in {"dev", "development"}
+        return self.environment in {"dev", "development", "DEV"}
 
 
 @cache
