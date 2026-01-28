@@ -4,10 +4,8 @@ import logging
 import time
 from dataclasses import asdict
 
-from dataland_qa.models.qa_status import QaStatus
-
-from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, prompts
-from dataland_qa_lab.utils import config, image_helper, pdf_handler
+from dataland_qa_lab.data_point_flow import ai, dataland, db, models, ocr, pdf_handler, prompts
+from dataland_qa_lab.utils import config, image_helper
 
 config = config.get_config()
 
@@ -39,7 +37,7 @@ async def validate_datapoint(
             ai_model=ai_model,
             use_ocr=use_ocr,
             override=override,
-            qa_status="NOTATTEMPTED",
+            qa_status="QaNotAttempted",
             timestamp=int(time.time()),
             _prompt=None,
         )
@@ -49,7 +47,6 @@ async def validate_datapoint(
     prompt = prompts.get_prompt_config(data_point.data_point_type)
 
     if prompt:
-        # check for dependencies
         depends_on = "Dependencies could not be resolved."
 
         if len(prompt.depends_on) and dataset_id:
@@ -57,7 +54,6 @@ async def validate_datapoint(
                 dataset_id=dataset_id or "", depends_on=prompt.depends_on, use_ocr=use_ocr, ai_model=ai_model
             )
 
-        # run validation
         downloaded_document = await dataland.get_document(
             reference_id=data_point.file_reference, page_num=data_point.page
         )
@@ -122,18 +118,24 @@ async def validate_datapoint(
                 ai_model=ai_model,
                 use_ocr=use_ocr,
                 override=override,
-                qa_status="NOTATTEMPTED",
+                qa_status="QaNotAttempted",
                 _prompt=prompt.prompt,
                 timestamp=int(time.time()),
             )
             await db.store_data_point_in_db(res)
             return res
 
-        await dataland.override_dataland_qa(
-            data_point_id=data_point.data_point_id,
-            reasoning=ai_response.reasoning,
-            qa_status=QaStatus.ACCEPTED if ai_response.qa_status == "ACCEPTED" else QaStatus.REJECTED,
-        )
+        try:
+            qa_report = await dataland.override_dataland_qa(
+                data_point_id=data_point.data_point_id,
+                comment="Reviewed by QaLab: " + ai_response.reasoning,
+                qa_status=ai_response.qa_status,
+                predicted_answer=ai_response.predicted_answer,
+                data_source=data_point.data_source,
+            )
+            qa_report_id = qa_report.qa_report_id
+        except Exception:  # noqa: BLE001
+            qa_report_id = None
 
         res = models.ValidatedDatapoint(
             data_point_id=data_point.data_point_id,
@@ -149,6 +151,7 @@ async def validate_datapoint(
             file_reference=data_point.file_reference,
             page=data_point.page,
             override=override,
+            qa_report_id=qa_report_id,
             _prompt=prompt.prompt,
             timestamp=int(time.time()),
         )
@@ -162,7 +165,7 @@ async def validate_datapoint(
         ai_model=ai_model,
         use_ocr=use_ocr,
         override=override,
-        qa_status="NOTATTEMPTED",
+        qa_status="QaNotAttempted",
         _prompt=None,
         timestamp=int(time.time()),
     )

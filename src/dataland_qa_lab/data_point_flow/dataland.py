@@ -4,11 +4,10 @@ import json
 import logging
 
 import async_lru
-from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import models, prompts
+from dataland_qa_lab.data_point_flow.pdf_handler import extract_single_page
 from dataland_qa_lab.utils import config
-from dataland_qa_lab.utils.pdf_handler import extract_single_page
 
 config = config.get_config()
 
@@ -65,14 +64,31 @@ async def get_document(reference_id: str, page_num: int) -> io.BytesIO:
     return extracted_pdf_stream
 
 
-async def override_dataland_qa(data_point_id: str, reasoning: str, qa_status: QaStatus) -> None:
+async def override_dataland_qa(
+    data_point_id: str,
+    comment: str,
+    qa_status: str,
+    predicted_answer: any,  # type: ignore
+    data_source: dict,
+) -> None:
     """Override Dataland QA status for the given data point ID."""
     logger.info("Overriding Dataland QA status for data point ID: %s to %s", data_point_id, qa_status)
-    await asyncio.to_thread(
-        config.dataland_client.qa_api.change_data_point_qa_status,
+    report_data = {
+        "comment": comment,
+        "verdict": str(qa_status),
+        "correctedData": json.dumps(
+            {
+                "value": predicted_answer,
+                "quality": "Incomplete",
+                "comment": "program neural circuit",
+                "dataSource": data_source,
+            }
+        ),
+    }
+    return await asyncio.to_thread(
+        config.dataland_client.datapoint_qa_controller_api.post_qa_report,
         data_point_id=data_point_id,
-        qa_status=qa_status,
-        comment=reasoning,
+        qa_report_data_point_string=report_data,
     )
 
 
