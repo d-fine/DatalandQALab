@@ -1,5 +1,6 @@
 import logging
 import sys
+import time
 from typing import Any
 
 from sqlalchemy import create_engine, inspect, text
@@ -112,3 +113,34 @@ def delete_entity(entity_id: str, entity_class: type[Any]) -> bool:
         session.close()
 
     return True
+
+
+def acquire_or_refresh_datapoint_lock(data_point_id: str, lock_ttl_seconds: int) -> bool:
+    """Acquire or refresh a lock for a data point (atomic upsert)."""
+    session = SessionLocal()
+    now_ts = int(time.time())
+    stale_before = now_ts - lock_ttl_seconds
+
+    try:
+        result = session.execute(
+            text(
+                """
+                INSERT INTO datapoint_in_review (data_point_id, locked_at)
+                VALUES (:id, :now_ts)
+                ON CONFLICT (data_point_id) DO UPDATE
+                  SET locked_at = EXCLUDED.locked_at
+                  WHERE datapoint_in_review.locked_at < :stale_before
+                RETURNING data_point_id
+                """
+            ),
+            {"id": data_point_id, "now_ts": now_ts, "stale_before": stale_before},
+        )
+        session.commit()
+    except SQLAlchemyError as e:
+        session.rollback()
+        logger.exception("Error acquiring or refreshing datapoint lock", exc_info=e)
+        return False
+    else:
+        return result.first() is not None
+    finally:
+        session.close()

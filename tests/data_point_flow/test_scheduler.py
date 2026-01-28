@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import time
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.exc import IntegrityError
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
@@ -129,6 +129,7 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
 
     db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
 
     config.dataland_client.meta_api.get_contained_data_points.return_value = {
         "k1": "dp1",
@@ -144,9 +145,10 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
 
     run_scheduled_processing()
 
-    assert db_engine.get_entity.call_count == 4  # 1 for dataset check + 3 for datapoint locks
-    assert db_engine.add_entity.call_count == 4  # 3 locks + 1 ReviewedDataset
-    assert db_engine.delete_entity.call_count == 3  # 3 datapoint locks deleted
+    assert db_engine.get_entity.call_count == 4
+    assert db_engine.acquire_or_refresh_datapoint_lock.call_count == 3
+    assert db_engine.add_entity.call_count == 1
+    assert db_engine.delete_entity.call_count == 3
 
     inserted_entities = [c.args[0] for c in db_engine.add_entity.call_args_list]
     inserted_reviewed = next(e for e in inserted_entities if isinstance(e, ReviewedDataset))
@@ -213,40 +215,29 @@ def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> No
 def test_try_acquire_no_existing(mocks: MagicMock) -> None:
     """Test acquiring lock when no existing lock."""
     db_engine = mocks["db_engine"]
-    db_tables = mocks["db_tables"]
-
-    class DatapointInReview:
-        def __init__(self, data_point_id: str) -> None:
-            """Initialize DatapointInReview."""
-            self.data_point_id = data_point_id
-
-    db_tables.DatapointInReview = DatapointInReview
 
     db_engine.get_entity.return_value = None
-    db_engine.add_entity.return_value = None
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
 
     assert try_acquire_lock("dp1") is True
-    db_engine.add_entity.assert_called_once()
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=LOCK_TTL_SECONDS,
+    )
+    db_engine.add_entity.assert_not_called()
     db_engine.delete_entity.assert_not_called()
 
 
 def test_try_acquire_lock_existing_not_stale(mocks: MagicMock) -> None:
     """Test acquiring lock when existing lock."""
     db_engine = mocks["db_engine"]
-    db_tables = mocks["db_tables"]
-
-    class DatapointInReview:
-        def __init__(self, data_point_id: str) -> None:
-            """Initialize DatapointInReview."""
-            self.data_point_id = data_point_id
-
-    db_tables.DatapointInReview = DatapointInReview
 
     lock = MagicMock()
     lock.locked_at = int(time.time())
     db_engine.get_entity.return_value = lock
 
     assert try_acquire_lock("dp1") is False
+    db_engine.acquire_or_refresh_datapoint_lock.assert_not_called()
     db_engine.add_entity.assert_not_called()
     db_engine.delete_entity.assert_not_called()
 
@@ -254,39 +245,84 @@ def test_try_acquire_lock_existing_not_stale(mocks: MagicMock) -> None:
 def test_try_acquire_lock_existing_stale(mocks: MagicMock) -> None:
     """Test acquiring lock when existing stale lock."""
     db_engine = mocks["db_engine"]
-    db_tables = mocks["db_tables"]
-
-    class DatapointInReview:
-        def __init__(self, data_point_id: str) -> None:
-            """Initialize DatapointInReview."""
-            self.data_point_id = data_point_id
-
-    db_tables.DatapointInReview = DatapointInReview
 
     lock = MagicMock()
     lock.locked_at = int(time.time()) - (LOCK_TTL_SECONDS + 1)
     db_engine.get_entity.return_value = lock
 
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
     assert try_acquire_lock("dp1") is True
-    db_engine.delete_entity.assert_called_once()
-    db_engine.add_entity.assert_called_once()
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=LOCK_TTL_SECONDS,
+    )
+    db_engine.delete_entity.assert_not_called()
+    db_engine.add_entity.assert_not_called()
 
 
-def test_try_acquire_lock_integrity_error(mocks: MagicMock) -> None:
-    """Test acquiring lock when IntegrityError occurs."""
+def test_try_acquire_lock_not_acquired(mocks: MagicMock) -> None:
+    """Test that lock acquisition returns False when lock cannot be acquired."""
     db_engine = mocks["db_engine"]
-    db_tables = mocks["db_tables"]
-
-    class DatapointInReview:
-        def __init__(self, data_point_id: str) -> None:
-            """Initialize DatapointInReview."""
-            self.data_point_id = data_point_id
-
-    db_tables.DatapointInReview = DatapointInReview
 
     db_engine.get_entity.return_value = None
-    db_engine.add_entity.side_effect = IntegrityError("stmt", {}, Exception("orig"))
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = False
 
     assert try_acquire_lock("dp1") is False
-    db_engine.add_entity.assert_called_once()
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=LOCK_TTL_SECONDS,
+    )
+    db_engine.add_entity.assert_not_called()
     db_engine.delete_entity.assert_not_called()
+
+
+def test_process_dataset_continues_on_datapoint_exception(mocks: MagicMock) -> None:
+    config = mocks["config"]
+    review = mocks["review"]
+    slack = mocks["slack"]
+    db_engine = mocks["db_engine"]
+    asyncio_run = mocks["asyncio_run"]
+    logger = mocks["logger"]
+
+    @dataclass
+    class ValidatedDatapoint:
+        data_point_id: str
+        qa_status: str
+
+    @dataclass
+    class CannotValidateDatapoint:
+        data_point_id: str
+
+    review.models.ValidatedDatapoint = ValidatedDatapoint
+    review.models.CannotValidateDatapoint = CannotValidateDatapoint
+
+    dataset = MagicMock()
+    dataset.data_id = "D123"
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
+    config.dataland_client.meta_api.get_contained_data_points.return_value = {
+        "k1": "dp1",
+        "k2": "dp2",
+    }
+
+    asyncio_run.side_effect = [
+        Exception("boom"),
+        ValidatedDatapoint("dp2", "QaAccepted"),
+    ]
+
+    run_scheduled_processing()
+
+    assert asyncio_run.call_count == 2
+
+    assert logger.exception.called
+
+    assert db_engine.delete_entity.call_count == 2
+
+    msg = slack.send_slack_message.call_args[0][0]
+    assert "Accepted: 1" in msg
+    assert "Not validated: 1" in msg

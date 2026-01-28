@@ -3,7 +3,6 @@ import logging
 import time
 
 from dataland_qa.models.qa_status import QaStatus
-from sqlalchemy.exc import IntegrityError
 
 from dataland_qa_lab.data_point_flow import review
 from dataland_qa_lab.database import database_engine, database_tables
@@ -28,18 +27,34 @@ def try_acquire_lock(data_point_id: str) -> bool:
             return False
 
         logger.warning("Datapoint %s lock is stale (age=%ss). Proceeding to review.", data_point_id, age)
-        database_engine.delete_entity(entity_id=data_point_id, entity_class=database_tables.DatapointInReview)
-    try:
-        database_engine.add_entity(
-            database_tables.DatapointInReview(
-                data_point_id=data_point_id,
-            )
-        )
-    except IntegrityError:
+
+    acquired = database_engine.acquire_or_refresh_datapoint_lock(
+        data_point_id=data_point_id, lock_ttl_seconds=LOCK_TTL_SECONDS
+    )
+    if not acquired:
         logger.info("Datapoint %s already being processed. Skipping.", data_point_id)
         return False
-    else:
-        return True
+
+    return True
+
+
+def bucket_validator_result(
+    validator_result: review.models.ValidatedDatapoint | review.models.CannotValidateDatapoint,
+    accepted_ids: list[str],
+    rejected_ids: list[str],
+    inconclusive: list[str],
+    not_attempted: list[str],
+) -> None:
+    """Buckets the validator result into appropriate lists."""
+    if isinstance(validator_result, review.models.ValidatedDatapoint):
+        if validator_result.qa_status == "QaAccepted":
+            accepted_ids.append(validator_result.data_point_id)
+        elif validator_result.qa_status == "QaRejected":
+            rejected_ids.append(validator_result.data_point_id)
+        elif validator_result.qa_status == "QaInconclusive":
+            inconclusive.append(validator_result.data_point_id)
+    elif isinstance(validator_result, review.models.CannotValidateDatapoint):
+        not_attempted.append(validator_result.data_point_id)
 
 
 def run_scheduled_processing() -> None:
@@ -89,17 +104,15 @@ def run_scheduled_processing() -> None:
                 not_attempted.append(v)
                 continue
             finally:
-                database_engine.delete_entity(entity_id=v, entity_class=database_tables.DatapointInReview)
+                deleted = database_engine.delete_entity(entity_id=v, entity_class=database_tables.DatapointInReview)
+                if not deleted:
+                    logger.warning(
+                        "Failed to release lock for datapoint ID: %s. Lock may remain until TTL expires (%s seconds).",
+                        v,
+                        LOCK_TTL_SECONDS,
+                    )
 
-            if isinstance(validator_result, review.models.ValidatedDatapoint):
-                if validator_result.qa_status == "QaAccepted":
-                    accepted_ids.append(validator_result.data_point_id)
-                elif validator_result.qa_status == "QaRejected":
-                    rejected_ids.append(validator_result.data_point_id)
-                elif validator_result.qa_status == "QaInconclusive":
-                    inconclusive.append(validator_result.data_point_id)
-            if isinstance(validator_result, review.models.CannotValidateDatapoint):
-                not_attempted.append(validator_result.data_point_id)
+            bucket_validator_result(validator_result, accepted_ids, rejected_ids, inconclusive, not_attempted)
 
         database_engine.add_entity(
             database_tables.ReviewedDataset(
