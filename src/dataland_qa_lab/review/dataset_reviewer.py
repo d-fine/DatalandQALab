@@ -4,7 +4,7 @@ import logging
 import time
 from dataclasses import dataclass
 
-import fitz
+import pymupdf
 from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import ai, prompts
@@ -275,8 +275,8 @@ def _get_file_using_ocr(file_name: str, file_reference: str, page: int) -> str:
 def _get_document(reference_id: str, page_numbers: list[int]) -> io.BytesIO:
     """Return a PDF document stream for specific pages."""
     full_pdf = config.dataland_client.documents_api.get_document(reference_id)
-    with fitz.open(streaqm=full_pdf, filetype="pdf") as src_doc:
-        output_doc = fitz.open()
+    with pymupdf.open(stream=full_pdf, filetype="pdf") as src_doc:
+        output_doc = pymupdf.open()
         for page_num in page_numbers:
             page_index = page_num - 1
             if 0 <= page_index < len(src_doc):

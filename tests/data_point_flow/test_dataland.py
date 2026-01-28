@@ -3,7 +3,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from pypdf import PdfReader, PdfWriter
+from pymupdf import PdfReader, PdfWriter
 
 from dataland_qa_lab.data_point_flow import (
     dataland,

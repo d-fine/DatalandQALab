@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 from unittest.mock import ANY, MagicMock, patch
 
-import pypdf
+import pymupdf
 from azure.ai.documentintelligence.models import AnalyzeResult
 
 from dataland_qa_lab.pages.text_to_doc_intelligence import (
@@ -54,7 +54,7 @@ def test_get_markdown_from_dataset_new_entry(
     mock_get_entity.return_value = None
 
     data_id = "test_id"
-    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pdf_reader = MagicMock(spec=pymupdf.PdfReader)
     pages = [1, 2, 3]
 
     result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
@@ -78,7 +78,7 @@ def test_get_markdown_from_dataset_existing_entry(
     mock_get_entity.return_value = mock_existing_entry
 
     data_id = "test_id"
-    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pdf_reader = MagicMock(spec=pymupdf.PdfReader)
     pages = [1, 2, 3]
 
     result = old_get_markdown_from_dataset(data_id=data_id, relevant_pages_pdf_reader=pdf_reader, page_numbers=pages)
@@ -105,7 +105,7 @@ def test_get_markdown_from_dataset_saves_llm_version(
     mock_get_time.return_value = "2025-12-12 12:34:56"
 
     data_id = "test_id"
-    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pdf_reader = MagicMock(spec=pymupdf.PdfReader)
     pages = [1, 2, 3]
     llm_version = "gpt_4o"
 
@@ -153,7 +153,7 @@ def test_get_markdown_from_dataset_updates_existing_llm_version(
     mock_get_entity.return_value = existing
 
     data_id = "test_id"
-    pdf_reader = MagicMock(spec=pypdf.PdfReader)
+    pdf_reader = MagicMock(spec=pymupdf.PdfReader)
     pages = [3, 4]
     llm_version = "gpt-4o"
 
