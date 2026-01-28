@@ -59,8 +59,8 @@ def _create_excel_export(df: pd.DataFrame) -> BytesIO | None:
             df.to_excel(writer, index=False, sheet_name="Results")
             ws = writer.sheets["Results"]
 
-            # Format header row with bold white text on blue background
-            if ws.max_row > 0:
+            # Format header row with bold white text on blue background (only if DataFrame has columns)
+            if not df.empty and len(df.columns) > 0:
                 for cell in ws[1]:
                     cell.font = Font(bold=True, color="FFFFFF")
                     cell.fill = PatternFill(fgColor="4472C4", fill_type="solid")
@@ -76,7 +76,7 @@ def _create_excel_export(df: pd.DataFrame) -> BytesIO | None:
 
                     # Set column width with min 10 and max 50 characters
                     ws.column_dimensions[col[0].column_letter].width = min(max(max_len + 2, 10), 50)
-    except (OSError, ValueError, KeyError) as e:
+    except (ValueError, AttributeError, TypeError) as e:
         st.error(f"❌ Excel export failed: {e}")
         return None
     else:
