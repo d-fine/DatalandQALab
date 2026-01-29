@@ -1,9 +1,12 @@
 import json
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from dataland_qa_lab.data_point_flow.ai import execute_prompt
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_execute_prompt_valid_json(mock_client: MagicMock) -> None:
     """Test that execute_prompt returns correct data on valid JSON response."""
@@ -26,6 +29,7 @@ async def test_execute_prompt_valid_json(mock_client: MagicMock) -> None:
     assert result.reasoning == "All good"
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_execute_prompt_retry_on_invalid_json(mock_client: MagicMock) -> None:
     """Test that execute_prompt retries on invalid JSON responses."""
@@ -57,6 +61,7 @@ async def test_execute_prompt_retry_on_invalid_json(mock_client: MagicMock) -> N
     assert "Finally valid" in result.reasoning
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_execute_prompt_no_content(mock_client: MagicMock) -> None:
     """Test that execute_prompt handles no content response with fallback."""
@@ -69,6 +74,7 @@ async def test_execute_prompt_no_content(mock_client: MagicMock) -> None:
     assert "No content" in result.reasoning
 
 
+@pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_execute_prompt_invalid_json_fallback(mock_client: MagicMock) -> None:
     """Test that execute_prompt falls back after retries on invalid JSON."""
