@@ -44,37 +44,24 @@ def _format_db_response(db_response: tuple, experiment_type: str) -> list:
 
 
 def _create_excel_export(df: pd.DataFrame) -> BytesIO | None:
-    """Create formatted Excel file from DataFrame.
-
-    Args:
-        df: DataFrame to export with experiment results
-
-    Returns:
-        BytesIO buffer containing Excel data with formatted headers and optimized column widths,
-        or None if export fails
-    """
+    """Create an Excel export from the DataFrame with formatting."""
     try:
         buffer = BytesIO()
         with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
             df.to_excel(writer, index=False, sheet_name="Results")
             ws = writer.sheets["Results"]
 
-            # Format header row with bold white text on blue background (only if DataFrame has columns)
             if not df.empty and len(df.columns) > 0:
                 for cell in ws[1]:
                     cell.font = Font(bold=True, color="FFFFFF")
                     cell.fill = PatternFill(fgColor="4472C4", fill_type="solid")
 
-            # Optimize column widths based on content and header length
             for col in ws.columns:
                 if col:
-                    # Calculate max length from header
                     header_len = len(str(col[0].value or ""))
-                    # Calculate max length from data cells
                     data_max = max((len(str(cell.value or "")) for cell in col[1:]), default=0)
                     max_len = max(header_len, data_max)
 
-                    # Set column width with min 10 and max 50 characters
                     ws.column_dimensions[col[0].column_letter].width = min(max(max_len + 2, 10), 50)
     except (ValueError, AttributeError, TypeError) as e:
         st.error(f"❌ Excel export failed: {e}")
