@@ -1,6 +1,6 @@
 import io
 
-import fitz
+import pymupdf
 import pytest
 from PIL import Image
 
@@ -10,7 +10,7 @@ from dataland_qa_lab.data_point_flow import pdf_handler
 @pytest.fixture
 def sample_pdf_bytes() -> bytes:
     """Returns a simple PDF file in bytes."""
-    doc = fitz.open()
+    doc = pymupdf.open()
     doc.new_page()
     doc.new_page()
     doc.new_page()
@@ -20,7 +20,7 @@ def sample_pdf_bytes() -> bytes:
 def test_extract_single_page(sample_pdf_bytes: bytes) -> None:
     """Test extracting a single page from a PDF."""
     result_stream = pdf_handler.extract_single_page(sample_pdf_bytes, page_number=2)
-    with fitz.open(stream=result_stream, filetype="pdf") as result_doc:
+    with pymupdf.open(stream=result_stream, filetype="pdf") as result_doc:
         assert len(result_doc) == 1
 
 

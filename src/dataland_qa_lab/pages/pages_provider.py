@@ -1,7 +1,7 @@
 import io
 import logging
 
-import pypdf
+import pymupdf
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 
 from dataland_qa_lab.dataland import data_provider
@@ -21,7 +21,7 @@ def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]
     return sorted(set(yes_no_pages + numeric_pages))
 
 
-def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.PdfReader | None:
+def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pymupdf.PdfReader | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
     logger.info("Starting to retrieve pages from company report.")
@@ -37,8 +37,8 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pypdf.Pdf
     full_pdf = dataland_client.documents_api.get_document(file_reference)
     full_pdf_stream = io.BytesIO(full_pdf)
 
-    original_pdf = pypdf.PdfReader(full_pdf_stream)
-    output_pdf = pypdf.PdfWriter()
+    original_pdf = pymupdf.PdfReader(full_pdf_stream)
+    output_pdf = pymupdf.PdfWriter()
 
     for page_num in page_numbers:
         if 0 <= page_num - 1 < len(original_pdf.pages):
