@@ -2,7 +2,6 @@ import time
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
 
 from dataland_qa_lab.data_point_flow import db as db_module
 from dataland_qa_lab.data_point_flow import models
@@ -20,7 +19,7 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock) -> No
         predicted_answer=12,
         confidence=0.9,
         reasoning="Reasoning text",
-        qa_status=QaStatus.ACCEPTED,
+        qa_status="QaAccepted",
         timestamp=int(time.time()),
         ai_model="gpt-4",
         use_ocr=False,
@@ -28,6 +27,7 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock) -> No
         file_reference="ref123",
         page=1,
         override=None,
+        qa_report_id="report_id",
         _prompt="prompt text",
     )
 
@@ -39,7 +39,7 @@ async def test_store_data_point_in_db_validated(mock_db_engine: MagicMock) -> No
     )
     assert added_entity.data_point_id == "dp123"
     assert added_entity.predicted_answer == 12
-    assert added_entity.qa_status == QaStatus.ACCEPTED
+    assert added_entity.qa_status == "QaAccepted"
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
         ai_model="gpt-4",
         use_ocr=True,
         override=None,
-        qa_status="NOTATTEMPTED",
+        qa_status="QaNotAttempted",
         timestamp=int(time.time()),
         _prompt="prompt text",
     )
@@ -64,7 +64,7 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
     assert added_entity.data_point_id == "dp456"
     assert added_entity.predicted_answer is None
     assert added_entity.confidence == 0.0
-    assert added_entity.qa_status == "NOTATTEMPTED"
+    assert added_entity.qa_status == "QaNotAttempted"
 
 
 @pytest.mark.asyncio
@@ -88,7 +88,7 @@ async def test_check_if_already_validated_validated(mock_db_engine: MagicMock) -
     mock_entity.predicted_answer = 12
     mock_entity.confidence = 0.9
     mock_entity.reasoning = "Reasoning text"
-    mock_entity.qa_status = QaStatus.ACCEPTED
+    mock_entity.qa_status = "QaAccepted"
     mock_entity.timestamp = int(time.time())
     mock_entity.ai_model = "gpt-4"
     mock_entity.use_ocr = False

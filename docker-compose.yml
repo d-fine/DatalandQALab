@@ -22,12 +22,35 @@ services:
       DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
       ENVIRONMENT: ${ENVIRONMENT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:81/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      data_reviewer-db:
+        condition: service_healthy
+  
   qa-lab-monitor:
+    environment:
+      DATALAND_URL: ${DATALAND_URL}
+      DATALAND_API_KEY: ${DATALAND_API_KEY}
     profiles:
       - prod
     image: ghcr.io/d-fine/datalandqalab/qalab-monitor:${QALAB_SERVER_VERSION}
     ports:
       - "127.0.0.1:8501:8501"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      qa-lab-server-prod:
+        condition: service_healthy
+  
   qa-lab-server-prod:
     profiles:
       - prod
@@ -48,6 +71,16 @@ services:
       DATABASE_CONNECTION_STRING: ${DATABASE_CONNECTION_STRING}
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
       ENVIRONMENT: ${ENVIRONMENT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:81/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      data_reviewer-db:
+        condition: service_healthy
+  
   data_reviewer-db:
     image: postgres:17.2
     restart: always
@@ -59,6 +92,13 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d dataland_qa_lab"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   pgdata:
+  
