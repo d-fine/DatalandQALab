@@ -1,16 +1,20 @@
 # noqa: N999
 from io import BytesIO
 
+import requests
 import streamlit as st
 
 from utils import dataland
 
 
 def _render_pdf(reference_id: str) -> None:
-    response = dataland.download_document(reference_id)
-    pdf_bytes = response.content
-    buffer = BytesIO(pdf_bytes)
-    st.download_button("View PDF in browser", buffer, file_name="document.pdf", mime="application/pdf")
+    try:
+        response = dataland.download_document(reference_id)
+        pdf_bytes = response.content
+        buffer = BytesIO(pdf_bytes)
+        st.download_button("View PDF in browser", buffer, file_name="document.pdf", mime="application/pdf")
+    except requests.RequestException as error:
+        st.error(f"❌ Failed to download PDF: {error}")
 
 
 def render_pdf_viewer() -> None:
