@@ -7,14 +7,14 @@ import sentry_sdk
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI, HTTPException, status
+from sentry_sdk.integrations.fastapi import FastApiIntegration
 from sentry_sdk.utils import BadDsn
 
 from dataland_qa_lab.bin import models
 from dataland_qa_lab.data_point_flow import dataland, review
 from dataland_qa_lab.data_point_flow import models as datapoint_flow_models
-from dataland_qa_lab.data_point_flow import scheduler as data_point_scheduler
 from dataland_qa_lab.database.database_engine import create_tables, verify_database_connection
-from dataland_qa_lab.dataland import scheduled_processor
+from dataland_qa_lab.dataland import scheduled_job
 from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
@@ -45,13 +45,15 @@ def init_sentry() -> None:
     if not dsn:
         logger.info("Sentry DSN not provided. Skipping Sentry initialization.")
         return
-
+    traces_sample_rate = float(getattr(cfg, "sentry_traces_sample_rate", 1.0))
     try:
         sentry_sdk.init(
             dsn=dsn,
             environment=cfg.environment or "dev",
             enable_logs=True,
             send_default_pii=False,
+            integrations=[FastApiIntegration()],
+            traces_sample_rate=traces_sample_rate,
         )
         logger.info("Sentry initialized.")
     except BadDsn as e:
@@ -64,21 +66,11 @@ async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
     logger.info("Server startup initiated. Configuring scheduler.")
     init_sentry()
 
-    if config.is_dev_environment:
-        logger.info("Development environment detected. Using new scheduler.")
-
-        logger.info("Adding scheduled processor job to scheduler.")
-        scheduler.add_job(
-            data_point_scheduler.run_scheduled_processing,
-            trigger,
-            next_run_time=datetime.now(),  # noqa: DTZ005
-        )
-    else:
-        scheduler.add_job(
-            scheduled_processor.old_run_scheduled_processing,
-            trigger,
-            next_run_time=datetime.now(),  # noqa: DTZ005
-        )
+    scheduler.add_job(
+        scheduled_job.run_scheduled_processing_job,
+        trigger,
+        next_run_time=datetime.now(),  # noqa: DTZ005
+    )
 
     if scheduler.get_jobs():
         logger.info("Starting scheduler with %d jobs.", len(scheduler.get_jobs()))

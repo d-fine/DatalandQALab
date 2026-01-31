@@ -18,6 +18,8 @@ def test_settings_load_from_env(monkeypatch: MagicMock) -> None:
     monkeypatch.setenv("SLACK_WEBHOOK_URL", "https://slack-url")
     monkeypatch.setenv("ENVIRONMENT", "dev")
     monkeypatch.setenv("FRAMEWORKS", "sfdr, taxonomy")
+    monkeypatch.setenv("SENTRY_DSN", "https://examplePublicKey@o0.ingest.sentry.io/0")
+    monkeypatch.setenv("SENTRY_TRACES_SAMPLE_RATE", "0.25")
 
     settings = DatalandQaLabSettings()
 
@@ -30,6 +32,8 @@ def test_settings_load_from_env(monkeypatch: MagicMock) -> None:
     assert settings.database_connection_string == "sqlite:///tmp.db"
     assert settings.slack_webhook_url == "https://slack-url"
     assert settings.environment == "dev"
+    assert settings.sentry_dsn == "https://examplePublicKey@o0.ingest.sentry.io/0"
+    assert settings.sentry_traces_sample_rate == 0.25
 
 
 def test_frameworks_list_parsing(monkeypatch: MagicMock) -> None:
