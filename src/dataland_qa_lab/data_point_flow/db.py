@@ -6,7 +6,7 @@ from dataland_qa_lab.data_point_flow import models, prompts
 from dataland_qa_lab.database import database_engine, database_tables
 from dataland_qa_lab.utils import config
 
-config = config.get_config()
+conf = config.get_config()
 
 
 logger = logging.getLogger(__name__)
@@ -17,45 +17,40 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
     """Store the validated data point in the database."""
     logger.info("Storing validated data point ID: %s in the database.", data.data_point_id)
     if isinstance(data, models.CannotValidateDatapoint):
-        await asyncio.to_thread(
-            database_engine.add_entity,
-            database_tables.ValidatedDataPoint(
-                data_point_id=data.data_point_id,
-                data_point_type=data.data_point_type,
-                previous_answer=None,
-                predicted_answer=None,
-                confidence=0.0,
-                reasoning=data.reasoning,
-                qa_status="QaNotAttempted",
-                timestamp=int(time.time()),
-                ai_model=data.ai_model,
-                use_ocr=data.use_ocr,
-                override=data.override,
-                file_reference=None,
-                file_name=None,
-                page=None,
-            ),
+        model = database_tables.ValidatedDataPoint(
+            data_point_id=data.data_point_id,
+            data_point_type=data.data_point_type,
+            previous_answer=None,
+            predicted_answer=None,
+            confidence=0.0,
+            reasoning=data.reasoning,
+            qa_status="QaNotAttempted",
+            timestamp=int(time.time()),
+            ai_model=data.ai_model,
+            use_ocr=data.use_ocr,
+            override=data.override,
+            file_reference=None,
+            file_name=None,
+            page=None,
         )
     else:
-        await asyncio.to_thread(
-            database_engine.add_entity,
-            entity=database_tables.ValidatedDataPoint(
-                data_point_id=data.data_point_id,
-                data_point_type=data.data_point_type,
-                previous_answer=data.previous_answer,
-                predicted_answer=data.predicted_answer,
-                confidence=data.confidence,
-                reasoning=data.reasoning,
-                qa_status=data.qa_status,
-                timestamp=data.timestamp,
-                ai_model=data.ai_model,
-                use_ocr=data.use_ocr,
-                override=data.override,
-                file_reference=data.file_reference,
-                file_name=data.file_name,
-                page=data.page,
-            ),
+        model = database_tables.ValidatedDataPoint(
+            data_point_id=data.data_point_id,
+            data_point_type=data.data_point_type,
+            previous_answer=data.previous_answer,
+            predicted_answer=data.predicted_answer,
+            confidence=data.confidence,
+            reasoning=data.reasoning,
+            qa_status=data.qa_status,
+            timestamp=data.timestamp,
+            ai_model=data.ai_model,
+            use_ocr=data.use_ocr,
+            override=data.override,
+            file_reference=data.file_reference,
+            file_name=data.file_name,
+            page=data.page,
         )
+    await asyncio.to_thread(database_engine.add_entity, entity=model)
 
 
 async def check_if_already_validated(

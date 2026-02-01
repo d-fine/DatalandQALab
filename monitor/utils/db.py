@@ -1,9 +1,9 @@
 import json
 import os
 import sqlite3
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator
 
 DB_PATH = Path(os.getenv("MONITOR_DB_PATH", "monitor.db"))
 
