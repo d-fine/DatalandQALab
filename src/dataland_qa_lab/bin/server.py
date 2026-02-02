@@ -45,7 +45,6 @@ def init_sentry() -> None:
     if not dsn:
         logger.info("Sentry DSN not provided. Skipping Sentry initialization.")
         return
-    traces_sample_rate = float(getattr(cfg, "sentry_traces_sample_rate", 1.0))
     try:
         sentry_sdk.init(
             dsn=dsn,
@@ -53,7 +52,7 @@ def init_sentry() -> None:
             enable_logs=True,
             send_default_pii=False,
             integrations=[FastApiIntegration()],
-            traces_sample_rate=traces_sample_rate,
+            traces_sample_rate=1.0,
         )
         logger.info("Sentry initialized.")
     except BadDsn as e:

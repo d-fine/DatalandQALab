@@ -43,7 +43,6 @@ class DatalandQaLabSettings(BaseSettings):
     environment: str | None = None
     frameworks: str = "sfdr"
     sentry_dsn: str | None = None
-    sentry_traces_sample_rate: float = 1.0
     ai_model: str = "gpt-5"
     use_ocr: bool = True
 
