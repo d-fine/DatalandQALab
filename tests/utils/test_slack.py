@@ -7,9 +7,7 @@ from dataland_qa_lab.utils.slack import send_slack_message
 @patch("dataland_qa_lab.utils.slack.sentry_sdk.capture_message")
 @patch("dataland_qa_lab.utils.slack.config")
 def test_send_slack_message_success(
-    mock_config: MagicMock,
-    mock_capture: MagicMock,
-    mock_push_scope: MagicMock
+    mock_config: MagicMock, mock_capture: MagicMock, mock_push_scope: MagicMock
 ) -> None:
     mock_config.get_config.return_value.environment = "dev"
 
