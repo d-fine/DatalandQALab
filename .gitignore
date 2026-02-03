@@ -169,3 +169,5 @@ clients/
 monitor/config.json
 monitor/output/
 *.db
+.python-version
+
