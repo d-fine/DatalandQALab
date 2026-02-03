@@ -15,6 +15,13 @@ Ensure you have an active GitHub Copilot subscription.
 | **PyCharm** | 1. Go to `Settings` → `Plugins`<br>2. Install **"GitHub Copilot"**<br>3. Restart IDE<br>4. Click the Copilot icon (bottom right or sidebar) to sign in. |
 | **VS Code** | 1. Open Extensions (`Cmd+Shift+X`)<br>2. Install **"GitHub Copilot"**<br>3. Follow the prompt to sign in via GitHub. |
 
+### Project-Specific Configuration
+This project includes a `.copilotignore` file that configures Copilot to:
+- Ignore certain file patterns during suggestions
+- Focus on relevant project files
+
+No additional setup is required - the configuration loads automatically when you open the project.
+
 ---
 
 ## 2. How to Use
