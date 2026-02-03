@@ -11,6 +11,7 @@ from dataland_qa_lab.utils import config, slack
 logger = logging.getLogger(__name__)
 config = config.get_config()
 LOCK_TTL_SECONDS = 15 * 60  # 15 minutes
+VALIDATION_TIMEOUT_SECONDS = 5 * 60
 
 
 def try_acquire_lock(data_point_id: str) -> bool:
@@ -92,13 +93,22 @@ def run_scheduled_processing() -> None:
 
             try:
                 validator_result = asyncio.run(
-                    review.validate_datapoint(
-                        data_point_id=v,
-                        ai_model=config.ai_model,
-                        use_ocr=config.use_ocr,
-                        override=False,
+                    asyncio.wait_for(
+                        review.validate_datapoint(
+                            data_point_id=v,
+                            ai_model=config.ai_model,
+                            use_ocr=config.use_ocr,
+                            override=False,
+                        ),
+                        timeout=VALIDATION_TIMEOUT_SECONDS,
                     )
                 )
+            except TimeoutError:
+                logger.warning(
+                    "Validation timed out for datapoint ID: %s after %s seconds", v, VALIDATION_TIMEOUT_SECONDS
+                )
+                not_attempted.append(v)
+                continue
             except Exception:
                 logger.exception("Error occurred while validating datapoint ID: %s", v)
                 not_attempted.append(v)

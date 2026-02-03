@@ -326,3 +326,48 @@ def test_process_dataset_continues_on_datapoint_exception(mocks: MagicMock) -> N
     msg = slack.send_slack_message.call_args[0][0]
     assert "Accepted: 1" in msg
     assert "Not validated: 1" in msg
+
+
+def test_process_dataset_continues_on_datapoint_timeout(mocks: MagicMock) -> None:
+    config = mocks["config"]
+    review = mocks["review"]
+    slack = mocks["slack"]
+    db_engine = mocks["db_engine"]
+    asyncio_run = mocks["asyncio_run"]
+    logger = mocks["logger"]
+
+    @dataclass
+    class ValidatedDatapoint:
+        data_point_id: str
+        qa_status: str
+
+    review.models.ValidatedDatapoint = ValidatedDatapoint
+
+    dataset = MagicMock()
+    dataset.data_id = "D123"
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
+    config.dataland_client.meta_api.get_contained_data_points.return_value = {
+        "k1": "dp1",
+        "k2": "dp2",
+    }
+
+    asyncio_run.side_effect = [
+        TimeoutError(),
+        ValidatedDatapoint("dp2", "QaAccepted"),
+    ]
+
+    run_scheduled_processing()
+
+    assert asyncio_run.call_count == 2
+    assert db_engine.delete_entity.call_count == 2
+
+    assert logger.warning.called
+
+    msg = slack.send_slack_message.call_args[0][0]
+    assert "Accepted: 1" in msg
+    assert "Not validated: 1" in msg
