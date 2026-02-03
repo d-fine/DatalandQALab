@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
+from dataland_qa.models.qa_status import QaStatus
 from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
 from dataland_qa_lab.dataland import scheduled_processor
@@ -76,14 +77,12 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     asyncio_run = mocks["asyncio_run"]
 
     class ValidatedDatapoint:
-        def __init__(self, data_point_id: str, qa_status: str) -> None:
-            """Initialize ValidatedDatapoint."""
+        def __init__(self, data_point_id: str, qa_status: QaStatus) -> None:
             self.data_point_id = data_point_id
             self.qa_status = qa_status
 
     class CannotValidateDatapoint:
         def __init__(self, data_point_id: str) -> None:
-            """Initialize CannotValidateDatapoint."""
             self.data_point_id = data_point_id
 
     review.models.ValidatedDatapoint = ValidatedDatapoint
@@ -91,9 +90,13 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
 
     class ReviewedDataset:
         def __init__(
-            self, data_id: str, review_start_time: int, review_end_time: int, review_completed: bool, report_id: str
+            self,
+            data_id: str,
+            review_start_time: int,
+            review_end_time: int,
+            review_completed: bool,
+            report_id: str,
         ) -> None:
-            """Initialize ReviewedDataset."""
             self.data_id = data_id
             self.review_start_time = review_start_time
             self.review_end_time = review_end_time
@@ -104,6 +107,7 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
 
     dataset = MagicMock()
     dataset.data_id = "D123"
+
     config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
     config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
 
@@ -115,8 +119,8 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
         "k3": "dp3",
     }
 
-    accepted_dp = ValidatedDatapoint("dp1", "QaAccepted")
-    rejected_dp = ValidatedDatapoint("dp2", "QaRejected")
+    accepted_dp = ValidatedDatapoint("dp1", QaStatus.ACCEPTED)
+    rejected_dp = ValidatedDatapoint("dp2", QaStatus.REJECTED)
     cannot_dp = CannotValidateDatapoint("dp3")
 
     asyncio_run.side_effect = [accepted_dp, rejected_dp, cannot_dp]
@@ -160,6 +164,7 @@ def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
     """Test that the new scheduler logic is used in dev environment."""
     mocks = server_mocks
     mocks["config"].is_dev_environment = True
+
     with TestClient(mocks["app"]):
         pass
 
@@ -180,6 +185,6 @@ def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> No
 
     scheduler_mock = mocks["scheduler"]
     assert scheduler_mock.add_job.called
-    passed_function = scheduler_mock.add_job.call_args[0][0]
 
+    passed_function = scheduler_mock.add_job.call_args[0][0]
     assert passed_function == scheduled_processor.old_run_scheduled_processing
