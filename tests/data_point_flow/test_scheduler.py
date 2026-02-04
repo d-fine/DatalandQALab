@@ -3,7 +3,6 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import app
 from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
