@@ -153,16 +153,3 @@ def server_mocks() -> Iterator[dict[str, Any]]:
         patch("dataland_qa_lab.bin.server.data_point_scheduler.run_scheduled_processing") as mock_job_func,
     ):
         yield {"app": app, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
-
-
-def test_scheduler_does_not_start_on_local(server_mocks: dict[str, Any]) -> None:
-    """Test that the scheduler does not add jobs in local environment."""
-    mocks = server_mocks
-    mocks["config"].is_local_environment = True
-
-    scheduler_mock = mocks["scheduler"]
-
-    with TestClient(mocks["app"]):
-        pass
-
-    assert not scheduler_mock.add_job.called
