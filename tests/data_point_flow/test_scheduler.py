@@ -6,9 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import app
-from dataland_qa_lab.data_point_flow import scheduler as data_point_scheduler
 from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
-from dataland_qa_lab.dataland import scheduled_processor
 
 
 @pytest.fixture

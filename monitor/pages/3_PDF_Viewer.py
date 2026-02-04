@@ -3,7 +3,6 @@ from io import BytesIO
 
 import requests
 import streamlit as st
-
 from utils import dataland
 
 

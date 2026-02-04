@@ -12,6 +12,8 @@ POLL_INTERVAL_SECONDS = 5
 
 @dataclass(frozen=True)
 class ExperimentConfig:
+    """Configuration for an experiment run."""
+
     experiment_id: int
     experiment_type: str
     ids: list[str]
@@ -81,7 +83,7 @@ def _process_pending_ids(config: ExperimentConfig, ids: Iterable[str]) -> None:
 
         try:
             result = _run_request(config, data_id)
-        except Exception as error:  # noqa: BLE001
+        except Exception as error:
             logger.exception("Monitor error for %s ID %s", config.experiment_type, data_id)
             remaining_ids = _process_result(
                 config.experiment_id,

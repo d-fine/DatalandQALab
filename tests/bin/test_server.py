@@ -1,10 +1,8 @@
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin import models, server
+from dataland_qa_lab.bin import server
 from dataland_qa_lab.data_point_flow import models as dp_models
 
 client = TestClient(server.app)

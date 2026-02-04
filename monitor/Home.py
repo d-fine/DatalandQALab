@@ -2,6 +2,7 @@ import streamlit as st
 
 
 def render_home() -> None:
+    """Render the home page of the monitor application."""
     st.set_page_config(
         page_title="Monitor Server",
         layout="wide",

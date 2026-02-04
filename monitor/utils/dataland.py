@@ -15,18 +15,21 @@ class DatalandConfigError(RuntimeError):
     """Raised when required Dataland configuration is missing."""
 
     def __init__(self, var_name: str) -> None:
+        """Initialize DatalandConfigError."""
         super().__init__(f"{var_name} is not configured.")
 
 
 def _build_headers() -> dict[str, str]:
     if not DATALAND_API_KEY:
-        raise DatalandConfigError("DATALAND_API_KEY")
+        msg = "DATALAND_API_KEY"
+        raise DatalandConfigError(msg)
     return {"Authorization": f"Bearer {DATALAND_API_KEY}", "accept": "application/json"}
 
 
 def _get_base_url() -> str:
     if not DATALAND_URL:
-        raise DatalandConfigError("DATALAND_URL")
+        msg = "DATALAND_URL"
+        raise DatalandConfigError(msg)
     return DATALAND_URL.rstrip("/")
 
 
