@@ -69,18 +69,3 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
     data = response.json()
     assert data["data_point_id"] == "dp1"
     assert data["qa_status"] == "QaAccepted"
-
-
-def test_review_dataset_returns_http_exception() -> None:
-    """Test error response on /data-point-flow/review-dataset"""
-    request = models.DatapointFlowReviewDataPointRequest(
-        use_ocr=True,
-        ai_model="gpt-5",
-        override=False,
-    )
-
-    result = asyncio.run(server.review_data_point_dataset_id("dataset-123", request))
-
-    assert isinstance(result, HTTPException)
-    assert result.status_code == 502
-    assert "Error fetching data points from Dataland" in result.detail

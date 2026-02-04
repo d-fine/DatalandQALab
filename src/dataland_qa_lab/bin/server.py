@@ -129,7 +129,6 @@ async def review_data_point_dataset_id(
             detail=f"Error fetching data points from Dataland: {e}",
         ) from e
 
-    # Create coroutines for concurrent execution
     keys = list(data_points.keys())
     tasks = [
         review.validate_datapoint(

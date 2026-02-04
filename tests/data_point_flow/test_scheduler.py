@@ -159,6 +159,7 @@ def server_mocks() -> Iterator[dict[str, Any]]:
 def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
     """Test that the new scheduler logic is used in dev environment."""
     mocks = server_mocks
+    mocks["config"].is_local_environment = False
     mocks["config"].is_dev_environment = True
     with TestClient(mocks["app"]):
         pass
@@ -173,8 +174,8 @@ def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
 def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> None:
     """Test that the old scheduler logic is used in prod environment."""
     mocks = server_mocks
+    mocks["config"].is_local_environment = False
     mocks["config"].is_dev_environment = False
-
     with TestClient(mocks["app"]):
         pass
 
