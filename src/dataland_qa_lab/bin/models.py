@@ -1,36 +1,37 @@
+from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class ReviewRequest(BaseModel):
-    """Request model for initiating a review."""
+class ReviewConfig(BaseModel):
+    """Review configuration."""
 
-    force_review: bool = False
     ai_model: str = "gpt-5"
     use_ocr: bool = True
 
 
-class ReviewMeta(BaseModel):
-    """Metadata about the review request and processing."""
+class ReviewRequest(ReviewConfig):
+    """Review request configuration."""
 
-    timestamp: str
-    ai_model: str
+    force_review: bool = False
+
+
+class ReviewMeta(ReviewConfig):
+    """Review metadata."""
+
+    timestamp: datetime = Field(default_factory=datetime.now)
     force_review: bool
-    use_ocr: bool
 
 
 class ReviewResponse(BaseModel):
-    """Response wrapper containing data and metadata."""
+    """Review response."""
 
     data: dict[str, Any]
     meta: ReviewMeta
 
 
-# models for the new dataset validation
-class DatapointFlowReviewDataPointRequest(BaseModel):
+class DatapointFlowReviewDataPointRequest(ReviewConfig):
     """Request model for initiating a data point review."""
 
-    ai_model: str = "gpt-5"
-    use_ocr: bool = True
     override: bool = False
