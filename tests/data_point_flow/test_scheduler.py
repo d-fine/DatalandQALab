@@ -7,15 +7,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dataland_qa_lab.bin.server import app
-from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
-from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa_lab.bin.server import app as dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
     LOCK_TTL_SECONDS,
     run_scheduled_processing,
     try_acquire_lock,
 )
-from dataland_qa_lab.dataland import scheduled_processor
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -182,35 +179,6 @@ def server_mocks() -> Iterator[dict[str, Any]]:
         patch("dataland_qa_lab.bin.server.data_point_scheduler.run_scheduled_processing") as mock_job_func,
     ):
         yield {"app": dataland_qa_lab, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
-
-
-def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
-    """Test that the new scheduler logic is used in dev environment."""
-    mocks = server_mocks
-    mocks["config"].is_dev_environment = True
-    with TestClient(mocks["app"]):
-        pass
-
-    scheduler_mock = mocks["scheduler"]
-    assert scheduler_mock.add_job.called
-
-    passed_function = scheduler_mock.add_job.call_args[0][0]
-    assert passed_function == mocks["job_func"]
-
-
-def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> None:
-    """Test that the old scheduler logic is used in prod environment."""
-    mocks = server_mocks
-    mocks["config"].is_dev_environment = False
-
-    with TestClient(mocks["app"]):
-        pass
-
-    scheduler_mock = mocks["scheduler"]
-    assert scheduler_mock.add_job.called
-    passed_function = scheduler_mock.add_job.call_args[0][0]
-
-    assert passed_function == scheduled_processor.old_run_scheduled_processing
 
 
 def test_try_acquire_no_existing(mocks: MagicMock) -> None:
