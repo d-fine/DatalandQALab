@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from openai.types.chat.chat_completion import ChatCompletion, ChatCompletionMessage, Choice
 from PIL import Image
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa_lab.bin.server import app
 from dataland_qa_lab.data_point_flow.models import DataPointPrompt
 from dataland_qa_lab.database.database_engine import delete_entity
 from dataland_qa_lab.database.database_tables import ReviewedDataset
@@ -22,7 +22,7 @@ from dataland_qa_lab.utils import config
 @pytest.fixture
 def test_client() -> TestClient:
     """Provide a FastAPI test client."""
-    return TestClient(dataland_qa_lab)
+    return TestClient(app)
 
 
 @pytest.fixture

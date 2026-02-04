@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa_lab.bin.server import app
 from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
 from dataland_qa_lab.dataland import scheduled_processor
 
@@ -153,7 +153,7 @@ def server_mocks() -> Iterator[dict[str, Any]]:
         patch("dataland_qa_lab.bin.server.scheduler") as scheduler_mock,
         patch("dataland_qa_lab.bin.server.data_point_scheduler.run_scheduled_processing") as mock_job_func,
     ):
-        yield {"app": dataland_qa_lab, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
+        yield {"app": app, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
 
 
 def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:

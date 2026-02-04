@@ -62,6 +62,11 @@ class DatalandQaLabSettings(BaseSettings):
         """Check if the environment is development."""
         return self.environment in {"dev", "development", "DEV"}
 
+    @property
+    def is_local_environment(self) -> bool:
+        """Check if the environment is local."""
+        return self.environment in {"local", "LOCAL"} or self.environment is None
+
 
 @cache
 def get_config() -> DatalandQaLabSettings:
