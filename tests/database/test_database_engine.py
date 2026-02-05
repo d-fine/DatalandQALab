@@ -195,3 +195,52 @@ def test_delete_entity_database_error(mock_inspect: MagicMock, mock_session_loca
     assert result is False
     mock_session.rollback.assert_called_once()
     mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_acquire_or_refresh_datapoint_lock_acquired(mock_session_local: MagicMock) -> None:
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+
+    mock_result = MagicMock()
+    mock_result.first.return_value = ("some-id",)  # anything non-None
+    mock_session.execute.return_value = mock_result
+
+    result = database_engine.acquire_or_refresh_datapoint_lock("dp-1", lock_ttl_seconds=60)
+
+    assert result is True
+    mock_session.execute.assert_called_once()
+    mock_session.commit.assert_called_once()
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_acquire_or_refresh_datapoint_lock_not_acquired(mock_session_local: MagicMock) -> None:
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+
+    mock_result = MagicMock()
+    mock_result.first.return_value = None
+    mock_session.execute.return_value = mock_result
+
+    result = database_engine.acquire_or_refresh_datapoint_lock("dp-1", lock_ttl_seconds=60)
+
+    assert result is False
+    mock_session.execute.assert_called_once()
+    mock_session.commit.assert_called_once()
+    mock_session.close.assert_called_once()
+
+
+@patch("dataland_qa_lab.database.database_engine.SessionLocal")
+def test_acquire_or_refresh_datapoint_lock_database_error(mock_session_local: MagicMock) -> None:
+    mock_session = MagicMock()
+    mock_session_local.return_value = mock_session
+
+    mock_session.execute.side_effect = SQLAlchemyError("DB Error")
+
+    result = database_engine.acquire_or_refresh_datapoint_lock("dp-1", lock_ttl_seconds=60)
+
+    assert result is False
+    mock_session.rollback.assert_called_once()
+    mock_session.close.assert_called_once()
+    mock_session.commit.assert_not_called()
