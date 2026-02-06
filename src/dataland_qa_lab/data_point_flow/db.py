@@ -50,6 +50,8 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
             file_name=data.file_name,
             page=data.page,
         )
+    if database_engine.get_entity(database_tables.ValidatedDataPoint, data_point_id=data.data_point_id):
+        await delete_existing_entry(data.data_point_id)
     await asyncio.to_thread(database_engine.add_entity, entity=model)
 
 
