@@ -29,11 +29,11 @@ async def execute_prompt(
 
     system_message = (
         "You are an AI assistant performing answer validation.\n"
-        'EXPECTED JSON FORMAT: {"predicted_answer": <val>, "confidence": <float>, "reasoning": <str>, "qa_status": <str>}\n\n'
+        'EXPECTED JSON FORMAT: {"predicted_answer": <val>, "confidence": <float>, "reasoning": <str>, "qa_status": <str>}\n\n'  # noqa: E501
         "NULL HANDLING RULES:\n"
         "1. If data is missing or unavailable, 'predicted_answer' must be null (JSON literal, no quotes).\n"
         f"2. The 'previous_answer' provided to you is: {previous_answer}.\n"
-        "3. LOGIC: If your 'predicted_answer' is null AND 'previous_answer' is null, 'qa_status' MUST BE 'QaAccepted'.\n"
+        "3. LOGIC: If your 'predicted_answer' is null AND 'previous_answer' is null, 'qa_status' MUST BE 'QaAccepted'.\n"  # noqa: E501
         "4. LOGIC: Only use 'QaRejected' if the values represent different factual information."
     )
 
