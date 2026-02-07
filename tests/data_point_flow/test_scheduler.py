@@ -177,9 +177,8 @@ def server_mocks() -> Iterator[dict[str, Any]]:
     """Fixture to mock config and scheduler in server."""
     with (
         patch("dataland_qa_lab.bin.server.config") as config_mock,
-        patch("dataland_qa_lab.bin.server.conf", new=SimpleNamespace(
-            is_local_environment=False,
-            is_dev_environment=True)
+        patch(
+            "dataland_qa_lab.bin.server.conf", new=SimpleNamespace(is_local_environment=False, is_dev_environment=True)
         ),
         patch("dataland_qa_lab.bin.server.scheduler") as scheduler_mock,
         patch("dataland_qa_lab.bin.server.scheduled_job.run_scheduled_processing_job") as mock_job_func,
