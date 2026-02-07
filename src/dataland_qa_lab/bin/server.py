@@ -19,22 +19,20 @@ from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
-console_logger.configure_console_logger()
 logger = logging.getLogger("dataland_qa_lab.bin.server")
 conf = config.get_config()
+
+console_logger.configure_console_logger()
+logger.info("Launching the Dataland QA Lab server")
 
 scheduler = BackgroundScheduler()
 
 
 def init_sentry() -> None:
     """Initialize Sentry for error tracking."""
-    cfg = config
-    dsn = getattr(cfg, "sentry_dsn", None)
+    dsn = getattr(conf, "sentry_dsn", None)
 
-    if hasattr(dsn, "get_secret_value"):
-        dsn = dsn.get_secret_value()
-
-    dsn = "" if dsn is None else str(dsn).strip()
+    dsn = "" if dsn is None else dsn.strip()
 
     if not dsn:
         logger.info("Sentry DSN not provided. Skipping Sentry initialization.")
@@ -42,7 +40,7 @@ def init_sentry() -> None:
     try:
         sentry_sdk.init(
             dsn=dsn,
-            environment=cfg.environment or "dev",
+            environment=conf.environment or "dev",
             enable_logs=True,
             send_default_pii=False,
             integrations=[FastApiIntegration()],
@@ -58,31 +56,16 @@ async def lifespan(_: FastAPI):  # noqa: ANN201, RUF029
     """Ensures that the scheduler shuts down correctly."""
     logger.info("Server startup initiated. Configuring scheduler.")
     init_sentry()
-
-    scheduler.add_job(
-        scheduled_job.run_scheduled_processing_job,
-        trigger,
-        next_run_time=datetime.now(),  # noqa: DTZ005
-    )
-    logger.info("Launching the Dataland QA Lab server")
-
     verify_database_connection()
     create_tables()
 
     trigger = CronTrigger(minute="*/10")
+
     if conf.is_local_environment:
         logger.info("Local environment detected. Not starting any scheduler.")
-    elif conf.is_dev_environment:
-        logger.info("Development environment detected. Using new scheduler.")
-        scheduler.add_job(
-            data_point_scheduler.run_scheduled_processing,
-            trigger,
-            next_run_time=datetime.now(),  # noqa: DTZ005
-        )
     else:
-        logger.info("Production environment detected. Using old scheduler.")
         scheduler.add_job(
-            scheduled_processor.old_run_scheduled_processing,
+            scheduled_job.run_scheduled_processing_job,
             trigger,
             next_run_time=datetime.now(),  # noqa: DTZ005
         )
