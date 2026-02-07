@@ -210,8 +210,7 @@
             "extendedDecimalWaterConsumptionInCubicMeters",
             "extendedDecimalTotalRevenueInEUR"
         ]
-    }
-
+    },
     "extendedEnumYesNoSecuritiesNotCertifiedAsGreen": {
         "prompt": "Determine whether the company has issued or invested in any securities (e.g., bonds, loans, notes) that are NOT certified as green, sustainable, or ESG-linked by an external party.\n\nCount as in-scope (examples / synonyms):\n- securities: 'bonds', 'loans', 'notes', 'debt instruments', 'credit facilities'\n- NOT certified as green/sustainable/ESG-linked: securities that lack third-party certification/verification labeling them as green/sustainable/ESG-linked, including securities that are not certified as green under an EU legal act setting up an EU Green Bond Standard (or any future equivalent standard)\n\nOut of scope / do NOT count:\n- securities that are explicitly certified as green, sustainable, or ESG-linked by recognized external parties\n- equity securities (stocks/shares) unless explicitly described as green/sustainable/ESG-linked or not\n\nDecision rules:\n- Return 'Yes' only if the text provides clear evidence that the company issues or invests in securities that are NOT certified as green/sustainable/ESG-linked.\n- Return 'No' only if the text explicitly states that all of the company's issued and invested-in securities are certified as green/sustainable/ESG-linked, or that the company has no such non-certified securities.\n- If the text provides no evidence either way, return 'Yes' as default.\n\nReturn only 'Yes' or 'No'.\n\n{context}"
     },
