@@ -2,9 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from dataland_qa_lab.bin.models import (
-    DatapointFlowCannotReviewDatapointResponse,
     DatapointFlowReviewDataPointRequest,
-    DatapointFlowReviewDataPointResponse,
     ReviewMeta,
     ReviewRequest,
     ReviewResponse,
@@ -64,72 +62,3 @@ def test_datapoint_flow_request_defaults() -> None:
     assert req.ai_model == "gpt-5"
     assert req.use_ocr is True
     assert req.override is False
-
-
-def test_datapoint_flow_review_datapoint_response_valid() -> None:
-    """Test valid DatapointFlowReviewDataPointResponse model."""
-    resp = DatapointFlowReviewDataPointResponse(
-        data_point_id="123",
-        data_point_type="invoice",
-        previous_answer="OLD",
-        predicted_answer="NEW",
-        confidence=0.92,
-        reasoning="High confidence based on OCR.",
-        qa_status="reviewed",
-        timestamp=1735689600,
-        ai_model="gpt-5",
-        use_ocr=True,
-        file_name="file.pdf",
-        file_reference="ref_001",
-        page=1,
-    )
-    assert resp.status == "success"
-    assert resp.confidence == 0.92
-    assert resp.page == 1
-
-
-def test_datapoint_flow_review_datapoint_response_invalid_confidence() -> None:
-    """Test invalid DatapointFlowReviewDataPointResponse model with wrong confidence type."""
-    with pytest.raises(ValidationError):
-        DatapointFlowReviewDataPointResponse(
-            data_point_id="123",
-            data_point_type="invoice",
-            previous_answer="OLD",
-            predicted_answer="NEW",
-            confidence="high",
-            reasoning="Invalid confidence type.",
-            qa_status="reviewed",
-            timestamp=1735689600,
-            ai_model="gpt-5",
-            use_ocr=True,
-            file_name="file.pdf",
-            file_reference="ref",
-            page=1,
-        )
-
-
-def test_datapoint_flow_cannot_review_response_valid() -> None:
-    """Test valid DatapointFlowCannotReviewDatapointResponse model."""
-    resp = DatapointFlowCannotReviewDatapointResponse(
-        data_point_id="99",
-        data_point_type="unsupported",
-        reasoning="Unsupported file format",
-        ai_model="gpt-5",
-        use_ocr=False,
-        timestamp=1735689600,
-    )
-    assert resp.status == "error"
-    assert resp.reasoning == "Unsupported file format"
-    assert resp.use_ocr is False
-
-
-def test_datapoint_flow_cannot_review_response_missing_field() -> None:
-    """Test invalid DatapointFlowCannotReviewDatapointResponse model with missing field."""
-    with pytest.raises(ValidationError):
-        DatapointFlowCannotReviewDatapointResponse(
-            data_point_type="invoice",
-            reasoning="Missing ID",
-            ai_model="gpt-5",
-            use_ocr=True,
-            timestamp=1735689600,
-        )

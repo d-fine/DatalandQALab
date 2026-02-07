@@ -58,10 +58,7 @@ async def get_document(reference_id: str, page_num: int) -> io.BytesIO:
         config.dataland_client.documents_api.get_document, document_id=reference_id
     )
 
-    extracted_pdf_stream = await asyncio.to_thread(
-        extract_single_page, full_pdf_bytes=full_pdf_bytes, page_number=page_num
-    )
-    return extracted_pdf_stream
+    return await asyncio.to_thread(extract_single_page, full_pdf_bytes=full_pdf_bytes, page_number=page_num)
 
 
 async def override_dataland_qa(
