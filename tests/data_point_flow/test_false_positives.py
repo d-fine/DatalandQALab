@@ -20,12 +20,14 @@ async def test_qa_rejected_when_answers_differ(mock_client: MagicMock) -> None:
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content=json.dumps({
-                    "predicted_answer": "No",
-                    "confidence": 0.95,
-                    "reasoning": "The document clearly states No",
-                    "qa_status": "QaRejected",
-                })
+                content=json.dumps(
+                    {
+                        "predicted_answer": "No",
+                        "confidence": 0.95,
+                        "reasoning": "The document clearly states No",
+                        "qa_status": "QaRejected",
+                    }
+                )
             )
         )
     ]
@@ -49,12 +51,14 @@ async def test_qa_accepted_when_answers_match(mock_client: MagicMock) -> None:
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content=json.dumps({
-                    "predicted_answer": "Yes",
-                    "confidence": 0.95,
-                    "reasoning": "The document confirms Yes",
-                    "qa_status": "QaAccepted",
-                })
+                content=json.dumps(
+                    {
+                        "predicted_answer": "Yes",
+                        "confidence": 0.95,
+                        "reasoning": "The document confirms Yes",
+                        "qa_status": "QaAccepted",
+                    }
+                )
             )
         )
     ]
@@ -78,12 +82,14 @@ async def test_qa_rejected_for_decimal_mismatch(mock_client: MagicMock) -> None:
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content=json.dumps({
-                    "predicted_answer": "42.5",
-                    "confidence": 0.9,
-                    "reasoning": "Document shows 42.5",
-                    "qa_status": "QaRejected",
-                })
+                content=json.dumps(
+                    {
+                        "predicted_answer": "42.5",
+                        "confidence": 0.9,
+                        "reasoning": "Document shows 42.5",
+                        "qa_status": "QaRejected",
+                    }
+                )
             )
         )
     ]
@@ -107,12 +113,14 @@ async def test_previous_answer_included_in_prompt(mock_client: MagicMock) -> Non
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content=json.dumps({
-                    "predicted_answer": "Yes",
-                    "confidence": 0.9,
-                    "reasoning": "Test",
-                    "qa_status": "QaAccepted",
-                })
+                content=json.dumps(
+                    {
+                        "predicted_answer": "Yes",
+                        "confidence": 0.9,
+                        "reasoning": "Test",
+                        "qa_status": "QaAccepted",
+                    }
+                )
             )
         )
     ]
@@ -153,12 +161,14 @@ async def test_yes_no_comparison_logic(
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content=json.dumps({
-                    "predicted_answer": predicted_answer,
-                    "confidence": 0.95,
-                    "reasoning": "Test reasoning",
-                    "qa_status": expected_status,
-                })
+                content=json.dumps(
+                    {
+                        "predicted_answer": predicted_answer,
+                        "confidence": 0.95,
+                        "reasoning": "Test reasoning",
+                        "qa_status": expected_status,
+                    }
+                )
             )
         )
     ]
