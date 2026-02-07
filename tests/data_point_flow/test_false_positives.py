@@ -5,7 +5,7 @@ when the AI's predicted answer differs from the previous answer.
 """
 
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -15,7 +15,7 @@ from dataland_qa_lab.data_point_flow.ai import execute_prompt
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_qa_rejected_when_answers_differ(mock_client: MagicMock) -> None:
     """Test that QaRejected is returned when predicted_answer differs from previous_answer."""
-    mock_client.chat.completions.create.return_value = MagicMock(
+    mock_response = MagicMock(
         choices=[
             MagicMock(
                 message=MagicMock(
@@ -29,6 +29,7 @@ async def test_qa_rejected_when_answers_differ(mock_client: MagicMock) -> None:
             )
         ]
     )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     result = await execute_prompt(
         prompt="Is nuclear energy used?",
@@ -43,7 +44,7 @@ async def test_qa_rejected_when_answers_differ(mock_client: MagicMock) -> None:
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_qa_accepted_when_answers_match(mock_client: MagicMock) -> None:
     """Test that QaAccepted is returned when predicted_answer matches previous_answer."""
-    mock_client.chat.completions.create.return_value = MagicMock(
+    mock_response = MagicMock(
         choices=[
             MagicMock(
                 message=MagicMock(
@@ -57,6 +58,7 @@ async def test_qa_accepted_when_answers_match(mock_client: MagicMock) -> None:
             )
         ]
     )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     result = await execute_prompt(
         prompt="Is nuclear energy used?",
@@ -71,7 +73,7 @@ async def test_qa_accepted_when_answers_match(mock_client: MagicMock) -> None:
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_qa_rejected_for_decimal_mismatch(mock_client: MagicMock) -> None:
     """Test that QaRejected is returned when decimal values differ."""
-    mock_client.chat.completions.create.return_value = MagicMock(
+    mock_response = MagicMock(
         choices=[
             MagicMock(
                 message=MagicMock(
@@ -85,6 +87,7 @@ async def test_qa_rejected_for_decimal_mismatch(mock_client: MagicMock) -> None:
             )
         ]
     )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     result = await execute_prompt(
         prompt="What is the revenue?",
@@ -99,7 +102,7 @@ async def test_qa_rejected_for_decimal_mismatch(mock_client: MagicMock) -> None:
 @patch("dataland_qa_lab.data_point_flow.ai.client")
 async def test_previous_answer_included_in_prompt(mock_client: MagicMock) -> None:
     """Test that the previous_answer is included in the prompt sent to AI."""
-    mock_client.chat.completions.create.return_value = MagicMock(
+    mock_response = MagicMock(
         choices=[
             MagicMock(
                 message=MagicMock(
@@ -113,6 +116,7 @@ async def test_previous_answer_included_in_prompt(mock_client: MagicMock) -> Non
             )
         ]
     )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     await execute_prompt(
         prompt="Test prompt",
@@ -144,7 +148,7 @@ async def test_yes_no_comparison_logic(
     expected_status: str,
 ) -> None:
     """Test Yes/No comparison returns correct QA status."""
-    mock_client.chat.completions.create.return_value = MagicMock(
+    mock_response = MagicMock(
         choices=[
             MagicMock(
                 message=MagicMock(
@@ -158,6 +162,7 @@ async def test_yes_no_comparison_logic(
             )
         ]
     )
+    mock_client.chat.completions.create = AsyncMock(return_value=mock_response)
 
     result = await execute_prompt(
         prompt="Test question",
