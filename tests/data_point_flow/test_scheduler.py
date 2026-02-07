@@ -6,11 +6,10 @@ from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
+from dataland_qa_lab.bin.server import app as dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
-    LOCK_TTL_SECONDS,
+    lock_ttl_seconds,
     run_scheduled_processing,
     try_acquire_lock,
 )
@@ -206,7 +205,7 @@ def test_try_acquire_no_existing(mocks: MagicMock) -> None:
     assert try_acquire_lock("dp1") is True
     db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
         data_point_id="dp1",
-        lock_ttl_seconds=LOCK_TTL_SECONDS,
+        lock_ttl_seconds=lock_ttl_seconds,
     )
     db_engine.add_entity.assert_not_called()
     db_engine.delete_entity.assert_not_called()
@@ -231,7 +230,7 @@ def test_try_acquire_lock_existing_stale(mocks: MagicMock) -> None:
     db_engine = mocks["db_engine"]
 
     lock = MagicMock()
-    lock.locked_at = int(time.time()) - (LOCK_TTL_SECONDS + 1)
+    lock.locked_at = int(time.time()) - (lock_ttl_seconds + 1)
     db_engine.get_entity.return_value = lock
 
     db_engine.acquire_or_refresh_datapoint_lock.return_value = True
@@ -239,7 +238,7 @@ def test_try_acquire_lock_existing_stale(mocks: MagicMock) -> None:
     assert try_acquire_lock("dp1") is True
     db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
         data_point_id="dp1",
-        lock_ttl_seconds=LOCK_TTL_SECONDS,
+        lock_ttl_seconds=lock_ttl_seconds,
     )
     db_engine.delete_entity.assert_not_called()
     db_engine.add_entity.assert_not_called()
@@ -255,7 +254,7 @@ def test_try_acquire_lock_not_acquired(mocks: MagicMock) -> None:
     assert try_acquire_lock("dp1") is False
     db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
         data_point_id="dp1",
-        lock_ttl_seconds=LOCK_TTL_SECONDS,
+        lock_ttl_seconds=lock_ttl_seconds,
     )
     db_engine.add_entity.assert_not_called()
     db_engine.delete_entity.assert_not_called()

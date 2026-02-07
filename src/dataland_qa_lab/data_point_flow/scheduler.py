@@ -10,8 +10,8 @@ from dataland_qa_lab.utils import config, slack
 
 logger = logging.getLogger(__name__)
 config = config.get_config()
-LOCK_TTL_SECONDS = 15 * 60  # 15 minutes
-VALIDATION_TIMEOUT_SECONDS = 5 * 60
+lock_ttl_seconds = 15 * 60
+validation_timeout_seconds = 5 * 60
 
 
 def try_acquire_lock(data_point_id: str) -> bool:
@@ -23,14 +23,14 @@ def try_acquire_lock(data_point_id: str) -> bool:
 
     if existing_lock:
         age = int(time.time()) - existing_lock.locked_at
-        if age < LOCK_TTL_SECONDS:
+        if age < lock_ttl_seconds:
             logger.info("Datapoint %s is already in review (age=%ss). Skipping.", data_point_id, age)
             return False
 
         logger.warning("Datapoint %s lock is stale (age=%ss). Proceeding to review.", data_point_id, age)
 
     acquired = database_engine.acquire_or_refresh_datapoint_lock(
-        data_point_id=data_point_id, lock_ttl_seconds=LOCK_TTL_SECONDS
+        data_point_id=data_point_id, lock_ttl_seconds=lock_ttl_seconds
     )
     if not acquired:
         logger.info("Datapoint %s already being processed. Skipping.", data_point_id)
@@ -100,12 +100,12 @@ def run_scheduled_processing() -> None:
                             use_ocr=config.use_ocr,
                             override=False,
                         ),
-                        timeout=VALIDATION_TIMEOUT_SECONDS,
+                        timeout=validation_timeout_seconds,
                     )
                 )
             except TimeoutError:
                 logger.warning(
-                    "Validation timed out for datapoint ID: %s after %s seconds", v, VALIDATION_TIMEOUT_SECONDS
+                    "Validation timed out for datapoint ID: %s after %s seconds", v, validation_timeout_seconds
                 )
                 not_attempted.append(v)
                 continue
@@ -119,7 +119,7 @@ def run_scheduled_processing() -> None:
                     logger.warning(
                         "Failed to release lock for datapoint ID: %s. Lock may remain until TTL expires (%s seconds).",
                         v,
-                        LOCK_TTL_SECONDS,
+                        lock_ttl_seconds,
                     )
 
             bucket_validator_result(validator_result, accepted_ids, rejected_ids, inconclusive, not_attempted)

@@ -5,37 +5,40 @@ from pathlib import Path
 from dataland_qa_lab.data_point_flow import models
 from dataland_qa_lab.utils import config
 
-config = config.get_config()
+conf = config.get_config()
 logger = getLogger(__name__)
 
+default_prompts_dir = Path(__file__).parent.parent / "prompts"
 
-def get_prompts(prompts_dir: Path | None = None) -> dict:
+
+def get_prompts(prompts_dir: Path = default_prompts_dir) -> dict:
     """Return all prompts from the prompts directory."""
-    if prompts_dir is None:
-        prompts_dir = Path(__file__).parent.parent / "prompts"
-
-    if not prompts_dir.exists():
+    if not prompts_dir.is_dir():
         msg = f"Prompts directory not found: {prompts_dir}"
         raise FileNotFoundError(msg)
 
     combined = {}
     for file in prompts_dir.glob("*.json"):
-        data = json.loads(file.read_text(encoding="utf-8"))
-        if not isinstance(data, dict):
-            logger.error("JSON file does not contain a dictionary: %s", file)
-            continue
-        combined.update(data)
+        try:
+            data = json.loads(file.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                combined.update(data)
+            else:
+                logger.error("JSON file %s must be a dictionary object.", file.name)
+        except json.JSONDecodeError:
+            logger.exception("Failed to decode JSON from %s", file.name)
+
     return combined
 
 
 def get_prompt_config(data_point_type: str) -> models.DataPointPrompt | None:
-    """Retrieve the validation prompt or raise an error if not found."""
-    logger.info("Retrieving prompt for data point type: %s", data_point_type)
-    validation_prompts = get_prompts()
+    """Retrieve the validation prompt or return None if not found."""
+    logger.info("Retrieving prompt for: %s", data_point_type)
 
-    prompt = validation_prompts.get(data_point_type)
-    if prompt:
-        return models.DataPointPrompt(prompt=prompt.get("prompt"), depends_on=prompt.get("depends_on", []))
+    prompt_data = get_prompts().get(data_point_type)
 
-    logger.warning("No prompt found for data point type: %s. Skipping...", data_point_type)
-    return None
+    if not prompt_data:
+        logger.warning("No prompt found for %s. Skipping...", data_point_type)
+        return None
+
+    return models.DataPointPrompt(prompt=prompt_data.get("prompt"), depends_on=prompt_data.get("depends_on", []))

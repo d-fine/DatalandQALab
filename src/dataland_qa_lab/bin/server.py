@@ -19,17 +19,11 @@ from dataland_qa_lab.review import dataset_reviewer, exceptions
 from dataland_qa_lab.utils import config, console_logger
 from dataland_qa_lab.utils.datetime_helper import get_german_time_as_string
 
-logger = logging.getLogger("dataland_qa_lab.bin.server")
-config = config.get_config()
-
-
 console_logger.configure_console_logger()
-logger.info("Launching the Dataland QA Lab server")
-verify_database_connection()
-create_tables()
+logger = logging.getLogger("dataland_qa_lab.bin.server")
+conf = config.get_config()
 
 scheduler = BackgroundScheduler()
-trigger = CronTrigger(minute="*/10")
 
 
 def init_sentry() -> None:
@@ -60,7 +54,7 @@ def init_sentry() -> None:
 
 
 @asynccontextmanager
-async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
+async def lifespan(_: FastAPI):  # noqa: ANN201, RUF029
     """Ensures that the scheduler shuts down correctly."""
     logger.info("Server startup initiated. Configuring scheduler.")
     init_sentry()
@@ -70,30 +64,50 @@ async def lifespan(dataland_qa_lab: FastAPI):  # noqa: ANN201, ARG001, RUF029
         trigger,
         next_run_time=datetime.now(),  # noqa: DTZ005
     )
+    logger.info("Launching the Dataland QA Lab server")
+
+    verify_database_connection()
+    create_tables()
+
+    trigger = CronTrigger(minute="*/10")
+    if conf.is_local_environment:
+        logger.info("Local environment detected. Not starting any scheduler.")
+    elif conf.is_dev_environment:
+        logger.info("Development environment detected. Using new scheduler.")
+        scheduler.add_job(
+            data_point_scheduler.run_scheduled_processing,
+            trigger,
+            next_run_time=datetime.now(),  # noqa: DTZ005
+        )
+    else:
+        logger.info("Production environment detected. Using old scheduler.")
+        scheduler.add_job(
+            scheduled_processor.old_run_scheduled_processing,
+            trigger,
+            next_run_time=datetime.now(),  # noqa: DTZ005
+        )
 
     if scheduler.get_jobs():
         logger.info("Starting scheduler with %d jobs.", len(scheduler.get_jobs()))
         scheduler.start()
-    else:
-        logger.info("No jobs to schedule. Scheduler will not be started.")
 
     yield
-    logger.info("Server shutdown initiated. Shutting down scheduler.")
+
     if scheduler.running:
         logger.info("Shutting down scheduler.")
         scheduler.shutdown()
 
 
-dataland_qa_lab = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan)
 
 
-@dataland_qa_lab.get("/health")
+@app.get("/health")
 def health_check() -> dict:
     """Health check endpoint."""
     return {"status": "ok", "timestamp": get_german_time_as_string()}
 
 
-@dataland_qa_lab.post("/review/{data_id}", response_model=models.ReviewResponse)
+@app.post("/review/{data_id}", response_model=models.ReviewResponse)
 def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> models.ReviewResponse:
     """Review a single dataset via API call (configurable)."""
     try:
@@ -113,33 +127,29 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
     except exceptions.ReviewError as exc:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc
 
-    meta = models.ReviewMeta(
-        timestamp=get_german_time_as_string(),
-        ai_model=data.ai_model,
-        force_review=data.force_review,
-        use_ocr=data.use_ocr,
+    return models.ReviewResponse(
+        data=report,
+        meta=models.ReviewMeta(
+            timestamp=get_german_time_as_string(),
+            ai_model=data.ai_model,
+            force_review=data.force_review,
+            use_ocr=data.use_ocr,
+        ),
     )
 
-    return models.ReviewResponse(data=report, meta=meta)
 
-
-# new validation flow using datapoints
-
-
-@dataland_qa_lab.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
+@app.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
 async def review_data_point_id(
     data_point_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
 ) -> datapoint_flow_models.ValidatedDatapoint | datapoint_flow_models.CannotValidateDatapoint:
     """Review a single dataset via API call (configurable)."""
-    res = await review.validate_datapoint(
+    return await review.validate_datapoint(
         data_point_id=data_point_id, ai_model=data.ai_model, use_ocr=data.use_ocr, override=data.override
     )
 
-    return res
 
-
-@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
+@app.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
@@ -149,19 +159,20 @@ async def review_data_point_dataset_id(
     """Review a single dataset via API call (configurable)."""
     try:
         data_points = await dataland.get_contained_data_points(data_id)
-    except Exception as e:  # noqa: BLE001
-        return HTTPException(
+    except Exception as e:
+        logger.exception("Failed to fetch data points for dataset %s", data_id)
+        raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Error fetching data points from Dataland: " + str(e),
+            detail=f"Error fetching data points from Dataland: {e}",
+        ) from e
+
+    keys = list(data_points.keys())
+    tasks = [
+        review.validate_datapoint(
+            data_points[k], use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override, dataset_id=data_id
         )
+        for k in keys
+    ]
 
-    tasks = {
-        k: review.validate_datapoint(
-            v, use_ocr=data.use_ocr, ai_model=data.ai_model, override=data.override, dataset_id=data_id
-        )
-        for k, v in data_points.items()
-    }
-
-    results_list = await asyncio.gather(*tasks.values())
-
-    return dict(zip(tasks.keys(), results_list, strict=False))
+    results_list = await asyncio.gather(*tasks)
+    return dict(zip(keys, results_list, strict=True))
