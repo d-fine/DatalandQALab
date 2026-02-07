@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
@@ -67,3 +68,24 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
     data = response.json()
     assert data["data_point_id"] == "dp1"
     assert data["qa_status"] == "QaAccepted"
+
+
+def test_init_sentry_skips_when_no_dsn() -> None:
+    server.conf = SimpleNamespace(sentry_dsn=None, environment="dev")
+    with patch.object(server.sentry_sdk, "init") as sentry_init:
+        server.init_sentry()
+        sentry_init.assert_not_called()
+
+
+def test_init_sentry_calls_sentry_when_dsn_present() -> None:
+    server.conf = SimpleNamespace(sentry_dsn="https://example@dsn/1", environment="dev")
+    with patch.object(server.sentry_sdk, "init") as sentry_init:
+        server.init_sentry()
+        sentry_init.assert_called_once()
+
+
+def test_init_sentry_handles_bad_dsn() -> None:
+    server.conf = SimpleNamespace(sentry_dsn="bad", environment="dev")
+    with patch.object(server.sentry_sdk, "init", side_effect=server.BadDsn("bad dsn")) as sentry_init:
+        server.init_sentry()
+        sentry_init.assert_called_once()
