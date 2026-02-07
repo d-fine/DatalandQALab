@@ -61,16 +61,16 @@ async def lifespan(_: FastAPI):  # noqa: ANN201, RUF029
         scheduler.shutdown()
 
 
-app = FastAPI(lifespan=lifespan)
+dataland_qa_lab = FastAPI(lifespan=lifespan)
 
 
-@app.get("/health")
+@dataland_qa_lab.get("/health")
 def health_check() -> dict:
     """Health check endpoint."""
     return {"status": "ok", "timestamp": get_german_time_as_string()}
 
 
-@app.post("/review/{data_id}", response_model=models.ReviewResponse)
+@dataland_qa_lab.post("/review/{data_id}", response_model=models.ReviewResponse)
 def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> models.ReviewResponse:
     """Review a single dataset via API call (configurable)."""
     try:
@@ -101,7 +101,7 @@ def review_dataset_post_endpoint(data_id: str, data: models.ReviewRequest) -> mo
     )
 
 
-@app.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
+@dataland_qa_lab.post("/data-point-flow/review-data-point/{data_point_id}", response_model=None)
 async def review_data_point_id(
     data_point_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
@@ -112,7 +112,7 @@ async def review_data_point_id(
     )
 
 
-@app.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
+@dataland_qa_lab.post("/data-point-flow/review-dataset/{data_id}", response_model=None)
 async def review_data_point_dataset_id(
     data_id: str,
     data: models.DatapointFlowReviewDataPointRequest,
