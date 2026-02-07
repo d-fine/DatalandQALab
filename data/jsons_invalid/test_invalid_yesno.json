@@ -1,0 +1,82 @@
+{
+    "reportingPeriod": "2024",
+    "data": {
+        "general": {
+            "general": {
+                "referencedReports": {
+                    "test-report": {
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595",
+                        "fileName": null,
+                        "publicationDate": "2024-03-27"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection426": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection427": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                },
+                "nuclearEnergyRelatedActivitiesSection428": {
+                    "value": "No",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection429": {
+                    "value": "No",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection430": {
+                    "value": "No",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                },
+                "fossilGasRelatedActivitiesSection431": {
+                    "value": "Yes",
+                    "quality": "Reported",
+                    "comment": "Wrong value for testing",
+                    "dataSource": {
+                        "page": "152",
+                        "tagName": null,
+                        "fileName": "test-report",
+                        "fileReference": "9c0a555a29683aedd2cd50ff7e837181a7fbb2d1c567d336897e2356fc17a595"
+                    }
+                }
+            }
+        }
+    }
+}
