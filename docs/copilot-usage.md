@@ -22,32 +22,37 @@ This project includes a `.copilotignore` file that configures Copilot to:
 
 No additional setup is required - the configuration loads automatically when you open the project.
 
----
+### Code Review Best Practice
+Always cross-check all Copilot-generated code:
+- Verify logic correctness
+- Check for security issues
+- Ensure compliance with project coding standards
+- Test functionality thoroughly
 
 ## 2. How to Use
 
-### 👻 Ghost Text (Inline Suggestions)
+### Ghost Text (Inline Suggestions)
 As you type in the editor, Copilot suggests code in gray text.
 - **Accept:** Press `Tab`
 - **Partial Accept:** Press `Cmd + →` (Mac) or `Ctrl + →` (Win) to accept word-by-word.
 - **Reject:** Press `Esc` or keep typing.
 
-### 💬 Copilot Chat (The Assistant)
+### Copilot Chat (The Assistant)
 Use the chat for explanations, refactoring, or generating logic.
 - **VS Code:** Press `Cmd + I` (Mac) / `Ctrl + I` (Win) for Inline Chat, or open the Sidebar.
 - **PyCharm:** Open the "GitHub Copilot" tool window.
 
 ---
 
-## 3. 🛡️ Security & Privacy (CRITICAL)
+## 3. Security & Privacy (CRITICAL)
 
-> ⚠️ **WARNING:** Copilot snippets are processed in the cloud. Never expose sensitive data in your code or chat prompts.
+> **WARNING:** Copilot snippets are processed in the cloud. Never expose sensitive data in your code or chat prompts.
 
-### ❌ ABSOLUTE DON'TS
+### ABSOLUTE DON'TS
 - **NEVER** paste real **API Keys, Passwords, or Tokens** into the chat.
 - **NEVER** paste real **Database Connection Strings** (even if local).
 - **NEVER** paste customer PII (Personally Identifiable Information).
 
-### ✅ CORRECT WAY: Secrets Handling
+### CORRECT WAY: Secrets Handling
 Always reference environment variables. Copilot understands this pattern.
 

@@ -5,9 +5,9 @@ The system supports multiple AI models for quality assurance:
 
 | Model | Use Case | Performance |
 |-------|----------|-------------|
-| **GPT-4 Turbo** | Primary model for most validations | High accuracy, moderate speed |
-| **GPT-3.5 Turbo** | Faster validations where high accuracy is less critical | Lower accuracy, faster speed |
-| **Custom SFDR Prompts** | Specialized for Sustainable Finance Disclosure Regulation reporting | Optimized for sustainability data |
+| **GPT-5** | Primary model for most validations | High accuracy, moderate speed |
+| **GPT-4/4o** | Alternative model when GPT-5 is not available | Good accuracy, reliable |
+| **Custom SFDR Prompts** | Specialized prompts sent to the AI models for sustainability reporting | Optimized for SFDR regulations |sustainability data |
 
 ## Running Experiments & Benchmarks
 
@@ -19,10 +19,7 @@ The system supports multiple AI models for quality assurance:
    ```
 Then navigate to the `notebooks/` directory.
 
-2. **Available Notebooks:**
-   - `project_demo.ipynb` - Comprehensive demo of AI validation capabilities
-   - `test_existing_company_reports.ipynb` - Test suite for company report validations
-   - `base.ipynb` - Foundation for custom experiments
+
 
 ### Using the Dashboard
 For production benchmarking:
@@ -31,34 +28,29 @@ For production benchmarking:
 3. Export results for comparative analysis
 
 ## SFDR Prompts
-Specialized prompts for Sustainable Finance Disclosure Regulation (SFDR) are stored in: src/dataland_qa_lab/prompts/sfdr/
+Specialized prompts for Sustainable Finance Disclosure Regulation (SFDR) are stored in: `src/dataland_qa_lab/prompts/sfdr.json`
 
-- `sfdr_data_validation.txt` - General SFDR data validation
-- `sfdr_report_check.txt` - SFDR report compliance checking
-- Additional specialized prompts as needed
 
-### To update SFDR prompts:
-1. Edit the `.txt` files in the prompts directory
-2. Follow existing naming conventions
-3. The system automatically loads updated prompts on restart
+The JSON file contains named prompt entries for different validation scenarios.
+
+### To update SFDR prompts:  
+1. Open and edit the `src/dataland_qa_lab/prompts/sfdr.json` file  
+2. Add or modify prompt entries in the JSON structure, keeping valid JSON and following existing naming convention
+
 
 ## Best Practices
 
 ### Model Selection Guide
-- **Use GPT-4 Turbo** for:
-  - Critical business validations
-  - Complex logical reasoning
+- **Use GPT-5** for:
+  - Most production validations
   - High-stakes compliance checks
   
-- **Use GPT-3.5 Turbo** for:
+- **Use GPT-4/4o** for:
+  - When GPT-5 is not available
   - Development and testing
-  - Simple format validations
-  - High-volume, low-risk checks
-  
+
 - **Use SFDR prompts** for:
-  - Sustainability reporting validations
-  - ESG (Environmental, Social, Governance) compliance
-  - Regulatory reporting checks
+  - Sustainability reporting validations (prompts are sent to the selected AI model)
 
 ## Troubleshooting
 - **No benchmark script found:** Use the provided Jupyter notebooks instead
