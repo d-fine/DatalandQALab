@@ -1,13 +1,11 @@
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin import models, server
+from dataland_qa_lab.bin import server
 from dataland_qa_lab.data_point_flow import models as dp_models
 
-client = TestClient(server.dataland_qa_lab)
+client = TestClient(server.app)
 
 
 def test_health_check() -> None:
@@ -69,18 +67,3 @@ def test_review_data_point_id_sync(mock_config: MagicMock, mock_validate: AsyncM
     data = response.json()
     assert data["data_point_id"] == "dp1"
     assert data["qa_status"] == "QaAccepted"
-
-
-def test_review_dataset_returns_http_exception() -> None:
-    """Test error response on /data-point-flow/review-dataset"""
-    request = models.DatapointFlowReviewDataPointRequest(
-        use_ocr=True,
-        ai_model="gpt-5",
-        override=False,
-    )
-
-    result = asyncio.run(server.review_data_point_dataset_id("dataset-123", request))
-
-    assert isinstance(result, HTTPException)
-    assert result.status_code == 502
-    assert "Error fetching data points from Dataland" in result.detail

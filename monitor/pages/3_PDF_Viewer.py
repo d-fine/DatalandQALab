@@ -1,22 +1,33 @@
-import pathlib  # noqa: N999
-import tempfile
+# noqa: N999
+from io import BytesIO
 
+import requests
 import streamlit as st
 from utils import dataland
 
-st.title("PDF Viewer")
 
-params = st.query_params
-reference_id = params.get("reference_id")
+def _render_pdf(reference_id: str) -> None:
+    try:
+        response = dataland.download_document(reference_id)
+        pdf_bytes = response.content
+        buffer = BytesIO(pdf_bytes)
+        st.download_button("View PDF in browser", buffer, file_name="document.pdf", mime="application/pdf")
+    except requests.RequestException as error:
+        st.error(f"❌ Failed to download PDF: {error}")
 
-if not reference_id:
-    st.info("Click a PDF link on the analytics tab to view the referenced PDF document here.")
-else:
-    pdf_bytes = dataland.download_document(reference_id).content
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-        tmp_file.write(pdf_bytes)
-        tmp_file_path = tmp_file.name
+def render_pdf_viewer() -> None:
+    """Render the PDF viewer page."""
+    st.title("PDF Viewer")
 
-    with pathlib.Path(tmp_file_path).open("rb") as f:
-        st.download_button("View PDF in browser", f, file_name="document.pdf", mime="application/pdf")
+    params = st.query_params
+    reference_id = params.get("reference_id")
+
+    if not reference_id:
+        st.info("Click a PDF link on the analytics tab to view the referenced PDF document here.")
+        return
+
+    _render_pdf(reference_id)
+
+
+render_pdf_viewer()

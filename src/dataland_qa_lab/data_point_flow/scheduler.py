@@ -10,6 +10,52 @@ from dataland_qa_lab.utils import config, slack
 
 logger = logging.getLogger(__name__)
 config = config.get_config()
+lock_ttl_seconds = 15 * 60
+validation_timeout_seconds = 5 * 60
+
+
+def try_acquire_lock(data_point_id: str) -> bool:
+    """Returns True if the lock was acquired, False if datapoint should be skipped."""
+    existing_lock = database_engine.get_entity(
+        entity_class=database_tables.DatapointInReview,
+        data_point_id=data_point_id,
+    )
+
+    if existing_lock:
+        age = int(time.time()) - existing_lock.locked_at
+        if age < lock_ttl_seconds:
+            logger.info("Datapoint %s is already in review (age=%ss). Skipping.", data_point_id, age)
+            return False
+
+        logger.warning("Datapoint %s lock is stale (age=%ss). Proceeding to review.", data_point_id, age)
+
+    acquired = database_engine.acquire_or_refresh_datapoint_lock(
+        data_point_id=data_point_id, lock_ttl_seconds=lock_ttl_seconds
+    )
+    if not acquired:
+        logger.info("Datapoint %s already being processed. Skipping.", data_point_id)
+        return False
+
+    return True
+
+
+def bucket_validator_result(
+    validator_result: review.models.ValidatedDatapoint | review.models.CannotValidateDatapoint,
+    accepted_ids: list[str],
+    rejected_ids: list[str],
+    inconclusive: list[str],
+    not_attempted: list[str],
+) -> None:
+    """Buckets the validator result into appropriate lists."""
+    if isinstance(validator_result, review.models.ValidatedDatapoint):
+        if validator_result.qa_status == "QaAccepted":
+            accepted_ids.append(validator_result.data_point_id)
+        elif validator_result.qa_status == "QaRejected":
+            rejected_ids.append(validator_result.data_point_id)
+        elif validator_result.qa_status == "QaInconclusive":
+            inconclusive.append(validator_result.data_point_id)
+    elif isinstance(validator_result, review.models.CannotValidateDatapoint):
+        not_attempted.append(validator_result.data_point_id)
 
 
 def run_scheduled_processing() -> None:
@@ -42,15 +88,43 @@ def run_scheduled_processing() -> None:
         not_attempted = []
 
         for _k, v in data_points.items():  # noqa: PERF102
-            validator_result = asyncio.run(
-                review.validate_datapoint(
-                    data_point_id=v,
-                    ai_model=config.ai_model,
-                    use_ocr=config.use_ocr,
-                    override=False,
-                )
-            )
+            if not try_acquire_lock(v):
+                continue
 
+            try:
+                validator_result = asyncio.run(
+                    asyncio.wait_for(
+                        review.validate_datapoint(
+                            data_point_id=v,
+                            ai_model=config.ai_model,
+                            use_ocr=config.use_ocr,
+                            override=False,
+                        ),
+                        timeout=validation_timeout_seconds,
+                    )
+                )
+            except TimeoutError:
+                logger.warning(
+                    "Validation timed out for datapoint ID: %s after %s seconds", v, validation_timeout_seconds
+                )
+                not_attempted.append(v)
+                continue
+            except Exception:
+                logger.exception("Error occurred while validating datapoint ID: %s", v)
+                not_attempted.append(v)
+                continue
+            finally:
+                deleted = database_engine.delete_entity(entity_id=v, entity_class=database_tables.DatapointInReview)
+                if not deleted:
+                    logger.warning(
+                        "Failed to release lock for datapoint ID: %s. Lock may remain until TTL expires (%s seconds).",
+                        v,
+                        lock_ttl_seconds,
+                    )
+
+            bucket_validator_result(validator_result, accepted_ids, rejected_ids, inconclusive, not_attempted)
+
+<<<<<<< HEAD
             if isinstance(validator_result, review.models.ValidatedDatapoint):
                 if validator_result.qa_status == "QaAccepted":
                     accepted_ids.append(validator_result.data_point_id)
@@ -61,6 +135,8 @@ def run_scheduled_processing() -> None:
             if isinstance(validator_result, review.models.CannotValidateDatapoint):
                 not_attempted.append(validator_result.data_point_id)
 
+=======
+>>>>>>> db471a07e068e188b85ea5177076af4c7ff753fd
         database_engine.add_entity(
             database_tables.ReviewedDataset(
                 data_id=dataset_id,

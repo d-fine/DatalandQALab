@@ -1,14 +1,21 @@
-from collections.abc import Iterator
-from typing import Any
+from __future__ import annotations
+
+import time
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from dataland_qa.models.qa_status import QaStatus
-from fastapi.testclient import TestClient
 
-from dataland_qa_lab.bin.server import dataland_qa_lab
-from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
-from dataland_qa_lab.dataland import scheduled_processor
+from dataland_qa_lab.bin.server import app as dataland_qa_lab
+from dataland_qa_lab.data_point_flow.scheduler import (
+    lock_ttl_seconds,
+    run_scheduled_processing,
+    try_acquire_lock,
+)
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 @pytest.fixture
@@ -92,7 +99,12 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
 
     class ReviewedDataset:
         def __init__(
-            self, data_id: str, review_start_time: int, review_end_time: int, review_completed: bool, report_id: str
+            self,
+            data_id: str,
+            review_start_time: int,
+            review_end_time: int,
+            review_completed: bool,
+            report_id: str | None,
         ) -> None:
             """Initialize ReviewedDataset."""
             self.data_id = data_id
@@ -101,7 +113,13 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
             self.review_completed = review_completed
             self.report_id = report_id
 
+    class DatapointInReview:
+        def __init__(self, data_point_id: str) -> None:
+            """Initialize DatapointInReview."""
+            self.data_point_id = data_point_id
+
     db_tables.ReviewedDataset = ReviewedDataset
+    db_tables.DatapointInReview = DatapointInReview
 
     dataset = MagicMock()
     dataset.data_id = "D123"
@@ -109,6 +127,7 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
 
     db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
 
     config.dataland_client.meta_api.get_contained_data_points.return_value = {
         "k1": "dp1",
@@ -124,11 +143,16 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
 
     run_scheduled_processing()
 
-    db_engine.add_entity.assert_called_once()
-    inserted = db_engine.add_entity.call_args[0][0]
+    assert db_engine.get_entity.call_count == 4
+    assert db_engine.acquire_or_refresh_datapoint_lock.call_count == 3
+    assert db_engine.add_entity.call_count == 1
+    assert db_engine.delete_entity.call_count == 3
 
-    assert inserted.data_id == "D123"
-    assert inserted.review_completed is True
+    inserted_entities = [c.args[0] for c in db_engine.add_entity.call_args_list]
+    inserted_reviewed = next(e for e in inserted_entities if isinstance(e, ReviewedDataset))
+
+    assert inserted_reviewed.data_id == "D123"
+    assert inserted_reviewed.review_completed is True
 
     msg = slack.send_slack_message.call_args[0][0]
     assert "Accepted: 1" in msg
@@ -157,30 +181,162 @@ def server_mocks() -> Iterator[dict[str, Any]]:
         yield {"app": dataland_qa_lab, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
 
 
-def test_scheduler_uses_new_logic_on_dev(server_mocks: dict[str, Any]) -> None:
-    """Test that the new scheduler logic is used in dev environment."""
-    mocks = server_mocks
-    mocks["config"].is_dev_environment = True
-    with TestClient(mocks["app"]):
-        pass
+def test_try_acquire_no_existing(mocks: MagicMock) -> None:
+    """Test acquiring lock when no existing lock."""
+    db_engine = mocks["db_engine"]
 
-    scheduler_mock = mocks["scheduler"]
-    assert scheduler_mock.add_job.called
+    db_engine.get_entity.return_value = None
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
 
-    passed_function = scheduler_mock.add_job.call_args[0][0]
-    assert passed_function == mocks["job_func"]
+    assert try_acquire_lock("dp1") is True
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=lock_ttl_seconds,
+    )
+    db_engine.add_entity.assert_not_called()
+    db_engine.delete_entity.assert_not_called()
 
 
-def test_scheduler_uses_old_logic_on_non_dev(server_mocks: dict[str, Any]) -> None:
-    """Test that the old scheduler logic is used in prod environment."""
-    mocks = server_mocks
-    mocks["config"].is_dev_environment = False
+def test_try_acquire_lock_existing_not_stale(mocks: MagicMock) -> None:
+    """Test acquiring lock when existing lock."""
+    db_engine = mocks["db_engine"]
 
-    with TestClient(mocks["app"]):
-        pass
+    lock = MagicMock()
+    lock.locked_at = int(time.time())
+    db_engine.get_entity.return_value = lock
 
-    scheduler_mock = mocks["scheduler"]
-    assert scheduler_mock.add_job.called
-    passed_function = scheduler_mock.add_job.call_args[0][0]
+    assert try_acquire_lock("dp1") is False
+    db_engine.acquire_or_refresh_datapoint_lock.assert_not_called()
+    db_engine.add_entity.assert_not_called()
+    db_engine.delete_entity.assert_not_called()
 
-    assert passed_function == scheduled_processor.old_run_scheduled_processing
+
+def test_try_acquire_lock_existing_stale(mocks: MagicMock) -> None:
+    """Test acquiring lock when existing stale lock."""
+    db_engine = mocks["db_engine"]
+
+    lock = MagicMock()
+    lock.locked_at = int(time.time()) - (lock_ttl_seconds + 1)
+    db_engine.get_entity.return_value = lock
+
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
+    assert try_acquire_lock("dp1") is True
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=lock_ttl_seconds,
+    )
+    db_engine.delete_entity.assert_not_called()
+    db_engine.add_entity.assert_not_called()
+
+
+def test_try_acquire_lock_not_acquired(mocks: MagicMock) -> None:
+    """Test that lock acquisition returns False when lock cannot be acquired."""
+    db_engine = mocks["db_engine"]
+
+    db_engine.get_entity.return_value = None
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = False
+
+    assert try_acquire_lock("dp1") is False
+    db_engine.acquire_or_refresh_datapoint_lock.assert_called_once_with(
+        data_point_id="dp1",
+        lock_ttl_seconds=lock_ttl_seconds,
+    )
+    db_engine.add_entity.assert_not_called()
+    db_engine.delete_entity.assert_not_called()
+
+
+def test_process_dataset_continues_on_datapoint_exception(mocks: MagicMock) -> None:
+    config = mocks["config"]
+    review = mocks["review"]
+    slack = mocks["slack"]
+    db_engine = mocks["db_engine"]
+    asyncio_run = mocks["asyncio_run"]
+    logger = mocks["logger"]
+
+    @dataclass
+    class ValidatedDatapoint:
+        data_point_id: str
+        qa_status: str
+
+    @dataclass
+    class CannotValidateDatapoint:
+        data_point_id: str
+
+    review.models.ValidatedDatapoint = ValidatedDatapoint
+    review.models.CannotValidateDatapoint = CannotValidateDatapoint
+
+    dataset = MagicMock()
+    dataset.data_id = "D123"
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
+    config.dataland_client.meta_api.get_contained_data_points.return_value = {
+        "k1": "dp1",
+        "k2": "dp2",
+    }
+
+    asyncio_run.side_effect = [
+        Exception("boom"),
+        ValidatedDatapoint("dp2", "QaAccepted"),
+    ]
+
+    run_scheduled_processing()
+
+    assert asyncio_run.call_count == 2
+
+    assert logger.exception.called
+
+    assert db_engine.delete_entity.call_count == 2
+
+    msg = slack.send_slack_message.call_args[0][0]
+    assert "Accepted: 1" in msg
+    assert "Not validated: 1" in msg
+
+
+def test_process_dataset_continues_on_datapoint_timeout(mocks: MagicMock) -> None:
+    config = mocks["config"]
+    review = mocks["review"]
+    slack = mocks["slack"]
+    db_engine = mocks["db_engine"]
+    asyncio_run = mocks["asyncio_run"]
+    logger = mocks["logger"]
+
+    @dataclass
+    class ValidatedDatapoint:
+        data_point_id: str
+        qa_status: str
+
+    review.models.ValidatedDatapoint = ValidatedDatapoint
+
+    dataset = MagicMock()
+    dataset.data_id = "D123"
+    config.dataland_client.qa_api.get_number_of_pending_datasets.return_value = 1
+    config.dataland_client.qa_api.get_info_on_datasets.return_value = [dataset]
+
+    db_engine.get_entity.return_value = False
+    db_engine.acquire_or_refresh_datapoint_lock.return_value = True
+
+    config.dataland_client.meta_api.get_contained_data_points.return_value = {
+        "k1": "dp1",
+        "k2": "dp2",
+    }
+
+    asyncio_run.side_effect = [
+        TimeoutError(),
+        ValidatedDatapoint("dp2", "QaAccepted"),
+    ]
+
+    run_scheduled_processing()
+
+    assert asyncio_run.call_count == 2
+    assert db_engine.delete_entity.call_count == 2
+
+    assert logger.warning.called
+
+    msg = slack.send_slack_message.call_args[0][0]
+    assert "Accepted: 1" in msg
+    assert "Not validated: 1" in msg
