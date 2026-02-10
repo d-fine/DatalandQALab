@@ -1,11 +1,12 @@
 from collections.abc import Iterator
+from dataclasses import dataclass
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from dataland_qa.models.qa_status import QaStatus
 from fastapi.testclient import TestClient
 
-from dataland_qa.models.qa_status import QaStatus
 from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import run_scheduled_processing
 from dataland_qa_lab.dataland import scheduled_processor
@@ -76,32 +77,25 @@ def test_process_dataset_and_classify_results(mocks: MagicMock) -> None:
     db_tables = mocks["db_tables"]
     asyncio_run = mocks["asyncio_run"]
 
+    @dataclass
     class ValidatedDatapoint:
-        def __init__(self, data_point_id: str, qa_status: QaStatus) -> None:
-            self.data_point_id = data_point_id
-            self.qa_status = qa_status
+        data_point_id: str
+        qa_status: QaStatus
 
+    @dataclass
     class CannotValidateDatapoint:
-        def __init__(self, data_point_id: str) -> None:
-            self.data_point_id = data_point_id
+        data_point_id: str
 
     review.models.ValidatedDatapoint = ValidatedDatapoint
     review.models.CannotValidateDatapoint = CannotValidateDatapoint
 
+    @dataclass
     class ReviewedDataset:
-        def __init__(
-            self,
-            data_id: str,
-            review_start_time: int,
-            review_end_time: int,
-            review_completed: bool,
-            report_id: str,
-        ) -> None:
-            self.data_id = data_id
-            self.review_start_time = review_start_time
-            self.review_end_time = review_end_time
-            self.review_completed = review_completed
-            self.report_id = report_id
+        data_id: str
+        review_start_time: int
+        review_end_time: int
+        review_completed: bool
+        report_id: str
 
     db_tables.ReviewedDataset = ReviewedDataset
 
