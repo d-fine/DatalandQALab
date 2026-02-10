@@ -44,7 +44,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection429": {
-                    "value": "No",
+                    "value": "Yes",
                     "quality": "Reported",
                     "comment": "Wrong value for testing",
                     "dataSource": {
@@ -55,7 +55,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection430": {
-                    "value": "No",
+                    "value": "Yes",
                     "quality": "Reported",
                     "comment": "Wrong value for testing",
                     "dataSource": {
@@ -66,7 +66,7 @@
                     }
                 },
                 "fossilGasRelatedActivitiesSection431": {
-                    "value": "Yes",
+                    "value": "No",
                     "quality": "Reported",
                     "comment": "Wrong value for testing",
                     "dataSource": {
