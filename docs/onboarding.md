@@ -53,6 +53,12 @@ VS Code will then open a new window and begin connecting — please wait while i
 - a PostgreSQL database container, and
 - a Debian container where all dependencies are automatically installed.
 
+### DevContainer-Specific Features
+Once the DevContainer is running, you have access to:
+- **Pre-installed Extensions:** All VS Code extensions from `.vscode/extensions.json` are automatically installed.
+- **GitHub Copilot:** The workspace is pre-configured with Copilot settings from `.copilotignore`.
+- **Database Tools:** PGAdmin is available at `http://localhost:5050` (login with credentials from `.env`).
+
 Once the setup is complete, run the following command to start the server:
 
 ```bash
