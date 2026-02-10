@@ -124,19 +124,6 @@ def run_scheduled_processing() -> None:
 
             bucket_validator_result(validator_result, accepted_ids, rejected_ids, inconclusive, not_attempted)
 
-<<<<<<< HEAD
-            if isinstance(validator_result, review.models.ValidatedDatapoint):
-                if validator_result.qa_status == "QaAccepted":
-                    accepted_ids.append(validator_result.data_point_id)
-                elif validator_result.qa_status == "QaRejected":
-                    rejected_ids.append(validator_result.data_point_id)
-                elif validator_result.qa_status == "QaInconclusive":
-                    inconclusive.append(validator_result.data_point_id)
-            if isinstance(validator_result, review.models.CannotValidateDatapoint):
-                not_attempted.append(validator_result.data_point_id)
-
-=======
->>>>>>> db471a07e068e188b85ea5177076af4c7ff753fd
         database_engine.add_entity(
             database_tables.ReviewedDataset(
                 data_id=dataset_id,
