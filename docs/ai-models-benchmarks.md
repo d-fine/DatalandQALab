@@ -7,7 +7,8 @@ The system supports multiple AI models for quality assurance:
 |-------|----------|-------------|
 | **GPT-5** | Primary model for most validations | High accuracy, moderate speed |
 | **GPT-4/4o** | Alternative model when GPT-5 is not available | Good accuracy, reliable |
-| **Custom SFDR Prompts** | Specialized prompts sent to the AI models for sustainability reporting | Optimized for SFDR regulations |sustainability data |
+
+and many more depending on what's available via Azure Foundry...
 
 ## Running Experiments & Benchmarks
 
@@ -49,12 +50,7 @@ The JSON file contains named prompt entries for different validation scenarios.
   - When GPT-5 is not available
   - Development and testing
 
-- **Use SFDR prompts** for:
-  - Sustainability reporting validations (prompts are sent to the selected AI model)
-
 ## Troubleshooting
 - **No benchmark script found:** Use the provided Jupyter notebooks instead
 - **Script not working:** Ensure all dependencies are installed with `pdm install`
 - **Questions about benchmarks:** Contact project maintainers
-
-*Last Updated: February 2025*
