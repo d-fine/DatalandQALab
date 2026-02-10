@@ -19,7 +19,7 @@ mock_config.azure_docintel_endpoint = "fake_endpoint"
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.AzureKeyCredential")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence._config", new=mock_config)
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
 def test_extract_text_of_pdf(mock_credential: MagicMock, mock_client: MagicMock) -> None:
     pdf_bytes = b"%PDF-1.4 dummy content"
 
@@ -60,7 +60,7 @@ def test_get_markdown_from_dataset_new_entry(
 
     result = old_get_markdown_from_dataset(
         data_id=data_id,
-        relevant_pages_pdf_stream=pdf_stream,
+        relevant_pages_pdf_reader=pdf_stream,
         page_numbers=pages,
     )
 
@@ -88,7 +88,7 @@ def test_get_markdown_from_dataset_existing_entry(
 
     result = old_get_markdown_from_dataset(
         data_id=data_id,
-        relevant_pages_pdf_stream=pdf_stream,
+        relevant_pages_pdf_reader=pdf_stream,
         page_numbers=pages,
     )
 
@@ -118,7 +118,7 @@ def test_get_markdown_from_dataset_saves_llm_version(
 
     result = old_get_markdown_from_dataset(
         data_id=data_id,
-        relevant_pages_pdf_stream=pdf_stream,
+        relevant_pages_pdf_reader=pdf_stream,
         page_numbers=pages,
         llm_version=llm_version,
     )
@@ -165,7 +165,7 @@ def test_get_markdown_from_dataset_updates_existing_llm_version(
 
     result = old_get_markdown_from_dataset(
         data_id=data_id,
-        relevant_pages_pdf_stream=pdf_stream,
+        relevant_pages_pdf_reader=pdf_stream,
         page_numbers=pages,
         llm_version=llm_version,
     )
@@ -181,7 +181,7 @@ def test_get_markdown_from_dataset_updates_existing_llm_version(
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence._config", new=mock_config)
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
 def test_extract_pdf_calls_client(mock_docintel_client_class: MagicMock) -> None:
     mock_client = MagicMock()
     mock_docintel_client_class.return_value = mock_client
@@ -206,7 +206,7 @@ def test_extract_pdf_calls_client(mock_docintel_client_class: MagicMock) -> None
 
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence._config", new=mock_config)
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
 def test_extract_pdf_returns_content(mock_docintel_client_class: MagicMock) -> None:
     mock_client = MagicMock()
     mock_docintel_client_class.return_value = mock_client
@@ -225,7 +225,7 @@ def test_extract_pdf_returns_content(mock_docintel_client_class: MagicMock) -> N
 
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.AzureKeyCredential")
 @patch("dataland_qa_lab.pages.text_to_doc_intelligence.DocumentIntelligenceClient")
-@patch("dataland_qa_lab.pages.text_to_doc_intelligence._config", new=mock_config)
+@patch("dataland_qa_lab.pages.text_to_doc_intelligence.config", new=mock_config)
 def test_extract_pdf_uses_credential(mock_docintel_client_class: MagicMock, mock_azure_key_cred: MagicMock) -> None:
     mock_client = MagicMock()
     mock_docintel_client_class.return_value = mock_client
