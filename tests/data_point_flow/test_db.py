@@ -60,7 +60,9 @@ async def test_store_data_point_in_db_cannot_validate(mock_db_engine: MagicMock)
 
     await db_module.store_data_point_in_db(data)
 
-    added_entity = mock_db_engine.add_entity.call_args[0][0]
+    added_entity = (
+        mock_db_engine.add_entity.call_args.kwargs.get("entity") or mock_db_engine.add_entity.call_args.args[0]
+    )
     assert added_entity.data_point_id == "dp456"
     assert added_entity.predicted_answer is None
     assert added_entity.confidence == 0.0

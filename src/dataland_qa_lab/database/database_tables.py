@@ -55,7 +55,7 @@ class ValidatedDataPoint(Base):
     confidence = Column("confidence", Float, nullable=True)
     reasoning = Column("reasoning", String, nullable=True)
     qa_status = Column("qa_status", String, nullable=True)
-    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=True)
+    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=False)
     ai_model = Column("ai_model", String, nullable=True)
     use_ocr = Column("use_ocr", Boolean, nullable=True)
     override = Column("override", Boolean, nullable=True)
@@ -64,3 +64,11 @@ class ValidatedDataPoint(Base):
     page = Column("page", Integer, nullable=True)
     qa_report_id = Column("qa_report_id", String, nullable=True)
     _prompt = Column("_prompt", String, nullable=True)
+
+
+class DatapointInReview(Base):
+    """Database entity for datapoints currently in review."""
+
+    __tablename__ = "datapoint_in_review"
+    data_point_id = Column("data_point_id", String, primary_key=True)
+    locked_at = Column("locked_at", Integer, default=lambda: int(time.time()), nullable=False)
