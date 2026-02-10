@@ -21,7 +21,7 @@ def get_relevant_page_numbers(dataset: NuclearAndGasDataCollection) -> list[int]
     return sorted(set(yes_no_pages + numeric_pages))
 
 
-def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pymupdf.PdfReader | None:
+def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> io.BytesIO | None:
     """Get page numbers of relevant data."""
     dataland_client = config.get_config().dataland_client
     logger.info("Starting to retrieve pages from company report.")
@@ -37,15 +37,18 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> pymupdf.P
     full_pdf = dataland_client.documents_api.get_document(file_reference)
     full_pdf_stream = io.BytesIO(full_pdf)
 
-    original_pdf = pymupdf.PdfReader(full_pdf_stream)
-    output_pdf = pymupdf.PdfWriter()
-
-    for page_num in page_numbers:
-        if 0 <= page_num - 1 < len(original_pdf.pages):
-            output_pdf.add_page(original_pdf.pages[page_num - 1])
+    with pymupdf.open(stream=full_pdf_stream, filetype="pdf") as original_pdf:
+        output_pdf = pymupdf.open()
+        for page_num in page_numbers:
+            page_index = page_num - 1
+            if 0 <= page_index < len(original_pdf):
+                page = original_pdf.load_page(page_index)
+                new_page = output_pdf.new_page(width=page.rect.width, height=page.rect.height)
+                new_page.show_pdf_page(new_page.rect, original_pdf, page_index)
 
     extracted_pdf_stream = io.BytesIO()
-    output_pdf.write(extracted_pdf_stream)
+    output_pdf.save(extracted_pdf_stream)
+    output_pdf.close()
     extracted_pdf_stream.seek(0)
 
     if extracted_pdf_stream is not None:
