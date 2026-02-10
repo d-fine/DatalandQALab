@@ -34,7 +34,7 @@ class GenerateGptRequest:
             try:
                 updated_openai_response = client.chat.completions.create(
                     model=ai_model,
-                    temperature=0,
+                    temperature=1 if "gpt-5" in ai_model else 0,
                     messages=[
                         {"role": "system", "content": mainprompt},
                     ],

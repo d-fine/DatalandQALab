@@ -31,6 +31,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
             override=data.override,
             file_reference=None,
             file_name=None,
+            _prompt=data._prompt,
             page=None,
         )
     else:
@@ -48,6 +49,7 @@ async def store_data_point_in_db(data: models.ValidatedDatapoint | models.Cannot
             override=data.override,
             file_reference=data.file_reference,
             file_name=data.file_name,
+            _prompt=data._prompt,
             page=data.page,
         )
     if database_engine.get_entity(database_tables.ValidatedDataPoint, data_point_id=data.data_point_id):
