@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from dataland_qa_lab.bin import server
 from dataland_qa_lab.data_point_flow import models as dp_models
 
-client = TestClient(server.app)
+client = TestClient(server.dataland_qa_lab)
 
 
 def test_health_check() -> None:

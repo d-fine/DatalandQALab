@@ -38,18 +38,13 @@ Navigate to the **Run** section in the sidebar to configure a test.
 6. **Start:** Click **Start Monitoring Datapoint**.
 
 ## 4. Analytics and Exporting Data
-View real-time progress in the **Analytics** section. To analyze the data in Excel, follow this specific workflow:
+View real-time progress in the **Analytics** section. You can export results in two formats:
 
-1. **Export:** Click **Download CSV** in the dashboard.
-2. **Convert:** Use a **CSV to Excel Converter** tool to convert the file.
-3. **Format in Excel:**
-   * Open the converted Excel file.
-   * Select the first column
-   * Go to **Data > Text to Columns**.
-   * **Delimited**, set the separator to **Comma**, and finish.
-4. **Create Intelligent Table:**
-   * Select all data.
-   * Press `Ctrl + T (or Cmd + T)`
-   * **My table has headers** and confirm.
-  
-You can now use the filter headers to analyze the results. 
+### Export as Excel (.xlsx) - RECOMMENDED
+1. Click **Download Excel** in the dashboard.
+2. Open the `.xlsx` file directly in Microsoft Excel or compatible software.
+3. The data is already formatted as a table with filterable headers.
+
+### Export as CSV (Legacy)
+1. Click **Download CSV** in the dashboard.
+2. For Excel analysis: Open the CSV file in Excel and use **Data > Text to Columns** with comma delimiter.

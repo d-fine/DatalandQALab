@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from dataland_qa_lab.bin.server import app as dataland_qa_lab
+from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
     lock_ttl_seconds,
     run_scheduled_processing,

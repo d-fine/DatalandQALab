@@ -110,13 +110,13 @@ jobs:
             cd ~/qalab
             echo 'Starting health checks...'
             
-            # Timeout von 3 Minuten (36 * 5s)
+            
             for i in {1..36}; do
               # Prüfe QA Lab Server Health Status
               if docker compose --profile prod ps qa-lab-server-prod | grep -q '(healthy)'; then
                 echo 'QA Lab Server is healthy'
                 
-                # Prüfe Monitor
+                
                 if docker compose --profile prod ps qa-lab-monitor | grep -q '(healthy)'; then
                   echo 'Monitor is healthy'
                   echo 'All services healthy!'
@@ -136,7 +136,7 @@ jobs:
             exit 1
           "
           
-          # Prüfe den Exit-Code des SSH-Befehls
+          
           if [ $? -ne 0 ]; then
             echo "Health check failed"
             exit 1
