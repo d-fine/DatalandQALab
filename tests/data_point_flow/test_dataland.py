@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-import pymupdf
+import fitz 
 import pytest
 
 from dataland_qa_lab.data_point_flow import dataland, models
@@ -49,7 +49,7 @@ async def test_get_data_point_missing_data_source(mock_config: MagicMock) -> Non
 async def test_get_document_single_page(mock_config: MagicMock) -> None:
     """Test get_document extracts the correct page from a PDF."""
     # create a 2-page PDF using PyMuPDF
-    doc = pymupdf.open()
+    doc = fitz.open()
     doc.new_page(width=100, height=100)
     doc.new_page(width=200, height=200)
     pdf_data = doc.tobytes()
@@ -60,7 +60,7 @@ async def test_get_document_single_page(mock_config: MagicMock) -> None:
     result_stream = await dataland.get_document("ref123", 2)
 
     # verify result is a 1-page PDF and has the expected page size
-    out_doc = pymupdf.open(stream=result_stream.getvalue(), filetype="pdf")
+    out_doc = fitz.open(stream=result_stream.getvalue(), filetype="pdf")
     assert len(out_doc) == 1
 
     page = out_doc[0]
@@ -81,13 +81,18 @@ async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
         data_source={},
     )
 
-    mock_config.dataland_client.qa_api.datapoint_qa_controller_api.post_qa_report(
-        data_point_id="dp123",
-        qa_report_data_point_string={
-            "comment": "Reasoning text",
-            "verdict": "QaAccepted",
-            "correctedData": json.dumps(
-                {"value": "Yes", "quaility": "Incomplete", "comment": "program neural circuit", "dataSource": {}}
-            ),
-        },
-    )
+    mock_config.dataland_client.qa_api.datapoint_qa_controller_api.post_qa_report.assert_called_once_with(
+    data_point_id="dp123",
+    qa_report_data_point_string={
+        "comment": "Reasoning text",
+        "verdict": "QaAccepted",
+        "correctedData": json.dumps(
+            {
+                "value": "Yes",
+                "quaility": "Incomplete",
+                "comment": "program neural circuit",
+                "dataSource": {},
+            }
+        ),
+    },
+)
