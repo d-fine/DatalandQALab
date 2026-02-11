@@ -135,7 +135,6 @@ async def test_override_existing_entry(mock_db: MagicMock) -> None:
 
 
 @pytest.mark.asyncio
-@patch("dataland_qa_lab.data_point_flow.review.config")
 @patch("dataland_qa_lab.data_point_flow.review.db")
 @patch("dataland_qa_lab.data_point_flow.review.dataland")
 @patch("dataland_qa_lab.data_point_flow.review.prompts")
@@ -149,12 +148,8 @@ async def test_vision_flow(  # noqa: PLR0913, PLR0917
     mock_prompts: MagicMock,
     mock_dataland: MagicMock,
     mock_db: MagicMock,
-    mock_config: MagicMock,
 ) -> None:
     """Tests validation workflow for bypassing OCR and using image-based AI."""
-    mock_config.get_config.return_value.vision_enabled = True
-    mock_config.vision.enabled = True
-    mock_config.vision.dpi = 300
     mock_db.check_if_already_validated = AsyncMock(return_value=None)
     mock_db.store_data_point_in_db = AsyncMock()
     mock_dataland.get_data_point = AsyncMock(return_value=MagicMock(value="A", file_reference="ref", page=1))
@@ -174,7 +169,6 @@ async def test_vision_flow(  # noqa: PLR0913, PLR0917
 
 
 @pytest.mark.asyncio
-@patch("dataland_qa_lab.data_point_flow.review.config")
 @patch("dataland_qa_lab.data_point_flow.review.db")
 @patch("dataland_qa_lab.data_point_flow.review.dataland")
 @patch("dataland_qa_lab.data_point_flow.review.prompts")
@@ -182,11 +176,8 @@ async def test_vision_flow_vision_disabled(
     mock_prompts: MagicMock,
     mock_dataland: MagicMock,
     mock_db: MagicMock,
-    mock_config: MagicMock,
 ) -> None:
     """Tests that RuntimeError is raised if vision is disabled in config."""
-    mock_config.vision.enabled = False
-    mock_config.vision.dpi = 300
     mock_db.check_if_already_validated = AsyncMock(return_value=None)
     mock_db.store_data_point_in_db = AsyncMock()
     mock_dataland.get_data_point = AsyncMock(return_value=MagicMock(value="A", file_reference="ref", page=1))
@@ -199,23 +190,19 @@ async def test_vision_flow_vision_disabled(
 
 
 @pytest.mark.asyncio
-@patch("dataland_qa_lab.data_point_flow.review.config")
 @patch("dataland_qa_lab.data_point_flow.review.db")
 @patch("dataland_qa_lab.data_point_flow.review.dataland")
 @patch("dataland_qa_lab.data_point_flow.review.prompts")
 @patch("dataland_qa_lab.data_point_flow.review.pdf_handler")
 @patch("dataland_qa_lab.data_point_flow.review.ai")
-async def test_vision_flow_no_images_rendered(  # noqa: PLR0913, PLR0917
+async def test_vision_flow_no_images_rendered(
     mock_ai: MagicMock,
     mock_pdf_handler: MagicMock,
     mock_prompts: MagicMock,
     mock_dataland: MagicMock,
     mock_db: MagicMock,
-    mock_config: MagicMock,
 ) -> None:
     """Test that VaulueError is raised if no images are rendered from PDF."""
-    mock_config.vision.enabled = True
-    mock_config.vision.dpi = 300
     mock_db.check_if_already_validated = AsyncMock(return_value=None)
     mock_db.store_data_point_in_db = AsyncMock()
     mock_dataland.get_data_point = AsyncMock(
@@ -226,10 +213,10 @@ async def test_vision_flow_no_images_rendered(  # noqa: PLR0913, PLR0917
     mock_dataland.override_dataland_qa = AsyncMock()
 
     mock_pdf_handler.render_pdf_to_image.return_value = []
-    mock_ai.execute_prompt.side_effect = Exception("No images were rendered from the PDF document.")
+    mock_ai.execute_prompt.side_effect = Exception("No images rendered from PDF")
     result = await validate.validate_datapoint("dp_no_images", use_ocr=False, ai_model="gpt-vision", override=False)
     assert isinstance(result, models.CannotValidateDatapoint)
-    assert "No images were rendered from the PDF document." in result.reasoning
+    assert "No images rendered from PDF" in result.reasoning
 
 
 @pytest.mark.asyncio

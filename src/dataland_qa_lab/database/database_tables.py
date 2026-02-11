@@ -55,7 +55,7 @@ class ValidatedDataPoint(Base):
     confidence = Column("confidence", Float, nullable=True)
     reasoning = Column("reasoning", String, nullable=True)
     qa_status = Column("qa_status", String, nullable=True)
-    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=True)
+    timestamp = Column("timestamp", Integer, default=int(time.time()), nullable=False)
     ai_model = Column("ai_model", String, nullable=True)
     use_ocr = Column("use_ocr", Boolean, nullable=True)
     override = Column("override", Boolean, nullable=True)

@@ -27,41 +27,9 @@ class ReviewResponse(BaseModel):
     meta: ReviewMeta
 
 
-# models for the new dataset validation
 class DatapointFlowReviewDataPointRequest(BaseModel):
     """Request model for initiating a data point review."""
 
     ai_model: str = "gpt-5"
     use_ocr: bool = True
     override: bool = False
-
-
-class DatapointFlowReviewDataPointResponse(BaseModel):
-    """Response model for a reviewed data point."""
-
-    data_point_id: str
-    data_point_type: str
-    previous_answer: Any
-    predicted_answer: Any
-    confidence: float
-    reasoning: str
-    qa_status: str
-    timestamp: int
-    ai_model: str
-    use_ocr: bool
-    file_name: str
-    file_reference: str
-    page: int
-    status: str = "success"
-
-
-class DatapointFlowCannotReviewDatapointResponse(BaseModel):
-    """Response model for a data point that cannot be reviewed."""
-
-    data_point_id: str
-    data_point_type: str
-    reasoning: str
-    ai_model: str
-    use_ocr: bool
-    timestamp: int
-    status: str = "error"
