@@ -138,12 +138,8 @@ def _attach_debug_json(
     if not rows:
         return
 
-    rows[0]["old_core_json"] = (
-        json.dumps(old_core, ensure_ascii=False, sort_keys=True, indent=2) if old_core else None
-    )
-    rows[0]["new_core_json"] = (
-        json.dumps(new_core, ensure_ascii=False, sort_keys=True, indent=2) if new_core else None
-    )
+    rows[0]["old_core_json"] = json.dumps(old_core, ensure_ascii=False, sort_keys=True, indent=2) if old_core else None
+    rows[0]["new_core_json"] = json.dumps(new_core, ensure_ascii=False, sort_keys=True, indent=2) if new_core else None
     rows[0]["new_previous_answers_json"] = (
         json.dumps(new_info, ensure_ascii=False, sort_keys=True, indent=2) if new_info else None
     )
@@ -220,6 +216,7 @@ async def _call_both_flows(
 @dataclass(frozen=True)
 class RowContext:
     """Context for building per-datapoint comparison rows."""
+
     dataset_id: str
     old_res: CallResult
     new_res: CallResult
@@ -270,6 +267,7 @@ def _make_datapoint_rows(ctx: RowContext) -> list[dict[str, JsonValue]]:
 @dataclass
 class CallResult:
     """HTTP call result for one endpoint invocation."""
+
     ok: bool
     status_code: int | None
     latency_ms: int | None
@@ -298,6 +296,7 @@ async def post_json(client: httpx.AsyncClient, url: str, payload: dict[str, Json
 @dataclass(frozen=True)
 class Config:
     """Runtime configuration for the n&g flow comparison script."""
+
     base_url: str
     ids_file: str
     out: str
