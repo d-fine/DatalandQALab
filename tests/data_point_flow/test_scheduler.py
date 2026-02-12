@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from types import SimpleNamespace
 from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from fastapi.testclient import TestClient
 
 from dataland_qa_lab.bin.server import dataland_qa_lab
 from dataland_qa_lab.data_point_flow.scheduler import (
@@ -175,10 +177,26 @@ def server_mocks() -> Iterator[dict[str, Any]]:
     """Fixture to mock config and scheduler in server."""
     with (
         patch("dataland_qa_lab.bin.server.config") as config_mock,
+        patch(
+            "dataland_qa_lab.bin.server.conf", new=SimpleNamespace(is_local_environment=False, is_dev_environment=True)
+        ),
         patch("dataland_qa_lab.bin.server.scheduler") as scheduler_mock,
-        patch("dataland_qa_lab.bin.server.data_point_scheduler.run_scheduled_processing") as mock_job_func,
+        patch("dataland_qa_lab.bin.server.scheduled_job.run_scheduled_processing_job") as mock_job_func,
     ):
         yield {"app": dataland_qa_lab, "config": config_mock, "scheduler": scheduler_mock, "job_func": mock_job_func}
+
+
+def test_scheduler_registers_wrapper_job(server_mocks: dict[str, Any]) -> None:
+    """Test that the server registers the scheduled processing wrapper job on startup."""
+    mocks = server_mocks
+    with TestClient(mocks["app"]):
+        pass
+
+    scheduler_mock = mocks["scheduler"]
+    assert scheduler_mock.add_job.called
+
+    passed_function = scheduler_mock.add_job.call_args[0][0]
+    assert passed_function == mocks["job_func"]
 
 
 def test_try_acquire_no_existing(mocks: MagicMock) -> None:

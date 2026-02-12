@@ -42,6 +42,7 @@ class DatalandQaLabSettings(BaseSettings):
     slack_webhook_url: str | None = None
     environment: str | None = None
     frameworks: str = "sfdr"
+    sentry_dsn: str | None = None
     ai_model: str = "gpt-5"
     use_ocr: bool = True
 
