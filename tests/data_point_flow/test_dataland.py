@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-import fitz 
+import fitz
 import pytest
 
 from dataland_qa_lab.data_point_flow import dataland, models
