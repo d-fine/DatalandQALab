@@ -1,7 +1,7 @@
 import io
 import logging
 
-import fitz
+import pymupdf
 from dataland_backend.models.extended_document_reference import ExtendedDocumentReference
 
 from dataland_qa_lab.dataland import data_provider
@@ -37,8 +37,8 @@ def get_relevant_pages_of_pdf(dataset: NuclearAndGasDataCollection) -> io.BytesI
     full_pdf = dataland_client.documents_api.get_document(file_reference)
     full_pdf_stream = io.BytesIO(full_pdf)
 
-    with fitz.open(stream=full_pdf_stream, filetype="pdf") as original_pdf:
-        output_pdf = fitz.open()
+    with pymupdf.open(stream=full_pdf_stream, filetype="pdf") as original_pdf:
+        output_pdf = pymupdf.open()
         for page_num in page_numbers:
             page_index = page_num - 1
             if 0 <= page_index < len(original_pdf):
