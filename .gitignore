@@ -169,3 +169,8 @@ clients/
 monitor/config.json
 monitor/output/
 *.db
+
+# Compare NG flows artifacts (local)
+out/
+data/txt/
+*.xlsx

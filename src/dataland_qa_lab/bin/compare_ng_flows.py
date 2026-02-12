@@ -1,3 +1,34 @@
+"""Compare NG flows (old vs new) and write an Excel report.
+
+What it does
+- For each dataset_id in a text file, this script calls:
+  - OLD flow endpoint: /review/{data_id}
+  - NEW flow endpoint: /data-point-flow/review-dataset/{data_id}
+- It normalizes both responses and compares them against the NEW flow's `previous_answer`
+  (treated as "Dataland truth").
+- NEW "hit": predicted_answer == previous_answer
+- OLD "hit": derived from qa_status (QaAccepted => match, QaRejected => mismatch)
+- Produces an .xlsx with:
+  - summary_overall, summary_by_dataset
+  - results_by_datapoint, pivot_by_datapoint_key
+  - mismatches_vs_dataland
+
+
+How to use (local dev)
+1) Create a txt file with one dataset_id per line, e.g.:
+   data/txt/ng_ids_50.txt
+
+2) Create output folder (terminal 2):
+   mkdir out
+
+3) Start the API locally (terminal 1):
+   pdm run dev
+
+4) Run the comparison script (terminal 2):
+   pdm run python -m dataland_qa_lab.bin.compare_ng_flows --base-url http://127.0.0.1:8000 --ids-file data/txt/ng_ids_50.txt --out out/ng_compare.xlsx
+
+"""  # noqa: E501
+
 from __future__ import annotations
 
 import argparse
