@@ -25,7 +25,7 @@ How to use (local dev)
    pdm run dev
 
 4) Run the comparison script (terminal 2):
-   pdm run python -m dataland_qa_lab.bin.compare_ng_flows --base-url http://127.0.0.1:8000 --ids-file data/txt/ng_ids_50.txt --out out/ng_compare.xlsx
+   pdm run python notebooks/compare_ng_flows.py --base-url http://127.0.0.1:8000 --ids-file data/txt/ng_ids_50.txt --out out/ng_compare.xlsx
 
 """  # noqa: E501
 
