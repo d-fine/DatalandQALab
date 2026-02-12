@@ -2,7 +2,8 @@ from typing import Final
 
 import requests
 
-REQUEST_TIMEOUT: Final[float] = 30.0
+REQUEST_TIMEOUT: Final[float] = 300.0
+HEALTH_TIMEOUT: Final[float] = 30.0
 
 
 def _normalize_base_url(qalab_base_url: str) -> str:
@@ -13,7 +14,7 @@ def is_healthy(qalab_base_url: str) -> bool:
     """Check the health of the QaLab service."""
     api_url = f"{_normalize_base_url(qalab_base_url)}/health"
     try:
-        response = requests.get(api_url, timeout=REQUEST_TIMEOUT)
+        response = requests.get(api_url, timeout=HEALTH_TIMEOUT)
     except requests.RequestException:
         return False
     return response.status_code == requests.codes.ok
