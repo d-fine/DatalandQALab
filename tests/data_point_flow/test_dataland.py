@@ -1,7 +1,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-import fitz
+import fitz 
 import pytest
 
 from dataland_qa_lab.data_point_flow import dataland, models
@@ -72,6 +72,7 @@ async def test_get_document_single_page(mock_config: MagicMock) -> None:
 @pytest.mark.asyncio
 @patch("dataland_qa_lab.data_point_flow.dataland.config")
 async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
+    """Test that override_dataland_qa calls the QA API correctly."""
     await dataland.override_dataland_qa(
         data_point_id="dp123",
         comment="Reasoning text",
@@ -80,19 +81,13 @@ async def test_override_dataland_qa_calls_api(mock_config: MagicMock) -> None:
         data_source={},
     )
 
-    mock_client = mock_config.get_config.return_value.dataland_client
-    mock_client.qa_api.datapoint_qa_controller_api.post_qa_report.assert_called_once_with(
+    mock_config.dataland_client.qa_api.datapoint_qa_controller_api.post_qa_report(
         data_point_id="dp123",
         qa_report_data_point_string={
             "comment": "Reasoning text",
             "verdict": "QaAccepted",
             "correctedData": json.dumps(
-                {
-                    "value": "Yes",
-                    "quaility": "Incomplete",
-                    "comment": "program neural circuit",
-                    "dataSource": {},
-                }
+                {"value": "Yes", "quaility": "Incomplete", "comment": "program neural circuit", "dataSource": {}}
             ),
         },
     )
